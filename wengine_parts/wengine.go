@@ -15,32 +15,38 @@ import (
 
 func main() {
 
-    port , _  , err := get_args()
+    port, filepath, err := get_args()
     if err!=nil{
 
         fmt.Println(err)
         os.Exit(1)
 
     }
-
-
-
     port = ":"+port
 
-    http.HandleFunc("/", homeHandler)
+    handler_func,_:=makeHandlerFunc(filepath)
+
+    http.HandleFunc("/", handler_func)
+
     panic(http.ListenAndServe(port, nil))
 }
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-    _,filepath,_:=get_args()
+
+func makeHandlerFunc(filepath string) (func(w http.ResponseWriter, r *http.Request), error) {
+
+    return func(w http.ResponseWriter, r *http.Request) {
     text , _ := readFile(filepath)
     fmt.Fprintf(w, text)
 
+} , nil
 }
 
 func readFile(filename string) (text string ,err error ) {
+
     rawBytes, err := ioutil.ReadFile(filename)
+
     text = string(rawBytes)
+
     return text, nil
 }
 
@@ -61,13 +67,16 @@ func get_args()(port string,filepath string , err error) {
         } else {
               return "","",fmt.Errorf("usage: <port_number> <path_to_html_file>") 
         }
-        ln, err := net.Listen("tcp", ":"+port)
+
+        ln, err := net.Listen("tcp", ":"+port);
         if err!=nil {
 
             return "","",fmt.Errorf("error: Unable to open port %s",port)
             
         }
+
         defer ln.Close()
+
         return port,filepath,err
 
 
