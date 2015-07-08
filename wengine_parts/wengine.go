@@ -24,7 +24,11 @@ func main() {
     }
     port = ":"+port
 
-    handler_func,_:=makeHandlerFunc(filepath)
+    messages := make(chan string)
+
+    printLogMessage(messages)
+
+    handler_func,_:=makeHandlerFunc(filepath,messages)
 
     http.HandleFunc("/", handler_func)
 
@@ -32,11 +36,12 @@ func main() {
 }
 
 
-func makeHandlerFunc(filepath string) (func(w http.ResponseWriter, r *http.Request), error) {
-
+func makeHandlerFunc(filepath string,messages chan string) (func(w http.ResponseWriter, r *http.Request), error) {
+   
     return func(w http.ResponseWriter, r *http.Request) {
     text , _ := readFile(filepath)
     fmt.Fprintf(w, text)
+    messages <-(r.Method+" | "+r.Proto+" | "+r.URL.Path)
 
 } , nil
 }
@@ -80,5 +85,20 @@ func get_args()(port string,filepath string , err error) {
         return port,filepath,err
 
 
+
+}
+
+
+
+
+func printLogMessage(message_channel chan string) {
+
+    go func() { 
+    for {
+    message:= <-message_channel
+    fmt.Printf("| %s |\n",message)
+
+    }
+   }()
 
 }
