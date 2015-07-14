@@ -3,15 +3,13 @@ package router
 import ("net/http";"fmt")
 
 
-func route(path string,method chan string) (func(w http.ResponseWriter, r *http.Request), error) {
 
-    apps:=map[string]string {"receive_client_update":"handle_client_update","request_repo_update":"handle_request_repo_update"}
+func route_request_to_func(path string,method chan string) (func(w http.ResponseWriter, r *http.Request), error) {
 
-    funcs:= map[string]interface{} {"handle_client_update":test1}
+    funcs:= map[string]interface{} {"receive_client_update":handle_client_update,
+                                    "request_repo_update":handle_request_repo_update,
+                                    "dashboard":render_dashboard}
 
-    
-
-    fmt.Println(apps)
     fmt.Println(funcs)
 
     return func(w http.ResponseWriter, r *http.Request) {
@@ -24,13 +22,14 @@ func route(path string,method chan string) (func(w http.ResponseWriter, r *http.
 } , nil
 }
 
-func test1(path string ){
+func handle_client_update(w http.ResponseWriter, r *http.Request){
 
 }
 
-func test2(path string ){
+func handle_request_repo_update(w http.ResponseWriter, r *http.Request){
 
 }
-func test3(path string ){
+
+func render_dashboard(w http.ResponseWriter, r *http.Request){
 
 }
