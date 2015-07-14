@@ -8,6 +8,7 @@ import (
     "io/ioutil"
 //    "errors"
 //    "fmt"
+//    "encoding/json"
     "os"
 )
 
@@ -39,8 +40,11 @@ func main() {
 func makeHandlerFunc(filepath string,messages chan string) (func(w http.ResponseWriter, r *http.Request), error) {
    
     return func(w http.ResponseWriter, r *http.Request) {
+
     text , _ := readFile(filepath)
+
     fmt.Fprintf(w, text)
+
     messages <-(r.Method+" | "+r.Proto+" | "+r.URL.Path)
 
 } , nil
@@ -53,6 +57,12 @@ func readFile(filename string) (text string ,err error ) {
     text = string(rawBytes)
 
     return text, nil
+}
+
+func render_test_json(json string){
+
+
+
 }
 
 func get_args()(port string,filepath string , err error) {
