@@ -52,6 +52,15 @@ type DependencyDeb struct {
 
 type RpmPackage struct {
 
+    Type string
+    Package string
+    Architecture string
+    Epoch string
+    Version string
+    Release string
+    SHA256 string
+    
+
 
 
 
