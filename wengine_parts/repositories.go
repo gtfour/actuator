@@ -59,10 +59,33 @@ type RpmPackage struct {
     Version string
     Release string
     SHA256 string
-    
+    PackageID string
+    Summary string
+    Description string
+    Packager string
+    Url string
+    TimeFile uint32
+    TimeBuild uint32
+    SizePackage uint64
+    SizeInstalled uint64
+    SizeArchive uint64
+    LocationHref string
+    License string
+    Vendor string
+    Group string
+    Buildhost string
+    SourceRpm string
+    HeaderRangeStart uint64
+    HeaderRangeEnd uint64
 
+}
 
+type RpmDependencyOrProvision struct {
 
+    Flags string 
+    Epoch string
+    Version string
+    Release string
 
 }
 
