@@ -77,11 +77,13 @@ type RpmPackage struct {
     SourceRpm string
     HeaderRangeStart uint64
     HeaderRangeEnd uint64
+    RpmDependencyOrProvision RpmRelation
 
 }
 
-type RpmDependencyOrProvision struct {
+type RpmRelation struct {
 
+    Name string
     Flags string 
     Epoch string
     Version string
