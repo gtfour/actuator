@@ -31,20 +31,20 @@ type DebPackage struct {
     Version string
     Depends []DependencyDeb
     Supported string
-    Filename string 
+    Filename string
     Size int
     MD5sum string
-    SHA1 string 
-    SHA256 string 
-    Description string 
-    Descriptionmd5 string 
+    SHA1 string
+    SHA256 string
+    Description string
+    Descriptionmd5 string
 }
 
 type DependencyDeb struct {
 
     Package string
     Version string
-    Substitutes []string  
+    Substitutes []string
 
 }
 
@@ -84,7 +84,9 @@ type RpmPackage struct {
 type RpmRelation struct {
 
     Name string
-    Flags string 
+    FileName string
+    Architecture string
+    Flags string
     Epoch string
     Version string
     Release string
