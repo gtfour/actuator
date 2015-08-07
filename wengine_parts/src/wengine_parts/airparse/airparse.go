@@ -1,7 +1,8 @@
 package airparse
 
 import ("net/http";"errors";"compress/gzip";"fmt")
-//import "io"
+import bytes
+import "reflect"
 
 var err = errors.New("airparse side error")
 
@@ -19,23 +20,29 @@ type RepoFile struct {
 func (repofile *RepoFile) Download(){
 
     repofile.DataGZ, err=http.Get(repofile.Url)
+
+    fmt.Println("Download block")
+    fmt.Println(reflect.TypeOf(repofile.DataGZ.Body))
+    fmt.Println("==============")
     
     defer repofile.DataGZ.Body.Close()
 }
 
-func (repofile *RepoFile) Extract() string{
+func (repofile *RepoFile) Extract(){
 
     r, _ := gzip.NewReader(repofile.DataGZ.Body)
 
+    fmt.Println("---")
     fmt.Println(r)
+    fmt.Println("---")
 
 }
 
-func (repofile *RepoFile) parse(){
+func (repofile *RepoFile) Parse(){
 
 }
 
-func (repofile *RepoFile) handle(){
+func (repofile *RepoFile) Handle(){
 
 
 }
