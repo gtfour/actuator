@@ -17,11 +17,11 @@ func get_remote_file() {
     //defer resp.Body.Close()
     //_, _=io.Copy(out, resp.Body)
 
-    test:=airparse.RepoFile {Url: "http://ubuntu-cloud.archive.canonical.com/ubuntu/dists/trusty-updates/kilo/main/binary-amd64/Packages.gz"}
+    test:=airparse.RepoFile {Url: "http://download.opensuse.org/distribution/13.2/repo/oss/suse/repodata/appdata.xml.gz"}
 
     test.Download()
 
-    test.Extract()
+//    test.Extract()
 
 }
 

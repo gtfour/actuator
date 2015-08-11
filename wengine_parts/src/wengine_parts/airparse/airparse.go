@@ -1,8 +1,11 @@
 package airparse
 
 import ("net/http";"errors";"compress/gzip";"fmt")
-import bytes
+//import "bytes"
 import "reflect"
+//import "xml"
+import "io/ioutil"
+
 
 var err = errors.New("airparse side error")
 
@@ -22,9 +25,25 @@ func (repofile *RepoFile) Download(){
     repofile.DataGZ, err=http.Get(repofile.Url)
 
     fmt.Println("Download block")
+
     fmt.Println(reflect.TypeOf(repofile.DataGZ.Body))
+
     fmt.Println("==============")
+
+    reader, _ :=gzip.NewReader(repofile.DataGZ.Body)
+
+    xml.Unmarshal(reader, &q)
+
+    text, _:=ioutil.ReadAll(reader)
+
     
+
+    fmt.Println("---")
+
+    fmt.Println("%x",text)
+
+    fmt.Println("---")
+
     defer repofile.DataGZ.Body.Close()
 }
 
