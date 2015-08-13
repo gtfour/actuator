@@ -49,17 +49,13 @@ type RpmPackage struct {
     Type string `xml:"type"`
     Name string `xml:"name"`
     Architecture string `xml:"arch"`
-    Epoch string
-    Version string
-    Release string
-    SHA256 string
-    PackageID string
-    Summary string
-    Description string
-    Packager string
-    Url string
-    TimeFile uint32
-    TimeBuild uint32
+    PackageVersionField 
+    PackageChecksumField
+    Summary string `xml:"summary"`
+    Description string `xml:"description"`
+    Packager string `xml:"packager"`
+    Url string `xml:"url"`
+    PackageTimeField
     SizePackage uint64
     SizeInstalled uint64
     SizeArchive uint64
@@ -86,7 +82,36 @@ type RpmMetadata struct {
 
 }
 
-type RpmMetadataField struct{
+type PackageVersionField struct{
+
+    Epoch string `xml:"epoch,attr"`
+    Ver string `xml:"ver,attr"`
+    Rel string `xml:"rel,attr"`
+
+}
+
+type PackageChecksumField struct{
+
+
+    Checksum string `xml:",chardata"`
+    Type string `xml:"type,attr"`
+    Pkgid string `xml:"pkgid,attr"`
+
+}
+
+type PackageTimeField struct{
+
+    File string `xml:"file,attr"`
+    Build string `xml:"build,attr"`
+
+}
+
+type PackageSizeField struct {
+
+    Package string `xml:"package,attr"`
+    Installed string `xml:"installed,attr"`
+    Archive string `xml:"archive,attr"`
+
 
 
 }

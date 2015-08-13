@@ -25,6 +25,7 @@ func main() {
 
 	data := `
 		<Person>
+                        <Phone>884884</Phone>
 			<FullName>Grace R. Emlin</FullName>
 			<Company>Example Inc.</Company>
 			<Email where="home">

@@ -16,6 +16,8 @@ func get_remote_file() {
     //resp,_:=http.Get("http://ubuntu-cloud.archive.canonical.com/ubuntu/dists/trusty-updates/kilo/main/binary-amd64/Packages.gz")
     //defer resp.Body.Close()
     //_, _=io.Copy(out, resp.Body)
+    // DELL primary xml:
+    // http://linux.dell.com/repo/community/content/el5-i386/repodata/primary.xml.gz
 
     test:=airparse.RepoFile {Url: "http://download.opensuse.org/distribution/13.2/repo/oss/suse/repodata/appdata.xml.gz"}
 
