@@ -49,17 +49,16 @@ type RpmPackage struct {
     Type string `xml:"type"`
     Name string `xml:"name"`
     Architecture string `xml:"arch"`
-    PackageVersionField 
-    PackageChecksumField
+    PackageVersionField PackageVersionField `xml:"version"`
+    PackageChecksumField PackageChecksumField `xml:"checksum"`
     Summary string `xml:"summary"`
     Description string `xml:"description"`
     Packager string `xml:"packager"`
     Url string `xml:"url"`
-    PackageTimeField
-    SizePackage uint64
-    SizeInstalled uint64
-    SizeArchive uint64
-    LocationHref string
+    PackageTimeField PackageTimeField `xml:"time"`
+    PackageSizeField PackageSizeField `xml:"size"`
+    LocationHref string `xml:"href,attr"` 
+    // RpmRelationField
     License string
     Vendor string
     Group string
@@ -67,7 +66,7 @@ type RpmPackage struct {
     SourceRpm string
     HeaderRangeStart uint64
     HeaderRangeEnd uint64
-    RpmDependencyOrProvision RpmRelation
+    //RpmDependencyOrProvision RpmRelation
 
 }
 
@@ -78,7 +77,7 @@ type RpmMetadata struct {
      XmlNsSuSE string `xml:"xmlns:suse,attr"`
      XmlNsRpm string `xml:"xmlns:rpm,attr"`
      PackagesCount string `xml:"packages,attr"`
-     RpmPackages []RpmPackage
+     RpmPackages []RpmPackage `xml:"metadata>package"`
 
 }
 
@@ -116,15 +115,15 @@ type PackageSizeField struct {
 
 }
 
-type RpmRelation struct {
 
-    Name string
-    FileName string
-    Architecture string
-    Flags string
-    Epoch string
-    Version string
-    Release string
+
+type RpmRelationField struct {
+
+    Name string `xml:"name,attr"`
+    Flags string `xml:"flags,attr"`
+    Epoch string `xml:"epoch,attr"`
+    Ver string `xml:"ver,attr"`
+    Rel string `xml:"rel,attr"`
 
 }
 
