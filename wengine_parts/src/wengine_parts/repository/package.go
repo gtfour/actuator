@@ -59,14 +59,7 @@ type RpmPackage struct {
     PackageSizeField PackageSizeField `xml:"size"`
     LocationHref string `xml:"href,attr"` 
     // RpmRelationField
-    License string
-    Vendor string
-    Group string
-    Buildhost string
-    SourceRpm string
-    HeaderRangeStart uint64
-    HeaderRangeEnd uint64
-    //RpmDependencyOrProvision RpmRelation
+    RpmFormatField RpmFormatField `xml:"format"`
 
 }
 
@@ -117,7 +110,7 @@ type PackageSizeField struct {
 
 
 
-type RpmRelationField struct {
+type RpmEntryField struct {
 
     Name string `xml:"name,attr"`
     Flags string `xml:"flags,attr"`
@@ -127,3 +120,22 @@ type RpmRelationField struct {
 
 }
 
+type RpmFormatField struct {
+
+    License string `xml:"license,attr"`
+    Vendor string `xml:"vendor,attr"`
+    Group string `xml:"group,attr"`
+    Buildhost string `xml:"buildhost,attr"`
+    SourceRpm string `xml:"sourcerpm,attr"`
+    RpmFormatHeaderRangeField RpmFormatHeaderRangeField `xml:"header-range"` 
+    RpmProvidesField []RpmEntryField `xml:"rpm:provides>rpm:entry"`
+    RpmRequiresField []RpmEntryField `xml:"rpm:requires>rpm:entry"`
+
+}
+
+type RpmFormatHeaderRangeField struct {
+
+    Start string `xml:"start,attr"`
+    End string `xml:"end,attr"`
+
+}

@@ -19,7 +19,7 @@ func get_remote_file() {
     // DELL primary xml:
     // http://linux.dell.com/repo/community/content/el5-i386/repodata/primary.xml.gz
 
-    test:=airparse.RepoFile {Url: "http://download.opensuse.org/distribution/13.2/repo/oss/suse/repodata/appdata.xml.gz"}
+    test:=airparse.RepoFile {Url: "http://linux.dell.com/repo/community/content/el5-i386/repodata/primary.xml.gz"}
 
     test.Download()
 

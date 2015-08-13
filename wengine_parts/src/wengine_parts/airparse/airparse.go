@@ -3,8 +3,10 @@ package airparse
 import ("net/http";"errors";"compress/gzip";"fmt")
 //import "bytes"
 import "reflect"
-//import "xml"
+import "encoding/xml"
 import "io/ioutil"
+import "wengine_parts/repository"
+// RpmMetadata 
 
 
 var err = errors.New("airparse side error")
@@ -30,19 +32,39 @@ func (repofile *RepoFile) Download(){
 
     fmt.Println("==============")
 
-    reader, _ :=gzip.NewReader(repofile.DataGZ.Body)
+    reader, err :=gzip.NewReader(repofile.DataGZ.Body)
 
-    xml.Unmarshal(reader, &q)
+    if err!=nil {
 
-    text, _:=ioutil.ReadAll(reader)
+        fmt.Printf("error: %v", err)
+
+    }
+
+    text, err:=ioutil.ReadAll(reader)
+
+    if err!=nil {
+
+        fmt.Printf("error: %v", err)
+
+    }
+
+    q := repository.RpmMetadata {}
 
     
 
+    err=xml.Unmarshal(text, &q)
+
+    if err!=nil {
+
+        fmt.Printf("error: %v", err)
+    }
+
+    // text, _:=ioutil.ReadAll(reader)
+
+    fmt.Println("---")
+    fmt.Println(q.PackagesCount)
     fmt.Println("---")
 
-    fmt.Println("%x",text)
-
-    fmt.Println("---")
 
     defer repofile.DataGZ.Body.Close()
 }
