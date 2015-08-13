@@ -1,0 +1,1148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://linux.duke.edu/metadata/common" xmlns:suse="http://novell.com/package/metadata/suse/common" xmlns:rpm="http://linux.duke.edu/metadata/rpm" packages="32"><package type="rpm">
+  <name>python-ctypes</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="1.0.2" rel="1.2.el5"/>
+  <checksum type="sha" pkgid="YES">c8186fa0b463a0c5a6373230a4e14feede19add2</checksum>
+  <summary>Advanced Foreign Function Interface for Python</summary>
+  <description>ctypes is an advanced ffi (Foreign Function Interface) package for
+Python 2.3 and higher.
+ctypes allows to call functions exposed from dlls/shared libraries
+and has extensive facilities to create, access and manipulate
+simple and complicated C data types in Python - in other words:
+wrap libraries in pure Python.  It is even possible to implement C
+callback functions in pure Python.</description>
+  <packager/>
+  <url>http://starship.python.net/crew/theller/ctypes/</url>
+  <time file="1227138205" build="1227138212"/>
+  <size package="214894" installed="665808" archive="672636"/>
+<location href="i386/python-ctypes-1.0.2-1.2.el5.i386.rpm"/>
+  <format>
+    <rpm:license>MIT</rpm:license>
+    <rpm:vendor>openSUSE Build Service</rpm:vendor>
+    <rpm:group>Development/Languages</rpm:group>
+    <rpm:buildhost>build22</rpm:buildhost>
+    <rpm:sourcerpm>python-ctypes-1.0.2-1.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="448" end="7652"/>
+    <rpm:provides>
+      <rpm:entry name="_ctypes.so"/>
+      <rpm:entry name="_ctypes_test.so"/>
+      <rpm:entry name="python-ctypes" flags="EQ" epoch="0" ver="1.0.2" rel="1.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="python-abi" flags="EQ" epoch="0" ver="2.4"/>
+      <rpm:entry name="libpthread.so.0"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.0)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.1.3)"/>
+      <rpm:entry name="rtld(GNU_HASH)"/>
+      <rpm:entry name="python(abi)" flags="EQ" epoch="0" ver="2.4"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.1)"/>
+      <rpm:entry name="libc.so.6"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.4)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.3.4)"/>
+    </rpm:requires>
+  </format>
+</package>
+
+<package type="rpm">
+  <name>biosdevname</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="0.2.4" rel="3.3.el5"/>
+  <checksum type="sha" pkgid="YES">5fe60077fc599a963c243406d9244c11a7df0514</checksum>
+  <summary>Udev helper for naming devices per BIOS names</summary>
+  <description>biosdevname in its simplest form takes a kernel device name as an
+argument, and returns the BIOS-given name it "should" be.  This is necessary
+on systems where the BIOS name for a given device (e.g. the label on
+the chassis is "Gb1") doesn't map directly and obviously to the kernel
+name (e.g. eth0).</description>
+  <packager></packager>
+  <url>http://linux.dell.com/files/biosdevname</url>
+  <time file="1335581993" build="1335581880"/>
+  <size package="46904" installed="89349" archive="90360"/>
+<location href="i386/biosdevname-0.2.4-3.3.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Base</rpm:group>
+    <rpm:buildhost>build02</rpm:buildhost>
+    <rpm:sourcerpm>biosdevname-0.2.4-3.3.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="4110"/>
+    <rpm:provides>
+      <rpm:entry name="config(biosdevname)" flags="EQ" epoch="0" ver="0.2.4" rel="3.3.el5"/>
+      <rpm:entry name="biosdevname" flags="EQ" epoch="0" ver="0.2.4" rel="3.3.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="config(biosdevname)" flags="EQ" epoch="0" ver="0.2.4" rel="3.3.el5"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.3)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.0)"/>
+      <rpm:entry name="libc.so.6"/>
+      <rpm:entry name="libz.so.1"/>
+      <rpm:entry name="rtld(GNU_HASH)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.1)"/>
+      <rpm:entry name="udev"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.4)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.3.4)"/>
+    </rpm:requires>    <file>/sbin/biosdevname</file>
+    <file>/etc/udev/rules.d/60-biosdevname.rules</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>cppunit</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="1.12.1" rel="1.4.el5"/>
+  <checksum type="sha" pkgid="YES">ce93fda6db3d7eb55bbce1126c8ced4ef12c6c1f</checksum>
+  <summary>C++ unit testing framework</summary>
+  <description>CppUnit is the C++ port of the famous JUnit framework for unit testing.
+Test output is in XML for automatic testing and GUI based for supervised
+tests.</description>
+  <packager></packager>
+  <url>http://cppunit.sourceforge.net/</url>
+  <time file="1335575771" build="1335575753"/>
+  <size package="825356" installed="2441611" archive="2443688"/>
+<location href="i386/cppunit-1.12.1-1.4.el5.i386.rpm"/>
+  <format>
+    <rpm:license>LGPLv2+</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Development/Libraries</rpm:group>
+    <rpm:buildhost>build15</rpm:buildhost>
+    <rpm:sourcerpm>cppunit-1.12.1-1.4.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="5457"/>
+    <rpm:provides>
+      <rpm:entry name="libcppunit-1.12.so.1"/>
+      <rpm:entry name="cppunit" flags="EQ" epoch="0" ver="1.12.1" rel="1.4.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="libm.so.6"/>
+      <rpm:entry name="libcppunit-1.12.so.1"/>
+      <rpm:entry name="libgcc_s.so.1(GCC_3.0)"/>
+      <rpm:entry name="libstdc++.so.6"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.0)"/>
+      <rpm:entry name="libdl.so.2"/>
+      <rpm:entry name="libdl.so.2(GLIBC_2.0)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.1.3)"/>
+      <rpm:entry name="libdl.so.2(GLIBC_2.1)"/>
+      <rpm:entry name="libstdc++.so.6(CXXABI_1.3)"/>
+      <rpm:entry name="rtld(GNU_HASH)"/>
+      <rpm:entry name="libstdc++.so.6(GLIBCXX_3.4)"/>
+      <rpm:entry name="/sbin/ldconfig" pre="1"/>
+      <rpm:entry name="libgcc_s.so.1"/>
+      <rpm:entry name="libc.so.6"/>
+    </rpm:requires>    <file>/usr/bin/DllPlugInTester</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>cppunit-devel</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="1.12.1" rel="1.4.el5"/>
+  <checksum type="sha" pkgid="YES">ffbe02902aba0af510fdea8cf5fc735fa1226eec</checksum>
+  <summary>Libraries and headers for cppunit development</summary>
+  <description>This package contains the libraries and headers necessary for developing
+programs that use cppunit.</description>
+  <packager></packager>
+  <url>http://cppunit.sourceforge.net/</url>
+  <time file="1335575771" build="1335575753"/>
+  <size package="63479" installed="214119" archive="228692"/>
+<location href="i386/cppunit-devel-1.12.1-1.4.el5.i386.rpm"/>
+  <format>
+    <rpm:license>LGPLv2+</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Development/Libraries</rpm:group>
+    <rpm:buildhost>build15</rpm:buildhost>
+    <rpm:sourcerpm>cppunit-1.12.1-1.4.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="13694"/>
+    <rpm:provides>
+      <rpm:entry name="cppunit-devel" flags="EQ" epoch="0" ver="1.12.1" rel="1.4.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="libcppunit-1.12.so.1"/>
+      <rpm:entry name="/bin/sh"/>
+      <rpm:entry name="automake"/>
+      <rpm:entry name="cppunit" flags="EQ" epoch="0" ver="1.12.1" rel="1.4.el5"/>
+      <rpm:entry name="pkgconfig"/>
+    </rpm:requires>    <file>/usr/bin/cppunit-config</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>cppunit-doc</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="1.12.1" rel="1.4.el5"/>
+  <checksum type="sha" pkgid="YES">6f0d472aeabd8c935c92ff8fbe8cbb3188736536</checksum>
+  <summary>HTML formatted API documention for cppunit</summary>
+  <description>The cppunit-doc package contains HTML formatted API documention generated by
+the popular doxygen documentation generation tool.</description>
+  <packager></packager>
+  <url>http://cppunit.sourceforge.net/</url>
+  <time file="1335575771" build="1335575753"/>
+  <size package="2841" installed="0" archive="124"/>
+<location href="i386/cppunit-doc-1.12.1-1.4.el5.i386.rpm"/>
+  <format>
+    <rpm:license>LGPLv2+</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Documentation</rpm:group>
+    <rpm:buildhost>build15</rpm:buildhost>
+    <rpm:sourcerpm>cppunit-1.12.1-1.4.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="2793"/>
+    <rpm:provides>
+      <rpm:entry name="cppunit-doc" flags="EQ" epoch="0" ver="1.12.1" rel="1.4.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>dell-repo-tools</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.0.5" rel="1.3.el5"/>
+  <checksum type="sha" pkgid="YES">e73a9a8f3ddf4775dc6f8fde2e14a1d8638a0645</checksum>
+  <summary>Scripts to extract BIOS/Firmware from Dell Update Packages</summary>
+  <description>placeholder</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1335583927" build="1335583918"/>
+  <size package="1635966" installed="1659088" archive="1660704"/>
+<location href="i386/dell-repo-tools-2.0.5-1.3.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPL style</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build31</rpm:buildhost>
+    <rpm:sourcerpm>dell-repo-tools-2.0.5-1.3.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="3738"/>
+    <rpm:provides>
+      <rpm:entry name="dell-repo-tools" flags="EQ" epoch="0" ver="2.0.5" rel="1.3.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="/usr/bin/python"/>
+      <rpm:entry name="firmware-tools" flags="GE" epoch="0" ver="2.0"/>
+      <rpm:entry name="/usr/bin/python2"/>
+      <rpm:entry name="/bin/bash"/>
+      <rpm:entry name="firmware-addon-dell"/>
+      <rpm:entry name="smbios-utils"/>
+      <rpm:entry name="unshield"/>
+      <rpm:entry name="wine"/>
+      <rpm:entry name="firmware-extract" flags="GE" epoch="0" ver="2.0"/>
+    </rpm:requires>    <file>/etc/firmware/firmware.d/dell-repo-tools.conf</file>
+    <file>/usr/bin/build_deb</file>
+    <file>/usr/bin/make_dell_mirror</file>
+    <file>/usr/bin/dup_pkginfo.py</file>
+    <file>/usr/bin/mkbiosrepo.sh</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>firmware-addon-dell</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.2.9" rel="1.6.el5"/>
+  <checksum type="sha" pkgid="YES">5f5f2990afe94f712ce0b1b51e992efe769677c8</checksum>
+  <summary>A firmware-tools plugin to handle BIOS/Firmware for Dell systems</summary>
+  <description>The firmware-addon-dell package provides plugins to firmware-tools which enable
+BIOS updates for Dell system, plus pulls in standard inventory modules
+applicable to most Dell systems.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1335584502" build="1335584472"/>
+  <size package="52854" installed="184811" archive="190340"/>
+<location href="i386/firmware-addon-dell-2.2.9-1.6.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build35</rpm:buildhost>
+    <rpm:sourcerpm>firmware-addon-dell-2.2.9-1.6.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="8451"/>
+    <rpm:provides>
+      <rpm:entry name="config(firmware-addon-dell)" flags="EQ" epoch="0" ver="2.2.9" rel="1.6.el5"/>
+      <rpm:entry name="firmware_inventory(system_bios)" flags="EQ" epoch="0" ver="2.2.9"/>
+      <rpm:entry name="firmware-addon-dell" flags="EQ" epoch="0" ver="2.2.9" rel="1.6.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="smbios-utils"/>
+      <rpm:entry name="config(firmware-addon-dell)" flags="EQ" epoch="0" ver="2.2.9" rel="1.6.el5"/>
+      <rpm:entry name="python-smbios"/>
+      <rpm:entry name="python(abi)" flags="EQ" epoch="0" ver="2.4"/>
+      <rpm:entry name="firmware-tools" flags="GE" epoch="0" ver="2.0.0"/>
+    </rpm:requires>    <file>/etc/firmware/firmware.d/firmware-addon-dell.conf</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>libsmbios</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.2.26" rel="3.2.el5"/>
+  <checksum type="sha" pkgid="YES">a81435fc0056450df12b7a63fef373334f2072ab</checksum>
+  <summary>Libsmbios C/C++ shared libraries</summary>
+  <description>Libsmbios is a library and utilities that can be used by client programs to get
+information from standard BIOS tables, such as the SMBIOS table.
+
+This package provides the C-based libsmbios library, with a C interface.
+
+This package also has a C++-based library, with a C++ interface. It is not
+actively maintained, but provided for backwards compatibility. New programs
+should use the libsmbios C interface.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/main</url>
+  <time file="1335508764" build="1335508756"/>
+  <size package="1528660" installed="4879077" archive="4881864"/>
+<location href="i386/libsmbios-2.2.26-3.2.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Libraries</rpm:group>
+    <rpm:buildhost>build13</rpm:buildhost>
+    <rpm:sourcerpm>libsmbios-2.2.26-3.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="11720"/>
+    <rpm:provides>
+      <rpm:entry name="0:2.2.26-3.2.el5"/>
+      <rpm:entry name="libsmbios-libs" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="libsmbios.so.2"/>
+      <rpm:entry name="libsmbios2"/>
+      <rpm:entry name="libsmbios_c.so.2"/>
+      <rpm:entry name="libsmbios" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="libm.so.6"/>
+      <rpm:entry name="libstdc++.so.6(GLIBCXX_3.4)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.3)"/>
+      <rpm:entry name="libstdc++.so.6"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.0)"/>
+      <rpm:entry name="libsmbios.so.2"/>
+      <rpm:entry name="libgcc_s.so.1(GCC_3.0)"/>
+      <rpm:entry name="libgcc_s.so.1(GLIBC_2.0)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.1.3)"/>
+      <rpm:entry name="libstdc++.so.6(CXXABI_1.3)"/>
+      <rpm:entry name="rtld(GNU_HASH)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.1)"/>
+      <rpm:entry name="/sbin/ldconfig" pre="1"/>
+      <rpm:entry name="libgcc_s.so.1"/>
+      <rpm:entry name="libc.so.6"/>
+      <rpm:entry name="libsmbios_c.so.2"/>
+    </rpm:requires>
+    <rpm:obsoletes>
+      <rpm:entry name="libsmbios-libs" flags="LT" epoch="0" ver="2.0.0"/>
+      <rpm:entry name="libsmbios2" flags="LE" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:obsoletes>
+  </format>
+</package>
+<package type="rpm">
+  <name>libsmbios-devel</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.2.26" rel="3.2.el5"/>
+  <checksum type="sha" pkgid="YES">cb1bc2d18d31239531ca35568ae5072e9097abb7</checksum>
+  <summary>Development headers and archives</summary>
+  <description>Libsmbios is a library and utilities that can be used by client programs to get
+information from standard BIOS tables, such as the SMBIOS table.
+
+This package contains the headers and .a files necessary to compile new client
+programs against libsmbios.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/main</url>
+  <time file="1335508764" build="1335508756"/>
+  <size package="402372" installed="2771920" archive="2838724"/>
+<location href="i386/libsmbios-devel-2.2.26-3.2.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Development/Libraries</rpm:group>
+    <rpm:buildhost>build13</rpm:buildhost>
+    <rpm:sourcerpm>libsmbios-2.2.26-3.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="50710"/>
+    <rpm:provides>
+      <rpm:entry name="libsmbios2-devel" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="libsmbios-devel" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="libsmbios" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="libsmbios.so.2"/>
+      <rpm:entry name="libsmbios_c.so.2"/>
+    </rpm:requires>
+    <rpm:obsoletes>
+      <rpm:entry name="libsmbios2-devel" flags="LT" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:obsoletes>
+  </format>
+</package>
+<package type="rpm">
+  <name>python-smbios</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.2.26" rel="3.2.el5"/>
+  <checksum type="sha" pkgid="YES">0377cf3aec1b7b76184dbc002a6896652b64d48b</checksum>
+  <summary>Python interface to Libsmbios C library</summary>
+  <description>This package provides a Python interface to libsmbios</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/main</url>
+  <time file="1335508764" build="1335508756"/>
+  <size package="71525" installed="207492" archive="215072"/>
+<location href="i386/python-smbios-2.2.26-3.2.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Libraries</rpm:group>
+    <rpm:buildhost>build13</rpm:buildhost>
+    <rpm:sourcerpm>libsmbios-2.2.26-3.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="13220"/>
+    <rpm:provides>
+      <rpm:entry name="python-smbios" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="libsmbios" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="python"/>
+      <rpm:entry name="python-ctypes"/>
+      <rpm:entry name="python(abi)" flags="EQ" epoch="0" ver="2.4"/>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>smbios-utils</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.2.26" rel="3.2.el5"/>
+  <checksum type="sha" pkgid="YES">186ac12bbe5cd91f72af6fcef1f078f00415ddcd</checksum>
+  <summary>Meta-package that pulls in all smbios binaries and python scripts</summary>
+  <description>This is a meta-package that pulls in the binary libsmbios executables as well
+as the python executables.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/main</url>
+  <time file="1335508765" build="1335508756"/>
+  <size package="13542" installed="12409" archive="13164"/>
+<location href="i386/smbios-utils-2.2.26-3.2.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build13</rpm:buildhost>
+    <rpm:sourcerpm>libsmbios-2.2.26-3.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="8920"/>
+    <rpm:provides>
+      <rpm:entry name="libsmbios-bin" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="libsmbios-unsupported-bin" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="smbios-utils" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="smbios-utils-bin"/>
+      <rpm:entry name="smbios-utils-python"/>
+    </rpm:requires>
+    <rpm:obsoletes>
+      <rpm:entry name="libsmbios-bin" flags="LT" epoch="0" ver="2.0.0"/>
+      <rpm:entry name="libsmbios-unsupported-bin" flags="LT" epoch="0" ver="2.0.0"/>
+    </rpm:obsoletes>
+  </format>
+</package>
+<package type="rpm">
+  <name>smbios-utils-bin</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.2.26" rel="3.2.el5"/>
+  <checksum type="sha" pkgid="YES">ec5598167377191d8c2f0a23fc49d347d5f03a92</checksum>
+  <summary>Binary utilities that use libsmbios</summary>
+  <description>Get BIOS information, such as System product name, product id, service tag and
+asset tag.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/main</url>
+  <time file="1335508765" build="1335508756"/>
+  <size package="115138" installed="380535" archive="382816"/>
+<location href="i386/smbios-utils-bin-2.2.26-3.2.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build13</rpm:buildhost>
+    <rpm:sourcerpm>libsmbios-2.2.26-3.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="10526"/>
+    <rpm:provides>
+      <rpm:entry name="smbios-utils-bin" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="libstdc++.so.6(GLIBCXX_3.4)"/>
+      <rpm:entry name="libstdc++.so.6(CXXABI_1.3.1)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.3)"/>
+      <rpm:entry name="libstdc++.so.6"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.0)"/>
+      <rpm:entry name="libsmbios.so.2"/>
+      <rpm:entry name="libgcc_s.so.1(GCC_3.0)"/>
+      <rpm:entry name="libsmbios" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.1.3)"/>
+      <rpm:entry name="libstdc++.so.6(CXXABI_1.3)"/>
+      <rpm:entry name="rtld(GNU_HASH)"/>
+      <rpm:entry name="libc.so.6(GLIBC_2.1)"/>
+      <rpm:entry name="libgcc_s.so.1"/>
+      <rpm:entry name="libc.so.6"/>
+      <rpm:entry name="libsmbios_c.so.2"/>
+    </rpm:requires>    <file>/usr/sbin/dellBiosUpdate-compat</file>
+    <file>/usr/sbin/dellMediaDirectCtl</file>
+    <file>/usr/sbin/smbios-state-byte-ctl</file>
+    <file>/usr/sbin/dellLEDCtl</file>
+    <file>/usr/sbin/smbios-upflag-ctl</file>
+    <file>/usr/sbin/smbios-get-ut-data</file>
+    <file>/usr/sbin/smbios-sys-info-lite</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>smbios-utils-python</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.2.26" rel="3.2.el5"/>
+  <checksum type="sha" pkgid="YES">dc3a9288cdedbf3fa9393e4994e71043529a4ec8</checksum>
+  <summary>Python executables that use libsmbios</summary>
+  <description>Get BIOS information, such as System product name, product id, service tag and
+asset tag. Set service and asset tags on Dell machines. Manipulate wireless
+cards/bluetooth on Dell laptops. Set BIOS password on select Dell systems.
+Update BIOS on select Dell systems. Set LCD brightness on select Dell laptops.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/main</url>
+  <time file="1335508765" build="1335508756"/>
+  <size package="64196" installed="217939" archive="222192"/>
+<location href="i386/smbios-utils-python-2.2.26-3.2.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build13</rpm:buildhost>
+    <rpm:sourcerpm>libsmbios-2.2.26-3.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="11883"/>
+    <rpm:provides>
+      <rpm:entry name="config(smbios-utils-python)" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="smbios-utils-python" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="python-smbios" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="/usr/bin/python"/>
+      <rpm:entry name="config(smbios-utils-python)" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:requires>    <file>/usr/sbin/smbios-token-ctl</file>
+    <file>/usr/sbin/smbios-rbu-bios-update</file>
+    <file>/usr/sbin/dellBiosUpdate</file>
+    <file>/usr/sbin/smbios-passwd</file>
+    <file>/usr/bin/dellWirelessCtl</file>
+    <file>/usr/sbin/smbios-sys-info</file>
+    <file>/usr/sbin/smbios-lcd-brightness</file>
+    <file>/usr/sbin/getSystemId</file>
+    <file>/usr/sbin/dellLcdBrightness</file>
+    <file>/usr/sbin/smbios-wireless-ctl</file>
+    <file>/usr/sbin/dellWirelessCtl</file>
+    <file>/usr/sbin/smbios-wakeup-ctl</file>
+    <file>/etc/libsmbios/logging.conf</file>
+    <file type="dir">/etc/libsmbios</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>yum-dellsysid</name>
+  <arch>i386</arch>
+  <version epoch="0" ver="2.2.26" rel="3.2.el5"/>
+  <checksum type="sha" pkgid="YES">28acfd8af793d5244aca57352df97598d945ee6b</checksum>
+  <summary>YUM plugin to retrieve the Dell System ID</summary>
+  <description>Libsmbios is a library and utilities that can be used by client programs to get
+information from standard BIOS tables, such as the SMBIOS table.
+
+This package contains a YUM plugin which allows the use of certain
+substitutions in yum repository configuration files on Dell systems.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/main</url>
+  <time file="1335508765" build="1335508756"/>
+  <size package="15965" installed="17081" archive="18432"/>
+<location href="i386/yum-dellsysid-2.2.26-3.2.el5.i386.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Development/Tools</rpm:group>
+    <rpm:buildhost>build13</rpm:buildhost>
+    <rpm:sourcerpm>libsmbios-2.2.26-3.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="9448"/>
+    <rpm:provides>
+      <rpm:entry name="config(yum-dellsysid)" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="yum-dellsysid" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="config(yum-dellsysid)" flags="EQ" epoch="0" ver="2.2.26" rel="3.2.el5"/>
+      <rpm:entry name="smbios-utils-python" flags="GE" epoch="0" ver="2.2.0"/>
+    </rpm:requires>    <file>/etc/yum/pluginconf.d/dellsysid.conf</file>
+
+  </format>
+</package><package type="rpm">
+  <name>firmware-usb-autoupdate</name>
+  <arch>noarch</arch>
+  <version epoch="0" ver="1.0.4" rel="17.1.el5"/>
+  <checksum type="sha" pkgid="YES">99e8d05d5c2b6bf2a8ab389d6250b7f497571f52</checksum>
+  <summary>Automatically update BIOS when USB Key with update is inserted</summary>
+  <description>Provides HAL framework for detecting USB key insertion, finding BIOS updates
+on the USB key, and updating the BIOS automatically. Can also be configured
+to ask the user for confirmation.</description>
+  <packager/>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1248215051" build="1248215044"/>
+  <size package="16167" installed="46670" archive="51596"/>
+<location href="noarch/firmware-usb-autoupdate-1.0.4-17.1.el5.noarch.rpm"/>
+  <format>
+    <rpm:license>GPLv2+</rpm:license>
+    <rpm:vendor>openSUSE Build Service</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build17</rpm:buildhost>
+    <rpm:sourcerpm>firmware-usb-autoupdate-1.0.4-17.1.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="6600"/>
+    <rpm:provides>
+      <rpm:entry name="config(firmware-usb-autoupdate)" flags="EQ" epoch="0" ver="1.0.4" rel="17.1.el5"/>
+      <rpm:entry name="firmware-usb-autoupdate" flags="EQ" epoch="0" ver="1.0.4" rel="17.1.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="/usr/bin/python"/>
+      <rpm:entry name="/bin/sh"/>
+      <rpm:entry name="rpm-python"/>
+      <rpm:entry name="desktop-file-utils"/>
+      <rpm:entry name="config(firmware-usb-autoupdate)" flags="EQ" epoch="0" ver="1.0.4" rel="17.1.el5"/>
+      <rpm:entry name="python(abi)" flags="EQ" epoch="0" ver="2.4"/>
+      <rpm:entry name="/usr/bin/env"/>
+    </rpm:requires>    <file>/usr/sbin/bios-update-monitor</file>
+    <file>/etc/dbus-1/system.d/firmware-usb-autoupdate.conf</file>
+    <file>/usr/sbin/bios-update-notify</file>
+    <file>/usr/sbin/bios-update-config</file>
+    <file>/etc/firmware/bios-update.ini</file>
+
+  </format>
+</package>
+
+<package type="rpm">
+  <name>dell-community-repository</name>
+  <arch>noarch</arch>
+  <version epoch="0" ver="1" rel="11.2.el5"/>
+  <checksum type="sha" pkgid="YES">546baa1de7eef1c6f2a27c55de06c37b0296f8d5</checksum>
+  <summary>Repository configuration for the community repos at http://linux.dell.com/repo/community/</summary>
+  <description>The linux.dell.com community software repository contains unofficial
+and unsupported Dell-developed software, as well as customer-contributed
+open source software.
+
+This package contains the yum-configuration for the
+linux.dell.com/repo/community/ repository.</description>
+  <packager></packager>
+  <url>http://linux.dell.com</url>
+  <time file="1335583302" build="1335583292"/>
+  <size package="3441" installed="0" archive="124"/>
+<location href="noarch/dell-community-repository-1-11.2.el5.noarch.rpm"/>
+  <format>
+    <rpm:license>BSD</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Base</rpm:group>
+    <rpm:buildhost>build09</rpm:buildhost>
+    <rpm:sourcerpm>dell-community-repository-1-11.2.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="3393"/>
+    <rpm:provides>
+      <rpm:entry name="config(dell-community-repository)" flags="EQ" epoch="0" ver="1" rel="11.2.el5"/>
+      <rpm:entry name="dell-community-repository" flags="EQ" epoch="0" ver="1" rel="11.2.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="/bin/sh" pre="1"/>
+      <rpm:entry name="config(dell-community-repository)" flags="EQ" epoch="0" ver="1" rel="11.2.el5"/>
+    </rpm:requires>
+    <rpm:obsoletes>
+      <rpm:entry name="dell-unsupported-repository" flags="LT" epoch="0" ver="2"/>
+    </rpm:obsoletes>    <file type="ghost">/etc/yum.repos.d/dell-community-repository.repo</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>dell-config-cluster</name>
+  <arch>noarch</arch>
+  <version epoch="0" ver="1.0" rel="51.3.el5"/>
+  <checksum type="sha" pkgid="YES">acd321f19b8069823d328e8fac909eaf696d77c2</checksum>
+  <summary>Dell | Red Hat HA Cluster configuration utility</summary>
+  <description>The dell-config-cluster utility will assist in deploying small (2-16)
+node Dell HA clusters connected to Dell storage.  All Dell specific
+components such as DRAC and storage are configured and used for fencing devices
+where appropriate.</description>
+  <packager></packager>
+  <url></url>
+  <time file="1335583129" build="1335583110"/>
+  <size package="143405" installed="1100898" archive="1103468"/>
+<location href="noarch/dell-config-cluster-1.0-51.3.el5.noarch.rpm"/>
+  <format>
+    <rpm:license>GPL</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/Dell</rpm:group>
+    <rpm:buildhost>build30</rpm:buildhost>
+    <rpm:sourcerpm>dell-config-cluster-1.0-51.3.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="10935"/>
+    <rpm:provides>
+      <rpm:entry name="dell-config-cluster" flags="EQ" epoch="0" ver="1.0" rel="51.3.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="pygtk2-libglade" flags="GE" epoch="0" ver="2.10"/>
+      <rpm:entry name="/bin/sh"/>
+      <rpm:entry name="/usr/bin/env"/>
+      <rpm:entry name="python"/>
+      <rpm:entry name="/bin/sh" pre="1"/>
+    </rpm:requires>
+    <rpm:conflicts>
+      <rpm:entry name="dell-se600l"/>
+    </rpm:conflicts>
+    <rpm:obsoletes>
+      <rpm:entry name="dell-se600l"/>
+    </rpm:obsoletes>    <file>/usr/sbin/dell-config-cluster</file>
+    <file>/usr/sbin/dell-config-cluster-demo</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>dkms</name>
+  <arch>noarch</arch>
+  <version epoch="0" ver="2.0.20.4" rel="6.3.el5"/>
+  <checksum type="sha" pkgid="YES">1ec120e5929d477540ac242d79d6d11913a280f3</checksum>
+  <summary>Dynamic Kernel Module Support Framework</summary>
+  <description>This package contains the framework for the Dynamic
+Kernel Module Support (DKMS) method for installing
+module RPMS as originally developed by Dell.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/dkms</url>
+  <time file="1335583736" build="1335583718"/>
+  <size package="95322" installed="191940" archive="195632"/>
+<location href="noarch/dkms-2.0.20.4-6.3.el5.noarch.rpm"/>
+  <format>
+    <rpm:license>GPLv2+</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Base</rpm:group>
+    <rpm:buildhost>build30</rpm:buildhost>
+    <rpm:sourcerpm>dkms-2.0.20.4-6.3.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="38473"/>
+    <rpm:provides>
+      <rpm:entry name="config(dkms)" flags="EQ" epoch="0" ver="2.0.20.4" rel="6.3.el5"/>
+      <rpm:entry name="dkms-minimal" flags="EQ" epoch="0" ver="2.0.20.4"/>
+      <rpm:entry name="dkms" flags="EQ" epoch="0" ver="2.0.20.4" rel="6.3.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="config(dkms)" flags="EQ" epoch="0" ver="2.0.20.4" rel="6.3.el5"/>
+      <rpm:entry name="/bin/sh"/>
+      <rpm:entry name="gawk"/>
+      <rpm:entry name="modutils"/>
+      <rpm:entry name="gzip"/>
+      <rpm:entry name="/bin/bash"/>
+      <rpm:entry name="lsb"/>
+      <rpm:entry name="mktemp"/>
+      <rpm:entry name="bash" flags="GT" epoch="0" ver="1.99"/>
+      <rpm:entry name="findutils"/>
+      <rpm:entry name="grep"/>
+      <rpm:entry name="sed"/>
+      <rpm:entry name="/bin/sh" pre="1"/>
+      <rpm:entry name="tar"/>
+      <rpm:entry name="cpio"/>
+    </rpm:requires>    <file>/etc/dkms/template-dkms-mkrpm.spec</file>
+    <file>/etc/kernel/postinst.d/dkms</file>
+    <file>/etc/init.d/dkms_autoinstaller</file>
+    <file>/etc/dkms/framework.conf</file>
+    <file>/etc/bash_completion.d/dkms</file>
+    <file>/etc/kernel/prerm.d/dkms</file>
+    <file>/usr/sbin/dkms</file>
+    <file type="dir">/etc/kernel/prerm.d</file>
+    <file type="dir">/etc/dkms</file>
+    <file type="dir">/etc/kernel/postinst.d</file>
+    <file type="dir">/etc/kernel</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>firmware-extract</name>
+  <arch>noarch</arch>
+  <version epoch="0" ver="2.0.13" rel="1.3.el5"/>
+  <checksum type="sha" pkgid="YES">3a167f5e9c8a720979080dcd83baa3d346a0d02b</checksum>
+  <summary>A firmware-tools plugin to add firmware extraction from vendor binaries</summary>
+  <description>A firmware-tools plugin which adds the --extract mode to firmwaretool.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1335584350" build="1335584269"/>
+  <size package="35084" installed="124237" archive="128208"/>
+<location href="noarch/firmware-extract-2.0.13-1.3.el5.noarch.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ and OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build05</rpm:buildhost>
+    <rpm:sourcerpm>firmware-extract-2.0.13-1.3.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="5319"/>
+    <rpm:provides>
+      <rpm:entry name="config(firmware-extract)" flags="EQ" epoch="0" ver="2.0.13" rel="1.3.el5"/>
+      <rpm:entry name="firmware-extract" flags="EQ" epoch="0" ver="2.0.13" rel="1.3.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="python-sqlite2"/>
+      <rpm:entry name="config(firmware-extract)" flags="EQ" epoch="0" ver="2.0.13" rel="1.3.el5"/>
+      <rpm:entry name="firmware-tools" flags="GE" epoch="0" ver="2.0"/>
+      <rpm:entry name="python(abi)" flags="EQ" epoch="0" ver="2.4"/>
+      <rpm:entry name="python-sqlobject"/>
+    </rpm:requires>    <file>/etc/firmware/firmware.d/firmware-extract.conf</file>
+
+  </format>
+</package>
+<package type="rpm">
+  <name>firmware-tools</name>
+  <arch>noarch</arch>
+  <version epoch="0" ver="2.1.13" rel="1.3.el5"/>
+  <checksum type="sha" pkgid="YES">c3e141f24ca11f77d728fc1072d90ffaee07fbdf</checksum>
+  <summary>Scripts and tools to manage firmware and BIOS updates</summary>
+  <description>The firmware-tools project provides tools to inventory hardware and a plugin
+architecture so that different OEM vendors can provide different inventory
+components. It is intended to tie to the package system to enable seamless
+installation of updated firmware via your package manager, as well as provide
+a framework for BIOS and firmware updates.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1335508656" build="1335508645"/>
+  <size package="205850" installed="807791" archive="823012"/>
+<location href="noarch/firmware-tools-2.1.13-1.3.el5.noarch.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build09</rpm:buildhost>
+    <rpm:sourcerpm>firmware-tools-2.1.13-1.3.el5.src.rpm</rpm:sourcerpm>
+    <rpm:header-range start="440" end="13895"/>
+    <rpm:provides>
+      <rpm:entry name="config(firmware-tools)" flags="EQ" epoch="0" ver="2.1.13" rel="1.3.el5"/>
+      <rpm:entry name="firmware_inventory(pci)" flags="EQ" epoch="0" ver="2.1.13"/>
+      <rpm:entry name="firmware-tools" flags="EQ" epoch="0" ver="2.1.13" rel="1.3.el5"/>
+    </rpm:provides>
+    <rpm:requires>
+      <rpm:entry name="/usr/bin/python"/>
+      <rpm:entry name="config(firmware-tools)" flags="EQ" epoch="0" ver="2.1.13" rel="1.3.el5"/>
+      <rpm:entry name="rpm-python"/>
+      <rpm:entry name="python(abi)" flags="EQ" epoch="0" ver="2.4"/>
+      <rpm:entry name="pciutils"/>
+    </rpm:requires>
+    <rpm:conflicts>
+      <rpm:entry name="firmware_addon_dell" flags="LT" epoch="0" ver="2.1.0"/>
+      <rpm:entry name="dell-dup" flags="LT" epoch="0" ver="1.1.0"/>
+    </rpm:conflicts>    <file>/usr/sbin/bootstrap_firmware</file>
+    <file>/usr/sbin/update_firmware</file>
+    <file>/usr/sbin/firmwaretool</file>
+    <file>/usr/sbin/inventory_firmware_gui</file>
+    <file>/usr/bin/update_firmware</file>
+    <file>/etc/firmware/firmware.conf</file>
+    <file>/usr/sbin/inventory_firmware</file>
+    <file type="dir">/etc/firmware</file>
+    <file type="dir">/etc/firmware/firmware.d</file>
+
+  </format>
+</package><package type="rpm">
+  <name>firmware-usb-autoupdate</name>
+  <arch>src</arch>
+  <version epoch="0" ver="1.0.4" rel="17.1.el5"/>
+  <checksum type="sha" pkgid="YES">32c7f645d2bed7acb59d3a791acf4d720dbd1d4f</checksum>
+  <summary>Automatically update BIOS when USB Key with update is inserted</summary>
+  <description>Provides HAL framework for detecting USB key insertion, finding BIOS updates
+on the USB key, and updating the BIOS automatically. Can also be configured
+to ask the user for confirmation.</description>
+  <packager/>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1248215052" build="1248215044"/>
+  <size package="167079" installed="166292" archive="166708"/>
+<location href="src/firmware-usb-autoupdate-1.0.4-17.1.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPLv2+</rpm:license>
+    <rpm:vendor>openSUSE Build Service</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build17</rpm:buildhost>
+    <rpm:sourcerpm/>
+    <rpm:header-range start="440" end="2319"/>
+    <rpm:requires>
+      <rpm:entry name="rpm-python"/>
+      <rpm:entry name="python-devel"/>
+      <rpm:entry name="desktop-file-utils"/>
+      <rpm:entry name="gettext"/>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>python-ctypes</name>
+  <arch>src</arch>
+  <version epoch="0" ver="1.0.2" rel="1.2.el5"/>
+  <checksum type="sha" pkgid="YES">eb3d25c2aec551bd3d4ff15cddd16b9575f707e1</checksum>
+  <summary>Advanced Foreign Function Interface for Python</summary>
+  <description>ctypes is an advanced ffi (Foreign Function Interface) package for
+Python 2.3 and higher.
+ctypes allows to call functions exposed from dlls/shared libraries
+and has extensive facilities to create, access and manipulate
+simple and complicated C data types in Python - in other words:
+wrap libraries in pure Python.  It is even possible to implement C
+callback functions in pure Python.</description>
+  <packager/>
+  <url>http://starship.python.net/crew/theller/ctypes/</url>
+  <time file="1227138205" build="1227138212"/>
+  <size package="390058" installed="387590" archive="387980"/>
+<location href="src/python-ctypes-1.0.2-1.2.el5.src.rpm"/>
+  <format>
+    <rpm:license>MIT</rpm:license>
+    <rpm:vendor>openSUSE Build Service</rpm:vendor>
+    <rpm:group>Development/Languages</rpm:group>
+    <rpm:buildhost>build22</rpm:buildhost>
+    <rpm:sourcerpm/>
+    <rpm:header-range start="448" end="2553"/>
+    <rpm:requires>
+      <rpm:entry name="python-devel"/>
+    </rpm:requires>
+  </format>
+</package>
+
+<package type="rpm">
+  <name>biosdevname</name>
+  <arch>src</arch>
+  <version epoch="0" ver="0.2.4" rel="3.3.el5"/>
+  <checksum type="sha" pkgid="YES">68819a306ec697476f268649ef0a0ac66938245a</checksum>
+  <summary>Udev helper for naming devices per BIOS names</summary>
+  <description>biosdevname in its simplest form takes a kernel device name as an
+argument, and returns the BIOS-given name it "should" be.  This is necessary
+on systems where the BIOS name for a given device (e.g. the label on
+the chassis is "Gb1") doesn't map directly and obviously to the kernel
+name (e.g. eth0).</description>
+  <packager></packager>
+  <url>http://linux.dell.com/files/biosdevname</url>
+  <time file="1335581993" build="1335581880"/>
+  <size package="183048" installed="180825" archive="181216"/>
+<location href="src/biosdevname-0.2.4-3.3.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPLv2</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Base</rpm:group>
+    <rpm:buildhost>build02</rpm:buildhost>
+    <rpm:header-range start="440" end="2851"/>
+    <rpm:requires>
+      <rpm:entry name="pciutils-devel"/>
+      <rpm:entry name="zlib-devel"/>
+      <rpm:entry name="udev"/>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>cppunit</name>
+  <arch>src</arch>
+  <version epoch="0" ver="1.12.1" rel="1.4.el5"/>
+  <checksum type="sha" pkgid="YES">2db5ad5ea69dad5c2c620041698e7536873f224d</checksum>
+  <summary>C++ unit testing framework</summary>
+  <description>CppUnit is the C++ port of the famous JUnit framework for unit testing.
+Test output is in XML for automatic testing and GUI based for supervised
+tests.</description>
+  <packager></packager>
+  <url>http://cppunit.sourceforge.net/</url>
+  <time file="1335575771" build="1335575753"/>
+  <size package="763455" installed="767149" archive="767672"/>
+<location href="src/cppunit-1.12.1-1.4.el5.src.rpm"/>
+  <format>
+    <rpm:license>LGPLv2+</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Development/Libraries</rpm:group>
+    <rpm:buildhost>build15</rpm:buildhost>
+    <rpm:header-range start="440" end="3144"/>
+    <rpm:requires>
+      <rpm:entry name="gcc-c++"/>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>dell-community-repository</name>
+  <arch>src</arch>
+  <version epoch="0" ver="1" rel="11.2.el5"/>
+  <checksum type="sha" pkgid="YES">ed0baf8073cd797010b38f18b991ea43400de470</checksum>
+  <summary>Repository configuration for the community repos at http://linux.dell.com/repo/community/</summary>
+  <description>The linux.dell.com community software repository contains unofficial
+and unsupported Dell-developed software, as well as customer-contributed
+open source software.
+
+This package contains the yum-configuration for the
+linux.dell.com/repo/community/ repository.</description>
+  <packager></packager>
+  <url>http://linux.dell.com</url>
+  <time file="1335583302" build="1335583292"/>
+  <size package="3240" installed="2037" archive="2308"/>
+<location href="src/dell-community-repository-1-11.2.el5.src.rpm"/>
+  <format>
+    <rpm:license>BSD</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Base</rpm:group>
+    <rpm:buildhost>build09</rpm:buildhost>
+    <rpm:header-range start="440" end="2145"/>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>dell-config-cluster</name>
+  <arch>src</arch>
+  <version epoch="0" ver="1.0" rel="51.3.el5"/>
+  <checksum type="sha" pkgid="YES">8350fc868432c2367477b9b9862033c40576459b</checksum>
+  <summary>Dell | Red Hat HA Cluster configuration utility</summary>
+  <description>The dell-config-cluster utility will assist in deploying small (2-16)
+node Dell HA clusters connected to Dell storage.  All Dell specific
+components such as DRAC and storage are configured and used for fencing devices
+where appropriate.</description>
+  <packager></packager>
+  <url></url>
+  <time file="1335583129" build="1335583110"/>
+  <size package="145885" installed="145883" archive="146292"/>
+<location href="src/dell-config-cluster-1.0-51.3.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPL</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/Dell</rpm:group>
+    <rpm:buildhost>build30</rpm:buildhost>
+    <rpm:header-range start="440" end="8337"/>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>dell-repo-tools</name>
+  <arch>src</arch>
+  <version epoch="0" ver="2.0.5" rel="1.3.el5"/>
+  <checksum type="sha" pkgid="YES">910b81204fe7dc4391c7efb3d65a915b673e9be4</checksum>
+  <summary>Scripts to extract BIOS/Firmware from Dell Update Packages</summary>
+  <description>placeholder</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1335583927" build="1335583918"/>
+  <size package="1702386" installed="1700696" archive="1701096"/>
+<location href="src/dell-repo-tools-2.0.5-1.3.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPL style</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build31</rpm:buildhost>
+    <rpm:header-range start="440" end="2031"/>
+    <rpm:requires>
+      <rpm:entry name="python-devel"/>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>dkms</name>
+  <arch>src</arch>
+  <version epoch="0" ver="2.0.20.4" rel="6.3.el5"/>
+  <checksum type="sha" pkgid="YES">84fdf6da83d198157a5ec46e78ba3eafe0135c11</checksum>
+  <summary>Dynamic Kernel Module Support Framework</summary>
+  <description>This package contains the framework for the Dynamic
+Kernel Module Support (DKMS) method for installing
+module RPMS as originally developed by Dell.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/dkms</url>
+  <time file="1335583736" build="1335583718"/>
+  <size package="116709" installed="108592" archive="108968"/>
+<location href="src/dkms-2.0.20.4-6.3.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPLv2+</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Base</rpm:group>
+    <rpm:buildhost>build30</rpm:buildhost>
+    <rpm:header-range start="440" end="32997"/>
+    <rpm:requires>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>firmware-addon-dell</name>
+  <arch>src</arch>
+  <version epoch="0" ver="2.2.9" rel="1.6.el5"/>
+  <checksum type="sha" pkgid="YES">dfd9e1fe68c158e8116fad80d671898c325582ea</checksum>
+  <summary>A firmware-tools plugin to handle BIOS/Firmware for Dell systems</summary>
+  <description>The firmware-addon-dell package provides plugins to firmware-tools which enable
+BIOS updates for Dell system, plus pulls in standard inventory modules
+applicable to most Dell systems.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1335584502" build="1335584472"/>
+  <size package="104862" installed="103323" archive="103732"/>
+<location href="src/firmware-addon-dell-2.2.9-1.6.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build35</rpm:buildhost>
+    <rpm:header-range start="440" end="4460"/>
+    <rpm:requires>
+      <rpm:entry name="python-devel"/>
+      <rpm:entry name="python-smbios"/>
+      <rpm:entry name="firmware-tools" flags="GT" epoch="0" ver="2.0"/>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>firmware-extract</name>
+  <arch>src</arch>
+  <version epoch="0" ver="2.0.13" rel="1.3.el5"/>
+  <checksum type="sha" pkgid="YES">128366e8b8f0a5de335a04752426b8347a68b56d</checksum>
+  <summary>A firmware-tools plugin to add firmware extraction from vendor binaries</summary>
+  <description>A firmware-tools plugin which adds the --extract mode to firmwaretool.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1335584350" build="1335584269"/>
+  <size package="91368" installed="89970" archive="90372"/>
+<location href="src/firmware-extract-2.0.13-1.3.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ and OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build05</rpm:buildhost>
+    <rpm:header-range start="440" end="2248"/>
+    <rpm:requires>
+      <rpm:entry name="python-devel"/>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>firmware-tools</name>
+  <arch>src</arch>
+  <version epoch="0" ver="2.1.13" rel="1.3.el5"/>
+  <checksum type="sha" pkgid="YES">3ba7c00206672ecf2e2a6a769a85be1487d61b76</checksum>
+  <summary>Scripts and tools to manage firmware and BIOS updates</summary>
+  <description>The firmware-tools project provides tools to inventory hardware and a plugin
+architecture so that different OEM vendors can provide different inventory
+components. It is intended to tie to the package system to enable seamless
+installation of updated firmware via your package manager, as well as provide
+a framework for BIOS and firmware updates.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/download/</url>
+  <time file="1335508656" build="1335508645"/>
+  <size package="168913" installed="167987" archive="168388"/>
+<location href="src/firmware-tools-2.1.13-1.3.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>Applications/System</rpm:group>
+    <rpm:buildhost>build09</rpm:buildhost>
+    <rpm:header-range start="440" end="3142"/>
+    <rpm:requires>
+      <rpm:entry name="rpm-python"/>
+      <rpm:entry name="python-devel"/>
+    </rpm:requires>
+  </format>
+</package>
+<package type="rpm">
+  <name>libsmbios</name>
+  <arch>src</arch>
+  <version epoch="0" ver="2.2.26" rel="3.2.el5"/>
+  <checksum type="sha" pkgid="YES">f8f754f33ad03eadde6e6386d01c49aed3b70c32</checksum>
+  <summary>Libsmbios C/C++ shared libraries</summary>
+  <description>Libsmbios is a library and utilities that can be used by client programs to get
+information from standard BIOS tables, such as the SMBIOS table.
+
+This package provides the C-based libsmbios library, with a C interface.
+
+This package also has a C++-based library, with a C++ interface. It is not
+actively maintained, but provided for backwards compatibility. New programs
+should use the libsmbios C interface.</description>
+  <packager></packager>
+  <url>http://linux.dell.com/libsmbios/main</url>
+  <time file="1335508764" build="1335508756"/>
+  <size package="952676" installed="957344" archive="957736"/>
+<location href="src/libsmbios-2.2.26-3.2.el5.src.rpm"/>
+  <format>
+    <rpm:license>GPLv2+ or OSL 2.1</rpm:license>
+    <rpm:vendor>obs://build.opensuse.org/isv:dell</rpm:vendor>
+    <rpm:group>System Environment/Libraries</rpm:group>
+    <rpm:buildhost>build13</rpm:buildhost>
+    <rpm:header-range start="440" end="8415"/>
+    <rpm:requires>
+      <rpm:entry name="gcc-c++"/>
+      <rpm:entry name="hardlink"/>
+      <rpm:entry name="libxml2-devel"/>
+      <rpm:entry name="gettext"/>
+      <rpm:entry name="python-devel"/>
+      <rpm:entry name="strace"/>
+      <rpm:entry name="doxygen"/>
+      <rpm:entry name="pkgconfig"/>
+    </rpm:requires>
+  </format>
+</package>
+</metadata>

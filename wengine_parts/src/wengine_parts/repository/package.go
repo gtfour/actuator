@@ -1,5 +1,7 @@
 package repository
 
+import "encoding/xml"
+
 type Package struct {
     Id         int
     Name int
@@ -43,9 +45,10 @@ type DependencyDeb struct {
 
 type RpmPackage struct {
 
-    Type string
-    Package string
-    Architecture string
+    Package string  `xml:package`
+    Type string `xml:"type"`
+    Name string `xml:"name"`
+    Architecture string `xml:"arch"`
     Epoch string
     Version string
     Release string
@@ -69,6 +72,22 @@ type RpmPackage struct {
     HeaderRangeStart uint64
     HeaderRangeEnd uint64
     RpmDependencyOrProvision RpmRelation
+
+}
+
+type RpmMetadata struct {
+
+     Metadata xml.Name `xml:"Metadata"`
+     XmlNS string `xml:"xmlns,attr"`
+     XmlNsSuSE string `xml:"xmlns:suse,attr"`
+     XmlNsRpm string `xml:"xmlns:rpm,attr"`
+     PackagesCount string `xml:"packages,attr"`
+     RpmPackages []RpmPackage
+
+}
+
+type RpmMetadataField struct{
+
 
 }
 
