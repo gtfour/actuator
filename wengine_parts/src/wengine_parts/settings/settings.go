@@ -1,0 +1,14 @@
+package settings
+
+var listen_address = "10.10.111.48"
+
+var listen_port = "9020"
+
+var mongo_host = ""
+
+var mongo_port = ""
+
+var proxy_address = ""
+
+var proxy_port = ""
+
