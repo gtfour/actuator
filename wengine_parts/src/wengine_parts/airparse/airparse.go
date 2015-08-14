@@ -1,8 +1,8 @@
 package airparse
 
-import ("net/http";"errors";"compress/gzip";"fmt")
+import ("net/http";"errors";"compress/gzip")
 //import "bytes"
-import "reflect"
+//import "reflect"
 import "encoding/xml"
 import "io/ioutil"
 import "wengine_parts/repository"
@@ -23,21 +23,21 @@ type RepoFile struct {
 
 }
 
-func (repofile *RepoFile) Download(){
+func (repofile *RepoFile) Download() (err error){
 
     repofile.DataGZ, err=http.Get(repofile.Url)
 
-    fmt.Println("Download block")
+    if err!=nil {
 
-    fmt.Println(reflect.TypeOf(repofile.DataGZ.Body))
+         return err
 
-    fmt.Println("==============")
+    }
 
     reader, err :=gzip.NewReader(repofile.DataGZ.Body)
 
     if err!=nil {
 
-        fmt.Printf("error: %v", err)
+        return err
 
     }
 
@@ -45,33 +45,29 @@ func (repofile *RepoFile) Download(){
 
     if err!=nil {
 
-        fmt.Printf("error: %v", err)
+        return err
 
     }
 
-    q := repository.RpmMetadata {}
+    repometadata_struct := repository.RpmMetadata {}
 
-    
-
-    err=xml.Unmarshal(text, &q)
+    err=xml.Unmarshal(text, &repometadata_struct)
 
     if err!=nil {
 
-        fmt.Printf("error: %v", err)
+        return err
     }
 
-    repofile.Packages=q.RpmPackages
+    repofile.Packages=repometadata_struct.RpmPackages
 
     defer repofile.DataGZ.Body.Close()
+
+    return nil
 }
 
 func (repofile *RepoFile) Extract(){
 
-    r, _ := gzip.NewReader(repofile.DataGZ.Body)
-
-    fmt.Println("---")
-    fmt.Println(r)
-    fmt.Println("---")
+    //r, _ := gzip.NewReader(repofile.DataGZ.Body)
 
 }
 
