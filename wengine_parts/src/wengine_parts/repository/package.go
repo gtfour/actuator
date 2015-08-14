@@ -65,12 +65,12 @@ type RpmPackage struct {
 
 type RpmMetadata struct {
 
-     Metadata xml.Name `xml:"Metadata"`
+     Metadata xml.Name `xml:"metadata"`
      XmlNS string `xml:"xmlns,attr"`
      XmlNsSuSE string `xml:"xmlns:suse,attr"`
      XmlNsRpm string `xml:"xmlns:rpm,attr"`
      PackagesCount string `xml:"packages,attr"`
-     RpmPackages []RpmPackage `xml:"metadata>package"`
+     RpmPackages []RpmPackage `xml:"package"`
 
 }
 

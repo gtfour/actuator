@@ -19,6 +19,7 @@ type RepoFile struct {
     DataGZ *http.Response
     DataXML http.Response
     Type string // deb or rpm
+    Packages []repository.RpmPackage
 
 }
 
@@ -59,12 +60,7 @@ func (repofile *RepoFile) Download(){
         fmt.Printf("error: %v", err)
     }
 
-    // text, _:=ioutil.ReadAll(reader)
-
-    fmt.Println("---")
-    fmt.Println(q.PackagesCount)
-    fmt.Println("---")
-
+    repofile.Packages=q.RpmPackages
 
     defer repofile.DataGZ.Body.Close()
 }
