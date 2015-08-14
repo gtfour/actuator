@@ -57,7 +57,7 @@ type RpmPackage struct {
     Url string `xml:"url"`
     PackageTimeField PackageTimeField `xml:"time"`
     PackageSizeField PackageSizeField `xml:"size"`
-    LocationHref string `xml:"href,attr"` 
+    LocationHref RpmPackageLocationField  `xml:"location"`
     // RpmRelationField
     RpmFormatField RpmFormatField `xml:"format"`
 
@@ -137,5 +137,11 @@ type RpmFormatHeaderRangeField struct {
 
     Start string `xml:"start,attr"`
     End string `xml:"end,attr"`
+
+}
+
+type RpmPackageLocationField struct {
+
+    Href string `xml:"href,attr"`
 
 }
