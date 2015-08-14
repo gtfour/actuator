@@ -1,10 +1,8 @@
 package repository
 
-type Repository struct {
-    Id         int
-    Name int
-    Path     int64 // 
-    Type     string // deb or rpm
-    Markers  []string
-    Packages []Package
+type RpmRepository struct {
+    Url string "http://linux.dell.com/repo/community/content/el5-i386/"
+    //Metadata 
+    //Packages 
 }
+

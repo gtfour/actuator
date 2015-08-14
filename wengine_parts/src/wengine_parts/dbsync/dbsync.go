@@ -1,4 +1,4 @@
-package main
+package dbsync
 import (
 
         "fmt"
@@ -11,13 +11,17 @@ import (
 
         "wengine_parts/repository"
 )
+
+
 func main() {
 
     fmt.Println("====")
 
-    my_repo_relation:= repository.RpmRelation {Name: "/bin/bash"}
-
-    fmt.Println(my_repo_relation)
-
 }
 
+func UploadStructToDb(repofile xrepository.RpmMetadata) (err error){ 
+
+
+
+   return nil
+}

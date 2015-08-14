@@ -72,7 +72,6 @@ type RpmMetadata struct {
      XmlNsRpm string `xml:"xmlns:rpm,attr"`
      PackagesCount string `xml:"packages,attr"`
      RpmPackages []RpmPackage `xml:"package"`
-     Url string
 
 }
 
