@@ -65,12 +65,14 @@ type RpmPackage struct {
 
 type RpmMetadata struct {
 
+     Url string // uniq repository identifier
      Metadata xml.Name `xml:"metadata"`
      XmlNS string `xml:"xmlns,attr"`
      XmlNsSuSE string `xml:"xmlns:suse,attr"`
      XmlNsRpm string `xml:"xmlns:rpm,attr"`
      PackagesCount string `xml:"packages,attr"`
      RpmPackages []RpmPackage `xml:"package"`
+     Url string
 
 }
 
