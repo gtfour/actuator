@@ -7,6 +7,7 @@ package main
 
 //import ("net/http";"io";"os")
 import "wengine_parts/airparse"
+import "fmt"
 
 
 func get_remote_file() {
@@ -18,13 +19,23 @@ func get_remote_file() {
     //_, _=io.Copy(out, resp.Body)
     // DELL primary xml:
     // http://linux.dell.com/repo/community/content/el5-i386/repodata/primary.xml.gz
+    // local DELL repo xml:
+    // http://127.0.0.1:8080/
 
-    test:=airparse.RepoFile {Url: "http://linux.dell.com/repo/community/content/el5-i386/repodata/primary.xml.gz"}
+    test:=airparse.RepoFile {Url: "http://127.0.0.1:8080/primary_dell.xml.gz"}
 
     test.Download()
 
-//    test.Extract()
+    for pkg_number:= range test.Packages{
 
+        fmt.Println("===============================")
+        fmt.Printf("%s\n",test.Packages[pkg_number].Name)
+        fmt.Printf("%s\n",test.Packages[pkg_number].Url)
+        fmt.Printf("%s\n",test.Packages[pkg_number].LocationHref)
+        fmt.Println("===============================")
+
+
+    }
 }
 
 
