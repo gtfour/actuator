@@ -8,7 +8,7 @@ var listen_port = "9020"
 //
 //
 //
-var mongo_host = ""
+var mongo_host = "127.0.0.1"
 //
 var mongo_port = ""
 //
