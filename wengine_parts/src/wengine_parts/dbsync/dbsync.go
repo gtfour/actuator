@@ -23,7 +23,7 @@ type Package struct {
 
 func UploadStructToDb(repofile airparse.RepoFile) (err error){ 
 
-   session, err := mgo.Dial("mongodb://wengine:OpenStack123@127.0.0.1/test") // settings.mongo_host
+   session, err := mgo.Dial("mongodb://wengine:SecretPassword123@127.0.0.1/test") // settings.mongo_host
 
    if err != nil {
       panic(err)
