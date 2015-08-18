@@ -3,7 +3,7 @@ package main
 import "client_side/protodb"
 import "fmt"
 
-var packages_db_file = "/var/lib/rpm/Packages"
+var packages_db_file = "/var/lib/rpm/Dirnames"
 var environment_dir = "/var/lib/rpm"
 
 func main(){
@@ -21,6 +21,7 @@ database,_ :=protodb.OpenDatabase(environment,transaction,packages_db_file,&prot
 defer database.Close()
 
 database_type,_:=database.Type()
+
 fmt.Println(database_type)
 
 
