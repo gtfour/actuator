@@ -24,7 +24,7 @@ func get_remote_file() {
     // http://127.0.0.1:8080/
     // http://127.0.0.1:8080/primary_dell.xml.gz
 
-    test:=airparse.RepoFile {Url: "http://127.0.0.1:8080/primary_dell.xml.gz"}
+    test:=airparse.RepoFile {Url: "http://linux.dell.com/repo/community/content/el5-i386/repodata/primary.xml.gz"}
 
     err:=test.Download()
 
