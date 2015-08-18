@@ -1,6 +1,7 @@
 package main
 
 import "client_side/protodb"
+import "github.com/golang/protobuf/proto"
 import "fmt"
 
 var packages_db_file = "/var/lib/rpm/Dirnames"
@@ -21,6 +22,18 @@ database,_ :=protodb.OpenDatabase(environment,transaction,packages_db_file,&prot
 defer database.Close()
 
 database_type,_:=database.Type()
+
+message:=proto.Message {} 
+
+records:=database.Get(transaction,false,message)
+
+fmt.Println(records)
+
+fmt.Println("------")
+
+fmt.Println(message)
+
+fmt.Println("------")
 
 fmt.Println(database_type)
 
