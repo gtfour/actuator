@@ -9,33 +9,33 @@ var environment_dir = "/var/lib/rpm"
 
 func main(){
 
-environment_config:=&protodb.EnvironmentConfig{Create:false}
+    environment_config:=&protodb.EnvironmentConfig{Create:false}
 
-environment,_:=protodb.OpenEnvironment(environment_dir,environment_config)
+    environment,_:=protodb.OpenEnvironment(environment_dir,environment_config)
 
-transaction:=protodb.NoTransaction
+    transaction:=protodb.NoTransaction
 
-//database_config:=DatabaseConfig{Create:false}
+    //database_config:=DatabaseConfig{Create:false}
 
-database,_ :=protodb.OpenDatabase(environment,transaction,packages_db_file,&protodb.DatabaseConfig{Create:false})
+    database,_ :=protodb.OpenDatabase(environment,transaction,packages_db_file,&protodb.DatabaseConfig{Create:false})
 
-defer database.Close()
+      defer database.Close()
 
-database_type,_:=database.Type()
+    database_type,_:=database.Type()
 
-message:=proto.Message {} 
+    message:=proto.Message {} 
 
-records:=database.Get(transaction,false,message)
+    records:=database.Get(transaction,false,&message)
 
-fmt.Println(records)
+        fmt.Println(records)
 
-fmt.Println("------")
+        fmt.Println("------")
 
-fmt.Println(message)
+        fmt.Println(message)
 
-fmt.Println("------")
+        fmt.Println("------")
 
-fmt.Println(database_type)
+        fmt.Println(database_type)
 
 
 }
