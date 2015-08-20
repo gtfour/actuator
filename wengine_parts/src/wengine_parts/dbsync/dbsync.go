@@ -2,9 +2,7 @@ package dbsync
 import (
 
         //"log"
-
         "gopkg.in/mgo.v2"
-
         "gopkg.in/mgo.v2/bson"
         "fmt"
         "wengine_parts/repository"
@@ -36,12 +34,18 @@ func UploadStructToDb(repofile *airparse.RepoFile) (err error){
 
    result:=Repository {}
 
-   err = c.Find(bson.M{"name": result.Url}).One(&result)
+   err = c.Find(bson.M{"url": result.Url}).One(&result)
 
    if err!=nil {
 
-     fmt.Printf("\n--UploadStructToDbi error: %s --\n",err)
+     fmt.Printf("\n--Create new entry block ::>>  error: %s --\n",err)
      err = c.Insert(&Repository{Url: repofile.Url,Packages: repofile.Packages})
+
+   } else {
+
+     err = c.Update(bson.M{"url": result.Url},&Repository{Url: repofile.Url,Packages: repofile.Packages})
+     fmt.Printf("\n--UploadStructToDbi error: %s --\n",err)
+
 
    }
 
