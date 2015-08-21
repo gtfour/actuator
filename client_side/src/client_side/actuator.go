@@ -8,24 +8,24 @@ import ( "fmt" ; "crypto/md5" ; "io" ; "os" ; "errors" )
 
 
 type File struct {
-        Path string
-        Sum []byte
+    Path string
+    Sum []byte
 }
 
 type Directory struct {
 
-         Path string
-         Files []File 
+    Path string
+    Files []File
 
 }
 
-var is_dir_error = errors.New("is_dir") 
+var is_dir_error = errors.New("is_dir")
 
 func Get_md5_dir(path string)(dir_struct Directory,err error){
 
 
     //var dir_struct Directory
-    dir, err := os.Open(path)  
+    dir, err := os.Open(path)
     dir_struct.Path = path
     //dir_struct.Files = [] File {}
 
@@ -33,23 +33,32 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
         return  dir_struct, err
     }
 
-    dir_content , err := dir.Readdirnames(-1) 
+    dir_content , err := dir.Readdirnames(-1)
 
-    if err != nil { 
+    if err != nil {
         return  dir_struct, err
     }
 
-    
+
     for file:= range dir_content{
+
         file_struct, err := Get_md5_file(path+"/"+dir_content[file])
+
         if err==nil {
-            go func() { 
+
+            //go func() { 
+
                 dir_struct.Files=append(dir_struct.Files,file_struct)
-            }()
+
+            //}()
         }
+
         if err==is_dir_error{
+
             another_dir_struct, _:=Get_md5_dir(path+"/"+dir_content[file])
+
             for another_file:= range another_dir_struct.Files{
+
                dir_struct.Files=append(dir_struct.Files,another_dir_struct.Files[another_file])
 
             }
@@ -108,11 +117,14 @@ func Get_md5_file(path string)(file_struct File, err error){
 
 func main() {
 
+        dir_struct , _ :=Get_md5_dir("/var/lib/rpm")
 
-        dir_struct , _ :=Get_md5_dir("/etc")
         for file := range dir_struct.Files {
+
             file_struct := dir_struct.Files[file]
+
             fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
 
         }
+
     }
