@@ -4,7 +4,6 @@ import (
         //"log"
         "gopkg.in/mgo.v2"
         "gopkg.in/mgo.v2/bson"
-        "fmt"
         "wengine_parts/repository"
         //"wengine_parts/settings"
         "wengine_parts/airparse"
@@ -25,7 +24,9 @@ func UploadStructToDb(repofile *airparse.RepoFile) (err error){
    session, err := mgo.Dial("mongodb://wengine:OpenStack123@127.0.0.1/test") // settings.mongo_host
 
    if err != nil {
+
       panic(err)
+
    }
    defer session.Close()
 
@@ -34,22 +35,20 @@ func UploadStructToDb(repofile *airparse.RepoFile) (err error){
 
    result:=Repository {}
 
-   err = c.Find(bson.M{"url": result.Url}).One(&result)
+   err = c.Find(bson.M{"url": repofile.Url}).One(&result)
 
    if err!=nil {
 
-     fmt.Printf("\n--Create new entry block ::>>  error: %s --\n",err)
-     err = c.Insert(&Repository{Url: repofile.Url,Packages: repofile.Packages})
+       err = c.Insert(&Repository{Url: repofile.Url,Packages: repofile.Packages})
 
    } else {
 
-     err = c.Update(bson.M{"url": result.Url},&Repository{Url: repofile.Url,Packages: repofile.Packages})
-     fmt.Printf("\n--UploadStructToDbi error: %s --\n",err)
+       err = c.Update(bson.M{"url": repofile.Url},&Repository{Url: repofile.Url, Packages: repofile.Packages })
+
 
 
    }
 
-   //err=c.Insert(&Package{repofile.Url:repofile.Packages})
 
    return nil
 }

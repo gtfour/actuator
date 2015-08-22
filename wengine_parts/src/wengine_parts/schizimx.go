@@ -36,11 +36,11 @@ func get_remote_file() {
 
 
 
-    if err==nil {
+    ////if err==nil {
 
-        for pkg_number:= range test.Packages{
+        ////for pkg_number:= range test.Packages{
 
-            fmt.Printf("\n--%s--\n",pkg_number)
+            ////fmt.Printf("\n--%s--\n",pkg_number)
 
             ////fmt.Printf("type: %s\n",test.Packages[pkg_number].Type)
 
@@ -82,10 +82,10 @@ func get_remote_file() {
             ////fmt.Println("-----")
 
 
-            }
+            ////}
 
 
-    }
+    ////}
 }
 
 
