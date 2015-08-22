@@ -45,10 +45,7 @@ func UploadStructToDb(repofile *airparse.RepoFile) (err error){
 
        err = c.Update(bson.M{"url": repofile.Url},&Repository{Url: repofile.Url, Packages: repofile.Packages })
 
-
-
    }
-
 
    return nil
 }

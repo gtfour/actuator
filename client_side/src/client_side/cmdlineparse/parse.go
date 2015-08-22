@@ -1,8 +1,6 @@
 //package parse
 
-package main
-
-//import "fmt"
+package cmdlineparse
 
 type Config struct {
 
@@ -10,6 +8,7 @@ type Config struct {
     print_help bool
     request_config_from_wengine bool
     wengine_address string
+    mistake bool
 
 }
 
@@ -21,44 +20,42 @@ var config_file_name = "actuator.conf"
 
 
 var words = map[string][]string{"start": {"-s","start","--start"},
-                                "wengine": {"-w","wengine-address","--wengine-address"},
+                                "wengine_address": {"-w","wengine-address","--wengine-address"},
                                 "request_config":{"-r","request-config","--request-config"},
                                 "print_help":{"-h","help","--help"} }
 
-//
+func Parse(osargs []string) (config Config) {
 
 
+    config=Config{}
 
 
+   for osarg_num:= range osargs {
 
+       osarg_word:=osargs[osarg_num]
 
+       for word_key := range words {
 
+           found:=Search(words[word_key],osarg_word)
 
-func Parse(osargs []string) (config *Config) {
+           if found {
 
+               if word_key=="start" {config.start=true}
+               if word_key=="wengine_address" {
+                   config.wengine_address=osarg_word}
+                    
+               if word_key=="request_config" {config.request_config_from_wengine=true}
+               if word_key=="print_help" {config.print_help=true}
 
-    config=&Config{}
-
-
-   for num:= range osargs {
-
-   
-
-
-
-
+           }
+       }
    }
 
-
-    return config
-
-
-}
-
-func Do() {
+   return config
 
 
 }
+
 
 func Search (word_list []string, word string )(bool) {
 
@@ -75,11 +72,6 @@ func Search (word_list []string, word string )(bool) {
     }
 
     return marker
-
-}
-
-func main() {
-
 
 }
 
