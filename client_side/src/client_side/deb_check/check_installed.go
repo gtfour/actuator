@@ -6,6 +6,7 @@ type StatusEntry struct {
     Version string
     Architecture string
     Complete bool
+    Installed bool
 
 }
 
