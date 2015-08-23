@@ -1,17 +1,19 @@
 package deb_check
 
-type DebPackageStatusEntry struct {
+type StatusEntry struct {
 
     Name string
     Version string
     Architecture string
+    Complete bool
 
 }
 
-type DpkgStatusFile struct {
+type StatusFile struct {
 
     FilePath string
     Sum string
+    InstalledPackages []StatusEntry
 
 }
 
