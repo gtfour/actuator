@@ -2,6 +2,8 @@ package main
 
 import "client_side/protodb"
 import "github.com/golang/protobuf/proto"
+// proto3_proto
+//import "github.com/golang/protobuf/proto/proto3_proto"
 import "fmt"
 
 var packages_db_file = "/var/lib/rpm/Dirnames"
@@ -15,30 +17,32 @@ func main(){
 
     transaction:=protodb.NoTransaction
 
-    //database_config:=DatabaseConfig{Create:false}
-
     database,_ :=protodb.OpenDatabase(environment,transaction,packages_db_file,&protodb.DatabaseConfig{Create:false})
 
       defer database.Close()
 
     database_type,_:=database.Type()
 
-    //message:=proto.Message {}
-    message:=&proto.Message{}
-    //var message_comp =  [...]proto.Message { message }
+    //cursor,err:=database.Cursor(transaction)
 
-    records:=database.Get(transaction,false,message.ProtoMessage())
+    //if err!= nil {
 
-        fmt.Println(records)
+      //  return 
 
-        fmt.Println("------")
+    //}
 
-        fmt.Println(message)
-
-        fmt.Println("------")
-
-        fmt.Println(database_type)
-
+    var message proto.Message
+    //err=cursor.First(message)
+    fmt.Println(" ------ ")
+    //fmt.Println(err)
+    //fmt.Println(cursor)
+    fmt.Println(" ------ ")
+    //fmt.Println(message)
+    _=database.Get(transaction,false,message)
+    fmt.Println(" ------ ")
+    fmt.Println(message)
+    fmt.Println(" ------ ")
+    fmt.Println(database_type)
 
 }
 
