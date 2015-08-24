@@ -6,7 +6,7 @@ import "github.com/golang/protobuf/proto"
 //import "github.com/golang/protobuf/proto/proto3_proto"
 import "fmt"
 
-var packages_db_file = "/var/lib/rpm/Dirnames"
+var packages_db_file = "/var/lib/rpm/Packages"
 var environment_dir = "/var/lib/rpm"
 
 func main(){
@@ -23,23 +23,25 @@ func main(){
 
     database_type,_:=database.Type()
 
-    //cursor,err:=database.Cursor(transaction)
+    cursor,err:=database.Cursor(transaction)
 
-    //if err!= nil {
+    if err!= nil {
 
-      //  return 
+       return
 
-    //}
+    }
 
     var message proto.Message
-    //err=cursor.First(message)
+    var cursor_message proto.Message
+    err=cursor.First(cursor_message)
     fmt.Println(" ------ ")
     //fmt.Println(err)
     //fmt.Println(cursor)
     fmt.Println(" ------ ")
-    //fmt.Println(message)
-    _=database.Get(transaction,false,message)
+    //fmt.Println(cursor_message)
+    err=database.Get(transaction,false,message)
     fmt.Println(" ------ ")
+    fmt.Println(err)
     fmt.Println(message)
     fmt.Println(" ------ ")
     fmt.Println(database_type)
