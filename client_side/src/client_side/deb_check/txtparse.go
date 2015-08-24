@@ -4,9 +4,7 @@ import "io"
 import "os"
 import "bufio"
 import "strings"
-import "fmt"
 
-// StatusEntry
 
 func ParseFile(filename string) (statusfile StatusFile, err error) {
 
@@ -32,17 +30,16 @@ func ParseFile(filename string) (statusfile StatusFile, err error) {
 
         if err == io.EOF {
             err = nil
-            eof = true 
+            eof = true
         } else if err != nil {
             return status_file, err
         }
 
-        if ( strings.HasPrefix(line, "Package") || strings.HasPrefix(line, "Architecture") || strings.HasPrefix(line, "Version")){
+        if ( strings.HasPrefix(line, "Package") || strings.HasPrefix(line, "Status") ||  strings.HasPrefix(line, "Architecture") || strings.HasPrefix(line, "Version")){
             status_entry.ParseField(line)
         }
-        if status_entry.Complete {
+        if (status_entry.Complete) && (status_entry.Installed) {
 
-          fmt.Println(status_entry)
           status_file.InstalledPackages=append(status_file.InstalledPackages,status_entry)
           status_entry=StatusEntry{}
 
@@ -62,7 +59,7 @@ func (status_entry *StatusEntry)ParseField(line string){
     if len(words)==4 {
 
         if (words[0]== "Status:")&&(words[3]=="installed\n") { status_entry.Installed = true }
-   }
+    }
     value_array:=string(words[1])
     value:=strings.Split(value_array,"\n")
 

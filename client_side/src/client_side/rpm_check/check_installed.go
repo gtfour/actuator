@@ -2,7 +2,6 @@ package main
 
 import "client_side/protodb"
 import "github.com/golang/protobuf/proto"
-import "github.com/golang/protobuf/proto/proto3_proto"
 import "fmt"
 
 var packages_db_file = "/var/lib/rpm/Dirnames"
@@ -25,9 +24,10 @@ func main(){
     database_type,_:=database.Type()
 
     //message:=proto.Message {}
-    message:=proto.proto3_proto.ProtoMessage()
+    message:=&proto.Message{}
+    //var message_comp =  [...]proto.Message { message }
 
-    records:=database.Get(transaction,false,message)
+    records:=database.Get(transaction,false,message.ProtoMessage())
 
         fmt.Println(records)
 
