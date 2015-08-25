@@ -40,7 +40,7 @@ func (os *OS) Hostname() (err error) {
 func (os *OS) Name() (err error) {
 
 
-    var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release", "/etc/fedora-release"}}
+    var providers = map[string][]string {"complex":{"/etc/SuSE-release","/etc/SuSE-brand" , "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release", "/etc/fedora-release","/etc/SuSE-brand"}}
 
     var complex_keys = []string {"NAME"}
 
@@ -51,7 +51,7 @@ func (os *OS) Name() (err error) {
 
 func (os *OS) Version() (err error) {
 
-    var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release","/etc/issue"}}
+    var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release", "/etc/SuSE-brand"},"direct":{"/etc/redhat-release","/etc/issue"}}
 
     var complex_keys = []string {"VERSION_ID","VERSION","release"}
 
