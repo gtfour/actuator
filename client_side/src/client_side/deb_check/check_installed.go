@@ -1,4 +1,5 @@
 package deb_check
+import "runtime"
 
 type StatusEntry struct {
 
@@ -36,5 +37,23 @@ func GenSumModifiedEvent() {
 
 
 }
+
+func SendJsonData() {
+
+
+
+}
+
+func GetOsProp ()  {
+
+
+
+}
+
+
+
+
+
+
 
 // main info /var/lib/dpkg/status
