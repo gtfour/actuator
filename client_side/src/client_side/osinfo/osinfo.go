@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "os"
+import "bufio"
 
 
 
@@ -9,13 +10,9 @@ import "os"
 type OS struct {
 
     HostName string
-
     OsName string
-
     OsVersion string
-
     OsRelease string
-
     Files []string
 
 }
@@ -32,8 +29,8 @@ func (os *OS) CheckEtcFiles() (err error) {
 func (os *OS) Hostname() (err error) {
 
 
-    var hostname_providers =  map[string][]string  {"direct":{"/proc/sys/kernel/hostname","/etc/hostname","/etc/HOSTNAME"}, "complex":{"/etc/sysconfig/network"}}
-    var complex_key_phrases = []string {"HOSTNAME"}
+    var providers =  map[string][]string  {"direct":{"/proc/sys/kernel/hostname","/etc/hostname","/etc/HOSTNAME"}, "complex":{"/etc/sysconfig/network"}}
+    var complex_keys = []string {"HOSTNAME"}
 
     return nil
 
@@ -43,9 +40,9 @@ func (os *OS) Hostname() (err error) {
 func (os *OS) Name() (err error) {
 
 
-    var name_providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release"},"direct":"/etc/redhat-release", "/etc/fedora-release"}
+    var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release", "/etc/fedora-release"}}
 
-    var complex_key_phrases = []string {"NAME"}
+    var complex_keys = []string {"NAME"}
 
     return nil
 
@@ -54,9 +51,9 @@ func (os *OS) Name() (err error) {
 
 func (os *OS) Version() (err error) {
 
-    var name_providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release"},"direct":"/etc/redhat-release","/etc/issue"}
+    var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release","/etc/issue"}}
 
-    var complex_key_phrases = []string {"VERSION_ID","VERSION"}
+    var complex_keys = []string {"VERSION_ID","VERSION","release"}
 
     return nil
 
@@ -67,9 +64,9 @@ func (os *OS) Version() (err error) {
 
 func (os *OS) Release() (err error) {
 
-    var name_providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release"},"direct":"/etc/redhat-release","/etc/issue"}
+    var providers = map[string][]string {"complex":{"/etc/lsb-release","/etc/fedora-release","/etc/redhat-release"}}
 
-    var complex_key_phrases = []string {"VERSION_ID","VERSION","release"}
+    var complex_keys = []string {"release","DISTRIB_RELEASE"}
 
     return nil
 
@@ -91,51 +88,32 @@ func main() {
 
 }
 
-func ReadFile(filename string, search_phrases []string) (params []string,err error) {
+func ReadFile(providers map[string][]string , complex_keys []string) (value string,err error) {
 
     var delimiters = []string {"="," ",": "}
+    value = "Unknown"
+    for provider_type := range providers {
 
-    file, err := os.Open(filename)
+        if provider_type == "direct" {
 
-    status_file:=StatusFile{}
+            for name := range providers["direct"] {
 
-    if err!=nil {
+                filename := providers["direct"][name]
+                file, err := os.Open(filename)
+                if err==nil {
+                     buffered_reader:=bufio.NewReader(file)
 
-        return status_file,err
+                }
 
-    }
-
-    buffered_reader:=bufio.NewReader(file)
-    eof := false
-
-    status_entry:=StatusEntry{}
-
-    for lino := 1; !eof; lino++ {
+        }} else {
 
 
-        line, err := buffered_reader.ReadString('\n')
 
-        if err == io.EOF {
-            err = nil
-            eof = true
-        } else if err != nil {
-            return status_file, err
-        }
+       }
 
-        if ( strings.HasPrefix(line, "Package") || strings.HasPrefix(line, "Status") ||  strings.HasPrefix(line, "Architecture") || strings.HasPrefix(line, "Version")){
-            status_entry.ParseField(line)
-        }
-        if (status_entry.Complete) && (status_entry.Installed) {
-
-          status_file.InstalledPackages=append(status_file.InstalledPackages,status_entry)
-          status_entry=StatusEntry{}
-
-        }
 
     }
-
-    return status_file,nil
+    return "",nil
 
 
 }
-
