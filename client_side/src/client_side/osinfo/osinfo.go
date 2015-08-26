@@ -197,11 +197,34 @@ func ValidateValue (values []string, key string) (value string,err error) {
 
 }
 
-func ParseLine (line string) (value string,err error) {
+func ParseLine (line string,key string) (value string,err error) {
 
     var delimiters = []string {"="," ",":"}
+
+    var quotes = []string {`\"`,`\'`}
+
+    for dkey := range delimiters {
+
+    }
 
 
 
     return "",nil
+
 }
+
+func SplitLine (line string) (param string,value string ) {
+
+    var delimiters = []string {"="," ",":"}
+    var quotes = []string {`\"`,`\'`}
+    for i := range delimiters {
+        splitted_line := Split(line,delimiters[i])
+
+
+
+
+}
+
+
+
+
