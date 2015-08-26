@@ -213,12 +213,33 @@ func ParseLine (line string,key string) (value string,err error) {
 
 }
 
-func SplitLine (line string) (param string,value string ) {
+func SplitLine (line string ) (param string,value string ) {
 
-    var delimiters = []string {"="," ",":"}
+    var delimiters = []string {"=",":"," "}
+
     var quotes = []string {`\"`,`\'`}
+
     for i := range delimiters {
-        splitted_line := Split(line,delimiters[i])
+
+        splitted_line := strings.Split(line,delimiters[i])
+
+        if delimiters[i]!=" " {
+
+            var stripped_line []string
+
+            for word := range splitted_line {
+
+                word=strings.Replace(word, " ", "", -1))
+
+                stripped_line=append(stripped_line,word)
+
+            }
+
+
+
+        } else {
+
+        
 
 
 
