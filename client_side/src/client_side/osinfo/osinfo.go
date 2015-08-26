@@ -1,9 +1,8 @@
 package main
 
 import "fmt"
-import "os"
-import "bufio"
-import "io"
+import "io/ioutil"
+import "strings"
 // I am glad to introduce you "f-shit power" and "How does this fking code work" technologies 
 
 
@@ -29,10 +28,9 @@ func main() {
    operating_system:=&OS{}
 
    operating_system.GetHostname()
-   fmt.Println(operating_system.Hostname)
-   fmt.Println(operating_system.VirtualProvider)
 
-   fmt.Println("----")
+   fmt.Println(operating_system.Hostname)
+
 
 }
 
@@ -40,14 +38,21 @@ func main() {
 
 func (os *OS) GetHostname() (err error) {
 
-                                          // по ключу директ находятся однострочные файлы
-                                          // по ключу комплекс - файлы которые надо парсить на предмет наличия внутри complex_key
+//по ключу директ находятся однострочные файлы
+//по ключу комплекс - файлы которые надо парсить на предмет наличия внутри complex_key
+
+
     var providers =  map[string][]string  {"direct":{"/proc/sys/kernel/hostname","/etc/hostname","/etc/HOSTNAME"}, "complex":{"/etc/sysconfig/network"}}
     var complex_keys = []string {"HOSTNAME"}
 
+    key :="hostname"
+
     //fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
 
-    os.Hostname,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+    var values []string
+
+    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+    os.Hostname,_=ValidateValue(values,key)
 
     return nil
 
@@ -59,6 +64,8 @@ func (os *OS) Name() (err error) {
     var providers = map[string][]string {"complex":{"/etc/SuSE-release","/etc/SuSE-brand" , "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release", "/etc/fedora-release","/etc/SuSE-brand"}}
 
     var complex_keys = []string {"NAME"}
+
+    key:="name"
 
     fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
     return nil
@@ -73,6 +80,8 @@ func (os *OS) Version() (err error) {
 
     var complex_keys = []string {"VERSION_ID","VERSION","release"}
 
+    key:="version"
+
     fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
     return nil
 
@@ -86,7 +95,10 @@ func (os *OS) Release() (err error) {
 
     var complex_keys = []string {"release","DISTRIB_RELEASE"}
 
+    key:="release"
+
     fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
+
     return nil
 
 
@@ -94,11 +106,8 @@ func (os *OS) Release() (err error) {
 
 
 
-func GetParamValue(providers map[string][]string , complex_keys []string) (value string,err error,vp []string) {
+func GetParamValue(providers map[string][]string , complex_keys []string) (values []string,err error,vp []string) {
 
-    //    var delimiters = []string {"="," ",": "}
-
-    value = "Unknown"
 
     var possible_value_candidates []string
 
@@ -112,29 +121,44 @@ func GetParamValue(providers map[string][]string , complex_keys []string) (value
 
                 lines,err:=ReadFileLines(filename)
 
-                
-
                 if err==nil {
-
-                     fmt.Println(len(lines))
 
                      lines_len :=len(lines)
 
                      if lines_len > 0 { possible_value_candidates=append(possible_value_candidates,lines[0]) }
 
-                     if lines_len > 1 { for i:= range lines { vp=append(vp,lines[i]) } }
+                     if lines_len > 1 { for i:= range lines { if  lines[i] != "" {  vp=append(vp,lines[i]) }  }  }
 
                 }
 
         }} else {
 
+            for name := range providers["complex"] {
+
+                filename := providers["complex"][name]
+
+                lines,err:=ReadFileLines(filename)
+
+                for ckey:= range complex_keys {
+
+                    for num := range lines {
+
+                        if strings.HasPrefix(lines[num], complex_keys[ckey]) {
 
 
+
+                        }
+
+                    }
+
+                }
+
+            }
        }
 
 
     }
-    return "",nil,vp
+    return possible_value_candidates,nil,vp
 
 
 }
@@ -142,38 +166,42 @@ func GetParamValue(providers map[string][]string , complex_keys []string) (value
 
 func ReadFileLines (filename string) (lines []string,err error){
 
-    file, err := os.Open(filename)
 
-    if err!=nil {
+    content, err := ioutil.ReadFile(filename)
+
+    if err != nil {
 
         return lines, err
 
     }
 
-    buffered_reader:=bufio.NewReader(file)
+    lines = strings.Split(string(content), "\n")
 
-    eof := false
-
-    for lino := 1; !eof; lino++ {
-
-        line, err := buffered_reader.ReadString('\n')
-
-        if err == io.EOF {
-
-            err = nil
-
-            eof = true
-
-        } else if err != nil {
-
-            return lines, err
-
-        }
-
-        lines=append(lines,line)
-
-    }
     return lines,err
 
 }
 
+func ValidateValue (values []string, key string) (value string,err error) {
+
+    for i := range values{
+
+       if key == "hostname" {
+
+           if (len(values[i])>len(value))&&(! strings.HasPrefix(values[i], "local")) { value=values[i] }
+
+       }
+
+
+    }
+    return value, nil
+
+}
+
+func ParseLine (line string) (value string,err error) {
+
+    var delimiters = []string {"="," ",":"}
+
+
+
+    return "",nil
+}
