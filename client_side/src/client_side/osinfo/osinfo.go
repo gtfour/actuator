@@ -216,8 +216,9 @@ func ParseLine (line string,key string) (value string,err error) {
 func SplitLine (line string ) (param string,value string ) {
 
     var delimiters = []string {"=",":"," "}
-    var quotes = []string {`\"`,`\'`}
+
     var param_candidates  []string
+
     var value_candidates  []string
 
     for i := range delimiters {
@@ -230,9 +231,15 @@ func SplitLine (line string ) (param string,value string ) {
 
                 word=strings.Replace(word, " ", "", -1)
 
+                word=strings.Replace(word, `\"`, "", -1)
+
+                word=strings.Replace(word, `\'`, "", -1)
+
                 stripped_line=append(stripped_line,word)
 
             }
+            if len(stripped_line==2) { param = stripped_line[0] ; value = stripped_line[1] } else {
+            
 
 
 
@@ -242,8 +249,8 @@ func SplitLine (line string ) (param string,value string ) {
 
 
 
-}
-}
+    }
+    }
 return "",""
 }
 
