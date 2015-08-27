@@ -10,9 +10,9 @@ import "strings"
 type OS struct {
 
     Hostname string
-    OsName string
-    OsVersion string
-    OsRelease string
+    Name string
+    Version string
+    Release string
     Files []string
     VirtualProvider []string // по задумке сюда будут складываться строки начиная со второй, которые были найдены
                              // проходом значений хеша по ключу директ 
@@ -28,8 +28,10 @@ func main() {
    operating_system:=&OS{}
 
    operating_system.GetHostname()
+   operating_system.GetName()
 
    fmt.Println(operating_system.Hostname)
+   fmt.Println(operating_system.Name)
 
 
 }
@@ -58,7 +60,7 @@ func (os *OS) GetHostname() (err error) {
 
 }
 
-func (os *OS) Name() (err error) {
+func (os *OS) GetName() (err error) {
 
 
     var providers = map[string][]string {"complex":{"/etc/SuSE-release","/etc/SuSE-brand" , "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release", "/etc/fedora-release","/etc/SuSE-brand"}}
@@ -66,21 +68,25 @@ func (os *OS) Name() (err error) {
     var complex_keys = []string {"NAME"}
 
     key:="name"
+    var values []string
 
-    fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
+    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+    os.Name,_=ValidateValue(values,key)
+
+
     return nil
 
 
 
 }
 
-func (os *OS) Version() (err error) {
+func (os *OS) GetVersion() (err error) {
 
     var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release", "/etc/SuSE-brand"},"direct":{"/etc/redhat-release","/etc/issue"}}
 
     var complex_keys = []string {"VERSION_ID","VERSION","release"}
 
-    key:="version"
+    //key:="version"
 
     fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
     return nil
@@ -89,13 +95,13 @@ func (os *OS) Version() (err error) {
 
 //
 
-func (os *OS) Release() (err error) {
+func (os *OS) GetRelease() (err error) {
 
     var providers = map[string][]string {"complex":{"/etc/lsb-release","/etc/fedora-release","/etc/redhat-release","/etc/SuSE-brand"}}
 
     var complex_keys = []string {"release","DISTRIB_RELEASE"}
 
-    key:="release"
+    //key:="release"
 
     fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
 
@@ -107,6 +113,7 @@ func (os *OS) Release() (err error) {
 
 
 func GetParamValue(providers map[string][]string , complex_keys []string) (values []string,err error,vp []string) {
+
 
 
     var possible_value_candidates []string
@@ -137,21 +144,16 @@ func GetParamValue(providers map[string][]string , complex_keys []string) (value
 
                 filename := providers["complex"][name]
 
-                lines,err:=ReadFileLines(filename)
-
-                for ckey:= range complex_keys {
+                lines,_:=ReadFileLines(filename)
 
                     for num := range lines {
 
-                        if strings.HasPrefix(lines[num], complex_keys[ckey]) {
+                        value,_:=ParseLine(lines[num],complex_keys)
+                        possible_value_candidates=append(possible_value_candidates,value)
 
-
-
-                        }
 
                     }
 
-                }
 
             }
        }
@@ -197,29 +199,33 @@ func ValidateValue (values []string, key string) (value string,err error) {
 
 }
 
-func ParseLine (line string,key string) (value string,err error) {
+func ParseLine (line string,complex_keys []string) (value string,vp string,err error) {
 
-    var delimiters = []string {"="," ",":"}
+    var param string
+    param,value = SplitLine(line)
+    for key := range complex_keys { if strings.EqualFold(complex_keys[key],param) { return value,nil } }
+    // below extension to parse redhat-release and SuSE-brand txt files
+    if (param==value) { 
+                      name:="NAME="
+                      version:="VERSION="
+                      release:="RELEASE="
+                      var release_word_number int
+                      sp_line:= strings.Split(value," ")
+                      for wid := range sp_line {
 
-    var quotes = []string {`\"`,`\'`}
+                          if sp_line[wid] == "release" 
+                          if strings.Index(sp_line[wid], ".")>=0 {  
 
-    for dkey := range delimiters {
+}
+    
 
-    }
-
-
-
-    return "",nil
+    return value,"",nil
 
 }
 
 func SplitLine (line string ) (param string,value string ) {
 
     var delimiters = []string {":","="," "}
-
-    var param_candidates  []string
-
-    var value_candidates  []string
 
     for i := range delimiters {
 
@@ -233,7 +239,6 @@ func SplitLine (line string ) (param string,value string ) {
 
             for word_num := range splitted_line {
 
-                //word=strings.Replace(word, " ", "", -1)
                 word:=splitted_line[word_num]
 
                 word=strings.Replace(word, `\"`, "", -1) // -1 means that Replace should replace all space entries
@@ -242,12 +247,8 @@ func SplitLine (line string ) (param string,value string ) {
 
                 subwords_splitted_by_space:=strings.Split(word," ")
 
-                subwords_line:=strings.Join(subwords_splitted_by_space," ")
+                subwords_line=strings.Join(subwords_splitted_by_space," ")
 
-                //for subw_id:=range subwords_splitted_by_space {
-               //     stripped_line=append(stripped_line,subwords_splitted_by_space[subw_id])
-               // }
-                //stripped_line=append(stripped_line,word)
 
             }
             if len(stripped_line)==2 && len(subwords_splitted_by_space)<=1 { param = stripped_line[0] ; value = stripped_line[1]  }
@@ -256,7 +257,7 @@ func SplitLine (line string ) (param string,value string ) {
 
 
 
-        } else { param=line ; value=line  }
+        } else {  param=line ; value=line  }
     }
     return param,value
 }
