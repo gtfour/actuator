@@ -91,7 +91,7 @@ func (os *OS) Version() (err error) {
 
 func (os *OS) Release() (err error) {
 
-    var providers = map[string][]string {"complex":{"/etc/lsb-release","/etc/fedora-release","/etc/redhat-release"}}
+    var providers = map[string][]string {"complex":{"/etc/lsb-release","/etc/fedora-release","/etc/redhat-release","/etc/SuSE-brand"}}
 
     var complex_keys = []string {"release","DISTRIB_RELEASE"}
 
@@ -215,7 +215,7 @@ func ParseLine (line string,key string) (value string,err error) {
 
 func SplitLine (line string ) (param string,value string ) {
 
-    var delimiters = []string {"=",":"," "}
+    var delimiters = []string {":","="," "}
 
     var param_candidates  []string
 
@@ -224,34 +224,41 @@ func SplitLine (line string ) (param string,value string ) {
     for i := range delimiters {
 
         splitted_line := strings.Split(line,delimiters[i])
-        SplitWithDelim:
+
         if delimiters[i]!=" " {
+
             var stripped_line []string
-            for word := range splitted_line {
+            var subwords_splitted_by_space []string
+            var subwords_line string
 
-                word=strings.Replace(word, " ", "", -1)
+            for word_num := range splitted_line {
 
-                word=strings.Replace(word, `\"`, "", -1)
+                //word=strings.Replace(word, " ", "", -1)
+                word:=splitted_line[word_num]
 
-                word=strings.Replace(word, `\'`, "", -1)
+                word=strings.Replace(word, `\"`, "", -1) // -1 means that Replace should replace all space entries
 
-                stripped_line=append(stripped_line,word)
+                word=strings.Replace(word, `\'`, "", -1) // if define 2 as last arg it will replace two times
+
+                subwords_splitted_by_space:=strings.Split(word," ")
+
+                subwords_line:=strings.Join(subwords_splitted_by_space," ")
+
+                //for subw_id:=range subwords_splitted_by_space {
+               //     stripped_line=append(stripped_line,subwords_splitted_by_space[subw_id])
+               // }
+                //stripped_line=append(stripped_line,word)
 
             }
-            if len(stripped_line==2) { param = stripped_line[0] ; value = stripped_line[1] }
-            if len(stripped_line>2) { param = 
+            if len(stripped_line)==2 && len(subwords_splitted_by_space)<=1 { param = stripped_line[0] ; value = stripped_line[1]  }
+
+            if len(stripped_line)==2 && len(subwords_splitted_by_space)>1  { param = stripped_line[0] ; value = subwords_line  }
 
 
 
-        } else {
-
-
-
-
-
+        } else { param=line ; value=line  }
     }
-    }
-return "",""
+    return param,value
 }
 
 
