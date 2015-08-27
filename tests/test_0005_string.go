@@ -1,13 +1,16 @@
 package main
 
 import "fmt"
+import "strings"
 
 func main() {
 
 
-StringSearch("hello","h")
+//StringSearch("hello","h")
 
+string_without_equal_sign:="Hello hello h"
 
+fmt.Printf(" Len %d\n",len(strings.Split(string_without_equal_sign,"=")))
 
 
 }

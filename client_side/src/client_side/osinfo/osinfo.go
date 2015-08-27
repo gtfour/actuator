@@ -32,6 +32,8 @@ func main() {
 
    fmt.Println(operating_system.Hostname)
    fmt.Println(operating_system.Name)
+   fmt.Println("------------------------------")
+   fmt.Println(operating_system.VirtualProvider)
 
 
 }
@@ -148,7 +150,8 @@ func GetParamValue(providers map[string][]string , complex_keys []string) (value
 
                     for num := range lines {
 
-                        value,_:=ParseLine(lines[num],complex_keys)
+                        value,vp_new,_:=ParseLine(lines[num],complex_keys)
+                        if len(vp_new)>0 { for i:= range vp_new { vp=append(vp,vp_new[i]) } }
                         possible_value_candidates=append(possible_value_candidates,value)
 
 
@@ -199,27 +202,57 @@ func ValidateValue (values []string, key string) (value string,err error) {
 
 }
 
-func ParseLine (line string,complex_keys []string) (value string,vp string,err error) {
+func ParseLine (line string,complex_keys []string) (value string,vp []string, err error) {
 
     var param string
+
+
     param,value = SplitLine(line)
-    for key := range complex_keys { if strings.EqualFold(complex_keys[key],param) { return value,nil } }
+    for key := range complex_keys { if strings.EqualFold(complex_keys[key],param) { return value,vp,nil } }
     // below extension to parse redhat-release and SuSE-brand txt files
-    if (param==value) { 
+
+
+
+
+
+    if (param==value) {
                       name:="NAME="
                       version:="VERSION="
                       release:="RELEASE="
                       var release_word_number int
+                      var name_len int
                       sp_line:= strings.Split(value," ")
                       for wid := range sp_line {
 
-                          if sp_line[wid] == "release" 
-                          if strings.Index(sp_line[wid], ".")>=0 {  
+                          if sp_line[wid] == "release" {
+                               release_word_number=wid
+                               name_len=wid-1
+                               if len(sp_line[:name_len])>0 {name=name+strings.Join(sp_line[:name_len]," ")}
+                               if len(sp_line)>(release_word_number+1) { 
+                                   version=version+sp_line[release_word_number+1] ; 
+                                   release=release+"1"
+                               }
 
-}
-    
+                          }
+                          if strings.Index(sp_line[wid], ".")>=0 {
+                              name_len=wid-1 ;
+                              version_and_release := strings.Split(sp_line[wid],".")
+                              if (len(version_and_release)>=2) {
+                                  version=version+string(version_and_release[0])
+                                  if (len(version_and_release[1:])>1) {
 
-    return value,"",nil
+                                      release=strings.Join(version_and_release[1:],".") } else {
+
+                                      release=release+string(version_and_release[1]) }
+                              } }
+
+                       }
+
+    if name!="NAME=" {vp=append(vp,name)}
+    if version!="VERSION=" {vp=append(vp,version)}
+    if release!="RELEASE=" {vp=append(vp,release)}
+    }
+    return value,vp,nil
 
 }
 
