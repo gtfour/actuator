@@ -224,7 +224,7 @@ func SplitLine (line string ) (param string,value string ) {
     for i := range delimiters {
 
         splitted_line := strings.Split(line,delimiters[i])
-
+        SplitWithDelim:
         if delimiters[i]!=" " {
             var stripped_line []string
             for word := range splitted_line {
@@ -238,8 +238,8 @@ func SplitLine (line string ) (param string,value string ) {
                 stripped_line=append(stripped_line,word)
 
             }
-            if len(stripped_line==2) { param = stripped_line[0] ; value = stripped_line[1] } else {
-            
+            if len(stripped_line==2) { param = stripped_line[0] ; value = stripped_line[1] }
+            if len(stripped_line>2) { param = 
 
 
 
