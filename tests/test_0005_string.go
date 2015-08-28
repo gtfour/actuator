@@ -8,7 +8,9 @@ func main() {
 
 //StringSearch("hello","h")
 
-string_without_equal_sign:="Hello hello h"
+string_without_equal_sign:=`Hello "   hello h`
+
+fmt.Println(strings.Replace(string_without_equal_sign, `"`, "-", -1))
 
 fmt.Printf(" Len %d\n",len(strings.Split(string_without_equal_sign,"=")))
 
