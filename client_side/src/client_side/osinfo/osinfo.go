@@ -29,10 +29,14 @@ func main() {
 
    operating_system.GetHostname()
    operating_system.GetName()
+   operating_system.GetVersion()
+   operating_system.GetRelease()
 
-   fmt.Println(operating_system.Hostname)
-   fmt.Println(operating_system.Name)
-   fmt.Println("------------------------------")
+   fmt.Printf("hostname %s",operating_system.Hostname)
+   fmt.Printf("name %s",operating_system.Name)
+   fmt.Printf("version %s",operating_system.Version)
+   fmt.Printf("release %s",operating_system.Release)
+   fmt.Printf("------------------------------")
    fmt.Println(operating_system.VirtualProvider)
 
 
@@ -88,9 +92,12 @@ func (os *OS) GetVersion() (err error) {
 
     var complex_keys = []string {"VERSION_ID","VERSION","release"}
 
-    //key:="version"
+    key:="version"
+    var values []string
+    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+    os.Version,_=ValidateValue(values,key)
 
-    fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
+
     return nil
 
 }
@@ -103,9 +110,12 @@ func (os *OS) GetRelease() (err error) {
 
     var complex_keys = []string {"release","DISTRIB_RELEASE"}
 
-    //key:="release"
+    key:="release"
+    var values []string
+    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+    os.Release,_=ValidateValue(values,key)
 
-    fmt.Printf("\n:debug:\n%s\n%s",providers,complex_keys)
+
 
     return nil
 
@@ -236,6 +246,8 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
                           }
                           if strings.Index(sp_line[wid], ".")>=0 {
                               name_len=wid-1 ;
+                              sp_line[wid]=strings.Replace(sp_line[wid], "(", "", -1)
+                              sp_line[wid]=strings.Replace(sp_line[wid], ")", "", -1)
                               version_and_release := strings.Split(sp_line[wid],".")
                               if (len(version_and_release)>=2) {
                                   version=version+string(version_and_release[0])
