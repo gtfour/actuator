@@ -39,7 +39,6 @@ func main() {
    fmt.Printf("------------------------------")
    fmt.Println(operating_system.VirtualProvider)
 
-
 }
 
 
@@ -71,7 +70,7 @@ func (os *OS) GetName() (err error) {
 
     var providers = map[string][]string {"complex":{"/etc/SuSE-release","/etc/SuSE-brand" , "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release", "/etc/fedora-release","/etc/SuSE-brand"}}
 
-    var complex_keys = []string {"NAME"}
+    var complex_keys = []string {"NAME","DISTRIB_ID"}
 
     key:="name"
     var values []string
@@ -90,7 +89,7 @@ func (os *OS) GetVersion() (err error) {
 
     var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release", "/etc/SuSE-brand"},"direct":{"/etc/redhat-release","/etc/issue"}}
 
-    var complex_keys = []string {"VERSION_ID","VERSION","release"}
+    var complex_keys = []string {"VERSION_ID","VERSION","release","DISTRIB_RELEASE","ID"}
 
     key:="version"
     var values []string
@@ -108,7 +107,7 @@ func (os *OS) GetRelease() (err error) {
 
     var providers = map[string][]string {"complex":{"/etc/lsb-release","/etc/fedora-release","/etc/redhat-release","/etc/SuSE-brand"}}
 
-    var complex_keys = []string {"release","DISTRIB_RELEASE"}
+    var complex_keys = []string {"release","DISTRIB_RELEASE","VERSION_ID","VERSION","VERSION_ID"}
 
     key:="release"
     var values []string
@@ -198,59 +197,42 @@ func ReadFileLines (filename string) (lines []string,err error){
 
 func ValidateValue (values []string, key string) (value string,err error) {
 
+    if key == "hostname" { fmt.Printf("hostname:")  ;  for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
+    if key == "name" { fmt.Printf("name:")  ; for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
+    if key == "version" { fmt.Printf("version:")  ; for i := range values { fmt.Printf("%s|",values[i]) }  ; fmt.Println("\n") }
+    if key == "release" { fmt.Printf("release:")  ; for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
+
     for i := range values{
 
        if key == "hostname" {
 
-           //fmt.Println()
-           //fmt.Println()
 
            if (len(values[i])>len(value))&&(! strings.HasPrefix(values[i], "local")) { value=values[i] }
 
        }
        if key == "name" {
 
-           //fmt.Println()
-           //fmt.Println()
+           //var exp_values []string
+           for i := range values {
 
+               if !IsContainDigit(values[i]) { }
 
-           //fmt.Println(values[i])
+           }
 
-       }
-       if key == "version" {
-
-        //  fmt.Println()
-         //  fmt.Println()
-
-
-          //fmt.Println(values[i])
-
-       }
-       if key == "release" {
-      //     fmt.Println()
-      //     fmt.Println()
-
-
-           //fmt.Println(values[i])
-
-        }
-
-
+    }
     }
     return value, nil
 
-}
 
+}
 func ParseLine (line string,complex_keys []string) (value string,vp []string, err error) {
 
     var param string
 
 
     param,value = SplitLine(line)
-    for key := range complex_keys { if strings.EqualFold(complex_keys[key],param) { return value,vp,nil } }
+    for key := range complex_keys { if strings.EqualFold(complex_keys[key],param) {  fmt.Printf("Debug::  cckey: %s param:  %s\n",complex_keys[key],param )  ; return value,vp,nil } }
     // below extension to parse redhat-release and SuSE-brand txt files
-    fmt.Printf("param : %s value : %s\n",param,value)
-
 
 
 
@@ -268,8 +250,8 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
                                release_word_number=wid
                                name_len=wid-1
                                if len(sp_line[:name_len])>0 {name=name+strings.Join(sp_line[:name_len]," ")}
-                               if len(sp_line)>(release_word_number+1) { 
-                                   version=version+sp_line[release_word_number+1] ; 
+                               if len(sp_line)>(release_word_number+1) {
+                                   version=version+sp_line[release_word_number+1] ;
                                    release=release+"1"
                                }
 
@@ -294,7 +276,7 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
     if version!="VERSION=" {vp=append(vp,version)}
     if release!="RELEASE=" {vp=append(vp,release)}
     }
-    return value,vp,nil
+    return "",vp,nil
 
 }
 
@@ -312,13 +294,14 @@ func SplitLine (line string ) (param string,value string ) {
             var subwords_splitted_by_space []string
             var subwords_line string
 
+            if len(splitted_line) > 1 {
             for word_num := range splitted_line {
 
                 word:=splitted_line[word_num]
 
-                word=strings.Replace(word, `\"`, "", -1) // -1 means that Replace should replace all space entries
+                word=strings.Replace(word, `"`, "", -1) // -1 means that Replace should replace all space entries
 
-                word=strings.Replace(word, `\'`, "", -1) // if define 2 as last arg it will replace two times
+                word=strings.Replace(word, `'`, "", -1) // if define 2 as last arg it will replace two times
 
                 stripped_line=append(stripped_line,word)
 
@@ -327,10 +310,11 @@ func SplitLine (line string ) (param string,value string ) {
                 subwords_splitted_by_space:=strings.Split(word," ")
 
                 subwords_line=strings.Join(subwords_splitted_by_space," ")
+                //fmt.Printf("stripped_line: %s subwords_line:  %s \n",stripped_line,subwords_line)
 
 
 
-            }
+            } }
             if len(stripped_line)==2 && len(subwords_splitted_by_space)<=1 { param = stripped_line[0] ; value = stripped_line[1]  }
 
             if len(stripped_line)==2 && len(subwords_splitted_by_space)>1  { param = stripped_line[0] ; value = subwords_line  }
@@ -339,9 +323,15 @@ func SplitLine (line string ) (param string,value string ) {
 
         } else {  if (param=="" && value == "") { param=line ; value=line } }
     }
+    fmt.Printf("Input: %s Param: %s Value: %s\n",line,param,value)
     return param,value
 }
 
 
 
+func IsContainDigit(line string)(b bool){ 
 
+    for char:=range line { if line[char] >= '0' && line[char] <= '9' {  b=true } } 
+    return b
+
+}
