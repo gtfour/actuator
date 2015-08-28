@@ -202,36 +202,36 @@ func ValidateValue (values []string, key string) (value string,err error) {
 
        if key == "hostname" {
 
-           fmt.Println()
-           fmt.Println()
+           //fmt.Println()
+           //fmt.Println()
 
            if (len(values[i])>len(value))&&(! strings.HasPrefix(values[i], "local")) { value=values[i] }
 
        }
        if key == "name" {
 
-           fmt.Println()
-           fmt.Println()
+           //fmt.Println()
+           //fmt.Println()
 
 
-           fmt.Println(values[i])
+           //fmt.Println(values[i])
 
        }
        if key == "version" {
 
-          fmt.Println()
-           fmt.Println()
+        //  fmt.Println()
+         //  fmt.Println()
 
 
-          fmt.Println(values[i])
+          //fmt.Println(values[i])
 
        }
        if key == "release" {
-           fmt.Println()
-           fmt.Println()
+      //     fmt.Println()
+      //     fmt.Println()
 
 
-           fmt.Println(values[i])
+           //fmt.Println(values[i])
 
         }
 
@@ -249,6 +249,7 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
     param,value = SplitLine(line)
     for key := range complex_keys { if strings.EqualFold(complex_keys[key],param) { return value,vp,nil } }
     // below extension to parse redhat-release and SuSE-brand txt files
+    fmt.Printf("param : %s value : %s\n",param,value)
 
 
 
@@ -319,9 +320,14 @@ func SplitLine (line string ) (param string,value string ) {
 
                 word=strings.Replace(word, `\'`, "", -1) // if define 2 as last arg it will replace two times
 
+                stripped_line=append(stripped_line,word)
+
+
+
                 subwords_splitted_by_space:=strings.Split(word," ")
 
                 subwords_line=strings.Join(subwords_splitted_by_space," ")
+
 
 
             }
@@ -331,7 +337,7 @@ func SplitLine (line string ) (param string,value string ) {
 
 
 
-        } else {  param=line ; value=line  }
+        } else {  if (param=="" && value == "") { param=line ; value=line } }
     }
     return param,value
 }
