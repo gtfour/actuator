@@ -202,9 +202,38 @@ func ValidateValue (values []string, key string) (value string,err error) {
 
        if key == "hostname" {
 
+           fmt.Println()
+           fmt.Println()
+
            if (len(values[i])>len(value))&&(! strings.HasPrefix(values[i], "local")) { value=values[i] }
 
        }
+       if key == "name" {
+
+           fmt.Println()
+           fmt.Println()
+
+
+           fmt.Println(values[i])
+
+       }
+       if key == "version" {
+
+          fmt.Println()
+           fmt.Println()
+
+
+          fmt.Println(values[i])
+
+       }
+       if key == "release" {
+           fmt.Println()
+           fmt.Println()
+
+
+           fmt.Println(values[i])
+
+        }
 
 
     }
