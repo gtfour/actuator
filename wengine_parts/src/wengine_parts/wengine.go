@@ -10,7 +10,7 @@ import (
 //    "fmt"
 //    "encoding/json"
     "os"
-    "wengine_parts/settings"
+//    "wengine_parts/settings"
 )
 
 
@@ -30,7 +30,7 @@ func main() {
 
     printLogMessage(messages)
 
-    handler_func,_:=makeHandlerFunc(filepath,messages)
+    handler_func,_:=makeHandlerFunc(filepath,messages,"html_get")
 
     http.HandleFunc("/", handler_func)
 
@@ -38,7 +38,9 @@ func main() {
 }
 
 
-func makeHandlerFunc(filepath string,messages chan string) (func(w http.ResponseWriter, r *http.Request), error) {
+func makeHandlerFunc(filepath string,messages chan string, reqtype string) (func(w http.ResponseWriter, r *http.Request), error) {
+
+    if reqtype == "html_get" {
    
     return func(w http.ResponseWriter, r *http.Request) {
 
@@ -49,6 +51,12 @@ func makeHandlerFunc(filepath string,messages chan string) (func(w http.Response
     messages <-(r.Method+" | "+r.Proto+" | "+r.URL.Path)
 
 } , nil
+}
+
+    if reqtype ==  "client_info" {
+
+
+    }
 }
 
 func readFile(filename string) (text string ,err error ) {
@@ -114,3 +122,5 @@ func printLogMessage(message_channel chan string) {
    }()
 
 }
+
+

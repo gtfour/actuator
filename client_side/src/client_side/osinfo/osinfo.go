@@ -1,9 +1,11 @@
 package main
+// Determines current operating system
 
 import "fmt"
 import "io/ioutil"
 import "strings"
 // I am glad to introduce you "f-shit power" and "How does this fking code work" technologies 
+// I have to to finish handling of vp array !!!
 
 
 
