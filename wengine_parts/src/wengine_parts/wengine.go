@@ -8,10 +8,17 @@ import (
     "io/ioutil"
 //    "errors"
 //    "fmt"
-//    "encoding/json"
+    "encoding/json"
     "os"
 //    "wengine_parts/settings"
 )
+
+type TestJson struct {
+
+    //struct to test json reciever
+    data string
+
+}
 
 
 
@@ -30,19 +37,21 @@ func main() {
 
     printLogMessage(messages)
 
-    handler_func,_:=makeHandlerFunc(filepath,messages,"html_get")
+    web_page,_:=makeHandlerFunc(filepath,messages,"html_get")
+    client_info,_:=makeHandlerFunc(filepath,messages,"client_info")
 
-    http.HandleFunc("/", handler_func)
+    http.HandleFunc("/", web_page)
+    http.HandleFunc("/clinfo", client_info)
 
     panic(http.ListenAndServe(port, nil))
 }
 
 
-func makeHandlerFunc(filepath string,messages chan string, reqtype string) (func(w http.ResponseWriter, r *http.Request), error) {
+func makeHandlerFunc(filepath string,messages chan string, reqtype string) (handle_func func(w http.ResponseWriter, r *http.Request),err error) {
 
     if reqtype == "html_get" {
    
-    return func(w http.ResponseWriter, r *http.Request) {
+    handle_func=func(w http.ResponseWriter, r *http.Request) {
 
     text , _ := readFile(filepath)
 
@@ -50,13 +59,26 @@ func makeHandlerFunc(filepath string,messages chan string, reqtype string) (func
 
     messages <-(r.Method+" | "+r.Proto+" | "+r.URL.Path)
 
-} , nil
+}
 }
 
     if reqtype ==  "client_info" {
 
+    handle_func=func (rw http.ResponseWriter, r *http.Request) {
+
+        decoder := json.NewDecoder(r.Body)
+        fmt.Println(r.Body)
+        var t TestJson
+        err:=decoder.Decode(&t)
+        if err!=nil { panic("Unable to decode json") }
+        messages <-(r.Method+" | "+r.Proto+" | "+r.URL.Path+"|")
+        messages <-(t.data)
+
 
     }
+}
+
+return handle_func,nil
 }
 
 func readFile(filename string) (text string ,err error ) {

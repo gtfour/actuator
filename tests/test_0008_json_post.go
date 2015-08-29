@@ -1,8 +1,20 @@
+package main
+
+import "fmt"
+import "net/http"
+import "io/ioutil"
+import "bytes"
+
+type TestJson struct {
+
+    data string
+
+}
 func main() {
-    url := "http://restapi3.apiary.io/notes"
+    url := "http://127.0.0.1:8081/clinfo"
     fmt.Println("URL:>", url)
 
-    var jsonStr = []byte(`{"title":"Buy cheese and bread for breakfast."}`)
+    var jsonStr = []byte(`{"data":"Buy cheese and bread for breakfast."}`)
     req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
     req.Header.Set("X-Custom-Header", "myvalue")
     req.Header.Set("Content-Type", "application/json")
