@@ -6,6 +6,7 @@ import (
     "net"
     "net/http"
     "io/ioutil"
+    "reflect"
 //    "errors"
 //    "fmt"
     "encoding/json"
@@ -16,7 +17,7 @@ import (
 type TestJson struct {
 
     //struct to test json reciever
-    data string
+    data string `json:"data"`
 
 }
 
@@ -66,19 +67,29 @@ func makeHandlerFunc(filepath string,messages chan string, reqtype string) (hand
 
     handle_func=func (rw http.ResponseWriter, r *http.Request) {
 
-        decoder := json.NewDecoder(r.Body)
-        fmt.Println(r.Body)
-        var t TestJson
-        err:=decoder.Decode(&t)
-        if err!=nil { panic("Unable to decode json") }
-        messages <-(r.Method+" | "+r.Proto+" | "+r.URL.Path+"|")
-        messages <-(t.data)
+    body, err := ioutil.ReadAll(r.Body)
+
+    if err != nil {
+        panic("can't read request body")
+    }
+
+    var t TestJson
+
+    err = json.Unmarshal(body, &t)
+
+    if err != nil {
+        panic("can't parse json post request")
+    }
+
+    messages <-(r.Method+" | "+r.Proto+" | "+r.URL.Path+"|")
+    messages <-(t.data)
 
 
     }
 }
 
-return handle_func,nil
+    return handle_func,nil
+
 }
 
 func readFile(filename string) (text string ,err error ) {
@@ -109,7 +120,6 @@ func get_args()(port string,filepath string , err error) {
             return "","",fmt.Errorf("error: Unable to open file %s",filepath)
         }
 
-        
         } else {
               return "","",fmt.Errorf("usage: <port_number> <path_to_html_file>") 
         }
@@ -119,7 +129,6 @@ func get_args()(port string,filepath string , err error) {
         if err!=nil {
 
             return "","",fmt.Errorf("error: Unable to open port %s",port)
-            
         }
 
         defer ln.Close()

@@ -7,7 +7,7 @@ import "bytes"
 
 type TestJson struct {
 
-    data string
+    data string `json:"data"`
 
 }
 func main() {

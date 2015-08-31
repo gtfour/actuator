@@ -29,10 +29,21 @@ func main() {
 
    operating_system:=&OS{}
 
-   operating_system.GetHostname()
-   operating_system.GetName()
-   operating_system.GetVersion()
-   operating_system.GetRelease()
+   vp_control := make(chan int, 1)
+   vp_control <- 0
+
+   operating_system.GetHostname(vp_control)
+   operating_system.GetName(vp_control)
+   operating_system.GetVersion(vp_control)
+   operating_system.GetRelease(vp_control)
+
+   for {
+
+   complete_count:= <- vp_control
+   fmt.Println("test")
+   if (complete_count==4) {break }
+
+   }
 
    fmt.Printf("hostname %s",operating_system.Hostname)
    fmt.Printf("name %s",operating_system.Name)
@@ -45,7 +56,7 @@ func main() {
 
 
 
-func (os *OS) GetHostname() (err error) {
+func (os *OS) GetHostname(vp_control chan int) (err error) {
 
 //по ключу директ находятся однострочные файлы
 //по ключу комплекс - файлы которые надо парсить на предмет наличия внутри complex_key
@@ -60,14 +71,21 @@ func (os *OS) GetHostname() (err error) {
 
     var values []string
 
-    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
-    os.Hostname,_=ValidateValue(values,key)
+    complete_count:= <- vp_control
+
+
+    go func() { values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+               fmt.Printf("GetHostname %d",complete_count+1)
+               vp_control <- complete_count+1
+               for { complete_count:= <-vp_control ;
+               if complete_count == 4 { break }}
+    os.Hostname,_=ValidateValue(values,key) }()
 
     return nil
 
 }
 
-func (os *OS) GetName() (err error) {
+func (os *OS) GetName(vp_control chan int) (err error) {
 
 
     var providers = map[string][]string {"complex":{"/etc/SuSE-release","/etc/SuSE-brand" , "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release", "/etc/fedora-release","/etc/SuSE-brand"}}
@@ -77,8 +95,13 @@ func (os *OS) GetName() (err error) {
     key:="name"
     var values []string
 
-    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
-    os.Name,_=ValidateValue(values,key)
+    complete_count:= <- vp_control
+    go func() { values,_,os.VirtualProvider=GetParamValue(providers,complex_keys) 
+                 fmt.Printf("GetName %d",complete_count+1)
+                 vp_control <- complete_count+1
+                 for { complete_count:= <-vp_control
+                      if complete_count == 4 { break }}
+    os.Name,_=ValidateValue(values,key)}()
 
 
     return nil
@@ -87,7 +110,7 @@ func (os *OS) GetName() (err error) {
 
 }
 
-func (os *OS) GetVersion() (err error) {
+func (os *OS) GetVersion(vp_control chan int) (err error) {
 
     var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release", "/etc/SuSE-brand"},"direct":{"/etc/redhat-release","/etc/issue"}}
 
@@ -95,8 +118,13 @@ func (os *OS) GetVersion() (err error) {
 
     key:="version"
     var values []string
-    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
-    os.Version,_=ValidateValue(values,key)
+    complete_count:= <- vp_control
+    go func() { values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+                fmt.Printf("GetVersion %d",complete_count+1)
+                for { complete_count:= <-vp_control
+                      vp_control <- complete_count+1
+                      if complete_count == 4 { break }}
+    os.Version,_=ValidateValue(values,key)}()
 
 
     return nil
@@ -105,7 +133,7 @@ func (os *OS) GetVersion() (err error) {
 
 //
 
-func (os *OS) GetRelease() (err error) {
+func (os *OS) GetRelease(vp_control chan int) (err error) {
 
     var providers = map[string][]string {"complex":{"/etc/lsb-release","/etc/fedora-release","/etc/redhat-release","/etc/SuSE-brand"}}
 
@@ -113,8 +141,13 @@ func (os *OS) GetRelease() (err error) {
 
     key:="release"
     var values []string
-    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
-    os.Release,_=ValidateValue(values,key)
+    complete_count:= <- vp_control
+    go func() { values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+                fmt.Printf("GetRelease %d",complete_count+1)
+                vp_control <- complete_count+1
+                for { complete_count:= <-vp_control
+                    if complete_count == 4 { break }}
+    os.Release,_=ValidateValue(values,key)}()
 
 
 
@@ -161,9 +194,12 @@ func GetParamValue(providers map[string][]string , complex_keys []string) (value
 
                     for num := range lines {
 
-                        value,vp_new,_:=ParseLine(lines[num],complex_keys)
+                        //value,vp_new,_:=ParseLine(lines[num],complex_keys)
+                        //if len(vp_new)>0 { for i:= range vp_new { vp=append(vp,vp_new[i]) } }
+                        //possible_value_candidates=append(possible_value_candidates,value)
+                        var vp_new []string
+                        SingleLineProcessing(&possible_value_candidates,&vp_new,lines[num],complex_keys,true)
                         if len(vp_new)>0 { for i:= range vp_new { vp=append(vp,vp_new[i]) } }
-                        possible_value_candidates=append(possible_value_candidates,value)
 
 
                     }
@@ -178,6 +214,19 @@ func GetParamValue(providers map[string][]string , complex_keys []string) (value
 
 
 }
+
+
+func SingleLineProcessing (possible_value_candidates *[]string,vp *[]string,line string,complex_keys []string,collect_vp bool){
+
+    // 
+    // if collect_vp == false thats means  we are working with VP
+    // 
+    var value  string 
+    value,vp_new,_:=ParseLine(line , complex_keys)
+    if (len(vp_new)>0 && collect_vp==true)  { for i:= range vp_new { *vp=append(*vp,vp_new[i]) } }
+    *possible_value_candidates=append(*possible_value_candidates,value)
+}
+
 
 
 func ReadFileLines (filename string) (lines []string,err error){
