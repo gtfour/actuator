@@ -29,21 +29,12 @@ func main() {
 
    operating_system:=&OS{}
 
-   vp_control := make(chan int, 1)
-   vp_control <- 0
 
-   operating_system.GetHostname(vp_control)
-   operating_system.GetName(vp_control)
-   operating_system.GetVersion(vp_control)
-   operating_system.GetRelease(vp_control)
+   operating_system.GetHostname()
+   operating_system.GetName()
+   operating_system.GetVersion()
+   operating_system.GetRelease()
 
-   for {
-
-   complete_count:= <- vp_control
-   fmt.Println("test")
-   if (complete_count==4) {break }
-
-   }
 
    fmt.Printf("hostname %s",operating_system.Hostname)
    fmt.Printf("name %s",operating_system.Name)
@@ -56,7 +47,7 @@ func main() {
 
 
 
-func (os *OS) GetHostname(vp_control chan int) (err error) {
+func (os *OS) GetHostname() (err error) {
 
 //по ключу директ находятся однострочные файлы
 //по ключу комплекс - файлы которые надо парсить на предмет наличия внутри complex_key
@@ -71,21 +62,22 @@ func (os *OS) GetHostname(vp_control chan int) (err error) {
 
     var values []string
 
-    complete_count:= <- vp_control
 
 
-    go func() { values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
-               fmt.Printf("GetHostname %d",complete_count+1)
-               vp_control <- complete_count+1
-               for { complete_count:= <-vp_control ;
-               if complete_count == 4 { break }}
-    os.Hostname,_=ValidateValue(values,key) }()
+    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+
+    // proccessing lines from virtual provider 
+    var empty_vp []string
+    for line_num :=range os.VirtualProvider{
+        SingleLineProcessing(&values,&empty_vp,os.VirtualProvider[line_num],complex_keys,false)
+    }
+    os.Hostname,_=ValidateValue(values,key)
 
     return nil
 
 }
 
-func (os *OS) GetName(vp_control chan int) (err error) {
+func (os *OS) GetName() (err error) {
 
 
     var providers = map[string][]string {"complex":{"/etc/SuSE-release","/etc/SuSE-brand" , "/etc/lsb-release", "/etc/os-release"},"direct":{"/etc/redhat-release", "/etc/fedora-release","/etc/SuSE-brand"}}
@@ -95,13 +87,14 @@ func (os *OS) GetName(vp_control chan int) (err error) {
     key:="name"
     var values []string
 
-    complete_count:= <- vp_control
-    go func() { values,_,os.VirtualProvider=GetParamValue(providers,complex_keys) 
-                 fmt.Printf("GetName %d",complete_count+1)
-                 vp_control <- complete_count+1
-                 for { complete_count:= <-vp_control
-                      if complete_count == 4 { break }}
-    os.Name,_=ValidateValue(values,key)}()
+    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+    // proccessing lines from virtual provider
+    var empty_vp []string
+    for line_num :=range os.VirtualProvider{
+        SingleLineProcessing(&values,&empty_vp,os.VirtualProvider[line_num],complex_keys,false)
+    }
+
+    os.Name,_=ValidateValue(values,key)
 
 
     return nil
@@ -110,21 +103,22 @@ func (os *OS) GetName(vp_control chan int) (err error) {
 
 }
 
-func (os *OS) GetVersion(vp_control chan int) (err error) {
+func (os *OS) GetVersion() (err error) {
 
-    var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release", "/etc/SuSE-brand"},"direct":{"/etc/redhat-release","/etc/issue"}}
+    var providers = map[string][]string {"complex":{"/etc/SuSE-release", "/etc/lsb-release", "/etc/os-release", "/etc/SuSE-brand","/etc/issue","/etc/redhat-release"}}
 
     var complex_keys = []string {"VERSION_ID","VERSION","release","DISTRIB_RELEASE","ID"}
 
     key:="version"
     var values []string
-    complete_count:= <- vp_control
-    go func() { values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
-                fmt.Printf("GetVersion %d",complete_count+1)
-                for { complete_count:= <-vp_control
-                      vp_control <- complete_count+1
-                      if complete_count == 4 { break }}
-    os.Version,_=ValidateValue(values,key)}()
+    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+    // proccessing lines from virtual provider
+    var empty_vp []string
+    for line_num :=range os.VirtualProvider{
+        SingleLineProcessing(&values,&empty_vp,os.VirtualProvider[line_num],complex_keys,false)
+    }
+
+    os.Version,_=ValidateValue(values,key)
 
 
     return nil
@@ -133,21 +127,22 @@ func (os *OS) GetVersion(vp_control chan int) (err error) {
 
 //
 
-func (os *OS) GetRelease(vp_control chan int) (err error) {
+func (os *OS) GetRelease() (err error) {
 
-    var providers = map[string][]string {"complex":{"/etc/lsb-release","/etc/fedora-release","/etc/redhat-release","/etc/SuSE-brand"}}
+    var providers = map[string][]string {"complex":{"/etc/lsb-release","/etc/fedora-release","/etc/redhat-release","/etc/SuSE-brand","/etc/os-release","/etc/issue"}}
 
-    var complex_keys = []string {"release","DISTRIB_RELEASE","VERSION_ID","VERSION","VERSION_ID"}
+    var complex_keys = []string {"release","DISTRIB_RELEASE","VERSION_ID","VERSION","VERSION_ID","RELEASE"}
 
     key:="release"
     var values []string
-    complete_count:= <- vp_control
-    go func() { values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
-                fmt.Printf("GetRelease %d",complete_count+1)
-                vp_control <- complete_count+1
-                for { complete_count:= <-vp_control
-                    if complete_count == 4 { break }}
-    os.Release,_=ValidateValue(values,key)}()
+    values,_,os.VirtualProvider=GetParamValue(providers,complex_keys)
+    // proccessing lines from virtual provider
+    var empty_vp []string
+    for line_num :=range os.VirtualProvider{
+        SingleLineProcessing(&values,&empty_vp,os.VirtualProvider[line_num],complex_keys,false)
+    }
+
+    os.Release,_=ValidateValue(values,key)
 
 
 
@@ -312,13 +307,17 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
                               sp_line[wid]=strings.Replace(sp_line[wid], "(", "", -1)
                               sp_line[wid]=strings.Replace(sp_line[wid], ")", "", -1)
                               version_and_release := strings.Split(sp_line[wid],".")
+                              fmt.Printf("\nVERSION_AND_RELEASE %s\n",version_and_release)
                               if (len(version_and_release)>=2) {
                                   version=version+string(version_and_release[0])
+                                  // test
+                                  //release=release+string(version_and_release[1])
                                   if (len(version_and_release[1:])>1) {
 
-                                      release=strings.Join(version_and_release[1:],".") } else {
+                                      release=release+string(strings.Join(version_and_release[1:],".")) ; fmt.Printf("\nif: %s\b",release)  } else {
 
                                       release=release+string(version_and_release[1]) }
+                                      fmt.Printf("\nelse: %s\n",release)
                               } }
 
                        }
