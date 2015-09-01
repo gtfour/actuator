@@ -40,7 +40,6 @@ func main() {
    fmt.Printf("name %s",operating_system.Name)
    fmt.Printf("version %s",operating_system.Version)
    fmt.Printf("release %s",operating_system.Release)
-   fmt.Printf("------------------------------")
    fmt.Println(operating_system.VirtualProvider)
 
 }
@@ -71,7 +70,7 @@ func (os *OS) GetHostname() (err error) {
     for line_num :=range os.VirtualProvider{
         SingleLineProcessing(&values,&empty_vp,os.VirtualProvider[line_num],complex_keys,false)
     }
-    os.Hostname,_=ValidateValue(values,key)
+    os.Hostname,_=ValidateValue(values,key,os)
 
     return nil
 
@@ -94,7 +93,7 @@ func (os *OS) GetName() (err error) {
         SingleLineProcessing(&values,&empty_vp,os.VirtualProvider[line_num],complex_keys,false)
     }
 
-    os.Name,_=ValidateValue(values,key)
+    os.Name,_=ValidateValue(values,key,os)
 
 
     return nil
@@ -118,7 +117,7 @@ func (os *OS) GetVersion() (err error) {
         SingleLineProcessing(&values,&empty_vp,os.VirtualProvider[line_num],complex_keys,false)
     }
 
-    os.Version,_=ValidateValue(values,key)
+    os.Version,_=ValidateValue(values,key,os)
 
 
     return nil
@@ -142,7 +141,7 @@ func (os *OS) GetRelease() (err error) {
         SingleLineProcessing(&values,&empty_vp,os.VirtualProvider[line_num],complex_keys,false)
     }
 
-    os.Release,_=ValidateValue(values,key)
+    os.Release,_=ValidateValue(values,key,os)
 
 
 
@@ -241,7 +240,7 @@ func ReadFileLines (filename string) (lines []string,err error){
 
 }
 
-func ValidateValue (values []string, key string) (value string,err error) {
+func ValidateValue (values []string, key string,os *OS) (value string,err error) {
 
     if key == "hostname" { fmt.Printf("hostname:")  ;  for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
     if key == "name" { fmt.Printf("name:")  ; for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
@@ -253,20 +252,41 @@ func ValidateValue (values []string, key string) (value string,err error) {
        if key == "hostname" {
 
 
-           if (len(values[i])>len(value))&&(! strings.HasPrefix(values[i], "local")) { value=values[i] }
+           if (len(values[i])>len(value))&&(! strings.HasPrefix(values[i], "local")) { value=values[i] ; break }
 
        }
        if key == "name" {
 
            //var exp_values []string
-           for i := range values {
+           value = "Unknown"
+           //for i := range values {
 
-               if !IsContainDigit(values[i]) { }
+               if !IsContainDigit(values[i]) && (strings.Index(values[i], " ")==-1) && (strings.Index(values[i], ".")==-1) &&  values[i]!=""  { value=values[i] ; break  }
 
-           }
+           //}
 
     }
-    }
+     if key == "version" { 
+
+        value = "Unknown"
+        //for i := range values {
+
+            if IsContainDigit(values[i]) && (strings.Index(values[i], " ")==-1) && (strings.Index(values[i], ".")==-1) &&  values[i]!=""  { value=values[i] ;break }
+
+
+        //}
+     }
+     if key=="release" {
+
+            fmt.Printf("\nvalidate:%s\n",values)
+            if os.Version!="" {  /*version := os.Version*/ }
+            if IsContainDigit(values[i]) && (strings.Index(values[i], " ")==-1) &&  values[i]!=""  { value=values[i] ; break  }
+
+
+     }
+     }
+
+
     return value, nil
 
 
@@ -314,10 +334,10 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
                                   //release=release+string(version_and_release[1])
                                   if (len(version_and_release[1:])>1) {
 
-                                      release=release+string(strings.Join(version_and_release[1:],".")) ; fmt.Printf("\nif: %s\b",release)  } else {
+                                      release=release+string(strings.Join(version_and_release[1:],"."))   } else {
 
                                       release=release+string(version_and_release[1]) }
-                                      fmt.Printf("\nelse: %s\n",release)
+                                      
                               } }
 
                        }
