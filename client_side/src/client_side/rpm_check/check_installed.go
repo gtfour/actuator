@@ -22,6 +22,7 @@ func PackagesList () (packages []string,err error){
   cmd := exec.Command("rpm", "-qa","--queryformat='%{NAME}\n'")
   cmd.Stdin = strings.NewReader("some input")
   var out bytes.Buffer
+
   cmd.Stdout = &out
   err = cmd.Run()
   if err != nil {
@@ -46,11 +47,14 @@ func GetInfo(package_name string) (info Info,err error) {
   cmd := exec.Command("rpm", "-qi",package_name)
   cmd.Stdin = strings.NewReader("some input")
   var out bytes.Buffer
+  var stderr bytes.Buffer
   cmd.Stdout = &out
+  cmd.Stderr = &stderr
   err = cmd.Run()
   if err != nil {
       log.Fatal(err)
   }
+  fmt.Printf("\nErr: %q\n",stderr.String())
   lines:=strings.Split(out.String(),"\n")
   for line_num :=range lines {
     line:=lines[line_num]
