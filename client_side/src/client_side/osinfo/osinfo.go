@@ -28,19 +28,25 @@ type OS struct {
 func main() {
 
    operating_system:=&OS{}
-
-
-   operating_system.GetHostname()
-   operating_system.GetName()
-   operating_system.GetVersion()
-   operating_system.GetRelease()
+   operating_system.GetInfo()
 
 
    fmt.Printf("hostname %s",operating_system.Hostname)
    fmt.Printf("name %s",operating_system.Name)
    fmt.Printf("version %s",operating_system.Version)
    fmt.Printf("release %s",operating_system.Release)
-   fmt.Println(operating_system.VirtualProvider)
+
+}
+
+func (os *OS) GetInfo ()(err error) {
+
+  os.GetHostname()
+  os.GetName()
+  os.GetVersion()
+  os.GetRelease()
+  return nil
+
+
 
 }
 
@@ -242,10 +248,10 @@ func ReadFileLines (filename string) (lines []string,err error){
 
 func ValidateValue (values []string, key string,os *OS) (value string,err error) {
 
-    if key == "hostname" { fmt.Printf("hostname:")  ;  for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
-    if key == "name" { fmt.Printf("name:")  ; for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
-    if key == "version" { fmt.Printf("version:")  ; for i := range values { fmt.Printf("%s|",values[i]) }  ; fmt.Println("\n") }
-    if key == "release" { fmt.Printf("release:")  ; for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
+    //if key == "hostname" { fmt.Printf("hostname:")  ;  for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
+    //if key == "name" { fmt.Printf("name:")  ; for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
+    //if key == "version" { fmt.Printf("version:")  ; for i := range values { fmt.Printf("%s|",values[i]) }  ; fmt.Println("\n") }
+    //if key == "release" { fmt.Printf("release:")  ; for i := range values { fmt.Printf("%s|",values[i]) } ; fmt.Println("\n")  }
 
     for i := range values{
 
@@ -278,9 +284,12 @@ func ValidateValue (values []string, key string,os *OS) (value string,err error)
      }
      if key=="release" {
 
-            fmt.Printf("\nvalidate:%s\n",values)
-            if os.Version!="" {  /*version := os.Version*/ }
-            if IsContainDigit(values[i]) && (strings.Index(values[i], " ")==-1) &&  values[i]!=""  { value=values[i] ; break  }
+            //fmt.Printf("\nvalidate:%s\n",values)
+            version := os.Version
+            if os.Version!="" {
+                if IsContainDigit(values[i]) && (strings.Index(values[i], " ")==-1) &&  values[i]!="" && !strings.HasPrefix(values[i], version)  { value=values[i] ; break  } }else {
+                if IsContainDigit(values[i]) && (strings.Index(values[i], " ")==-1) &&  values[i]!="" { value=values[i] ;  break }
+            }
 
 
      }
@@ -297,7 +306,7 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
 
 
     param,value = SplitLine(line)
-    for key := range complex_keys { if strings.EqualFold(complex_keys[key],param) {  fmt.Printf("Debug::  cckey: %s param:  %s\n",complex_keys[key],param )  ; return value,vp,nil } }
+    for key := range complex_keys { if strings.EqualFold(complex_keys[key],param) {  /*fmt.Printf("Debug::  cckey: %s param:  %s\n",complex_keys[key],param ) */ ; return value,vp,nil } }
     // below extension to parse redhat-release and SuSE-brand txt files
 
 
@@ -327,7 +336,7 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
                               sp_line[wid]=strings.Replace(sp_line[wid], "(", "", -1)
                               sp_line[wid]=strings.Replace(sp_line[wid], ")", "", -1)
                               version_and_release := strings.Split(sp_line[wid],".")
-                              fmt.Printf("\nVERSION_AND_RELEASE %s\n",version_and_release)
+                              //fmt.Printf("\nVERSION_AND_RELEASE %s\n",version_and_release)
                               if (len(version_and_release)>=2) {
                                   version=version+string(version_and_release[0])
                                   // test
@@ -393,7 +402,7 @@ func SplitLine (line string ) (param string,value string ) {
 
         } else {  if (param=="" && value == "") { param=line ; value=line } }
     }
-    fmt.Printf("Input: %s Param: %s Value: %s\n",line,param,value)
+    //fmt.Printf("Input: %s Param: %s Value: %s\n",line,param,value)
     return param,value
 }
 
