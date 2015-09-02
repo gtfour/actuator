@@ -6,7 +6,7 @@ import (
     "net"
     "net/http"
     "io/ioutil"
-    "reflect"
+//    "reflect"
 //    "errors"
 //    "fmt"
     "encoding/json"
@@ -17,7 +17,7 @@ import (
 type TestJson struct {
 
     //struct to test json reciever
-    data string `json:"data"`
+    Data string `json:"data"`
 
 }
 
@@ -68,6 +68,7 @@ func makeHandlerFunc(filepath string,messages chan string, reqtype string) (hand
     handle_func=func (rw http.ResponseWriter, r *http.Request) {
 
     body, err := ioutil.ReadAll(r.Body)
+    fmt.Println(r.Body)
 
     if err != nil {
         panic("can't read request body")
@@ -82,7 +83,7 @@ func makeHandlerFunc(filepath string,messages chan string, reqtype string) (hand
     }
 
     messages <-(r.Method+" | "+r.Proto+" | "+r.URL.Path+"|")
-    messages <-(t.data)
+    messages <-(t.Data)
 
 
     }
