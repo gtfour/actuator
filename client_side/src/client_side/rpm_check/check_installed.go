@@ -1,50 +1,60 @@
 package main
 
-import "client_side/protodb"
-import "github.com/golang/protobuf/proto"
-// proto3_proto
-//import "github.com/golang/protobuf/proto/proto3_proto"
-import "fmt"
+import (
+        "bytes"
+        "fmt"
+        "log"
+        "os/exec"
+        "strings"
+)
+
 
 var packages_db_file = "/var/lib/rpm/Packages"
 var environment_dir = "/var/lib/rpm"
 
-func main(){
 
-    environment_config:=&protodb.EnvironmentConfig{Create:false}
 
-    environment,_:=protodb.OpenEnvironment(environment_dir,environment_config)
+func main() {
+  packages,_:=PackagesList()
+  fmt.Printf("%s",packages)
+}
 
-    transaction:=protodb.NoTransaction
+func PackagesList () (packages []string,err error){
 
-    database,_ :=protodb.OpenDatabase(environment,transaction,packages_db_file,&protodb.DatabaseConfig{Create:false})
+  cmd := exec.Command("rpm", "-qa","--queryformat='%{NAME}\n'")
+  cmd.Stdin = strings.NewReader("some input")
+  var out bytes.Buffer
+  cmd.Stdout = &out
+  err = cmd.Run()
+  if err != nil {
+      log.Fatal(err)
+  }
+  packages= strings.Split(out.String(),"\n")
+  return packages,err
 
-      defer database.Close()
 
-    database_type,_:=database.Type()
+}
 
-    cursor,err:=database.Cursor(transaction)
+type Info struct {
+  Name string
+  Version string
+  Release string
+  Architecture string
 
-    if err!= nil {
+}
 
-       return
+func GetInfo(package_name string) (info Info,err error) {
 
-    }
+  cmd := exec.Command("rpm", "-qi",package_name)
+  cmd.Stdin = strings.NewReader("some input")
+  var out bytes.Buffer
+  cmd.Stdout = &out
+  err = cmd.Run()
+  if err != nil {
+      log.Fatal(err)
+  }
+  lines= strings.Split(out.String(),"\n")
 
-    var message proto.Message
-    var cursor_message proto.Message
-    err=cursor.First(cursor_message)
-    fmt.Println(" ------ ")
-    //fmt.Println(err)
-    //fmt.Println(cursor)
-    fmt.Println(" ------ ")
-    //fmt.Println(cursor_message)
-    err=database.Get(transaction,false,message)
-    fmt.Println(" ------ ")
-    fmt.Println(err)
-    fmt.Println(message)
-    fmt.Println(" ------ ")
-    fmt.Println(database_type)
 
 }
 
