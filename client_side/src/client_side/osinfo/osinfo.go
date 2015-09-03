@@ -1,7 +1,6 @@
-package main
+package osinfo
 // Determines current operating system
 
-import "fmt"
 import "io/ioutil"
 import "strings"
 // I am glad to introduce you "f-shit power" and "How does this fking code work" technologies 
@@ -25,31 +24,16 @@ type OS struct {
 
 
 
-func main() {
+func GetInfo ()(os OS,err error) {
 
-   operating_system:=&OS{}
-   operating_system.GetInfo()
-
-
-   fmt.Printf("hostname %s",operating_system.Hostname)
-   fmt.Printf("name %s",operating_system.Name)
-   fmt.Printf("version %s",operating_system.Version)
-   fmt.Printf("release %s",operating_system.Release)
-
-}
-
-func (os *OS) GetInfo ()(err error) {
-
+  os=OS{}
   os.GetHostname()
   os.GetName()
   os.GetVersion()
   os.GetRelease()
-  return nil
-
-
+  return os,nil
 
 }
-
 
 
 func (os *OS) GetHostname() (err error) {
@@ -346,7 +330,7 @@ func ParseLine (line string,complex_keys []string) (value string,vp []string, er
                                       release=release+string(strings.Join(version_and_release[1:],"."))   } else {
 
                                       release=release+string(version_and_release[1]) }
-                                      
+
                               } }
 
                        }
