@@ -1,8 +1,7 @@
-package main
+package rpm_check
 
 import (
         "bytes"
-        "fmt"
         "log"
         "os/exec"
         "strings"
@@ -11,16 +10,20 @@ import (
 
 
 
-func main() {
-  packages,_:=PackagesList()
-  fmt.Printf("%s",packages)
-  for pkg_num:=range packages { info,_:=GetInfo(packages[pkg_num]) ; fmt.Printf("%s %s %s %s\n",info.Name,info.Version,info.Release,info.Architecture)}
+
+func GetPkgs()(pkgs []Info){
+
+    packages,_:=PackagesList()
+    for pkg_num:=range packages { info,_:=GetInfo(packages[pkg_num]) ; pkgs=append(pkgs,info) }
+    return pkgs
+
+
 }
 
 func PackagesList () (packages []string,err error){
 
   cmd := exec.Command("rpm", "-qa","--queryformat='%{NAME}\n'")
-  cmd.Stdin = strings.NewReader("some input")
+  cmd.Stdin = strings.NewReader("")
   var out bytes.Buffer
 
   cmd.Stdout = &out
@@ -29,7 +32,11 @@ func PackagesList () (packages []string,err error){
       log.Fatal(err)
   }
   packages_temp:= strings.Split(out.String(),"\n")
-  for i:=range packages_temp { pkg_name:=packages_temp[i] ;  pkg_name=strings.Replace(pkg_name, `'`, "", -1) ; pkg_name=strings.Replace(pkg_name, " ", "", -1) ; packages=append(packages,pkg_name) }
+  for i:=range packages_temp { 
+    pkg_name:=packages_temp[i]
+    pkg_name=strings.Replace(pkg_name, `'`, "", -1)
+    pkg_name=strings.Replace(pkg_name, " ", "", -1)
+    if (pkg_name!="") { packages=append(packages,pkg_name) } }
   return packages,err
 
 
@@ -47,14 +54,11 @@ func GetInfo(package_name string) (info Info,err error) {
   cmd := exec.Command("rpm", "-qi",package_name)
   cmd.Stdin = strings.NewReader("some input")
   var out bytes.Buffer
-  var stderr bytes.Buffer
   cmd.Stdout = &out
-  cmd.Stderr = &stderr
   err = cmd.Run()
   if err != nil {
       log.Fatal(err)
   }
-  fmt.Printf("\nErr: %q\n",stderr.String())
   lines:=strings.Split(out.String(),"\n")
   for line_num :=range lines {
     line:=lines[line_num]
