@@ -1,5 +1,5 @@
 package config
-package os
+import ( "os" ; "path/filepath" )
 
 var config_delim = "|"
 var repositoryTag = "[repository]"
@@ -23,8 +23,12 @@ func CreateConfigFile()(err error, cnf *Config) {
 
 }
 
-func (cnf *Config) GetSelfPath() (err error){
+func (cnf *Config) GetCurrentConfigFile() (err error){
 
+
+    dir, _ := filepath.Split(os.Args[0])
+    if configfile, err := os.Open(dir+configFileName) ; 
+     
     return nil
 
 }
