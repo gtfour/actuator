@@ -1,5 +1,6 @@
-package config
-import ( "os" ; "path/filepath" )
+//package config
+package main
+import ( "os" ; "path/filepath" ; "fmt" ; "io/ioutil"  )
 
 var config_delim = "|"
 var repositoryTag = "[repository]"
@@ -8,29 +9,49 @@ var selfconfTag="[selfconf]"
 var wengineAddressTag = "[wengine]"
 var configFileName = "actuator.conf"
 
+func main() {
+
+  config:=&Config{}
+  fmt.Println(config.GetCurrentConfigFile())
+
+}
+
 type Config struct {
 
-  Path string
+  ConfigFilePath string
   Files []string
+  ConfigFileExists bool
   
 
 }
 
 func CreateConfigFile()(err error, cnf *Config) {
 
-    return nil, &ConfigFile{}
-
+    return nil,cnf
 
 }
 
 func (cnf *Config) GetCurrentConfigFile() (err error){
 
-
     dir, _ := filepath.Split(os.Args[0])
-    if configfile, err := os.Open(dir+configFileName) ; 
-     
-    return nil
+    fmt.Printf("\nDirectory:  %s \n",dir)
+    if _, err := os.Open(dir+configFileName) ; err != nil {
 
+        cnf.ConfigFileExists=false
+        return err
+
+    } else {
+
+        err=cnf.RequestNewConfig()
+        if err!=nil {
+
+            return err
+
+        }
+    }
+    cnf.ConfigFileExists=true
+
+    return nil
 }
 
 func (cnf *Config) AddDataToBlock(blockTag string) (err error){
@@ -58,6 +79,18 @@ func (cnf  *Config)UploadToFile (err error) {
 
 
 
+
+
+}
+
+func (cnf  *Config)ParseFile (err error) {
+
+    if (cnf.ConfigFileExists) {
+
+      content, err := ioutil.ReadFile(cnf.ConfigFilePath)
+      for line_num :=range content {
+
+      }
 
 
 }
