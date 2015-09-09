@@ -8,6 +8,8 @@ type Target struct {
     OldSum string
     Sum string
     Modified bool
+    EventGroup string
+    EventType string
 
 }
 
