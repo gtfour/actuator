@@ -21,6 +21,31 @@ type Directory struct {
 
 var is_dir_error = errors.New("is_dir")
 
+func IsDir(file os.File)(isdir bool,err error) {
+
+    file_info , err := file.Stat()
+    if err != nil {
+        
+        return false,err
+
+    }
+    file_mode :=  file_info.Mode()
+    if file_mode.IsDir()==true {
+  
+        isdir = true
+ 
+    } else {
+
+        isdir = false
+
+
+    }
+
+    return
+
+
+}
+
 func Get_md5_dir(path string)(dir_struct Directory,err error){
 
 
@@ -83,7 +108,7 @@ func Get_md5_file(path string)(file_struct File, err error){
         return file_struct, err 
 
     }
-    file_info , err := file.Stat()
+    isd IsDir(file)
     if err != nil { 
         
         return file_struct, err
