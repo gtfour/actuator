@@ -1,4 +1,4 @@
-package actuator 
+package main 
 //
 // actuator
 // client side
@@ -21,19 +21,26 @@ type Directory struct {
 
 var is_dir_error = errors.New("is_dir")
 
-func IsDir(file os.File)(isdir bool,err error) {
+func IsDir(path string)(isdir bool,err error) {
+
+    file, err := os.Open(path)
+    defer file.Close()
+    if err != nil {
+
+        return false, err
+
+    }
 
     file_info , err := file.Stat()
+
     if err != nil {
-        
         return false,err
 
     }
     file_mode :=  file_info.Mode()
+
     if file_mode.IsDir()==true {
-  
         isdir = true
- 
     } else {
 
         isdir = false
@@ -42,9 +49,16 @@ func IsDir(file os.File)(isdir bool,err error) {
     }
 
     return
+}
 
+func Get_mtime(path string)(mtime string) {
+
+    fi, _:=os.Stat(path)
+    mtime_struct:=fi.ModTime()
+    return string(mtime_struct.sec)
 
 }
+
 
 func Get_md5_dir(path string)(dir_struct Directory,err error){
 
@@ -102,27 +116,11 @@ func Get_md5_file(path string)(file_struct File, err error){
     //
     var result []byte
     file_struct=File{}
-    file, err := os.Open(path)
-    if err != nil {
 
-        return file_struct, err 
+    if isdir,err:=IsDir(path) ; (isdir==true && err==nil ) {return  file_struct, is_dir_error } 
+    if (err!=nil ) {return  file_struct, err }
 
-    }
-    isd IsDir(file)
-    if err != nil { 
-        
-        return file_struct, err
-
-    }
-    file_mode :=  file_info.Mode()
-    if file_mode.IsDir()==true {
-  
-        return file_struct, is_dir_error
- 
-    }
-    //if mode.IsDir() {
-    //    fmt.Println("FIle is directory")
-    //}
+    file, _:= os.Open(path)
     defer file.Close()
     hash := md5.New()
     if _,err = io.Copy(hash, file); err !=nil {
@@ -151,5 +149,7 @@ func main() {
             fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
 
         }
+        fmt.Println(":: mtime ::")
+        fmt.Println(Get_mtime("/tmp/does_not_exist"))
 
     }
