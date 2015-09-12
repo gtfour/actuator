@@ -1,4 +1,4 @@
-package main 
+package actuator 
 //
 // actuator
 // client side
@@ -55,7 +55,7 @@ func Get_mtime(path string)(mtime string) {
 
     fi, _:=os.Stat(path)
     mtime_struct:=fi.ModTime()
-    return string(mtime_struct.sec)
+    return string(mtime_struct.Format("02 Jan 06 15:04 MST"))
 
 }
 
