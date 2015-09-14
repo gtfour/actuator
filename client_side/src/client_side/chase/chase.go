@@ -13,8 +13,8 @@ type Target struct {
     EventGroup string
     EventType string
     IsDir bool
-    EventChan chan
-    InfoChan chan
+    InfoIn <-chan bool
+    InfoOut chan<- string
 
 }
 
@@ -35,8 +35,8 @@ func Start (targets []string)(err error){
 
                 target:=&Target{}
                 target.Path=dir_struct.Files[file_id].Path
-                target.OldSum=string(dir_struct.Files[file_id].Sum)
-                go target.ChasingiFile()
+                target.OldMarker=string(dir_struct.Files[file_id].Sum)
+                go target.ChasingFile()
 
 
             }
@@ -46,7 +46,7 @@ func Start (targets []string)(err error){
 
       target:=&Target{}
       target.Path=targets[id]
-      target.OldSum=string(file_struct.Sum)
+      target.OldMarker=string(file_struct.Sum)
        go target.ChasingFile()
 
 
@@ -64,17 +64,39 @@ func Stop()(err error) {
 }
 
 
-func (tgt *Target) ChasingFile (){
+func (tgt *Target) ChasingFile() (err error){
+
+
+
+    for {
+
+        ask_path:= <-tgt.InfoIn
+
+        if(ask_path) { tgt.InfoOut <- tgt.Path }
+
+        if file,err:=actuator.Get_md5_file(tgt.Path);err!=nil { tgt.Marker=string(file.Sum) } else { return err }
+
+        if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
+
+        tgt.OldMarker=tgt.Marker
+
+
+    }
+    return nil
 
 
 }
 
-func (tgt *Target) ChasingDir (message chan string){
+func (tgt *Target) ChasingDir()(err error){
 
     
     for {
 
         tgt.Marker=actuator.Get_mtime(tgt.Path)
+
+        if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
+
+        tgt.OldMarker=tgt.Marker
         
 
     }
