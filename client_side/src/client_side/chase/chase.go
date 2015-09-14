@@ -3,6 +3,13 @@ package chase
 import "client_side/actuator"
 
 
+type Message struct {
+
+    Path string
+    IsChased bool
+    KillSelf bool
+
+}
 
 type Target struct {
 
@@ -20,6 +27,12 @@ type Target struct {
 
 func Start (targets []string)(err error){
 
+
+    request_channel:=make(chan bool)
+    response_channel:=make(chan string)
+
+    targets_count :=0
+
     for id :=range targets {
 
     file_struct,err:= actuator.Get_md5_file(targets[id])
@@ -27,7 +40,6 @@ func Start (targets []string)(err error){
     if err!=nil {
 
         dir_struct,err:=actuator.Get_md5_dir(targets[id])
-         
 
         if err==nil {
 
@@ -36,6 +48,9 @@ func Start (targets []string)(err error){
                 target:=&Target{}
                 target.Path=dir_struct.Files[file_id].Path
                 target.OldMarker=string(dir_struct.Files[file_id].Sum)
+                target.InfoIn = request_channel
+                target.InfoOut = response_channel
+                targets_count+=1
                 go target.ChasingFile()
 
 
@@ -47,11 +62,15 @@ func Start (targets []string)(err error){
       target:=&Target{}
       target.Path=targets[id]
       target.OldMarker=string(file_struct.Sum)
-       go target.ChasingFile()
+      target.InfoIn = request_channel
+      target.InfoOut = response_channel
+      targets_count+=1
+      go target.ChasingFile()
 
 
     }
     }
+
 
     return nil
 
@@ -59,14 +78,11 @@ func Start (targets []string)(err error){
 
 func Stop()(err error) {
 
-
     return nil
 }
 
 
 func (tgt *Target) ChasingFile() (err error){
-
-
 
     for {
 
@@ -74,22 +90,21 @@ func (tgt *Target) ChasingFile() (err error){
 
         if(ask_path) { tgt.InfoOut <- tgt.Path }
 
+        ask_path = false
+
         if file,err:=actuator.Get_md5_file(tgt.Path);err!=nil { tgt.Marker=string(file.Sum) } else { return err }
 
         if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
 
         tgt.OldMarker=tgt.Marker
 
-
     }
     return nil
-
 
 }
 
 func (tgt *Target) ChasingDir()(err error){
 
-    
     for {
 
         tgt.Marker=actuator.Get_mtime(tgt.Path)
@@ -97,10 +112,8 @@ func (tgt *Target) ChasingDir()(err error){
         if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
 
         tgt.OldMarker=tgt.Marker
-        
 
     }
-
 
 }
 
