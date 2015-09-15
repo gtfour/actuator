@@ -25,13 +25,13 @@ type Target struct {
 
 }
 
-func Start (targets []string)(err error){
+func Start (targets []string, mng <-chan bool)(err error){
 
 
     request_channel:=make(chan bool)
     response_channel:=make(chan string)
 
-    targets_count :=0
+    directory_count :=0
 
     for id :=range targets {
 
@@ -70,8 +70,11 @@ func Start (targets []string)(err error){
 
     }
     }
+    for {
 
 
+
+    }
     return nil
 
 }
