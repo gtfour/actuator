@@ -20,8 +20,8 @@ type Target struct {
     EventGroup string
     EventType string
     IsDir bool
-    InfoIn <-chan bool
-    InfoOut chan<- string
+    InfoIn chan bool
+    InfoOut chan string
 
 }
 
@@ -30,8 +30,8 @@ type TargetDir struct {
     Path string
     OldMarker string
     Marker string
-    InfoIn chan bool
-    InfoOut chan string
+    InfoIn []chan bool
+    InfoOut []chan string
 
 
 }
@@ -40,6 +40,7 @@ func Start (targets []string, mng <-chan bool)(err error){
 
 
     request_channel:=make(chan bool)
+
     response_channel:=make(chan string)
 
     for id :=range targets {
@@ -54,6 +55,7 @@ func Start (targets []string, mng <-chan bool)(err error){
         for subname:=range dir_struct.SubDirs  {
 
             tgt_dir:=TargetDir{}
+
             subdirs[dir_struct.SubDirs[subname]]=tgt_dir
 
 
@@ -71,9 +73,10 @@ func Start (targets []string, mng <-chan bool)(err error){
                 target.OldMarker=string(file_struct.Sum)
                 if subdir, ok := subdirs[file_struct.Dir]; ok {
 
-                    target.InfoIn = subdir.InfoIn
-                    target.InfoOut = subdir.InfoOut
-                
+                    subdir.InfoIn=append(subdir.InfoIn,target.InfoIn)
+                    subdir.InfoOut=append(subdir.InfoOut,target.InfoOut)
+
+
                 }else {
                     target.InfoIn = request_channel
                     target.InfoOut = response_channel
@@ -134,15 +137,48 @@ func (tgt *Target) ChasingFile() (err error){
 
 func (tgt *TargetDir) ChasingDir()(err error){
 
+    dir, err := os.Open(tgt.Path)
+
+    if err != nil {
+        return  err
+    }
+
+    dir_content , err := dir.Readdirnames(-1)
+    dir.Close()
+
     for {
 
         tgt.Marker=actuator.Get_mtime(tgt.Path)
 
-        if (tgt.Marker!=tgt.OldMarker){ 
+        if (tgt.Marker!=tgt.OldMarker){
 
-           tgt.InfoIn <- true 
+           for chan_id :=range tgt.InfoIn {
 
+               tgt.InfoIn[chan_id] <- true
 
+           }
+
+           var current_targets []string
+
+           for chan_id :=range tgt.InfoOut {
+
+               current_targets=append(current_targets,<-tgt.InfoOut[chan_id])
+
+           }
+
+           for cur_id :=range current_targets {
+
+              var found bool
+
+              for prev_id :=range dir_content  {
+                  if (dir_content[prev_id]==current_targets[cur_id]) { found=true }
+
+              }
+              if (found == false) {
+
+              }
+
+           }
         }
 
         tgt.OldMarker=tgt.Marker
