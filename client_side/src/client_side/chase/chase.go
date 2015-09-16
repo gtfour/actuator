@@ -51,6 +51,8 @@ func Start (targets []string, message_channel chan string)(err error){
 
     //response_channel:=make(chan string)
 
+    message_channel<-"Starting"
+
     for id :=range targets {
 
     file_struct,err:= actuator.Get_md5_file(targets[id])
@@ -65,6 +67,7 @@ func Start (targets []string, message_channel chan string)(err error){
 
             tgt_dir:=TargetDir{}
             tgt_dir.MessageChannel=message_channel
+            tgt_dir.Path=dir_struct.SubDirs[subname]
 
             subdirs[dir_struct.SubDirs[subname]]=tgt_dir
             go tgt_dir.ChasingDir()
@@ -153,6 +156,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
     dir, err := os.Open(tgt.Path)
 
+
     if err != nil {
         return  err
     }
@@ -162,6 +166,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
     for {
 
+        tgt.MessageChannel<-tgt.Marker+"--"+tgt.OldMarker
         tgt.Marker=actuator.Get_mtime(tgt.Path)
 
         if (tgt.Marker!=tgt.OldMarker){
@@ -215,6 +220,7 @@ func (tgt *Target) Reporting (){
 func Listen() (messages chan string){
 
 
+    messages=make(chan string,100)
     var test_dir= []string {"/etc/apt"}
     Start(test_dir,messages)
     return
@@ -232,9 +238,11 @@ messages:=Listen()
 for {
 
 select{
-    case message:=<-messages:fmt.Println(message)
+    case message:=<-messages:
+        fmt.Println(message)
+        time.Sleep(1000 * time.Millisecond)
     default:
-        time.Sleep(100 * time.Millisecond)
+        time.Sleep(1000 * time.Millisecond)
         fmt.Println("No messages")
 
 }
