@@ -3,7 +3,7 @@ import ("os" ; "fmt")
 
 func main() {
 
-fi, _:=os.Stat("/tmp/test2/test5")
+fi, _:=os.Stat("/etc/apt")
 mtime:=fi.ModTime()
 
 fmt.Println(mtime)
