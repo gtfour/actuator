@@ -25,13 +25,22 @@ type Target struct {
 
 }
 
+type TargetDir struct {
+
+    Path string
+    OldMarker string
+    Marker string
+    InfoIn chan bool
+    InfoOut chan string
+
+
+}
+
 func Start (targets []string, mng <-chan bool)(err error){
 
 
     request_channel:=make(chan bool)
     response_channel:=make(chan string)
-
-    var subdirs []string
 
     for id :=range targets {
 
@@ -40,18 +49,35 @@ func Start (targets []string, mng <-chan bool)(err error){
     if err!=nil {
 
         dir_struct,err:=actuator.Get_md5_dir(targets[id])
-        subdirs=append(subdirs,dir_struct.SubDirs)
-        
+        var subdirs map[string]TargetDir
+
+        for subname:=range dir_struct.SubDirs  {
+
+            tgt_dir:=TargetDir{}
+            subdirs[dir_struct.SubDirs[subname]]=tgt_dir
+
+
+
+        }
 
         if err==nil {
 
             for file_id :=range dir_struct.Files{
 
+                file_struct:=dir_struct.Files[file_id]
+
                 target:=&Target{}
-                target.Path=dir_struct.Files[file_id].Path
-                target.OldMarker=string(dir_struct.Files[file_id].Sum)
-                target.InfoIn = request_channel
-                target.InfoOut = response_channel
+                target.Path=file_struct.Path
+                target.OldMarker=string(file_struct.Sum)
+                if subdir, ok := subdirs[file_struct.Dir]; ok {
+
+                    target.InfoIn = subdir.InfoIn
+                    target.InfoOut = subdir.InfoOut
+                
+                }else {
+                    target.InfoIn = request_channel
+                    target.InfoOut = response_channel
+                }
                 go target.ChasingFile()
 
 
@@ -106,13 +132,18 @@ func (tgt *Target) ChasingFile() (err error){
 
 }
 
-func (tgt *Target) ChasingDir()(err error){
+func (tgt *TargetDir) ChasingDir()(err error){
 
     for {
 
         tgt.Marker=actuator.Get_mtime(tgt.Path)
 
-        if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
+        if (tgt.Marker!=tgt.OldMarker){ 
+
+           tgt.InfoIn <- true 
+
+
+        }
 
         tgt.OldMarker=tgt.Marker
 
