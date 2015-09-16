@@ -31,7 +31,7 @@ func Start (targets []string, mng <-chan bool)(err error){
     request_channel:=make(chan bool)
     response_channel:=make(chan string)
 
-    directory_count :=0
+    var subdirs []string
 
     for id :=range targets {
 
@@ -40,6 +40,8 @@ func Start (targets []string, mng <-chan bool)(err error){
     if err!=nil {
 
         dir_struct,err:=actuator.Get_md5_dir(targets[id])
+        subdirs=append(subdirs,dir_struct.SubDirs)
+        
 
         if err==nil {
 
@@ -50,7 +52,6 @@ func Start (targets []string, mng <-chan bool)(err error){
                 target.OldMarker=string(dir_struct.Files[file_id].Sum)
                 target.InfoIn = request_channel
                 target.InfoOut = response_channel
-                targets_count+=1
                 go target.ChasingFile()
 
 
@@ -64,7 +65,6 @@ func Start (targets []string, mng <-chan bool)(err error){
       target.OldMarker=string(file_struct.Sum)
       target.InfoIn = request_channel
       target.InfoOut = response_channel
-      targets_count+=1
       go target.ChasingFile()
 
 

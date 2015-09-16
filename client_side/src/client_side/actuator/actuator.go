@@ -4,11 +4,12 @@ package actuator
 // client side
 
 import ( "fmt" ; "crypto/md5" ; "io" ; "os" ; "errors" )
-//import ( "path/filepath")
+import ( "path/filepath")
 
 
 type File struct {
     Path string
+    Dir string
     Sum []byte
 }
 
@@ -16,6 +17,7 @@ type Directory struct {
 
     Path string
     Files []File
+    SubDirs []string
 
 }
 
@@ -95,6 +97,7 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
         if err==is_dir_error{
 
             another_dir_struct, _:=Get_md5_dir(path+"/"+dir_content[file])
+            dir_struct.SubDirs=append(dir_struct.SubDirs,path)
 
             for another_file:= range another_dir_struct.Files{
 
@@ -131,6 +134,7 @@ func Get_md5_file(path string)(file_struct File, err error){
 
     file_struct.Path = path
     file_struct.Sum = mdsum
+    file_struct.Dir = filepath.Dir(path)
 
     return file_struct , nil
 
