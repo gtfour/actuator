@@ -43,6 +43,8 @@ func Start (targets []string, message_channel chan string)(err error){
 
     message_channel<-"Starting"
 
+    subdirs:=make(map[string]*TargetDir)
+
     for id :=range targets {
 
     file_struct,err:= actuator.Get_md5_file(targets[id])
@@ -53,16 +55,23 @@ func Start (targets []string, message_channel chan string)(err error){
 
         if err!=nil { continue  } // was a return err
 
-        subdirs:=make(map[string]*TargetDir)
 
         for subname:=range dir_struct.SubDirs  {
 
-            tgt_dir:=TargetDir{}
-            tgt_dir.MessageChannel=message_channel
-            tgt_dir.Path=dir_struct.SubDirs[subname]
 
-            subdirs[dir_struct.SubDirs[subname]]=tgt_dir
-            //go tgt_dir.ChasingDir()
+            path :=dir_struct.SubDirs[subname]
+
+            if _, ok := subdirs[path]; ok == false {
+
+                tgt_dir:=&TargetDir{}
+
+                tgt_dir.MessageChannel=message_channel
+
+                tgt_dir.Path=path
+
+                subdirs[path]=tgt_dir
+                //go tgt_dir.ChasingDir()
+            }
 
 
 
@@ -114,6 +123,13 @@ func Start (targets []string, message_channel chan string)(err error){
 
 
     }
+    }
+
+
+    for i:=range subdirs {
+
+        go subdirs[i].ChasingDir()
+
     }
 
 
@@ -176,6 +192,23 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
     dir_content , err := dir.Readdirnames(-1)
     dir.Close()
+    var dir_files []string
+    for i:=range dir_content {
+
+        path:=dir_content[i]
+        is_dir,err:=actuator.IsDir(path)
+
+        if (err==nil){
+            if is_dir==false {
+
+                dir_files=append(dir_files,path)
+
+            }
+
+
+
+        }
+    }
 
     for {
 
@@ -187,7 +220,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
            tgt.MessageChannel<-tgt.Marker+"--"+tgt.OldMarker
 
-           if (len(tgt.InfoIn)>0)&&(len(dir_content)>0) {
+           if (len(tgt.InfoIn)>0) {
 
                tgt.MessageChannel<-"channel size :"+string(len(tgt.InfoIn))+"nothing"
 
@@ -204,7 +237,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
            for chan_id :=range tgt.InfoOut {
 
                select{
-                   case path_value:=<-tgt.InfoOut[chan_id]: 
+                   case path_value:=<-tgt.InfoOut[chan_id]:
                        current_targets=append(current_targets,path_value)
                    default: continue
                    }
@@ -214,26 +247,39 @@ func (tgt *TargetDir) ChasingDir()(err error){
            for cur_id :=range current_targets {
 
               var found bool
+
               tgt.MessageChannel<-"cur_targ"+current_targets[cur_id]
 
-              for prev_id :=range dir_content  {
-                  if (dir_content[prev_id]==current_targets[cur_id]) {
-                      //tgt.MessageChannel<-"existing: "+dir_content[prev_id] + "new:"+current_targets[cur_id]
+              for prev_id :=range dir_files {
+
+                  if (dir_files[prev_id]==current_targets[cur_id]) {
+
+                      tgt.MessageChannel<-"existing: "+dir_files[prev_id] + "new:"+current_targets[cur_id]
+
                       found=true
+
                       break
+
                    }
 
               }
+
               if (found == false) {
+
                   new_item_path:=current_targets[cur_id]
+
                   var new_items = []string {new_item_path}
+
                   Start(new_items,tgt.MessageChannel)
 
               }
 
            }
-           dir_content=current_targets
+
+           dir_files=current_targets
+
           }
+
         }
 
         tgt.OldMarker=tgt.Marker
@@ -253,7 +299,7 @@ func Listen() (messages chan string){
 
 
     messages=make(chan string,100)
-    var test_dir= []string {"/etc/apt"}
+    var test_dir= []string {"/tmp/test"}
     Start(test_dir,messages)
     return
 
