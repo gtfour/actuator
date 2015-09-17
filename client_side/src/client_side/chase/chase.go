@@ -134,22 +134,22 @@ func (tgt *Target) ChasingFile() (err error){
     for {
 
         if (tgt.Dir!="") {
-            //select {
-             //   case ask_path:= <-tgt.InfoIn:
+            select {
+                case ask_path:= <-tgt.InfoIn:
 
-                    ask_path:= <-tgt.InfoIn
+                    //ask_path:= <-tgt.InfoIn
 
                     if(ask_path) { tgt.InfoOut <- tgt.Path }
 
-               // default:
+                default:
 
-                    if file,err:=actuator.Get_md5_file(tgt.Path);err!=nil { tgt.Marker=string(file.Sum) } else { return err }
+                    if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { return err }
 
                     if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
 
                     tgt.OldMarker=tgt.Marker
 
-        //}
+        }
 
        } else {
 
