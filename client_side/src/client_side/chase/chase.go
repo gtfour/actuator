@@ -18,16 +18,15 @@ type Message struct {
 type Target struct {
 
     Path string
+    Dir string
     OldMarker string
     Marker string
     Modified bool
     EventGroup string
     EventType string
-    IsDir bool
     InfoIn chan bool
     InfoOut chan string
     MessageChannel chan string
-    
 
 }
 
@@ -39,7 +38,6 @@ type TargetDir struct {
     InfoIn []chan bool
     InfoOut []chan string
     MessageChannel chan string
-
 
 }
 
@@ -86,9 +84,12 @@ func Start (targets []string, message_channel chan string)(err error){
                 target.Path=file_struct.Path
                 target.OldMarker=string(file_struct.Sum)
                 target.MessageChannel=message_channel
+                target.InfoIn=make(chan bool,1)
+                target.InfoOut=make(chan string,1)
 
                 if subdir, ok := subdirs[file_struct.Dir]; ok {
 
+                    target.Dir=file_struct.Dir
                     subdir.InfoIn=append(subdir.InfoIn,target.InfoIn)
                     subdir.InfoOut=append(subdir.InfoOut,target.InfoOut)
 
@@ -132,20 +133,33 @@ func (tgt *Target) ChasingFile() (err error){
 
     for {
 
-        
-        select {
-            case ask_path:= <-tgt.InfoIn:
+        if (tgt.Dir!="") {
+            //select {
+             //   case ask_path:= <-tgt.InfoIn:
 
-                if(ask_path) { tgt.InfoOut <- tgt.Path }
-            default:
+                    ask_path:= <-tgt.InfoIn
 
-                if file,err:=actuator.Get_md5_file(tgt.Path);err!=nil { tgt.Marker=string(file.Sum) } else { return err }
+                    if(ask_path) { tgt.InfoOut <- tgt.Path }
 
-                if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
+               // default:
 
-                tgt.OldMarker=tgt.Marker
+                    if file,err:=actuator.Get_md5_file(tgt.Path);err!=nil { tgt.Marker=string(file.Sum) } else { return err }
 
-       }
+                    if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
+
+                    tgt.OldMarker=tgt.Marker
+
+        //}
+
+       } else {
+
+          if file,err:=actuator.Get_md5_file(tgt.Path);err!=nil { tgt.Marker=string(file.Sum) } else { return err }
+          if (tgt.Marker!=tgt.OldMarker) { tgt.Reporting() }
+
+                    tgt.OldMarker=tgt.Marker
+
+
+      }
 
     }
     return nil
@@ -166,7 +180,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
     for {
 
-        tgt.MessageChannel<-tgt.Marker+"--"+tgt.OldMarker
+        //tgt.MessageChannel<-tgt.Marker+"--"+tgt.OldMarker
         tgt.Marker=actuator.Get_mtime(tgt.Path)
 
         if (tgt.Marker!=tgt.OldMarker){
@@ -220,7 +234,7 @@ func (tgt *Target) Reporting (){
 func Listen() (messages chan string){
 
 
-    messages=make(chan string,100)
+    messages=make(chan string,1)
     var test_dir= []string {"/etc/apt"}
     Start(test_dir,messages)
     return
@@ -240,9 +254,9 @@ for {
 select{
     case message:=<-messages:
         fmt.Println(message)
-        time.Sleep(1000 * time.Millisecond)
+        time.Sleep(100 * time.Millisecond)
     default:
-        time.Sleep(1000 * time.Millisecond)
+        time.Sleep(100 * time.Millisecond)
         fmt.Println("No messages")
 
 }
