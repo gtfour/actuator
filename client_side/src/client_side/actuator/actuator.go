@@ -3,8 +3,9 @@ package actuator
 // actuator
 // client side
 
-import ( "fmt" ; "crypto/md5" ; "io" ; "os" ; "errors" )
+import ( "crypto/md5" ; "io" ; "os" ; "errors" )
 import ( "path/filepath")
+//import "fmt"
 
 
 type File struct {
@@ -142,18 +143,18 @@ func Get_md5_file(path string)(file_struct File, err error){
 
 
 
-func main() {
+//func main() {
 
-        dir_struct , _ :=Get_md5_dir("/var/lib/rpm")
+//        dir_struct , _ :=Get_md5_dir("/var/lib/rpm")
 
-        for file := range dir_struct.Files {
+//        for file := range dir_struct.Files {
 
-            file_struct := dir_struct.Files[file]
+//            file_struct := dir_struct.Files[file]
 
-            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
+//            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
 
-        }
-        fmt.Println(":: mtime ::")
-        fmt.Println(Get_mtime("/tmp/does_not_exist"))
+//        }
+//        fmt.Println(":: mtime ::")
+//        fmt.Println(Get_mtime("/tmp/does_not_exist"))
 
-    }
+//    }

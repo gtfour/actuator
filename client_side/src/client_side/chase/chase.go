@@ -7,14 +7,6 @@ import "fmt"
 import "time"
 
 
-type Message struct {
-
-    Path string
-    IsChased bool
-    KillSelf bool
-
-}
-
 type Target struct {
 
     Path string
@@ -59,7 +51,9 @@ func Start (targets []string, message_channel chan string)(err error){
 
         dir_struct,err:=actuator.Get_md5_dir(targets[id])
 
-        subdirs:=make(map[string]TargetDir)
+        if err!=nil { continue  } // was a return err
+
+        subdirs:=make(map[string]*TargetDir)
 
         for subname:=range dir_struct.SubDirs  {
 
@@ -68,24 +62,23 @@ func Start (targets []string, message_channel chan string)(err error){
             tgt_dir.Path=dir_struct.SubDirs[subname]
 
             subdirs[dir_struct.SubDirs[subname]]=tgt_dir
-            go tgt_dir.ChasingDir()
+            //go tgt_dir.ChasingDir()
 
 
 
         }
 
-        if err==nil {
 
             for file_id :=range dir_struct.Files{
 
                 file_struct:=dir_struct.Files[file_id]
 
-                target:=&Target{}
+                target:=Target{}
                 target.Path=file_struct.Path
                 target.OldMarker=string(file_struct.Sum)
                 target.MessageChannel=message_channel
                 target.InfoIn=make(chan bool,1)
-                target.InfoOut=make(chan string,1)
+                target.InfoOut=make(chan string, 1)
 
                 if subdir, ok := subdirs[file_struct.Dir]; ok {
 
@@ -102,11 +95,16 @@ func Start (targets []string, message_channel chan string)(err error){
 
 
             }
+            //for i:=range subdirs {
 
-        }
+           //      subdirs[i].ChasingDir()
+
+
+            //}
+
     }else {
 
-      target:=&Target{}
+      target:=Target{}
       target.Path=targets[id]
       target.OldMarker=string(file_struct.Sum)
       //target.InfoIn = request_channel
@@ -138,14 +136,13 @@ func (tgt *Target) ChasingFile() (err error){
                 case ask_path:= <-tgt.InfoIn:
 
                     //ask_path:= <-tgt.InfoIn
-
-                    if(ask_path) { tgt.InfoOut <- tgt.Path }
+                    if(ask_path==true) { tgt.InfoOut <- tgt.Path }
 
                 default:
 
                     if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { return err }
 
-                    if (tgt.Marker!=tgt.OldMarker){ tgt.Reporting() }
+                    if (tgt.Marker!=tgt.OldMarker){ go tgt.Reporting() }
 
                     tgt.OldMarker=tgt.Marker
 
@@ -153,8 +150,10 @@ func (tgt *Target) ChasingFile() (err error){
 
        } else {
 
-          if file,err:=actuator.Get_md5_file(tgt.Path);err!=nil { tgt.Marker=string(file.Sum) } else { return err }
-          if (tgt.Marker!=tgt.OldMarker) { tgt.Reporting() }
+
+          //tgt.MessageChannel<-"chasing file without parent: "+tgt.Path
+          if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { return err }
+          if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() }
 
                     tgt.OldMarker=tgt.Marker
 
@@ -183,28 +182,46 @@ func (tgt *TargetDir) ChasingDir()(err error){
         //tgt.MessageChannel<-tgt.Marker+"--"+tgt.OldMarker
         tgt.Marker=actuator.Get_mtime(tgt.Path)
 
-        if (tgt.Marker!=tgt.OldMarker){
+        if (tgt.Marker!=tgt.OldMarker) && (tgt.OldMarker!=""){
 
-           for chan_id :=range tgt.InfoIn {
 
-               tgt.InfoIn[chan_id] <- true
+           tgt.MessageChannel<-tgt.Marker+"--"+tgt.OldMarker
 
-           }
+           if (len(tgt.InfoIn)>0)&&(len(dir_content)>0) {
+
+               tgt.MessageChannel<-"channel size :"+string(len(tgt.InfoIn))+"nothing"
+
+               for chan_id :=range tgt.InfoIn {
+
+                   tgt.MessageChannel<-"send name request to childs:"+string(chan_id)
+
+                   tgt.InfoIn[chan_id] <- true
+
+               }
 
            var current_targets []string
 
            for chan_id :=range tgt.InfoOut {
 
-               current_targets=append(current_targets,<-tgt.InfoOut[chan_id])
+               select{
+                   case path_value:=<-tgt.InfoOut[chan_id]: 
+                       current_targets=append(current_targets,path_value)
+                   default: continue
+                   }
 
            }
 
            for cur_id :=range current_targets {
 
               var found bool
+              tgt.MessageChannel<-"cur_targ"+current_targets[cur_id]
 
               for prev_id :=range dir_content  {
-                  if (dir_content[prev_id]==current_targets[cur_id]) { found=true }
+                  if (dir_content[prev_id]==current_targets[cur_id]) {
+                      //tgt.MessageChannel<-"existing: "+dir_content[prev_id] + "new:"+current_targets[cur_id]
+                      found=true
+                      break
+                   }
 
               }
               if (found == false) {
@@ -216,6 +233,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
            }
            dir_content=current_targets
+          }
         }
 
         tgt.OldMarker=tgt.Marker
@@ -227,14 +245,14 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
 func (tgt *Target) Reporting (){
 
-    tgt.MessageChannel <- tgt.Path
+    tgt.MessageChannel <- tgt.Path+"file was modified"
 
 }
 
 func Listen() (messages chan string){
 
 
-    messages=make(chan string,1)
+    messages=make(chan string,100)
     var test_dir= []string {"/etc/apt"}
     Start(test_dir,messages)
     return
@@ -254,9 +272,9 @@ for {
 select{
     case message:=<-messages:
         fmt.Println(message)
-        time.Sleep(100 * time.Millisecond)
+        time.Sleep(10 * time.Millisecond)
     default:
-        time.Sleep(100 * time.Millisecond)
+        time.Sleep(1000 * time.Millisecond)
         fmt.Println("No messages")
 
 }
