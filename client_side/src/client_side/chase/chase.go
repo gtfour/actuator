@@ -5,6 +5,12 @@ import "client_side/actuator"
 import "os"
 import "fmt"
 import "time"
+//
+//pprof debug
+import _ "net/http/pprof"
+import "net/http"
+//
+//
 
 
 type Target struct {
@@ -36,48 +42,33 @@ type TargetDir struct {
 
 func Start (targets []string, message_channel chan string)(err error){
 
-
     //request_channel:=make(chan bool)
-
     //response_channel:=make(chan string)
-
     message_channel<-"Starting"
-
     subdirs:=make(map[string]*TargetDir)
 
     for id :=range targets {
 
-    file_struct,err:= actuator.Get_md5_file(targets[id])
+        file_struct,err:= actuator.Get_md5_file(targets[id])
 
-    if err!=nil {
+        if err!=nil {
 
-        dir_struct,err:=actuator.Get_md5_dir(targets[id])
-
-        if err!=nil { continue  } // was a return err
-
-
-        for subname:=range dir_struct.SubDirs  {
+            dir_struct,err:=actuator.Get_md5_dir(targets[id])
+            if err!=nil { continue  } // was a return err
+            for subname:=range dir_struct.SubDirs  {
 
 
-            path :=dir_struct.SubDirs[subname]
+                path :=dir_struct.SubDirs[subname]
 
-            if _, ok := subdirs[path]; ok == false {
+                if _, ok := subdirs[path]; ok == false {
 
-                tgt_dir:=&TargetDir{}
-
-                tgt_dir.MessageChannel=message_channel
-
-                tgt_dir.Path=path
-
-                subdirs[path]=tgt_dir
+                    tgt_dir:=&TargetDir{}
+                    tgt_dir.MessageChannel=message_channel
+                    tgt_dir.Path=path
+                    subdirs[path]=tgt_dir
                 //go tgt_dir.ChasingDir()
+                }
             }
-
-
-
-        }
-
-
             for file_id :=range dir_struct.Files{
 
                 file_struct:=dir_struct.Files[file_id]
@@ -102,7 +93,6 @@ func Start (targets []string, message_channel chan string)(err error){
                 //}
                 go target.ChasingFile()
 
-
             }
             //for i:=range subdirs {
 
@@ -125,20 +115,14 @@ func Start (targets []string, message_channel chan string)(err error){
     }
     }
 
-
     for i:=range subdirs {
-
         go subdirs[i].ChasingDir()
-
     }
-
-
     return nil
 
 }
 
 func Stop()(err error) {
-
     return nil
 }
 
@@ -152,152 +136,174 @@ func (tgt *Target) ChasingFile() (err error){
                 case ask_path:= <-tgt.InfoIn:
 
                     //ask_path:= <-tgt.InfoIn
-                    if(ask_path==true) { tgt.InfoOut <- tgt.Path } else { return nil }
+                    if(ask_path==true) { tgt.InfoOut <- tgt.Path } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
 
                 default:
 
                     if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { return err }
 
-                    if (tgt.Marker!=tgt.OldMarker){ go tgt.Reporting() }
+                    if (tgt.Marker!=tgt.OldMarker){ go tgt.Reporting() } else {time.Sleep(1000 * time.Millisecond)}
 
                     tgt.OldMarker=tgt.Marker
 
         }
 
        } else {
-
-
           //tgt.MessageChannel<-"chasing file without parent: "+tgt.Path
           if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { return err }
-          if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() }
+          if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() } else {time.Sleep(1000 * time.Millisecond)}
 
                     tgt.OldMarker=tgt.Marker
 
-
       }
-
     }
     return nil
-
 }
 
 func (tgt *TargetDir) ChasingDir()(err error){
 
-    dir, err := os.Open(tgt.Path)
 
-
-    if err != nil {
-        return  err
-    }
-
-    dir_content , err := dir.Readdirnames(-1)
-    dir.Close()
-    var dir_files []string
-    for i:=range dir_content {
-
+   //dup
+   dir, err := os.Open(tgt.Path)
+   if err != nil {
+   return  err
+   }
+   var dir_content []string
+   dir_content , err = dir.Readdirnames(-1)
+   dir.Close()
+   // dupdup
+   var dir_files_first,dir_subdirs_first []string
+   for i:=range dir_content {
         path:=dir_content[i]
         is_dir,err:=actuator.IsDir(path)
-
         if (err==nil){
-            if is_dir==false {
+                   if is_dir==false {
+                    dir_files_first=append(dir_files_first,path)
 
-                dir_files=append(dir_files,path)
-
-            }
-
-
-
+        } else { dir_subdirs_first=append(dir_subdirs_first,path) }
         }
     }
 
-    for {
 
+
+
+           //dupdup
+           // dup
+
+
+
+
+
+    for {
         //tgt.MessageChannel<-tgt.Marker+"--"+tgt.OldMarker
         tgt.Marker=actuator.Get_mtime(tgt.Path)
 
         if (tgt.Marker!=tgt.OldMarker) && (tgt.OldMarker!=""){
 
+           //dup 
+           dir, err = os.Open(tgt.Path)
+           if err != nil {
+           return  err
+           }
+           dir_content , err = dir.Readdirnames(-1)
+           dir.Close()
+           // dupdup
+           var dir_files,dir_subdirs []string
+           for i:=range dir_content {
+               path:=dir_content[i]
+                   is_dir,err:=actuator.IsDir(path)
+               if (err==nil){
+                   if is_dir==false {
+                    dir_files=append(dir_files,path)
 
-           tgt.MessageChannel<-tgt.Marker+"--"+tgt.OldMarker
+                } else { dir_subdirs=append(dir_subdirs,path) }
+              }
+           }
 
+
+
+
+           //dupdup
+           // dup
            if (len(tgt.InfoIn)>0) {
-
-               tgt.MessageChannel<-"channel size :"+string(len(tgt.InfoIn))+"nothing"
 
                for chan_id :=range tgt.InfoIn {
 
                    tgt.MessageChannel<-"send name request to childs:"+string(chan_id)
-
                    tgt.InfoIn[chan_id] <- true
 
                }
-
            var current_targets []string
 
            for chan_id :=range tgt.InfoOut {
-
                select{
                    case path_value:=<-tgt.InfoOut[chan_id]:
                        current_targets=append(current_targets,path_value)
                    default: continue
                    }
-
            }
+           var new_targets_files []string
+           var new_targets_subdirs []string
 
-           var new_targets []string
-
-           for cur_id :=range current_targets {
-
+           // tratata files
+           for cur_dk :=range dir_files {
               var found bool
-
-              tgt.MessageChannel<-"cur_targ"+current_targets[cur_id]
-
-              for prev_id :=range dir_files {
-
-                  if (dir_files[prev_id]==current_targets[cur_id]) {
-
-                      tgt.MessageChannel<-"existing: "+dir_files[prev_id] + "new:"+current_targets[cur_id]
-
+              for prev_id :=range current_targets {
+                  if (dir_files[cur_dk]==current_targets[prev_id]) {
                       found=true
-
                       break
-
                    }
-
               }
-
               if (found == false) {
-
-                  new_item_path:=current_targets[cur_id]
-                  new_targets=append(new_targets,new_item_path)
-
-                  //var new_items = []string {new_item_path}
-
-                  //Start(new_items,tgt.MessageChannel)
-
+                  new_item_path:=dir_files[cur_dk]
+                  new_targets_files=append(new_targets_files,new_item_path)
               }
+           }
+           // end tratata files
+           // tratata subdirs 
+           for subdir_id :=range dir_subdirs {
+              var found bool
+              for prevsubdir_id :=range dir_subdirs_first  {
+                  if (dir_subdirs[subdir_id]==dir_subdirs_first[prevsubdir_id]) {
+                      found=true
+                      break
+                   }
+              }
+              if (found == false) {
+                  new_item_path:=dir_subdirs[subdir_id]
+                  new_targets_subdirs=append(new_targets_subdirs,new_item_path)
+                  // start chasing of new subdir
+                  //var new_items = []string {tgt.Path}
+                  //defer Start(new_items,tgt.MessageChannel)
 
+                  // 
+                  
+              }
            }
 
-           if (len(new_targets)>0) {
+
+
+
+
+
+
+
+
+           // end tratata subdirs
+           if (len(new_targets_files)>0) || (len(new_targets_subdirs)>0) {
 
                var new_items = []string {tgt.Path}
                defer Start(new_items,tgt.MessageChannel)
 
                for chan_id :=range tgt.InfoIn {
-
                    tgt.InfoIn[chan_id] <- false
-
                }
 
                return nil }
 
-
-           dir_files=current_targets
-
           }
 
-        }
+        } else {time.Sleep(1000 * time.Millisecond)}
 
         tgt.OldMarker=tgt.Marker
 
@@ -329,6 +335,9 @@ func Listen() (messages chan string){
 func main() {
 
 messages:=Listen()
+go func() {
+	fmt.Println(http.ListenAndServe("10.10.111.124:6060", nil))
+}()
 
 for {
 
