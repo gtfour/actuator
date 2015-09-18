@@ -152,7 +152,7 @@ func (tgt *Target) ChasingFile() (err error){
                 case ask_path:= <-tgt.InfoIn:
 
                     //ask_path:= <-tgt.InfoIn
-                    if(ask_path==true) { tgt.InfoOut <- tgt.Path }
+                    if(ask_path==true) { tgt.InfoOut <- tgt.Path } else { return nil }
 
                 default:
 
@@ -244,6 +244,8 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
            }
 
+           var new_targets []string
+
            for cur_id :=range current_targets {
 
               var found bool
@@ -267,14 +269,29 @@ func (tgt *TargetDir) ChasingDir()(err error){
               if (found == false) {
 
                   new_item_path:=current_targets[cur_id]
+                  new_targets=append(new_targets,new_item_path)
 
-                  var new_items = []string {new_item_path}
+                  //var new_items = []string {new_item_path}
 
-                  Start(new_items,tgt.MessageChannel)
+                  //Start(new_items,tgt.MessageChannel)
 
               }
 
            }
+
+           if (len(new_targets)>0) {
+
+               var new_items = []string {tgt.Path}
+               defer Start(new_items,tgt.MessageChannel)
+
+               for chan_id :=range tgt.InfoIn {
+
+                   tgt.InfoIn[chan_id] <- false
+
+               }
+
+               return nil }
+
 
            dir_files=current_targets
 
@@ -318,7 +335,7 @@ for {
 select{
     case message:=<-messages:
         fmt.Println(message)
-        time.Sleep(10 * time.Millisecond)
+        //time.Sleep(10 * time.Millisecond)
     default:
         time.Sleep(1000 * time.Millisecond)
         fmt.Println("No messages")
