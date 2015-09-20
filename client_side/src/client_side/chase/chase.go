@@ -37,7 +37,6 @@ type TargetDir struct {
 
 
 func Start (targets []string, message_channel chan string)(err error){
-
     //request_channel:=make(chan bool)
     //response_channel:=make(chan string)
     message_channel<-"Starting"
@@ -46,9 +45,10 @@ func Start (targets []string, message_channel chan string)(err error){
         file_struct,err:= actuator.Get_md5_file(targets[id])
         if err!=nil {
             dir_struct,err:=actuator.Get_md5_dir(targets[id])
-            if err!=nil { continue  } // was a return err
+            if err!=nil { continue } // was a return err
             for subname:=range dir_struct.SubDirs  {
                 path :=dir_struct.SubDirs[subname]
+                message_channel <- "subdir :" +path
                 if _, ok := subdirs[path]; ok == false {
                     tgt_dir:=&TargetDir{}
                     tgt_dir.MessageChannel=message_channel
@@ -74,7 +74,6 @@ func Start (targets []string, message_channel chan string)(err error){
                 //    target.InfoOut = response_channel
                 //}
                 go target.ChasingFile()
-
             }
             //for i:=range subdirs {
            //      subdirs[i].ChasingDir()
@@ -239,10 +238,12 @@ func (tgt *TargetDir) ChasingDir()(err error){
            }
            if (len(new_targets_files)>0)  {
                var new_items = []string {tgt.Path}
-               defer Start(new_items,tgt.MessageChannel)
+               go Start(new_items,tgt.MessageChannel)
+               tgt.MessageChannel<-"start informing childs to exit"
                for chan_id :=range tgt.InfoIn {
                    tgt.InfoIn[chan_id] <- false
                }
+               tgt.MessageChannel<-"end informing childs to exit"
                return nil }
           }
         } else {time.Sleep(1000 * time.Millisecond)}
@@ -261,10 +262,6 @@ func Listen() (messages chan string){
     var test_dir= []string {"/tmp/test"}
     Start(test_dir,messages)
     return
-
-
-
-
 
 }
 

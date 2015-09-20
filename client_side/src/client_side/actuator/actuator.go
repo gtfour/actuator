@@ -90,7 +90,10 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
 
             //go func() { 
 
+                var subdir_added bool
                 dir_struct.Files=append(dir_struct.Files,file_struct)
+                for i:=range dir_struct.SubDirs { if (dir_struct.SubDirs[i]==path) {subdir_added=true} }
+                if subdir_added==false { dir_struct.SubDirs=append(dir_struct.SubDirs,path) }
 
             //}()
         }
@@ -98,7 +101,11 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
         if err==is_dir_error{
 
             another_dir_struct, _:=Get_md5_dir(path+"/"+dir_content[file])
-            dir_struct.SubDirs=append(dir_struct.SubDirs,path)
+
+
+            var subdir_added bool
+            for i:=range dir_struct.SubDirs { if (dir_struct.SubDirs[i]==(path+"/"+dir_content[file])) {subdir_added=true} }
+            if subdir_added==false { dir_struct.SubDirs=append(dir_struct.SubDirs,(path+"/"+dir_content[file])) }
 
             for another_file:= range another_dir_struct.Files{
 
