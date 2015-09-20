@@ -247,7 +247,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
                   go target_dir.ChasingDir()
               }
            }
-           if (len(new_targets_files)>0)  {
+           if (len(new_targets_files)>0) {
                var new_items = []string {tgt.Path}
                go Start(new_items,tgt.MessageChannel)
                tgt.MessageChannel<-"start informing childs to exit"
