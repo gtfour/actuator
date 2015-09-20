@@ -41,11 +41,21 @@ func Start (targets []string, message_channel chan string)(err error){
     //response_channel:=make(chan string)
     message_channel<-"Starting"
     subdirs:=make(map[string]*TargetDir)
+
     for id :=range targets {
         file_struct,err:= actuator.Get_md5_file(targets[id])
+
         if err!=nil {
             dir_struct,err:=actuator.Get_md5_dir(targets[id])
             if err!=nil { continue } // was a return err
+            //add root dir
+            if _, ok := subdirs[targets[id]]; ok == false {
+                tgt_dir:=&TargetDir{}
+                tgt_dir.MessageChannel=message_channel
+                tgt_dir.Path=targets[id]
+                subdirs[targets[id]]=tgt_dir
+            }
+            // 
             for subname:=range dir_struct.SubDirs  {
                 path :=dir_struct.SubDirs[subname]
                 message_channel <- "subdir :" +path
@@ -228,6 +238,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
                    }
               }
               if (found == false) {
+                  tgt.MessageChannel <- "new directory was found :" + dir_subdirs[subdir_id] + ":"
                   new_item_path:=dir_subdirs[subdir_id]
                   new_targets_subdirs=append(new_targets_subdirs,new_item_path)
                   target_dir:=&TargetDir{}
