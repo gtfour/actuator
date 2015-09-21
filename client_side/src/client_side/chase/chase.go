@@ -74,7 +74,7 @@ func Start (targets []string, message_channel chan string)(err error){
                 target.OldMarker=string(file_struct.Sum)
                 target.MessageChannel=message_channel
                 target.InfoIn=make(chan bool,1)
-                target.InfoOut=make(chan string, 1)
+                target.InfoOut=make(chan string,1)
                 if subdir, ok := subdirs[file_struct.Dir]; ok {
                     target.Dir=file_struct.Dir
                     subdir.InfoIn=append(subdir.InfoIn,target.InfoIn)
@@ -85,9 +85,9 @@ func Start (targets []string, message_channel chan string)(err error){
                 //}
                 go target.ChasingFile()
             }
-            //for i:=range subdirs {
-           //      subdirs[i].ChasingDir()
-            //}
+            for i:=range subdirs {
+                 go subdirs[i].ChasingDir()
+            }
     }else{
       target:=Target{}
       target.Path=targets[id]
@@ -124,7 +124,7 @@ func (tgt *Target) ChasingFile() (err error){
 
                     if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { tgt.InfoOut <- "|exited|"  ; return err }
 
-                    if (tgt.Marker!=tgt.OldMarker){ go tgt.Reporting() } else {time.Sleep(1000 * time.Millisecond)}
+                    if (tgt.Marker!=tgt.OldMarker){ go tgt.Reporting() } else {time.Sleep(10 * time.Millisecond)}
 
                     tgt.OldMarker=tgt.Marker
 
@@ -133,7 +133,7 @@ func (tgt *Target) ChasingFile() (err error){
        } else {
           //tgt.MessageChannel<-"chasing file without parent: "+tgt.Path
           if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { tgt.InfoOut <- "|exited|"  ; return err }
-          if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() } else {time.Sleep(1000 * time.Millisecond)}
+          if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() } else {time.Sleep(10 * time.Millisecond)}
 
                     tgt.OldMarker=tgt.Marker
 
@@ -169,6 +169,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
     }
            //dupdup
            //dup
+    tgt.OldMarker=actuator.Get_mtime(tgt.Path)
     for {
         tgt.Marker=actuator.Get_mtime(tgt.Path)
         if (tgt.Marker!=tgt.OldMarker) {
@@ -193,7 +194,6 @@ func (tgt *TargetDir) ChasingDir()(err error){
            }
            //dupdup
            // dup
-           if (len(tgt.InfoIn)>0) {
 
                for chan_id :=range tgt.InfoIn {
                    tgt.MessageChannel<-"send name request to childs:"+string(chan_id)
@@ -229,6 +229,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
                   new_targets_files=append(new_targets_files,new_item_path)
               }
            }
+           dir_files_first=dir_files
            for subdir_id :=range dir_subdirs {
               var found bool
               for prevsubdir_id :=range dir_subdirs_first  {
@@ -247,18 +248,21 @@ func (tgt *TargetDir) ChasingDir()(err error){
                   go target_dir.ChasingDir()
               }
            }
+           dir_subdirs_first=dir_subdirs
+           tgt.MessageChannel<-string(len(new_targets_files))+"New targets count::>>"
            if (len(new_targets_files)>0) {
                var new_items = []string {tgt.Path}
-               go Start(new_items,tgt.MessageChannel)
+               //go Start(new_items,tgt.MessageChannel)
                tgt.MessageChannel<-"start informing childs to exit"
                for chan_id :=range tgt.InfoIn {
                    tgt.InfoIn[chan_id] <- false
                }
                tgt.MessageChannel<-"end informing childs to exit"
+               go Start(new_items,tgt.MessageChannel)
                return nil }
-          }
-        } else {time.Sleep(1000 * time.Millisecond)}
-        tgt.OldMarker=tgt.Marker
+
+          tgt.OldMarker=tgt.Marker
+        } else {time.Sleep(10 * time.Millisecond)}
     }
 }
 
