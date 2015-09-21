@@ -7,8 +7,8 @@ import "fmt"
 import "time"
 //
 //pprof debug
-import _ "net/http/pprof"
-import "net/http"
+//import _ "net/http/pprof"
+//import "net/http"
 //
 //
 
@@ -113,16 +113,21 @@ func (tgt *Target) ChasingFile() (err error){
 
     for {
 
+       var inform_about_exit bool
+
         if (tgt.Dir!="") {
+
             select {
+
                 case ask_path:= <-tgt.InfoIn:
 
                     //ask_path:= <-tgt.InfoIn
-                    if(ask_path==true) { tgt.InfoOut <- tgt.Path } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
+
+                    if(ask_path==true) { if (inform_about_exit==true) { tgt.InfoOut <- "|exited|"  } else {  tgt.InfoOut <- tgt.Path  }  } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
 
                 default:
 
-                    if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { tgt.InfoOut <- "|exited|"  ; return err }
+                    if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { inform_about_exit=true  }  //; return err }
 
                     if (tgt.Marker!=tgt.OldMarker){ go tgt.Reporting() } else {time.Sleep(10 * time.Millisecond)}
 
@@ -132,7 +137,7 @@ func (tgt *Target) ChasingFile() (err error){
 
        } else {
           //tgt.MessageChannel<-"chasing file without parent: "+tgt.Path
-          if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { tgt.InfoOut <- "|exited|"  ; return err }
+          if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { /*tgt.InfoOut <- "|exited|"  }  ;*/ return err }
           if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() } else {time.Sleep(10 * time.Millisecond)}
 
                     tgt.OldMarker=tgt.Marker
@@ -283,9 +288,9 @@ func Listen() (messages chan string){
 func main() {
 
 messages:=Listen()
-go func() {
-	fmt.Println(http.ListenAndServe("127.0.0.1:6060", nil))
-}()
+//go func() {
+//	fmt.Println(http.ListenAndServe("127.0.0.1:6060", nil))
+//}()
 
 for {
 
