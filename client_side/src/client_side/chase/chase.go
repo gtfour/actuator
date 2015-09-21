@@ -216,16 +216,16 @@ func (tgt *TargetDir) ChasingDir()(err error){
            var new_targets_files []string
            var new_targets_subdirs []string
            // tratata files
-           for cur_dk :=range dir_files {
+           for cur_id :=range dir_files {
               var found bool
-              for prev_id :=range current_targets {
-                  if (dir_files[cur_dk]==current_targets[prev_id]) {
+              for prev_id :=range dir_files_first {
+                  if (dir_files_first[prev_id]==dir_files[cur_id]) {
                       found=true
                       break
                    }
               }
               if (found == false) {
-                  new_item_path:=dir_files[cur_dk]
+                  new_item_path:=dir_files[cur_id]
                   new_targets_files=append(new_targets_files,new_item_path)
               }
            }
