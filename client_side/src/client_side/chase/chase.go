@@ -7,8 +7,8 @@ import "fmt"
 import "time"
 //
 //pprof debug
-//import _ "net/http/pprof"
-//import "net/http"
+import _ "net/http/pprof"
+import "net/http"
 //
 //
 
@@ -121,7 +121,6 @@ func (tgt *Target) ChasingFile() (err error){
 
                 case ask_path:= <-tgt.InfoIn:
 
-                    //ask_path:= <-tgt.InfoIn
 
                     if(ask_path==true) { if (inform_about_exit==true) { tgt.InfoOut <- "|exited|"  } else {  tgt.InfoOut <- tgt.Path  }  } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
 
@@ -129,7 +128,7 @@ func (tgt *Target) ChasingFile() (err error){
 
                     if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { inform_about_exit=true  }  //; return err }
 
-                    if (tgt.Marker!=tgt.OldMarker){ go tgt.Reporting() } else {time.Sleep(10 * time.Millisecond)}
+                    if (tgt.Marker!=tgt.OldMarker){ go  tgt.Reporting() } else {time.Sleep(10 * time.Millisecond)}
 
                     tgt.OldMarker=tgt.Marker
 
@@ -149,23 +148,18 @@ func (tgt *Target) ChasingFile() (err error){
 
 func (tgt *TargetDir) ChasingDir()(err error){
    //dup
-   tgt.MessageChannel<-"start chasing dir:"+tgt.Path
    dir, err := os.Open(tgt.Path)
    if err != nil {
        return  err
    }
-   tgt.MessageChannel<-"dir was opened"+tgt.Path
    var dir_content_first []string
    dir_content_first , err = dir.Readdirnames(-1)
    dir.Close()
-   tgt.MessageChannel<-"start chasing dir:"+tgt.Path
-   tgt.MessageChannel<-string(len(dir_content_first))
    // dupdup
    var dir_files_first,dir_subdirs_first []string
    for i:=range dir_content_first {
         path:=dir_content_first[i]
         is_dir,err:=actuator.IsDir(tgt.Path+"/"+path)
-        tgt.MessageChannel<-"|||||cur dir obj "+path
         if (err==nil){
                    if is_dir==false {
                     dir_files_first=append(dir_files_first,tgt.Path+"/"+path)
@@ -175,7 +169,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
     }
            //dupdup
            //dup
-    tgt.OldMarker=actuator.Get_mtime(tgt.Path)
+    //tgt.OldMarker=actuator.Get_mtime(tgt.Path)
     for {
         tgt.Marker=actuator.Get_mtime(tgt.Path)
         if (tgt.Marker!=tgt.OldMarker) {
@@ -203,7 +197,6 @@ func (tgt *TargetDir) ChasingDir()(err error){
            // dup
 
                for chan_id :=range tgt.InfoIn {
-                   tgt.MessageChannel<-"send name request to childs:"+string(chan_id)
                    tgt.InfoIn[chan_id] <- true
                }
            var current_targets []string
@@ -214,7 +207,6 @@ func (tgt *TargetDir) ChasingDir()(err error){
                //select{
                    /*case*/ path_value:=<-tgt.InfoOut[chan_id]/*:*/
                        if (path_value!="|exited|") { current_targets=append(current_targets,path_value) ; NewInfoIn=append( NewInfoIn,tgt.InfoIn[chan_id]) ; NewInfoOut=append( NewInfoOut,tgt.InfoOut[chan_id]) }
-                       tgt.MessageChannel<-"answer recieved:"+path_value
                    //default: continue
                    //}
            }
@@ -246,7 +238,6 @@ func (tgt *TargetDir) ChasingDir()(err error){
                    }
               }
               if (found == false) {
-                  tgt.MessageChannel <- "new directory was found :" + dir_subdirs[subdir_id] + ":"
                   new_item_path:=dir_subdirs[subdir_id]
                   new_targets_subdirs=append(new_targets_subdirs,new_item_path)
                   target_dir:=&TargetDir{}
@@ -256,15 +247,12 @@ func (tgt *TargetDir) ChasingDir()(err error){
               }
            }
            dir_subdirs_first=dir_subdirs
-           tgt.MessageChannel<-string(len(new_targets_files))+"New targets count::>>"
            if (len(new_targets_files)>0) {
                var new_items = []string {tgt.Path}
                //go Start(new_items,tgt.MessageChannel)
-               tgt.MessageChannel<-"start informing childs to exit"
                for chan_id :=range tgt.InfoIn {
                    tgt.InfoIn[chan_id] <- false
                }
-               tgt.MessageChannel<-"end informing childs to exit"
                go Start(new_items,tgt.MessageChannel)
                return nil }
 
@@ -290,9 +278,9 @@ func Listen() (messages chan string){
 func main() {
 
 messages:=Listen()
-//go func() {
-//	fmt.Println(http.ListenAndServe("127.0.0.1:6060", nil))
-//}()
+go func() {
+	fmt.Println(http.ListenAndServe("127.0.0.1:6060", nil))
+}()
 
 for {
 
