@@ -155,21 +155,22 @@ func (tgt *TargetDir) ChasingDir()(err error){
        return  err
    }
    tgt.MessageChannel<-"dir was opened"+tgt.Path
-   var dir_content []string
-   dir_content , err = dir.Readdirnames(-1)
+   var dir_content_first []string
+   dir_content_first , err = dir.Readdirnames(-1)
    dir.Close()
    tgt.MessageChannel<-"start chasing dir:"+tgt.Path
-   tgt.MessageChannel<-string(len(dir_content))
+   tgt.MessageChannel<-string(len(dir_content_first))
    // dupdup
    var dir_files_first,dir_subdirs_first []string
-   for i:=range dir_content {
-        path:=dir_content[i]
-        is_dir,err:=actuator.IsDir(path)
+   for i:=range dir_content_first {
+        path:=dir_content_first[i]
+        is_dir,err:=actuator.IsDir(tgt.Path+"/"+path)
+        tgt.MessageChannel<-"|||||cur dir obj "+path
         if (err==nil){
                    if is_dir==false {
-                    dir_files_first=append(dir_files_first,path)
+                    dir_files_first=append(dir_files_first,tgt.Path+"/"+path)
 
-        } else { dir_subdirs_first=append(dir_subdirs_first,path) }
+        } else { dir_subdirs_first=append(dir_subdirs_first,tgt.Path+"/"+path) }
         }
     }
            //dupdup
@@ -183,18 +184,19 @@ func (tgt *TargetDir) ChasingDir()(err error){
            if err != nil {
            return  err
            }
+           var dir_content []string
            dir_content , err = dir.Readdirnames(-1)
            dir.Close()
            // dupdup
            var dir_files,dir_subdirs []string
            for i:=range dir_content {
                path:=dir_content[i]
-                   is_dir,err:=actuator.IsDir(path)
+                   is_dir,err:=actuator.IsDir(tgt.Path+"/"+path)
                if (err==nil){
                    if is_dir==false {
-                    dir_files=append(dir_files,path)
+                    dir_files=append(dir_files,tgt.Path+"/"+path)
 
-                } else { dir_subdirs=append(dir_subdirs,path) }
+                } else { dir_subdirs=append(dir_subdirs,tgt.Path+"/"+path) }
               }
            }
            //dupdup
