@@ -122,24 +122,24 @@ func (tgt *Target) ChasingFile() (err error){
                 case ask_path:= <-tgt.InfoIn:
 
 
-                    if(ask_path==true) { if (inform_about_exit==true) { tgt.InfoOut <- "|exited|"  } else {  tgt.InfoOut <- tgt.Path  }  } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
+                    if(ask_path==true) { if (inform_about_exit==true) { tgt.InfoOut <- "|exited|" ; return nil  } else {  tgt.InfoOut <- tgt.Path  }  } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
 
                 default:
 
                     if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { inform_about_exit=true  }  //; return err }
 
-                    if (tgt.Marker!=tgt.OldMarker){ go  tgt.Reporting() } else {time.Sleep(10 * time.Millisecond)}
+                    if (tgt.Marker!=tgt.OldMarker){ go  tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {time.Sleep(10 * time.Millisecond)}
 
-                    tgt.OldMarker=tgt.Marker
+                    //tgt.OldMarker=tgt.Marker
 
         }
 
        } else {
           //tgt.MessageChannel<-"chasing file without parent: "+tgt.Path
           if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { /*tgt.InfoOut <- "|exited|"  }  ;*/ return err }
-          if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() } else {time.Sleep(10 * time.Millisecond)}
+          if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {time.Sleep(10 * time.Millisecond)}
 
-                    tgt.OldMarker=tgt.Marker
+                    //tgt.OldMarker=tgt.Marker
 
       }
     }
