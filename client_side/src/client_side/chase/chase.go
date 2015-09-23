@@ -126,7 +126,7 @@ func (tgt *Target) ChasingFile() (err error){
 
                 default:
 
-                    if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { inform_about_exit=true  }  //; return err }
+                    if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.MessageChannel<-"checking child :" +tgt.Path    ; tgt.Marker=string(file.Sum) } else {  tgt.MessageChannel<-"child is faced with ERROR :"+tgt.Path  ; inform_about_exit=true  }  //; return err }
 
                     if (tgt.Marker!=tgt.OldMarker){ go  tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {time.Sleep(10 * time.Millisecond)}
 
@@ -255,6 +255,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
                }
                go Start(new_items,tgt.MessageChannel)
                return nil }
+          
 
           tgt.OldMarker=tgt.Marker
         } else {time.Sleep(10 * time.Millisecond)}
@@ -269,7 +270,7 @@ func (tgt *Target) Reporting (){
 func Listen() (messages chan string){
 
     messages=make(chan string,100)
-    var test_dir= []string {"/tmp/test"}
+    var test_dir= []string {"/proc/net"}
     Start(test_dir,messages)
     return
 
@@ -279,7 +280,7 @@ func main() {
 
 messages:=Listen()
 go func() {
-	fmt.Println(http.ListenAndServe("127.0.0.1:6060", nil))
+	fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
 }()
 
 for {
