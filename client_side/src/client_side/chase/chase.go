@@ -270,7 +270,7 @@ func (tgt *Target) Reporting (){
 func Listen() (messages chan string){
 
     messages=make(chan string,100)
-    var test_dir= []string {"/proc/net"}
+    var test_dir= []string {"/proc/1"}
     Start(test_dir,messages)
     return
 

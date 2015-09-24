@@ -23,6 +23,7 @@ type Directory struct {
 }
 
 var is_dir_error = errors.New("is_dir")
+var is_not_regular = errors.New("isnt_reg")
 
 func IsDir(path string)(isdir bool,err error) {
 
@@ -46,8 +47,9 @@ func IsDir(path string)(isdir bool,err error) {
         isdir = true
     } else {
 
-        isdir = false
 
+        isdir = false
+        if (file_mode.IsRegular() == false) && (isdir!=true) { return false, is_not_regular }
 
     }
 
@@ -80,6 +82,8 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
     if err != nil {
         return  dir_struct, err
     }
+
+    defer dir.Close()
 
 
     for file:= range dir_content{
@@ -132,8 +136,11 @@ func Get_md5_file(path string)(file_struct File, err error){
     if (err!=nil ) {return  file_struct, err }
 
     file, _:= os.Open(path)
+
     defer file.Close()
+
     hash := md5.New()
+
     if _,err = io.Copy(hash, file); err !=nil {
 
         return file_struct, err
