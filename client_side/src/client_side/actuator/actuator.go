@@ -49,7 +49,7 @@ func IsDir(path string)(isdir bool,err error) {
 
 
         isdir = false
-        if (file_mode.IsRegular() == false) && (isdir!=true) { return false, is_not_regular }
+        if ((file_mode.IsRegular() == false) && (isdir==false))||((file_mode.String()=="L")&& (isdir==false)) { return false, is_not_regular }
 
     }
 
