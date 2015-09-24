@@ -1,17 +1,19 @@
-package actuator 
+package main
+//package actuator 
 //
 // actuator
 // client side
 
 import ( "crypto/md5" ; "io" ; "os" ; "errors" )
 import ( "path/filepath")
-//import "fmt"
+import "fmt"
 
 
 type File struct {
     Path string
     Dir string
     Sum []byte
+    Type string
 }
 
 type Directory struct {
@@ -27,6 +29,7 @@ var is_not_regular = errors.New("isnt_reg")
 
 func IsDir(path string)(isdir bool,err error) {
 
+    fmt.Printf("Path: %s\n",path)
     file, err := os.Open(path)
     defer file.Close()
     if err != nil {
@@ -47,9 +50,17 @@ func IsDir(path string)(isdir bool,err error) {
         isdir = true
     } else {
 
+        var file_type string
+
+        if file_type, ok := file_mode.String()[0] ; ok != false { return false, is_not_regular }
+
+        fmt.Printf("file mode: %s ", file_mode.String()[0])
+
+        if file_mode.IsRegular()==false { fmt.Printf("%s Is not  regular ", path) }
 
         isdir = false
-        if ((file_mode.IsRegular() == false) && (isdir==false))||((file_mode.String()=="L")&& (isdir==false)) { return false, is_not_regular }
+
+        if ((file_type == "-") && (isdir==false))||((file_type=="L") && (isdir==false)) { return false, is_not_regular }
 
     }
 
@@ -157,18 +168,18 @@ func Get_md5_file(path string)(file_struct File, err error){
 
 
 
-//func main() {
+func main() {
 
-//        dir_struct , _ :=Get_md5_dir("/var/lib/rpm")
+        dir_struct , _ :=Get_md5_dir("/tmp/test")
 
-//        for file := range dir_struct.Files {
+        for file := range dir_struct.Files {
 
-//            file_struct := dir_struct.Files[file]
+            file_struct := dir_struct.Files[file]
 
-//            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
+            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
 
-//        }
-//        fmt.Println(":: mtime ::")
-//        fmt.Println(Get_mtime("/tmp/does_not_exist"))
+        }
+        fmt.Println(":: mtime ::")
+        fmt.Println(Get_mtime("/tmp/does_not_exist"))
 
-//    }
+    }
