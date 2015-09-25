@@ -1,12 +1,12 @@
-package main
-//package actuator 
+package actuator
 //
 // actuator
 // client side
 
 import ( "crypto/md5" ; "io" ; "os" ; "errors" )
 import ( "path/filepath")
-import "fmt"
+
+// Now it skips symlinks and other shit like a pipes and character devices
 
 
 type File struct {
@@ -29,9 +29,10 @@ var is_not_regular = errors.New("isnt_reg")
 
 func IsDir(path string)(isdir bool,err error) {
 
-    fmt.Printf("Path: %s\n",path)
     file, err := os.Open(path)
+
     defer file.Close()
+
     if err != nil {
 
         return false, err
@@ -41,37 +42,37 @@ func IsDir(path string)(isdir bool,err error) {
     file_info , err := file.Stat()
 
     if err != nil {
+
         return false,err
 
     }
+
     file_mode :=  file_info.Mode()
 
     if file_mode.IsDir()==true {
+
         isdir = true
+
     } else {
 
-        var file_type string
 
-        if file_type, ok := file_mode.String()[0] ; ok != false { return false, is_not_regular }
+        file_type := string(file_mode.String()[0])
 
-        fmt.Printf("file mode: %s ", file_mode.String()[0])
-
-        if file_mode.IsRegular()==false { fmt.Printf("%s Is not  regular ", path) }
-
-        isdir = false
-
-        if ((file_type == "-") && (isdir==false))||((file_type=="L") && (isdir==false)) { return false, is_not_regular }
+        if ( file_type == "-" ) {  err = nil } else { err = is_not_regular }
 
     }
 
+
     return
+
 }
 
-func Get_mtime(path string)(mtime string) {
+func Get_mtime(path string)(mtime string,err error) {
 
-    fi, _:=os.Stat(path)
+    fi, err:=os.Stat(path)
+    if err!=nil {return mtime,err}
     mtime_struct:=fi.ModTime()
-    return string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00"))
+    return string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00")),nil
 
 }
 
@@ -113,13 +114,14 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
             //}()
         }
 
-        if err==is_dir_error{
+        if err==is_dir_error {
 
             another_dir_struct, _:=Get_md5_dir(path+"/"+dir_content[file])
 
-
             var subdir_added bool
+
             for i:=range dir_struct.SubDirs { if (dir_struct.SubDirs[i]==(path+"/"+dir_content[file])) {subdir_added=true} }
+
             if subdir_added==false { dir_struct.SubDirs=append(dir_struct.SubDirs,(path+"/"+dir_content[file])) }
 
             for another_file:= range another_dir_struct.Files{
@@ -138,15 +140,18 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
 
 
 func Get_md5_file(path string)(file_struct File, err error){
-
     //
     var result []byte
+
     file_struct=File{}
 
-    if isdir,err:=IsDir(path) ; (isdir==true && err==nil ) {return  file_struct, is_dir_error } 
-    if (err!=nil ) {return  file_struct, err }
+    isdir,err:=IsDir(path)
 
-    file, _:= os.Open(path)
+    if (isdir==true && err==nil ) { return file_struct, is_dir_error }
+
+    if ( err!=nil ) { return file_struct, err }
+
+    file, err := os.Open(path)
 
     defer file.Close()
 
@@ -156,6 +161,7 @@ func Get_md5_file(path string)(file_struct File, err error){
 
         return file_struct, err
     }
+
     mdsum:=hash.Sum(result)
 
     file_struct.Path = path
@@ -168,18 +174,18 @@ func Get_md5_file(path string)(file_struct File, err error){
 
 
 
-func main() {
-
-        dir_struct , _ :=Get_md5_dir("/tmp/test")
-
-        for file := range dir_struct.Files {
-
-            file_struct := dir_struct.Files[file]
-
-            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
-
-        }
-        fmt.Println(":: mtime ::")
-        fmt.Println(Get_mtime("/tmp/does_not_exist"))
-
-    }
+//func main() {
+//
+//        dir_struct , _ :=Get_md5_dir("/proc/1")
+//
+//        for file := range dir_struct.Files {
+//
+//            file_struct := dir_struct.Files[file]
+//
+//            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
+//
+//        }
+//        fmt.Println(":: mtime ::")
+//        fmt.Println(Get_mtime("/tmp/does_not_exist"))
+//
+//    }

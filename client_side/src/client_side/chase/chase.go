@@ -43,9 +43,13 @@ func Start (targets []string, message_channel chan string)(err error){
     subdirs:=make(map[string]*TargetDir)
 
     for id :=range targets {
+
         file_struct,err:= actuator.Get_md5_file(targets[id])
 
-        if err!=nil {
+        if err.Error()=="is_dir" {
+
+            fmt.Println(err.Error())
+
             dir_struct,err:=actuator.Get_md5_dir(targets[id])
             if err!=nil { continue } // was a return err
             //add root dir
@@ -88,14 +92,17 @@ func Start (targets []string, message_channel chan string)(err error){
             for i:=range subdirs {
                  go subdirs[i].ChasingDir()
             }
-    }else{
-      target:=Target{}
-      target.Path=targets[id]
-      target.OldMarker=string(file_struct.Sum)
-      //target.InfoIn = request_channel
-      //target.InfoOut = response_channel
-      target.MessageChannel=message_channel
-      go target.ChasingFile()
+    }else {
+
+      if err.Error()!="isnt_reg" {
+          target:=Target{}
+          target.Path=targets[id]
+          target.OldMarker=string(file_struct.Sum)
+          //target.InfoIn = request_channel
+          //target.InfoOut = response_channel
+          target.MessageChannel=message_channel
+          go target.ChasingFile()
+      }
     }
     }
     for i:=range subdirs {
@@ -126,7 +133,12 @@ func (tgt *Target) ChasingFile() (err error){
 
                 default:
 
-                    if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.MessageChannel<-"checking child :" +tgt.Path    ; tgt.Marker=string(file.Sum) } else {  tgt.MessageChannel<-"child is faced with ERROR :"+tgt.Path  ; inform_about_exit=true  }  //; return err }
+                    if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { 
+                        tgt.MessageChannel<-"checking child :" +tgt.Path
+                        tgt.Marker=string(file.Sum) } else {
+
+                        tgt.MessageChannel<-"child is faced with ERROR :"+tgt.Path
+                        inform_about_exit=true  }  //; return err }
 
                     if (tgt.Marker!=tgt.OldMarker){ go  tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {time.Sleep(10 * time.Millisecond)}
 
@@ -171,7 +183,10 @@ func (tgt *TargetDir) ChasingDir()(err error){
            //dup
     //tgt.OldMarker=actuator.Get_mtime(tgt.Path)
     for {
-        tgt.Marker=actuator.Get_mtime(tgt.Path)
+        tgt.Marker,err=actuator.Get_mtime(tgt.Path)
+
+        if err!=nil {return err}
+
         if (tgt.Marker!=tgt.OldMarker) {
            //dup 
            dir, err = os.Open(tgt.Path)
