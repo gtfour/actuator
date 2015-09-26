@@ -1,10 +1,12 @@
 package actuator
+//package main
 //
 // actuator
 // client side
 
 import ( "crypto/md5" ; "io" ; "os" ; "errors" )
 import ( "path/filepath")
+//import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 
@@ -27,9 +29,40 @@ type Directory struct {
 var is_dir_error = errors.New("is_dir")
 var is_not_regular = errors.New("isnt_reg")
 
+func IsEmpty(path string) (empty bool,err error) {
+
+    file, err := os.Open(path)
+
+    //fmt.Println(path)
+
+    defer file.Close()
+
+    if err != nil {
+
+        return false, err
+
+    }
+
+    //file_info , err := file.Stat()
+
+    if err != nil {
+
+        return false,err
+
+    }
+
+    //size :=  file_info.Size()
+
+    //fmt.Printf("file : %s size: %d ",path,size)
+
+    return true, nil
+}
+
 func IsDir(path string)(isdir bool,err error) {
 
     file, err := os.Open(path)
+
+    //fmt.Println(path)
 
     defer file.Close()
 
@@ -62,9 +95,7 @@ func IsDir(path string)(isdir bool,err error) {
 
     }
 
-
     return
-
 }
 
 func Get_mtime(path string)(mtime string,err error) {
@@ -140,12 +171,16 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
 
 
 func Get_md5_file(path string)(file_struct File, err error){
+
+    IsEmpty(path)
     //
     var result []byte
 
     file_struct=File{}
 
     isdir,err:=IsDir(path)
+
+
 
     if (isdir==true && err==nil ) { return file_struct, is_dir_error }
 
@@ -175,17 +210,17 @@ func Get_md5_file(path string)(file_struct File, err error){
 
 
 //func main() {
-//
-//        dir_struct , _ :=Get_md5_dir("/proc/1")
+
+//        dir_struct , _ :=Get_md5_dir("/tmp/test")
 //
 //        for file := range dir_struct.Files {
-//
+
 //            file_struct := dir_struct.Files[file]
-//
+
 //            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
-//
+
 //        }
 //        fmt.Println(":: mtime ::")
 //        fmt.Println(Get_mtime("/tmp/does_not_exist"))
-//
+
 //    }

@@ -122,6 +122,8 @@ func (tgt *Target) ChasingFile() (err error){
 
        var inform_about_exit bool
 
+       tgt.MessageChannel <- tgt.Path + ":current_path"
+
         if (tgt.Dir!="") {
 
             select {
@@ -285,7 +287,7 @@ func (tgt *Target) Reporting (){
 func Listen() (messages chan string){
 
     messages=make(chan string,100)
-    var test_dir= []string {"/proc/1"}
+    var test_dir= []string {"/proc/net"}
     Start(test_dir,messages)
     return
 
