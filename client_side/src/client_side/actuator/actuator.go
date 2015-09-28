@@ -27,6 +27,7 @@ type Directory struct {
 }
 
 var is_dir_error = errors.New("is_dir")
+
 var is_not_regular = errors.New("isnt_reg")
 
 func IsEmpty(path string) (empty bool,err error) {
