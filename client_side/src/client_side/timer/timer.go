@@ -1,4 +1,10 @@
-package timer
+package task_manager
 import "time"
 
-func  
+type Task struct {
+
+    TimeSecs int
+
+
+
+}
