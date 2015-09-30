@@ -43,10 +43,11 @@ var is_not_readable = errors.New("isnt_read")
 
 var ino_not_found = errors.New("ino_not_found")
 
-func ArrayHasValue(array []uint64,value uint64)(has bool){
+func ArrayHasValue(array []uint64, value uint64)(has bool){
 
-    for i:=range array { if value==array[i] {has=true ; break } }
-
+    fmt.Printf("\n array size : %d\n",len(array))
+    for i:=range array { if value==array[i] { fmt.Printf("\n-- %d --\n",array[i])  ; has=true ; break } }
+    fmt.Printf("\nchecking state %t value %d \n",has,value)
     return
 
 }
@@ -204,10 +205,11 @@ func Get_mtime(path string)(mtime string,err error) {
 
 func Get_md5_dir(path string)(dir_struct Directory,err error){
 
-
     //var dir_struct Directory
+
     dir, err := os.Open(path)
     dir_struct.Path = path
+
     //dir_struct.Files = [] File {}
 
     if err != nil {
@@ -231,14 +233,11 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
 
     //
 
-
     defer dir.Close()
-
 
     for file:= range dir_content{
 
         file_struct, err := Get_md5_file(path+"/"+dir_content[file])
-
 
         if err==nil {
 
@@ -252,12 +251,23 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
             //}()
         }
 
-        if err==is_dir_error {
+        if err == is_dir_error {
 
             another_dir_struct, _:=Get_md5_dir(path+"/"+dir_content[file])
 
-            fmt.Printf("Dir: %s  inode : %d", path, another_dir_struct.Inode)
-            if (ArrayHasValue(dir_struct.DiscoveredInodes, another_dir_struct.Inode)) { fmt.Printf("Dup found %d   %s",another_dir_struct.Inode,path)  ; continue } else { dir_struct.DiscoveredInodes=append(dir_struct.DiscoveredInodes, another_dir_struct.Inode ) }
+            fmt.Printf("Dir: %s inode : %d", path, another_dir_struct.Inode)
+
+            if ( ArrayHasValue(dir_struct.DiscoveredInodes, another_dir_struct.Inode) ) {
+
+                fmt.Printf("Dup found : %d %s :", another_dir_struct.Inode,path)
+
+                continue } else {
+
+                fmt.Printf("Dup not found : %d %s :", another_dir_struct.Inode, path)
+
+                dir_struct.DiscoveredInodes = append( dir_struct.DiscoveredInodes, another_dir_struct.Inode )
+
+            }
 
             var subdir_added bool
 
@@ -267,16 +277,20 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
 
             for another_file:= range another_dir_struct.Files{
 
-               dir_struct.Files=append(dir_struct.Files,another_dir_struct.Files[another_file])
+               dir_struct.Files = append(dir_struct.Files, another_dir_struct.Files[another_file])
 
             }
+            for inode:= range another_dir_struct.DiscoveredInodes {
+               if ( ArrayHasValue(dir_struct.DiscoveredInodes, another_dir_struct.DiscoveredInodes[inode]) ) {
+                   continue
+              } else {
+                  dir_struct.DiscoveredInodes = append( dir_struct.DiscoveredInodes, another_dir_struct.DiscoveredInodes[inode] )
+              }
+            }
         }
-
     }
     return dir_struct,nil
-    
     // os.Readdirnames
-
 }
 
 
@@ -297,11 +311,9 @@ func Get_md5_file(path string)(file_struct File, err error){
 
     if ( err!=nil ) { return file_struct, err }
 
-
     is_readable := RegularFileIsReadable(path)
 
     if is_readable==false { fmt.Printf("<Not readable %s>",path)  ;  return file_struct, is_not_readable }
-
 
     // check's>
 
