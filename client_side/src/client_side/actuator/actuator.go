@@ -9,6 +9,7 @@ import ( "path/filepath")
 import "time"
 import "bufio"
 import "fmt"
+import "syscall"
 //
 import _ "net/http/pprof"
 import "net/http"
@@ -21,13 +22,16 @@ type File struct {
     Dir string
     Sum []byte
     Type string
+    Inode uint64
 }
 
 type Directory struct {
 
     Path string
+    Inode uint64
     Files []File
     SubDirs []string
+    DiscoveredInodes []uint64
 
 }
 
@@ -36,6 +40,16 @@ var is_dir_error = errors.New("is_dir")
 var is_not_regular = errors.New("isnt_reg")
 
 var is_not_readable = errors.New("isnt_read")
+
+var ino_not_found = errors.New("ino_not_found")
+
+func ArrayHasValue(array []uint64,value uint64)(has bool){
+
+    for i:=range array { if value==array[i] {has=true ; break } }
+
+    return
+
+}
 
 func RegularFileIsReadable (path string) (readable bool) {
 
@@ -65,6 +79,22 @@ func RegularFileIsReadable (path string) (readable bool) {
     //    fmt.Printf("%s",content[i])
     //}
     return
+
+}
+
+func GetFileIndexNumber(path string)(ino uint64,err error) {
+
+    fi, err:=os.Stat(path)
+
+    if err!=nil {return 0,err}
+
+    stat_interface:=fi.Sys()
+
+    stat_object,found :=stat_interface.(*syscall.Stat_t) // type assert
+
+    if found==false { return 0,ino_not_found  }
+
+    return stat_object.Ino,nil
 
 }
 
@@ -190,6 +220,18 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
         return  dir_struct, err
     }
 
+    // check inode number 
+    // prevent looping while discovering subdirectories
+
+    inode,err:=GetFileIndexNumber(path)
+
+    if err!=nil { return dir_struct, ino_not_found }
+
+    dir_struct.Inode = inode
+
+    //
+
+
     defer dir.Close()
 
 
@@ -213,6 +255,9 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
         if err==is_dir_error {
 
             another_dir_struct, _:=Get_md5_dir(path+"/"+dir_content[file])
+
+            fmt.Printf("Dir: %s  inode : %d", path, another_dir_struct.Inode)
+            if (ArrayHasValue(dir_struct.DiscoveredInodes, another_dir_struct.Inode)) { fmt.Printf("Dup found %d   %s",another_dir_struct.Inode,path)  ; continue } else { dir_struct.DiscoveredInodes=append(dir_struct.DiscoveredInodes, another_dir_struct.Inode ) }
 
             var subdir_added bool
 
@@ -243,9 +288,10 @@ func Get_md5_file(path string)(file_struct File, err error){
 
     file_struct=File{}
 
+
+    //<check's 
+
     isdir,err:=IsDir(path)
-
-
 
     if (isdir==true && err==nil ) { return file_struct, is_dir_error }
 
@@ -253,8 +299,11 @@ func Get_md5_file(path string)(file_struct File, err error){
 
 
     is_readable := RegularFileIsReadable(path)
+
     if is_readable==false { fmt.Printf("<Not readable %s>",path)  ;  return file_struct, is_not_readable }
-    
+
+
+    // check's>
 
     file, err := os.Open(path)
 
@@ -288,18 +337,21 @@ func main() {
         }()
 
 
-        dir_struct , _ :=Get_md5_dir("/proc/1")
+        dir_struct , _ :=Get_md5_dir("/tmp/test222")
 
 
 
-        for file := range dir_struct.Files {
+        counter:=0
+        for _ = range dir_struct.Files {
 
-            file_struct := dir_struct.Files[file]
+            //file_struct := dir_struct.Files[file]
 
-            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
+            //fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
+            counter+=1
 
         }
         fmt.Println(":: mtime ::")
+        fmt.Printf("counter %s",counter)
         fmt.Println(Get_mtime("/tmp/does_not_exist"))
 
     }
