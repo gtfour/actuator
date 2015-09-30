@@ -1,12 +1,17 @@
-package actuator
-//package main
+//package actuator
+package main
 //
 // actuator
 // client side
 
 import ( "crypto/md5" ; "io" ; "os" ; "errors" )
 import ( "path/filepath")
-//import "fmt"
+import "time"
+import "bufio"
+import "fmt"
+//
+import _ "net/http/pprof"
+import "net/http"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 
@@ -30,11 +35,69 @@ var is_dir_error = errors.New("is_dir")
 
 var is_not_regular = errors.New("isnt_reg")
 
+var is_not_readable = errors.New("isnt_read")
+
+func RegularFileIsReadable (path string) (readable bool) {
+
+    // thanks for "postman" from golang@cjr for this great idea
+    // this function is preventing blocking during reading files like a /proc/1/task/1/cwd/proc/kmsg
+
+    file, err := os.Open(path)
+      if err!=nil {
+        return false
+    }
+    manage_chn:=make(chan bool,1)
+    var content []string
+    go ReadFileWithTimeoutControll( file, manage_chn, &content)
+    time.Sleep(1 * time.Millisecond)
+    select {
+        case is_readable:=<-manage_chn:
+
+            if is_readable == true /* true means first line was read  */ { read_is_completed :=<-manage_chn ; if read_is_completed == false /* false means YES  */  {   defer file.Close() ; readable=true  } }
+
+        default:
+
+            file.Close()
+            readable=false
+
+    }
+    //for i:=range content {
+    //    fmt.Printf("%s",content[i])
+    //}
+    return
+
+}
+
+func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content *[]string )(err error){
+
+    buffered_reader:=bufio.NewReader(file)
+    eof := false
+    for lino := 1; !eof; lino++ {
+        //fmt.Printf("linenum %d",lino)
+        if lino ==2 {  readable<-true }
+        line, err := buffered_reader.ReadString('\n')
+        *content=append(*content,line)
+
+            if err == io.EOF {
+                err = nil
+                eof = true
+             } else if err != nil {
+            readable<-false
+            return err
+        }
+    }
+
+    readable<-false
+    return nil
+}
+
+
+
+
+
 func IsEmpty(path string) (empty bool,err error) {
 
     file, err := os.Open(path)
-
-    //fmt.Println(path)
 
     defer file.Close()
 
@@ -44,7 +107,7 @@ func IsEmpty(path string) (empty bool,err error) {
 
     }
 
-    //file_info , err := file.Stat()
+    file_info , err := file.Stat()
 
     if err != nil {
 
@@ -52,11 +115,11 @@ func IsEmpty(path string) (empty bool,err error) {
 
     }
 
-    //size :=  file_info.Size()
+    size :=  file_info.Size()
 
-    //fmt.Printf("file : %s size: %d ",path,size)
+    if size==0 { empty=true  } else { empty=false }
 
-    return true, nil
+    return
 }
 
 func IsDir(path string)(isdir bool,err error) {
@@ -134,6 +197,7 @@ func Get_md5_dir(path string)(dir_struct Directory,err error){
 
         file_struct, err := Get_md5_file(path+"/"+dir_content[file])
 
+
         if err==nil {
 
             //go func() { 
@@ -187,11 +251,18 @@ func Get_md5_file(path string)(file_struct File, err error){
 
     if ( err!=nil ) { return file_struct, err }
 
+
+    is_readable := RegularFileIsReadable(path)
+    if is_readable==false { fmt.Printf("<Not readable %s>",path)  ;  return file_struct, is_not_readable }
+    
+
     file, err := os.Open(path)
 
     defer file.Close()
 
     hash := md5.New()
+
+    fmt.Println("Io copy starting %s",path)
 
     if _,err = io.Copy(hash, file); err !=nil {
 
@@ -210,18 +281,25 @@ func Get_md5_file(path string)(file_struct File, err error){
 
 
 
-//func main() {
+func main() {
 
-//        dir_struct , _ :=Get_md5_dir("/tmp/test")
-//
-//        for file := range dir_struct.Files {
+        go func() {
+	    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
+        }()
 
-//            file_struct := dir_struct.Files[file]
 
-//            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
+        dir_struct , _ :=Get_md5_dir("/proc/1")
 
-//        }
-//        fmt.Println(":: mtime ::")
-//        fmt.Println(Get_mtime("/tmp/does_not_exist"))
 
-//    }
+
+        for file := range dir_struct.Files {
+
+            file_struct := dir_struct.Files[file]
+
+            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
+
+        }
+        fmt.Println(":: mtime ::")
+        fmt.Println(Get_mtime("/tmp/does_not_exist"))
+
+    }
