@@ -49,7 +49,7 @@ func Start (targets []string, message_channel chan string)(err error){
 
         if err.Error()=="is_dir" {
 
-            fmt.Println(err.Error())
+            //fmt.Println(err.Error())
 
             dir_struct:=&actuator.Directory{}
             err:=dir_struct.Get_md5_dir(targets[id])
@@ -125,16 +125,13 @@ func (tgt *Target) ChasingFile() (err error){
 
        var inform_about_exit bool
 
-       tgt.MessageChannel <- tgt.Path + ":current_path"
-
         if (tgt.Dir!="") {
 
             select {
 
                 case ask_path:= <-tgt.InfoIn:
 
-
-                    if(ask_path==true) { if (inform_about_exit==true) { tgt.InfoOut <- "|exited|" ; return nil  } else {  tgt.InfoOut <- tgt.Path  }  } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
+                    if( ask_path==true ) { if ( inform_about_exit==true ) { tgt.InfoOut <- "|exited|" ; return nil  } else {  tgt.InfoOut <- tgt.Path  }  } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
 
                 default:
 
@@ -142,13 +139,12 @@ func (tgt *Target) ChasingFile() (err error){
 
                     if err:=file.Get_md5_file(tgt.Path);err==nil {
 
-                        tgt.MessageChannel<-"checking child :" +tgt.Path
                         tgt.Marker=string(file.Sum) } else {
 
                         tgt.MessageChannel<-"child is faced with ERROR :"+tgt.Path
                         inform_about_exit=true  }  //; return err }
 
-                    if (tgt.Marker!=tgt.OldMarker){ go  tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {time.Sleep(10 * time.Millisecond)}
+                    if ( tgt.Marker!=tgt.OldMarker ){ go  tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {time.Sleep(10 * time.Millisecond)}
 
                     //tgt.OldMarker=tgt.Marker
 
@@ -195,6 +191,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
            //dup
     //tgt.OldMarker=actuator.Get_mtime(tgt.Path)
     for {
+
         tgt.Marker,err=actuator.Get_mtime(tgt.Path)
 
         if err!=nil {return err}
@@ -226,8 +223,11 @@ func (tgt *TargetDir) ChasingDir()(err error){
            // dup
 
                for chan_id :=range tgt.InfoIn {
+
                    tgt.InfoIn[chan_id] <- true
+
                }
+
            var current_targets []string
            var NewInfoIn []chan bool
            var NewInfoOut []chan string
@@ -236,7 +236,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
            // collect channels linked to alive childs
                //select{
                    /*case*/ path_value:=<-tgt.InfoOut[chan_id]/*:*/
-                       if (path_value!="|exited|") { current_targets=append(current_targets,path_value) ; NewInfoIn=append( NewInfoIn,tgt.InfoIn[chan_id]) ; NewInfoOut=append( NewInfoOut,tgt.InfoOut[chan_id]) }
+                       if ( path_value!="|exited|" ) { current_targets=append( current_targets, path_value ) ; NewInfoIn = append( NewInfoIn,tgt.InfoIn[chan_id] ) ; NewInfoOut = append( NewInfoOut,tgt.InfoOut[chan_id] ) }
                    /*default: continue
                    }*/
            }
@@ -280,12 +280,16 @@ func (tgt *TargetDir) ChasingDir()(err error){
                   go target_dir.ChasingDir()
               }
            }
+
            dir_subdirs_first=dir_subdirs
+
            if (len(new_targets_files)>0) {
                var new_items = []string {tgt.Path}
                //go Start(new_items,tgt.MessageChannel)
                for chan_id :=range tgt.InfoIn {
+
                    tgt.InfoIn[chan_id] <- false
+
                }
                go Start(new_items,tgt.MessageChannel)
                return nil }
