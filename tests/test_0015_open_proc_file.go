@@ -9,9 +9,9 @@ import "time"
 
 func main() {
 
-    //filename:="/proc/1/task/1/cwd/proc/kmsg"      //empty not readable file
+    filename:="/proc/1/task/1/cwd/proc/kmsg"      //empty not readable file
     //filename:="/proc/1/task/1/cwd/proc/partitions"  //empty readable file
-    filename:="/tmp/test222/test333/hello.txt" //simple empty file
+    //filename:="/tmp/test222/test333/hello.txt" //simple empty file
 
     //
     file, err := os.Open(filename)

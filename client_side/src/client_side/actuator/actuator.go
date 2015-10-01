@@ -114,11 +114,10 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 
     buffered_reader:=bufio.NewReader(file)
     eof := false
-    lino:=1
 
     var first_signal_sent bool
 
-    for lino = 1; !eof; lino++ {
+    for lino := 1; !eof; lino++ {
         if lino ==2 {  readable<-true ; first_signal_sent=true  }
         line, err := buffered_reader.ReadString('\n')
         *content=append(*content,line)
@@ -131,7 +130,7 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
             return err
         }
     }
-    if (lino==2) && (!first_signal_sent)  { readable<-true ; readable<-false  } else { readable<-false  }
+    if (!first_signal_sent)  { readable<-true ; readable<-false  } else { readable<-false  }
 
     return nil
 }
@@ -263,6 +262,7 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
     for file:= range dir_content{
 
         file_struct:=&File{}
+
         err=file_struct.Get_md5_file(path+"/"+dir_content[file])
 
         if err==nil {
@@ -314,9 +314,6 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
     //
     var result []byte
 
-    file_struct=&File{}
-
-
     //<check's 
 
     isdir,err:=IsDir(path)
@@ -364,11 +361,7 @@ func main() {
 
 
         dir_struct:=&Directory{}
-        dir_struct.Get_md5_dir("/proc/1")
-        //fmt.Printf("\ndisco inodes size %d",len(dir_struct.DiscoveredInodes))
-
-        //fmt.Println(err)
-
+        dir_struct.Get_md5_dir("/etc")
 
 
         counter:=0
@@ -382,6 +375,13 @@ func main() {
         }
         fmt.Println(":: mtime ::")
         fmt.Printf("counter %s",counter)
+
         fmt.Println(Get_mtime("/tmp/does_not_exist"))
+        // 
+        // test
+        file:=&File{}
+        err:=file.Get_md5_file("/proc/1/cwd/proc/kmsg")
+
+        fmt.Printf("Path:%s Sum:%s Dir:%s Err:%s",file.Path,file.Sum,file.Dir,err)
 
     }
