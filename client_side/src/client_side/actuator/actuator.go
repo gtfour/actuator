@@ -361,7 +361,7 @@ func main() {
 
 
         dir_struct:=&Directory{}
-        dir_struct.Get_md5_dir("/etc")
+        dir_struct.Get_md5_dir("/tmp/test222")
 
 
         counter:=0
@@ -380,8 +380,11 @@ func main() {
         // 
         // test
         file:=&File{}
-        err:=file.Get_md5_file("/proc/1/cwd/proc/kmsg")
 
-        fmt.Printf("Path:%s Sum:%s Dir:%s Err:%s",file.Path,file.Sum,file.Dir,err)
+        fmt.Println("::Checking file::")
+        err:=file.Get_md5_file("/proc/1/task/1/cwd/proc/iomem")
+
+        fmt.Printf("Path:%s Sum:%x Dir:%s \n",file.Path,file.Sum,file.Dir)
+        fmt.Println(err)
 
     }
