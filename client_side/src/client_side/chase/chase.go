@@ -65,7 +65,6 @@ func Start (targets []string, message_channel chan string)(err error){
             // 
             for subname:=range dir_struct.SubDirs  {
                 path :=dir_struct.SubDirs[subname]
-                message_channel <- "subdir :" +path
                 if _, ok := subdirs[path]; ok == false {
                     tgt_dir:=&TargetDir{}
                     tgt_dir.MessageChannel=message_channel
@@ -93,6 +92,7 @@ func Start (targets []string, message_channel chan string)(err error){
                 go target.ChasingFile()
             }
             for i:=range subdirs {
+ 
                  go subdirs[i].ChasingDir()
             }
     }else {
@@ -109,6 +109,7 @@ func Start (targets []string, message_channel chan string)(err error){
     }
     }
     for i:=range subdirs {
+        message_channel <- "subdir : " +subdirs[i].Path
         go subdirs[i].ChasingDir()
     }
     return nil
@@ -293,7 +294,6 @@ func (tgt *TargetDir) ChasingDir()(err error){
                }
                go Start(new_items,tgt.MessageChannel)
                return nil }
-          
 
           tgt.OldMarker=tgt.Marker
         } else {time.Sleep(10 * time.Millisecond)}
