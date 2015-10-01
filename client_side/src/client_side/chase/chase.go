@@ -172,14 +172,15 @@ func (tgt *Target) ChasingFile() (err error){
 func (tgt *TargetDir) ChasingDir()(err error){
    //dup
    dir, err := os.Open(tgt.Path)
+   defer dir.Close()
    if err != nil {
        return  err
    }
    var dir_content_first []string
    dir_content_first , err = dir.Readdirnames(-1)
-   dir.Close()
    // dupdup
-   var dir_files_first,dir_subdirs_first []string
+   var dir_files_first, dir_subdirs_first []string
+
    for i:=range dir_content_first {
         path:=dir_content_first[i]
         is_dir,err:=actuator.IsDir(tgt.Path+"/"+path)
@@ -200,13 +201,15 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
         if (tgt.Marker!=tgt.OldMarker) {
            //dup 
-           dir, err = os.Open(tgt.Path)
+           dir_new, err := os.Open(tgt.Path)
+           defer dir_new.Close()
+
            if err != nil {
-           return  err
+               return  err
            }
+
            var dir_content []string
-           dir_content , err = dir.Readdirnames(-1)
-           dir.Close()
+           dir_content , err = dir_new.Readdirnames(-1)
            // dupdup
            var dir_files,dir_subdirs []string
            for i:=range dir_content {
@@ -230,14 +233,19 @@ func (tgt *TargetDir) ChasingDir()(err error){
            var NewInfoOut []chan string
 
            for chan_id :=range tgt.InfoOut {
+           // collect channels linked to alive childs
                //select{
                    /*case*/ path_value:=<-tgt.InfoOut[chan_id]/*:*/
                        if (path_value!="|exited|") { current_targets=append(current_targets,path_value) ; NewInfoIn=append( NewInfoIn,tgt.InfoIn[chan_id]) ; NewInfoOut=append( NewInfoOut,tgt.InfoOut[chan_id]) }
-                   //default: continue
-                   //}
+                   /*default: continue
+                   }*/
            }
+
+           // replace existing channel array 
            tgt.InfoIn=NewInfoIn
            tgt.InfoOut=NewInfoOut
+
+
            var new_targets_files []string
            var new_targets_subdirs []string
            // tratata files
@@ -296,7 +304,7 @@ func (tgt *Target) Reporting (){
 func Listen() (messages chan string){
 
     messages=make(chan string,100)
-    var test_dir= []string {"/proc/net"}
+    var test_dir= []string {"/tmp/test"}
     Start(test_dir,messages)
     return
 
