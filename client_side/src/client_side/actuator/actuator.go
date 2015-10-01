@@ -114,9 +114,12 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 
     buffered_reader:=bufio.NewReader(file)
     eof := false
-    for lino := 1; !eof; lino++ {
-        //fmt.Printf("linenum %d",lino)
-        if lino ==2 {  readable<-true }
+    lino:=1
+
+    var first_signal_sent bool
+
+    for lino = 1; !eof; lino++ {
+        if lino ==2 {  readable<-true ; first_signal_sent=true  }
         line, err := buffered_reader.ReadString('\n')
         *content=append(*content,line)
 
@@ -128,8 +131,8 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
             return err
         }
     }
+    if (lino==2) && (!first_signal_sent)  { readable<-true ; readable<-false  } else { readable<-false  }
 
-    readable<-false
     return nil
 }
 
@@ -324,7 +327,7 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
 
     is_readable := RegularFileIsReadable(path)
 
-    if is_readable==false { fmt.Printf("<Not readable %s>",path)  ;  return is_not_readable }
+    if is_readable==false { fmt.Printf("\n<Not readable %s>",path)  ;  return is_not_readable }
 
     // check's>
 
@@ -334,7 +337,7 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
 
     hash := md5.New()
 
-    fmt.Println("Io copy starting %s",path)
+    fmt.Printf("\nIo copy starting %s",path)
 
     if _,err = io.Copy(hash, new_file); err !=nil {
 
@@ -361,8 +364,7 @@ func main() {
 
 
         dir_struct:=&Directory{}
-        fmt.Printf("empty disco inodes size %d",len(dir_struct.DiscoveredInodes))
-        dir_struct.Get_md5_dir("/etc")
+        dir_struct.Get_md5_dir("/proc/1")
         //fmt.Printf("\ndisco inodes size %d",len(dir_struct.DiscoveredInodes))
 
         //fmt.Println(err)

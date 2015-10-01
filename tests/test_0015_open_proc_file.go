@@ -9,8 +9,9 @@ import "time"
 
 func main() {
 
-    filename:="/proc/1/task/1/cwd/proc/kmsg"      //empty not readable file
+    //filename:="/proc/1/task/1/cwd/proc/kmsg"      //empty not readable file
     //filename:="/proc/1/task/1/cwd/proc/partitions"  //empty readable file
+    filename:="/tmp/test222/test333/hello.txt" //simple empty file
 
     //
     file, err := os.Open(filename)
@@ -24,11 +25,12 @@ func main() {
     select {
         case is_readable:=<-readable:
 
-            if is_readable == true { is_completed:=<-readable ; if is_completed==false { defer file.Close()  } }
+            fmt.Println("first signal recieved:")
+            if is_readable == true { is_completed:=<-readable ; if is_completed==false {  fmt.Println("file is readable +")  ; defer file.Close()  } }
 
         default:
 
-            fmt.Println("file is not readable")
+            fmt.Println("file is not readable -")
             file.Close()
 
     }
@@ -45,6 +47,7 @@ func read_file( file *os.File, readable chan<- bool, content *[]string )(err err
 
     buffered_reader:=bufio.NewReader(file)
     eof := false
+    fmt.Println("Reading the file")
     for lino := 1; !eof; lino++ {
         if lino ==2 {  readable<-true }
         line, err := buffered_reader.ReadString('\n')
@@ -60,5 +63,6 @@ func read_file( file *os.File, readable chan<- bool, content *[]string )(err err
     }
 
     readable<-false
+    fmt.Println("Finishing")
     return nil
 }
