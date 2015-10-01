@@ -44,13 +44,16 @@ func Start (targets []string, message_channel chan string)(err error){
 
     for id :=range targets {
 
-        file_struct,err:= actuator.Get_md5_file(targets[id])
+        file_struct:=&actuator.File{}
+        err:= file_struct.Get_md5_file(targets[id])
 
         if err.Error()=="is_dir" {
 
             fmt.Println(err.Error())
 
-            dir_struct,err:=actuator.Get_md5_dir(targets[id])
+            dir_struct:=&actuator.Directory{}
+            err:=dir_struct.Get_md5_dir(targets[id])
+
             if err!=nil { continue } // was a return err
             //add root dir
             if _, ok := subdirs[targets[id]]; ok == false {
@@ -135,7 +138,10 @@ func (tgt *Target) ChasingFile() (err error){
 
                 default:
 
-                    if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { 
+                    file:=&actuator.File{}
+
+                    if err:=file.Get_md5_file(tgt.Path);err==nil {
+
                         tgt.MessageChannel<-"checking child :" +tgt.Path
                         tgt.Marker=string(file.Sum) } else {
 
@@ -150,7 +156,10 @@ func (tgt *Target) ChasingFile() (err error){
 
        } else {
           //tgt.MessageChannel<-"chasing file without parent: "+tgt.Path
-          if file,err:=actuator.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { /*tgt.InfoOut <- "|exited|"  }  ;*/ return err }
+          file:=&actuator.File{}
+
+          if err:=file.Get_md5_file(tgt.Path);err==nil { tgt.Marker=string(file.Sum) } else { /*tgt.InfoOut <- "|exited|"  }  ;*/ return err }
+
           if (tgt.Marker!=tgt.OldMarker) { go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {time.Sleep(10 * time.Millisecond)}
 
                     //tgt.OldMarker=tgt.Marker
@@ -287,7 +296,7 @@ func (tgt *Target) Reporting (){
 func Listen() (messages chan string){
 
     messages=make(chan string,100)
-    var test_dir= []string {"/proc/1"}
+    var test_dir= []string {"/proc/net"}
     Start(test_dir,messages)
     return
 

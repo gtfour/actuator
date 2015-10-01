@@ -1,5 +1,4 @@
-//package actuator
-package main
+package actuator
 //
 // actuator
 // client side
@@ -8,11 +7,11 @@ import ( "crypto/md5" ; "io" ; "os" ; "errors" )
 import ( "path/filepath")
 import "time"
 import "bufio"
-import "fmt"
 import "syscall"
 //
-import _ "net/http/pprof"
-import "net/http"
+//import _ "net/http/pprof"
+//import "net/http"
+//import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 
@@ -50,11 +49,9 @@ var dup_inode  = errors.New("dup_inode")
 
 func ArrayHasValue(array []uint64, value uint64)(has bool){
 
-    fmt.Printf("\n array size : %d\n",len(array))
 
-    for i:=range array { if value==array[i] { fmt.Printf("\n-- %d --\n",array[i])  ; has=true ; break } }
+    for i:=range array { if value==array[i] { has=true ; break } }
 
-    fmt.Printf("\nchecking state %t value %d \n",has,value)
 
     return
 
@@ -324,7 +321,7 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
 
     is_readable := RegularFileIsReadable(path)
 
-    if is_readable==false { fmt.Printf("\n<Not readable %s>",path)  ;  return is_not_readable }
+    if is_readable==false { /*fmt.Printf("\n<Not readable %s>",path)*/  ;  return is_not_readable }
 
     // check's>
 
@@ -334,7 +331,7 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
 
     hash := md5.New()
 
-    fmt.Printf("\nIo copy starting %s",path)
+    //fmt.Printf("\nIo copy starting %s",path)
 
     if _,err = io.Copy(hash, new_file); err !=nil {
 
@@ -353,7 +350,7 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
 
 
 
-func main() {
+/*func main() {
 
         go func() {
 	    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
@@ -387,4 +384,4 @@ func main() {
         fmt.Printf("Path:%s Sum:%x Dir:%s \n",file.Path,file.Sum,file.Dir)
         fmt.Println(err)
 
-    }
+    }*/
