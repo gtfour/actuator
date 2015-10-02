@@ -15,6 +15,9 @@ import "syscall"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 
+type inodes []uint64
+type strings []string
+
 
 type File struct {
     Path string
@@ -29,8 +32,8 @@ type Directory struct {
     Path string
     Inode uint64
     Files []*File
-    SubDirs []string
-    DiscoveredInodes []uint64
+    SubDirs strings
+    DiscoveredInodes inodes
 
 }
 
@@ -46,16 +49,25 @@ var dup_inode  = errors.New("dup_inode")
 
 
 
-
-func ArrayHasValue(array []uint64, value uint64)(has bool){
+func (array inodes) IncludeValue ( value uint64 ) ( has bool ){
 
 
     for i:=range array { if value==array[i] { has=true ; break } }
 
+    return
+
+}
+
+func ( array strings ) IncludeValue ( value string ) (has bool) {
+
+
+    for i:=range array { if value==array[i] { has=true ; break } }
 
     return
 
 }
+
+
 
 func GetFileIndexNumber(path string)(ino uint64,err error) {
 
@@ -112,10 +124,10 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
     buffered_reader:=bufio.NewReader(file)
     eof := false
 
-    var first_signal_sent bool
+    var read_start_signal_sent bool
 
     for lino := 1; !eof; lino++ {
-        if lino ==2 {  readable<-true ; first_signal_sent=true  }
+        if lino ==2 {  readable<-true ; read_start_signal_sent=true  }
         line, err := buffered_reader.ReadString('\n')
         *content=append(*content,line)
 
@@ -123,11 +135,14 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
                 err = nil
                 eof = true
              } else if err != nil {
-            readable<-false
-            return err
+
+            if ( !read_start_signal_sent  ) { readable<-true ;  readable<-false } else { readable<-false  }
+
+            return nil
         }
     }
-    if (!first_signal_sent)  { readable<-true ; readable<-false  } else { readable<-false  }
+    if ( !read_start_signal_sent )  { readable<-true ; readable<-false  } else { readable<-false  }
+    
 
     return nil
 }
@@ -244,7 +259,7 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
     directory.Inode = inode
 
-    if ( ArrayHasValue(directory.DiscoveredInodes, directory.Inode) ) {
+    if ( directory.DiscoveredInodes.IncludeValue( directory.Inode ) ) {
 
 
                 return dup_inode } else {
@@ -254,50 +269,53 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
     }
 
+    var subdir_added bool
+
+    for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) { subdir_added=true ; break  } }
+
+    if subdir_added==false { directory.SubDirs=append(directory.SubDirs, path) }
+
+
     //
 
     for file:= range dir_content{
 
         file_struct:=&File{}
-
         err=file_struct.Get_md5_file(path+"/"+dir_content[file])
 
         if err==nil {
-
-            //go func() { 
-
-                var subdir_added bool
-
+                //var subdir_added bool
                 directory.Files=append(directory.Files,file_struct)
-
-                for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) {subdir_added=true ; break  } }
-
-                if subdir_added==false { directory.SubDirs=append(directory.SubDirs,path) }
-
-            //}()
+                //for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) {subdir_added=true ; break  } }
+                //if subdir_added==false { directory.SubDirs=append(directory.SubDirs,path) }
         }
 
         if err == is_dir_error {
 
             another_dir := &Directory{}
-
-            another_dir.DiscoveredInodes=directory.DiscoveredInodes
-
-            err=another_dir.Get_md5_dir(path+"/"+dir_content[file])
+            another_dir.DiscoveredInodes = directory.DiscoveredInodes
+            subdir_path:=path+"/"+dir_content[file]
+            err = another_dir.Get_md5_dir( subdir_path )
 
             if (err!=nil) { continue }
 
-            var subdir_added bool
+            //var subdir_added bool
+            //for i:=range directory.SubDirs { if ( directory.SubDirs[i] == subdir_path ) {subdir_added=true ; break  } }
+            //if subdir_added==false { directory.SubDirs = append(directory.SubDirs, subdir_path ) }
 
-            for i:=range directory.SubDirs { if (directory.SubDirs[i]==(path+"/"+dir_content[file])) {subdir_added=true ; break  } }
-
-            if subdir_added==false { directory.SubDirs=append(directory.SubDirs,(path+"/"+dir_content[file])) }
-
-            for another_file:= range another_dir.Files{
+            for another_file:= range another_dir.Files {
 
                directory.Files = append(directory.Files, another_dir.Files[another_file])
 
             }
+
+            for subdir := range another_dir.SubDirs {
+
+                directory.SubDirs = append( directory.SubDirs, another_dir.SubDirs[subdir] )
+
+
+
+          }
         }
     }
     return nil
