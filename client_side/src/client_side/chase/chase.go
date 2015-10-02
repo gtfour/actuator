@@ -98,6 +98,7 @@ func Start (targets []string, message_channel chan string)(err error){
             for i:=range subdirs {
 
                  message_channel<-"chasing subdir : " + subdirs[i].Path
+
                  go subdirs[i].ChasingDir()
 
             }
@@ -112,11 +113,13 @@ func Start (targets []string, message_channel chan string)(err error){
           target.MessageChannel=message_channel
           go target.ChasingFile()
       }
+
     }
     }
     for i:=range subdirs {
 
         message_channel <- "subdir : " +subdirs[i].Path
+
         go subdirs[i].ChasingDir()
 
     }
