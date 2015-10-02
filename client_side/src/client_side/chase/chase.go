@@ -92,8 +92,9 @@ func Start (targets []string, message_channel chan string)(err error){
                 go target.ChasingFile()
             }
             for i:=range subdirs {
- 
+
                  go subdirs[i].ChasingDir()
+
             }
     }else {
 
@@ -109,8 +110,10 @@ func Start (targets []string, message_channel chan string)(err error){
     }
     }
     for i:=range subdirs {
+
         message_channel <- "subdir : " +subdirs[i].Path
         go subdirs[i].ChasingDir()
+
     }
     return nil
 }
@@ -132,7 +135,7 @@ func (tgt *Target) ChasingFile() (err error){
 
                 case ask_path:= <-tgt.InfoIn:
 
-                    if( ask_path==true ) { if ( inform_about_exit==true ) { tgt.InfoOut <- "|exited|" ; return nil  } else {  tgt.InfoOut <- tgt.Path  }  } else {  tgt.MessageChannel<-"child is killing self"+tgt.Path  ; return nil }
+                    if ( ask_path==true ) { if ( inform_about_exit==true ) { tgt.InfoOut <- "|exited|" ; _ = <-tgt.InfoIn /* second signal should be false */  ; return nil    } else {  tgt.InfoOut <- tgt.Path  }  } else {  tgt.MessageChannel<-"child is killing self" + tgt.Path  ; return nil }
 
                 default:
 
@@ -237,7 +240,10 @@ func (tgt *TargetDir) ChasingDir()(err error){
            // collect channels linked to alive childs
                //select{
                    /*case*/ path_value:=<-tgt.InfoOut[chan_id]/*:*/
-                       if ( path_value!="|exited|" ) { current_targets=append( current_targets, path_value ) ; NewInfoIn = append( NewInfoIn,tgt.InfoIn[chan_id] ) ; NewInfoOut = append( NewInfoOut,tgt.InfoOut[chan_id] ) }
+                       if ( path_value!="|exited|" ) {
+                           current_targets=append( current_targets, path_value )
+                           NewInfoIn = append( NewInfoIn,tgt.InfoIn[chan_id] )
+                           NewInfoOut = append( NewInfoOut,tgt.InfoOut[chan_id] ) } else { tgt.InfoIn[chan_id] <- false  }
                    /*default: continue
                    }*/
            }
@@ -293,6 +299,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
                }
                go Start(new_items,tgt.MessageChannel)
+
                return nil }
 
           tgt.OldMarker=tgt.Marker
