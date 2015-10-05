@@ -82,3 +82,22 @@ func ( client *Client ) listenWrite () {
 func ( client *Client ) listenRead () {
 
     log.Println(" Listening read to client")
+    for {
+        select {
+        case <- client.doneCh:
+            client.server.Del(client)
+            client.doneCh <- true
+            return
+        default:
+            var message Message
+            err := websocket.JSON.Receive(client.ws, &message)
+            if err == io.EOF {
+                c.doneCh <- true
+            } else if err != nil {
+                client.server.Err(err)
+            } else {
+                client.server.SendAll(&message)
+            }
+        }
+    }
+}

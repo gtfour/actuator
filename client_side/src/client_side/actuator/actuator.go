@@ -1,4 +1,5 @@
-package actuator
+//package actuator
+package main
 //
 // actuator
 // client side
@@ -9,9 +10,9 @@ import "time"
 import "bufio"
 import "syscall"
 //
-//import _ "net/http/pprof"
-//import "net/http"
-//import "fmt"
+import _ "net/http/pprof"
+import "net/http"
+import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 
@@ -114,6 +115,7 @@ func RegularFileIsReadable (path string) (readable bool) {
     //for i:=range content {
     //    fmt.Printf("%s",content[i])
     //}
+    fmt.Printf("\n%s check is done %t\n",path,readable)
     return
 
 }
@@ -323,7 +325,7 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 }
 
 
-func (file_struct *File)  Get_md5_file (path string) (err error){
+func (file_struct *File) Get_md5_file (path string) (err error){
 
     //IsEmpty(path)
     //
@@ -368,7 +370,7 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
 
 
 
-/*func main() {
+func main() {
 
         go func() {
 	    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
@@ -376,7 +378,7 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
 
 
         dir_struct:=&Directory{}
-        dir_struct.Get_md5_dir("/tmp/test222")
+        dir_struct.Get_md5_dir("/tmp/mtime_test")
 
 
         counter:=0
@@ -402,4 +404,4 @@ func (file_struct *File)  Get_md5_file (path string) (err error){
         fmt.Printf("Path:%s Sum:%x Dir:%s \n",file.Path,file.Sum,file.Dir)
         fmt.Println(err)
 
-    }*/
+    }
