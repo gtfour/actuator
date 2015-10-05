@@ -12,11 +12,11 @@ var maxId int = 0
 
 type Client struct {
 
-    id      int
-    ws      *websocker.Conn
-    server  *Server
+    id                  int
+    ws                  *websocket.Conn
+    server              *Server
     messageChannel      chan *Message
-    doneCh  chan bool
+    doneCh              chan bool
 
 }
 
@@ -40,10 +40,10 @@ func ( client *Client ) Conn() *websocket.Conn {
 func ( client *Client ) Write ( msg *Message ) {
 
     select {
-        case client.messageChannel <- msg.Message:
+        case client.messageChannel <- msg:
         default:
             client.server.Del( client )
-            fmt.Errorf("Client %d is disconnected", client.id)
+            err := fmt.Errorf("Client %d is disconnected", client.id)
             client.server.Err(err)
     }
 
@@ -71,9 +71,9 @@ func ( client *Client ) listenWrite () {
         case msg:= <-client.messageChannel:
             log.Println("Send:",msg)
             websocket.JSON.Send( client.ws, msg )
-        case <-doneCh:
+        case <-client.doneCh:
             client.server.Del(client)
-            doneCh <- true
+            client.doneCh <- true
             return
         }
     }
@@ -92,7 +92,7 @@ func ( client *Client ) listenRead () {
             var message Message
             err := websocket.JSON.Receive(client.ws, &message)
             if err == io.EOF {
-                c.doneCh <- true
+                client.doneCh <- true
             } else if err != nil {
                 client.server.Err(err)
             } else {
