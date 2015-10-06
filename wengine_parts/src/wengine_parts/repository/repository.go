@@ -2,9 +2,9 @@ package repository
 
 type Repository struct {
 
-    Id string
-    Url string //"http://linux.dell.com/repo/community/content/el5-i386/"
-    Type string // deb or rpm
+    Id    string
+    Url   string //"http://linux.dell.com/repo/community/content/el5-i386/"
+    Type  string // deb or rpm
     Mtime string
 
 }

@@ -145,7 +145,7 @@ func get_args()(port string,filepath string , err error) {
 
 func printLogMessage(message_channel chan string) {
 
-    go func() { 
+    go func() {
     for {
     message:= <-message_channel
     fmt.Printf("| %s |\n",message)

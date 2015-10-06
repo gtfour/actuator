@@ -15,27 +15,27 @@ import "net/http"
 
 type Target struct {
 
-    Path string
-    Dir string
-    OldMarker string
-    Marker string
-    Modified bool
-    EventGroup string
-    EventType string
-    InfoIn chan bool
-    InfoOut chan string
+    Path           string
+    Dir            string
+    OldMarker      string
+    Marker         string
+    Modified       bool
+    EventGroup     string
+    EventType      string
+    InfoIn         chan bool
+    InfoOut        chan string
     MessageChannel chan string
 
 }
 
 type TargetDir struct {
 
-    Path string
-    OldMarker string
-    Marker string
-    InfoInArray []chan bool
-    InfoOutArray []chan string
-    MessageChannel chan string
+    Path           string
+    OldMarker      string
+    Marker         string
+    InfoInArray    []chan bool
+    InfoOutArray   []chan string
+    MessageChannel chan   string
 
 }
 
@@ -247,7 +247,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
                }
 
            var current_targets []string
-           var NewInfoInArray []chan bool
+           var NewInfoInArray  []chan bool
            var NewInfoOutArray []chan string
 
            for chan_id :=range tgt.InfoOutArray {
@@ -267,7 +267,7 @@ func (tgt *TargetDir) ChasingDir()(err error){
            tgt.InfoOutArray=NewInfoOutArray
 
 
-           var new_targets_files []string
+           var new_targets_files   []string
            var new_targets_subdirs []string
            // tratata files
            for cur_id :=range dir_files {

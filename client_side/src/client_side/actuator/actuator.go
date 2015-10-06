@@ -21,19 +21,19 @@ type strings []string
 
 
 type File struct {
-    Path string
-    Dir string
-    Sum []byte
-    Type string
+    Path  string
+    Dir   string
+    Sum   []byte
+    Type  string
     Inode uint64
 }
 
 type Directory struct {
 
-    Path string
-    Inode uint64
-    Files []*File
-    SubDirs strings
+    Path             string
+    Inode            uint64
+    Files            []*File
+    SubDirs          strings
     DiscoveredInodes inodes
 
 }
@@ -223,8 +223,11 @@ func IsDir(path string)(isdir bool,err error) {
 func Get_mtime(path string)(mtime string,err error) {
 
     fi, err:=os.Stat(path)
-    if err!=nil {return mtime,err}
+
+    if err!=nil { return mtime,err }
+
     mtime_struct:=fi.ModTime()
+
     return string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00")),nil
 
 }

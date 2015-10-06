@@ -6,11 +6,11 @@ import "bufio"
 import "strings"
 
 
-func ParseFile(filename string) (statusfile StatusFile, err error) {
+func ParseFile( filename string ) ( statusfile StatusFile, err error ) {
 
 
-    file, err := os.Open(filename)
-    status_file:=StatusFile{}
+    file, err   := os.Open(filename)
+    status_file := StatusFile{}
 
     if err!=nil {
 
@@ -54,21 +54,21 @@ func ParseFile(filename string) (statusfile StatusFile, err error) {
 
 func (status_entry *StatusEntry)ParseField(line string){
 
-    words:=strings.Split(line," ")
+    words:=strings.Split( line, " ")
 
-    if len(words)==4 {
+    if len( words ) == 4 {
 
-        if (words[0]== "Status:")&&(words[3]=="installed\n") { status_entry.Installed = true }
+        if ( words[0] == "Status:" ) && ( words[3] == "installed\n" ) { status_entry.Installed = true }
     }
     value_array:=string(words[1])
-    value:=strings.Split(value_array,"\n")
+    value      :=strings.Split(value_array,"\n")
 
 
-    if len(words)==2 {
+    if len(words) == 2 {
 
-        if words[0]== "Package:" { status_entry.Name = value[0]  }
-        if words[0]== "Architecture:" { status_entry.Architecture = value[0]  }
-        if words[0]== "Version:" { status_entry.Version = value[0] ; status_entry.Complete = true  }
+        if words[0] == "Package:"      { status_entry.Name = value[0]  }
+        if words[0] == "Architecture:" { status_entry.Architecture = value[0]  }
+        if words[0] == "Version:"      { status_entry.Version = value[0] ; status_entry.Complete = true  }
 
 }
 }

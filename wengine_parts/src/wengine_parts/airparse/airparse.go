@@ -13,12 +13,12 @@ var err = errors.New("airparse side error")
 
 type RepoFile struct {
 
-    Id string
+    Id       string
     FileName string
-    Url string
-    DataGZ *http.Response
-    DataXML http.Response
-    Type string // deb or rpm
+    Url      string
+    DataGZ   *http.Response
+    DataXML  http.Response
+    Type     string // deb or rpm
     Packages []repository.RpmPackage
 
 }

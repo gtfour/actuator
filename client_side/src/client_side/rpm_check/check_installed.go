@@ -8,15 +8,11 @@ import (
 )
 
 
-
-
-
 func GetPkgs()(pkgs []Info){
 
     packages,_:=PackagesList()
     for pkg_num:=range packages { info,_:=GetInfo(packages[pkg_num]) ; pkgs=append(pkgs,info) }
     return pkgs
-
 
 }
 
@@ -43,9 +39,9 @@ func PackagesList () (packages []string,err error){
 }
 
 type Info struct {
-  Name string
-  Version string
-  Release string
+  Name         string
+  Version      string
+  Release      string
   Architecture string
 }
 
@@ -70,6 +66,3 @@ func GetInfo(package_name string) (info Info,err error) {
   return
   // strings.HasPrefix(line, "Version"))
 }
-
-
-

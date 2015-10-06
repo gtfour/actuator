@@ -3,18 +3,18 @@ import "runtime"
 
 type StatusEntry struct {
 
-    Name string
-    Version string
+    Name         string
+    Version      string
     Architecture string
-    Complete bool
-    Installed bool
+    Complete     bool
+    Installed    bool
 
 }
 
 type StatusFile struct {
 
-    FilePath string
-    Sum string
+    FilePath          string
+    Sum               string
     InstalledPackages []StatusEntry
 
 }

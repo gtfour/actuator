@@ -10,11 +10,11 @@ import "strings"
 
 type OS struct {
 
-    Hostname string
-    Name string
-    Version string
-    Release string
-    Files []string
+    Hostname        string
+    Name            string
+    Version         string
+    Release         string
+    Files           []string
     VirtualProvider []string // по задумке сюда будут складываться строки начиная со второй, которые были найдены
                              // проходом значений хеша по ключу директ 
                              // по идее директ должен включать файлы имеющие всего одну строку, не содержащую ключей а только одно значение

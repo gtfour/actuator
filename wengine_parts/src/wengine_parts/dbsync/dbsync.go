@@ -12,8 +12,8 @@ import (
 
 type Repository struct {
 
-    Url string
-    Packages []repository.RpmPackage 
+    Url      string
+    Packages []repository.RpmPackage
 
 }
 
@@ -31,9 +31,9 @@ func UploadStructToDb(repofile *airparse.RepoFile) (err error){
    defer session.Close()
 
    session.SetMode(mgo.Monotonic, true)
-   c:=session.DB("wengine").C("repository")
 
-   result:=Repository {}
+   c      :=session.DB("wengine").C("repository")
+   result :=Repository {}
 
    err = c.Find(bson.M{"url": repofile.Url}).One(&result)
 
