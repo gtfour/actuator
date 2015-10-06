@@ -2,26 +2,25 @@
 package main
 import ( "os" ; "path/filepath" ; "fmt" ; "io/ioutil"  )
 
-var config_delim = "|"
-var repositoryTag = "[repository]"
-var packageTag = "[package]"
-var selfconfTag="[selfconf]"
-var wengineAddressTag = "[wengine]"
-var configFileName = "actuator.conf"
+var config_delim      =  "|"
+var repositoryTag     =  "[repository]"
+var packageTag        =  "[package]"
+var selfconfTag       =  "[selfconf]"
+var wengineAddressTag =  "[wengine]"
+var configFileName    =  "actuator.conf"
 
 func main() {
 
-  config:=&Config{}
+  config  :=  &Config{}
   fmt.Println(config.GetCurrentConfigFile())
 
 }
 
 type Config struct {
 
-  ConfigFilePath string
-  Files []string
-  ConfigFileExists bool
-  
+  ConfigFilePath    string
+  Files             []string
+  ConfigFileExists  bool
 
 }
 
@@ -91,6 +90,8 @@ func (cnf  *Config)ParseFile (err error) {
       for line_num :=range content {
 
       }
+
+    }
 
 
 }

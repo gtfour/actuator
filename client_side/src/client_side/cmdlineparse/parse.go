@@ -29,11 +29,11 @@ func Parse(osargs []string) (config Config) {
 
     config=Config{}
 
-   for osarg_num:= range osargs {
+   for osarg_num    :=  range osargs {
 
-       osarg_word:=osargs[osarg_num]
+       osarg_word   :=  osargs[osarg_num]
 
-       for word_key := range words {
+       for word_key :=  range words {
 
            found:=Search(words[word_key],osarg_word)
 
@@ -70,4 +70,3 @@ func Search (word_list []string, word string )(bool) {
     return marker
 
 }
-

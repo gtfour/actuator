@@ -26,11 +26,12 @@ type OS struct {
 
 func GetInfo ()(os OS,err error) {
 
-  os=OS{}
+  os = OS{}
   os.GetHostname()
   os.GetName()
   os.GetVersion()
   os.GetRelease()
+
   return os,nil
 
 }

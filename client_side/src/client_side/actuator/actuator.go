@@ -1,5 +1,5 @@
-//package actuator
-package main
+package actuator
+//package main
 //
 // actuator
 // client side
@@ -10,9 +10,9 @@ import "time"
 import "bufio"
 import "syscall"
 //
-import _ "net/http/pprof"
-import "net/http"
-import "fmt"
+// import _ "net/http/pprof"
+// import "net/http"
+// import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 
@@ -74,15 +74,15 @@ func GetFileIndexNumber(path string)(ino uint64,err error) {
 
     fi, err:=os.Stat(path)
 
-    if err!=nil {return 0,err}
+    if err != nil { return 0, err }
 
-    stat_interface:=fi.Sys()
+    stat_interface    := fi.Sys()
 
-    stat_object,found :=stat_interface.(*syscall.Stat_t) // type assert
+    stat_object,found := stat_interface.(*syscall.Stat_t) // type assert
 
     if found==false { return 0, ino_not_found  }
 
-    return stat_object.Ino,nil
+    return stat_object.Ino, nil
 
 }
 
@@ -94,13 +94,21 @@ func RegularFileIsReadable (path string) (readable bool) {
     // this function is preventing blocking during reading files like a /proc/1/task/1/cwd/proc/kmsg
 
     file, err := os.Open(path)
-      if err!=nil {
+
+    defer file.Close()
+
+    if err!=nil {
         return false
     }
+
     manage_chn:=make(chan bool,1)
+
     var content []string
+
     go ReadFileWithTimeoutControll( file, manage_chn, &content)
+
     time.Sleep(1 * time.Millisecond)
+
     select {
         case is_readable:=<-manage_chn:
 
@@ -115,7 +123,8 @@ func RegularFileIsReadable (path string) (readable bool) {
     //for i:=range content {
     //    fmt.Printf("%s",content[i])
     //}
-    fmt.Printf("\n%s check is done %t\n",path,readable)
+    //fmt.Printf("\n%s check is done %t\n",path,readable)
+
     return
 
 }
@@ -124,6 +133,7 @@ func RegularFileIsReadable (path string) (readable bool) {
 func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content *[]string )(err error){
 
     buffered_reader:=bufio.NewReader(file)
+
     eof := false
 
     var read_start_signal_sent bool
@@ -133,27 +143,25 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
         line, err := buffered_reader.ReadString('\n')
         *content=append(*content,line)
 
-            if err == io.EOF {
-                err = nil
-                eof = true
-             } else if err != nil {
+        if err == io.EOF {
+            err = nil
+            eof = true
+        } else if err != nil {
 
             if ( !read_start_signal_sent  ) { readable<-true ;  readable<-false } else { readable<-false  }
 
             return nil
         }
     }
+
     if ( !read_start_signal_sent )  { readable<-true ; readable<-false  } else { readable<-false  }
-    
 
     return nil
 }
 
 
 
-
-
-func IsEmpty(path string) (empty bool,err error) {
+func IsEmpty(path string) (empty bool, err error) {
 
     file, err := os.Open(path)
 
@@ -220,7 +228,7 @@ func IsDir(path string)(isdir bool,err error) {
     return
 }
 
-func Get_mtime(path string)(mtime string,err error) {
+func Get_mtime( path string )( mtime string, err error ) {
 
     fi, err:=os.Stat(path)
 
@@ -238,11 +246,10 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
     //var dir_struct Directory
 
     dir, err := os.Open(path)
+    defer dir.Close()
+
     directory.Path = path
 
-    //dir_struct.Files = [] File {}
-
-    defer dir.Close()
     if err != nil {
         return  err
     }
@@ -250,7 +257,6 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
     dir_content , err := dir.Readdirnames(-1)
 
     if err != nil {
-
         return  err
     }
 
@@ -258,7 +264,7 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
     // check inode number 
     // prevent looping while discovering subdirectories
 
-    inode,err:=GetFileIndexNumber(path)
+    inode,err := GetFileIndexNumber(path)
 
     if err!=nil { return ino_not_found }
 
@@ -268,7 +274,6 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
 
                 return dup_inode } else {
-
 
                 directory.DiscoveredInodes = append( directory.DiscoveredInodes, directory.Inode )
 
@@ -297,10 +302,10 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
         if err == is_dir_error {
 
-            another_dir := &Directory{}
-            another_dir.DiscoveredInodes = directory.DiscoveredInodes
-            subdir_path:=path+"/"+dir_content[file]
-            err = another_dir.Get_md5_dir( subdir_path )
+            another_dir                   :=  &Directory{}
+            another_dir.DiscoveredInodes  =   directory.DiscoveredInodes
+            subdir_path                   :=  path+"/"+dir_content[file]
+            err                           =   another_dir.Get_md5_dir( subdir_path )
 
             if (err!=nil) { continue }
 
@@ -310,15 +315,13 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
             for another_file:= range another_dir.Files {
 
-               directory.Files = append(directory.Files, another_dir.Files[another_file])
+                directory.Files = append(directory.Files, another_dir.Files[another_file])
 
             }
 
             for subdir := range another_dir.SubDirs {
 
                 directory.SubDirs = append( directory.SubDirs, another_dir.SubDirs[subdir] )
-
-
 
           }
         }
@@ -336,13 +339,13 @@ func (file_struct *File) Get_md5_file (path string) (err error){
 
     //<check's 
 
-    isdir,err:=IsDir(path)
+    isdir, err := IsDir(path)
 
-    if (isdir==true && err==nil ) { return is_dir_error }
+    if ( isdir==true && err==nil ) { return is_dir_error }
 
     if ( err!=nil ) { return err }
 
-    is_readable := RegularFileIsReadable(path)
+    is_readable := RegularFileIsReadable( path ) // check was failed by timeout controll . It fails when opens /proc/kmsg or other strange files
 
     if is_readable==false { /*fmt.Printf("\n<Not readable %s>",path)*/  ;  return is_not_readable }
 
@@ -373,7 +376,7 @@ func (file_struct *File) Get_md5_file (path string) (err error){
 
 
 
-func main() {
+/*func main() {
 
         go func() {
 	    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
@@ -407,4 +410,4 @@ func main() {
         fmt.Printf("Path:%s Sum:%x Dir:%s \n",file.Path,file.Sum,file.Dir)
         fmt.Println(err)
 
-    }
+    }*/
