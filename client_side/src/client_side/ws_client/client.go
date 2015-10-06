@@ -20,7 +20,7 @@ func main() {
 
     }
 
-    if test,err := ws.Write([]byte(`{"author":"venom","body":"Buy cheese and bread for breakfast."}`)) ; err != nil {
+    if test,err := ws.Write([]byte(`{"author":"user1","body":"Learn Go"}`)) ; err != nil {
 
         fmt.Println(test)
         log.Fatal(err)
