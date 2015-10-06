@@ -5,14 +5,30 @@ import (
        "code.google.com/p/go.net/websocket"
        "fmt"
        "log"
+       "encoding/json"
 )
+
+type Event struct {
+
+    Author string `json:"author"`
+    Body string `json:"body"`
+    //Name     string
+    //Type     string
+    //FilePath string
+    //Hostname string
+    //Os       string
+    //Version  string
+    //Release  string
+
+}
+
 
 func main() {
 
-    url    := "http://127.0.0.1"
-    origin := "ws://127.0.0.1:8080/entry"
+    origin    := "http://127.0.0.1"
+    url := "ws://127.0.0.1:8080/entry"
 
-    ws,err := websocket.Dial(origin, "", url)
+    ws,err := websocket.Dial(url, "", origin)
 
     if err != nil {
 
@@ -20,7 +36,13 @@ func main() {
 
     }
 
-    if test,err := ws.Write([]byte(`{"author":"user1","body":"Learn Go"}`)) ; err != nil {
+    test:=&Event{Author:"venom",Body:"Package json implements encoding and decoding of JSON objects as defined in RFC 4627.\n The mapping between JSON objects and Go values is described in the documentation for the Marshal and Unmarshal functions."}
+    test_serialized, err := json.Marshal(test)
+
+    fmt.Println(err)
+    fmt.Println(string(test_serialized))
+
+    if test,err := ws.Write( test_serialized ) ; err != nil {
 
         fmt.Println(test)
         log.Fatal(err)
