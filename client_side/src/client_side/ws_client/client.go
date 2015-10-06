@@ -9,10 +9,10 @@ import (
 
 func main() {
 
-    url    := "http://10.10.111.124"
-    origin := "ws://10.10.111.124:8080/entry"
+    url    := "http://127.0.0.1"
+    origin := "ws://127.0.0.1:8080/entry"
 
-    ws,err := websocket.Dial( url, "", origin)
+    ws,err := websocket.Dial(origin, "", url)
 
     if err != nil {
 
