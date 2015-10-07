@@ -32,7 +32,7 @@ type Directory struct {
 
     Path             string
     Inode            uint64
-    Dir              string
+    //Dir              string
     Files            []*File
     SubDirs          strings
     DiscoveredInodes inodes
