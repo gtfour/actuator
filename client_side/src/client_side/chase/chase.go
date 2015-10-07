@@ -2,9 +2,10 @@
 package main
 
 import "client_side/actuator"
-import "os"
+//import "os"
 import "fmt"
 import "time"
+import "path/filepath"
 //
 //pprof debug
 import _ "net/http/pprof"
@@ -33,6 +34,8 @@ type TargetDir struct {
     Path           string
     OldMarker      string
     Marker         string
+    InfoIn         chan bool
+    InfoOut        chan string
     InfoInArray    []chan bool
     InfoOutArray   []chan string
     MessageChannel chan   string
@@ -115,6 +118,7 @@ func Start (targets []string, message_channel chan string)(err error){
             for i:=range subdirs {
 
                  message_channel<-"chasing subdir : " + subdirs[i].Path
+                 // directory.Dir = filepath.Dir(path)
 
                  go subdirs[i].ChasingDir()
 
@@ -137,6 +141,22 @@ func Start (targets []string, message_channel chan string)(err error){
     for i:=range subdirs {
 
         message_channel <- "subdir : " +subdirs[i].Path
+
+        // ебучее говно : поиск родительской директории для этой субдиректории в массиве субдиректорий 
+        dir := filepath.Dir(i)
+        // ааа бляять - мои мозги !!!! 
+        if parent_dir, ok := subdirs[dir]; ok {
+
+            subdirs[dir].InfoIn          =   make(chan bool,1)
+            subdirs[dir].InfoOut         =   make(chan string,1)
+
+            parent_dir.InfoInArray       =  append(parent_dir.InfoInArray, subdirs[dir].InfoIn)
+            parent_dir.InfoOutArray      =  append(parent_dir.InfoOutArray, subdirs[dir].InfoOut)
+
+
+
+
+        }
 
         go subdirs[i].ChasingDir()
 
@@ -229,38 +249,6 @@ func (tgt *Target) ChasingFile() (err error){
 
 func (tgt *TargetDir) ChasingDir()(err error){
    //dup
-   dir, err := os.Open( tgt.Path )
-
-   defer dir.Close()
-
-   if err != nil {
-       return  err
-   }
-
-   var dir_content_first []string
-
-   dir_content_first , err = dir.Readdirnames(-1)
-   // dupdup
-   var dir_files_first, dir_subdirs_first []string
-
-   for  i:=  range dir_content_first {
-
-        path       :=  dir_content_first[i]
-        is_dir,err :=  actuator.IsDir(tgt.Path+"/"+path)
-
-        if (err==nil) {
-            if is_dir==false {
-                dir_files_first=append(dir_files_first,tgt.Path+"/"+path)
-
-        } else {
-
-            dir_subdirs_first=append(dir_subdirs_first,tgt.Path+"/"+path) }
-        }
-
-    }
-           //dupdup
-           //dup
-    //tgt.OldMarker=actuator.Get_mtime(tgt.Path)
     for {
 
         tgt.Marker,err  =  actuator.Get_mtime(tgt.Path)
@@ -268,34 +256,6 @@ func (tgt *TargetDir) ChasingDir()(err error){
         if err != nil { return err }
 
         if (tgt.Marker!=tgt.OldMarker) {
-           //dup 
-           dir_new, err := os.Open(tgt.Path)
-           defer dir_new.Close()
-
-           if err != nil {
-               return  err
-           }
-
-           var dir_content []string
-           dir_content , err = dir_new.Readdirnames(-1)
-           // dupdup
-           var dir_files,dir_subdirs []string
-
-           for i:=range dir_content {
-
-               path          :=  dir_content[i]
-               is_dir,err    :=  actuator.IsDir(tgt.Path+"/"+path)
-
-               if ( err==nil ) {
-                   if is_dir  ==  false {
-                    dir_files=append( dir_files,tgt.Path+"/"+path )
-
-                } else {
-                  dir_subdirs=append( dir_subdirs,tgt.Path+"/"+path ) }
-              }
-           }
-           //dupdup
-           // dup
 
            for chan_id :=range tgt.InfoInArray {
 
@@ -332,71 +292,19 @@ func (tgt *TargetDir) ChasingDir()(err error){
            tgt.InfoInArray  =  NewInfoInArray
            tgt.InfoOutArray =  NewInfoOutArray
 
-           var new_targets_files   []string
-           var new_targets_subdirs []string
-           // tratata files
 
-           for cur_id  :=  range dir_files {
-
-              var found bool
-
-              for prev_id :=range dir_files_first {
-                  if (dir_files_first[prev_id]==dir_files[cur_id]) {
-                      found=true
-                      break
-                   }
-              }
-
-              if (found == false) {
-                  new_item_path      :=  dir_files[cur_id]
-                  new_targets_files  =   append(new_targets_files,new_item_path)
-              }
-           }
-
-           dir_files_first  =  dir_files
-
-           for subdir_id :=range dir_subdirs {
-
-              var found bool
-
-              for prevsubdir_id  :=  range dir_subdirs_first  {
-
-                  if (dir_subdirs[subdir_id]==dir_subdirs_first[prevsubdir_id]) {
-
-                      found  =  true
-
-                      break
-
-                   }
-              }
-              if ( found == false ) {
-
-                  new_item_path              :=  dir_subdirs[subdir_id]
-                  new_targets_subdirs        =   append(new_targets_subdirs,new_item_path)
-                  target_dir                 :=  &TargetDir{}
-                  target_dir.MessageChannel  =   tgt.MessageChannel
-                  target_dir.Path            =   new_item_path
-                  go target_dir.ChasingDir()
-
-              }
-
-           }
-
-           dir_subdirs_first=dir_subdirs
-
-           if (len(new_targets_files)>0) {
-               var new_items = []string {  tgt.Path  }
-               //go Start(new_items,tgt.MessageChannel)
-               for chan_id :=range tgt.InfoInArray {
+           var new_items = []string {  tgt.Path  }
+           //go Start(new_items,tgt.MessageChannel)
+           for chan_id :=range tgt.InfoInArray {
 
                    tgt.InfoInArray[chan_id] <- false
 
-               }
-               go Start( new_items, tgt.MessageChannel )
+           }
+           go Start( new_items, tgt.MessageChannel )
 
-               return nil }
+           return nil
 
-          tgt.OldMarker  =  tgt.Marker
+           tgt.OldMarker  =  tgt.Marker
 
         } else {time.Sleep( 10 * time.Millisecond )}
     }

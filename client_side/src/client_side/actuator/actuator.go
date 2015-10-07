@@ -32,6 +32,7 @@ type Directory struct {
 
     Path             string
     Inode            uint64
+    Dir              string
     Files            []*File
     SubDirs          strings
     DiscoveredInodes inodes
@@ -263,6 +264,8 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
     // check inode number 
     // prevent looping while discovering subdirectories
+
+    //directory.Dir = filepath.Dir(path)
 
     inode,err := GetFileIndexNumber(path)
 
