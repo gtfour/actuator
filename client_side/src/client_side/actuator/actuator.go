@@ -12,7 +12,7 @@ import "syscall"
 //
 // import _ "net/http/pprof"
 // import "net/http"
-// import "fmt"
+//import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 
@@ -38,15 +38,15 @@ type Directory struct {
 
 }
 
-var is_dir_error = errors.New("is_dir")
+var is_dir_error     =  errors.New("is_dir")
 
-var is_not_regular = errors.New("isnt_reg")
+var is_not_regular   =  errors.New("isnt_reg")
 
-var is_not_readable = errors.New("isnt_read")
+var is_not_readable  =  errors.New("isnt_read")
 
-var ino_not_found = errors.New("ino_not_found")
+var ino_not_found    =  errors.New("ino_not_found")
 
-var dup_inode  = errors.New("dup_inode")
+var dup_inode        =  errors.New("dup_inode")
 
 
 

@@ -76,7 +76,7 @@ func Start (targets []string, message_channel chan string)(err error){
             // 
             for subname:=range dir_struct.SubDirs  { // iteration of each included subdir
 
-                path :=dir_struct.SubDirs[subname]
+                path := dir_struct.SubDirs[subname]
 
                 if _, ok := subdirs[path]; ok == false { // check global subdir map again and add each included subdir if it is not included yet 
 
@@ -151,6 +151,8 @@ func Stop()(err error) {
 
 func (tgt *Target) ChasingFile() (err error){
 
+    tgt.MessageChannel<-"start chasing file : " + tgt.Path
+
     for {
        var inform_about_exit bool
         if (tgt.Dir!="") {
@@ -206,7 +208,7 @@ func (tgt *Target) ChasingFile() (err error){
 
           file:=&actuator.File{}
 
-          if err:=file.Get_md5_file(tgt.Path);err==nil {
+          if err:=file.Get_md5_file(tgt.Path); err == nil {
 
               tgt.Marker=string(file.Sum) } else {
 
@@ -288,7 +290,8 @@ func (tgt *TargetDir) ChasingDir()(err error){
                    if is_dir  ==  false {
                     dir_files=append( dir_files,tgt.Path+"/"+path )
 
-                } else { dir_subdirs=append( dir_subdirs,tgt.Path+"/"+path ) }
+                } else {
+                  dir_subdirs=append( dir_subdirs,tgt.Path+"/"+path ) }
               }
            }
            //dupdup
@@ -312,8 +315,8 @@ func (tgt *TargetDir) ChasingDir()(err error){
                        if ( path_value  !=  "|exited|" ) {
 
                            current_targets  =  append( current_targets, path_value )
-                           NewInfoInArray   =  append( NewInfoInArray,tgt.InfoInArray[chan_id] )
-                           NewInfoOutArray  =  append( NewInfoOutArray,tgt.InfoOutArray[chan_id] )
+                           NewInfoInArray   =  append( NewInfoInArray, tgt.InfoInArray[chan_id] )
+                           NewInfoOutArray  =  append( NewInfoOutArray, tgt.InfoOutArray[chan_id] )
 
                        } else {
 
@@ -357,9 +360,11 @@ func (tgt *TargetDir) ChasingDir()(err error){
               var found bool
 
               for prevsubdir_id  :=  range dir_subdirs_first  {
+
                   if (dir_subdirs[subdir_id]==dir_subdirs_first[prevsubdir_id]) {
 
                       found  =  true
+
                       break
 
                    }
@@ -407,7 +412,7 @@ func (tgt *Target) Reporting () {
 func Listen() (messages chan string){
 
     messages      =  make(chan string,100)
-    var test_dir  =  []string { "/tmp/mtime_test" }
+    var test_dir  =  []string { "/tmp/test" }
     Start( test_dir, messages )
     return
 
