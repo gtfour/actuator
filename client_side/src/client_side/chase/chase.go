@@ -163,10 +163,8 @@ func Start (targets []string, message_channel chan string)(err error){
 
     for i:=range subdirs {
 
-
         message_channel <- "subdir : " +subdirs[i].Path
         go subdirs[i].ChasingDir()
-
 
     }
     return nil
@@ -247,13 +245,10 @@ func (tgt *Target) ChasingFile() (err error){
           if (tgt.Marker!=tgt.OldMarker) {
 
               go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {
-
               time.Sleep(10 * time.Millisecond) }
-
                     //tgt.OldMarker=tgt.Marker
       }
     }
-
     return nil
 }
 
@@ -263,13 +258,14 @@ func (tgt *TargetDir) ChasingDir()(err error){
 
         var inform_about_exit bool
 
-        tgt.Marker,err  =  actuator.Get_mtime(tgt.Path)
+        tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
 
         if err != nil { return err }
 
         // message exchange 
 
         if tgt.Dir != "" {
+
             select {
                 case ask_path:= <-tgt.InfoIn:
                     if ( ask_path==true ) {
@@ -279,21 +275,24 @@ func (tgt *TargetDir) ChasingDir()(err error){
                            return nil
 
                     } else { tgt.InfoOut <- tgt.Path }
-                   } else { return nil }
+                   } else { return nil  }
             }
-        } /*else if inform_about_exit == true {
 
-            var new_items = []string {  tgt.Path  }
-            go Start(new_items,tgt.MessageChannel)
+        } else if inform_about_exit == true {
+
+            var new_items = []string { tgt.Path }
+            go Start( new_items, tgt.MessageChannel )
             return nil
 
-        }*/
+        }
         //
 
-        if ( tgt.Marker != tgt.OldMarker )  {
+        if ( tgt.Marker != tgt.OldMarker ) {
 
            for chan_id :=range tgt.InfoInArray {
+
                tgt.InfoInArray[chan_id] <- true
+
            }
 
            var current_targets []string
@@ -321,15 +320,17 @@ func (tgt *TargetDir) ChasingDir()(err error){
            tgt.InfoOutArray =  NewInfoOutArray
            //var new_items = []string {  tgt.Path  }
            //go Start(new_items,tgt.MessageChannel)
-           for chan_id :=range tgt.InfoInArray {
+           for chan_id := range tgt.InfoInArray {
+
                    tgt.InfoInArray[chan_id] <- false
+
            }
            //go Start( new_items, tgt.MessageChannel )
            inform_about_exit = true
            //return nil
            //tgt.OldMarker  =  tgt.Marker
 
-        } else {time.Sleep( 10 * time.Millisecond )}
+        } else { time.Sleep( 10 * time.Millisecond ) }
     }
 }
 
