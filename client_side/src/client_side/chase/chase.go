@@ -167,6 +167,7 @@ func Start (targets []string, message_channel chan string)(err error){
         go subdirs[i].ChasingDir()
 
     }
+
     return nil
 }
 
@@ -253,6 +254,8 @@ func (tgt *Target) ChasingFile() (err error){
 }
 
 func (tgt *TargetDir) ChasingDir () (err error){
+
+    tgt.MessageChannel <- "start chasing of dir : "+tgt.Path
    //dup
     for {
         var inform_about_exit bool
