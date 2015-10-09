@@ -271,8 +271,8 @@ func (tgt *TargetDir) ChasingDir () (err error){
    //dup
     for {
 
-        tgt.MessageChannel <- "for part ::  " + tgt.Path + " : " + fmt.Sprintf("%t",inform_about_exit)
-        //var inform_about_exit bool
+        //  tgt.MessageChannel <- "for part ::  " + tgt.Path + " : " + fmt.Sprintf("%t",inform_about_exit)
+        //  var inform_about_exit bool
 
         tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
 
@@ -326,8 +326,6 @@ func (tgt *TargetDir) ChasingDir () (err error){
             // reload chaser >
             return nil
 
-
-
         }
         // 
 
@@ -354,7 +352,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
         }
         //
-        if ( tgt.Marker != tgt.OldMarker ) && ( tgt.OldMarker != "" )  {
+        if ( tgt.Marker != tgt.OldMarker ) {
 
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true
