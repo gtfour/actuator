@@ -268,6 +268,10 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
     var inform_about_exit bool
 
+    tgt.OldMarker , err =  actuator.Get_mtime(tgt.Path)
+
+    if err != nil { return err }
+
    //dup
     for {
 
