@@ -49,7 +49,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
     //request_channel:=make(chan bool)
     //response_channel:=make(chan string)
 
-    message_channel<-"Starting" // message just for information
+    message_channel <- "Starting" // message just for information
 
     //subdirs := make(map[string]*TargetDir) // make subdirs map 
 
@@ -189,7 +189,7 @@ func (tgt *Target) ChasingFile() (err error){
 
        var inform_about_exit bool
 
-        if (tgt.Dir!="") {
+        if ( tgt.Dir!="" ) {
 
             select {
 
@@ -266,9 +266,13 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
     tgt.MessageChannel <- ">>| InfoOutArray len : " +fmt.Sprintf("%d",len(tgt.InfoOutArray))+"path : "+tgt.Path+"\n"
 
+    var inform_about_exit bool
+
    //dup
     for {
-        var inform_about_exit bool
+
+        tgt.MessageChannel <- "for part ::  " + tgt.Path + " : " + fmt.Sprintf("%t",inform_about_exit)
+        //var inform_about_exit bool
 
         tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
 
@@ -281,15 +285,57 @@ func (tgt *TargetDir) ChasingDir () (err error){
                 case ask_path:= <-tgt.InfoIn:
                     if ( ask_path==true ) {
                         if ( inform_about_exit == true ) {
-                            tgt.InfoOut  <- "|exited|"
-                            _            =  <-tgt.InfoIn /* second signal should be false */
-                           return nil
+                            tgt.InfoOut        <- "|exited|"
+                            _                  =  <-tgt.InfoIn /* second signal should be false */
+                            // < reload chaser (incorrect place to put chaser) 
+                            //tgt.MessageChannel <- "Inform about exit :+-:"
+
+                            //var new_items = []string { tgt.Path }
+                            //subdirs                      := make(map[string]*TargetDir)
+                            //tgt_new                      := &TargetDir{}
+                            //tgt_new.MessageChannel       =  tgt.MessageChannel
+                            //tgt_new.Path                 =  tgt.Path
+                            //tgt_new.InfoIn               =  tgt.InfoIn
+                            //tgt_new.InfoOut              =  tgt.InfoOut
+                            //tgt_new.InOutChannelsCreated =  true
+                            //subdirs[tgt.Path]            =  tgt_new
+
+                            //go Start( new_items, tgt.MessageChannel, &subdirs )
+                            // reload chaser >
+                            //return nil
 
                     } else { tgt.InfoOut <- tgt.Path }
                    } else { return nil  }
             }
+        // correct place to put chaser
+
+        if ( inform_about_exit == true ) {
+
+            tgt.MessageChannel      <- "Inform about exit :+-:"
+            var new_items           = []string { tgt.Path }
+            subdirs                 := make(map[string]*TargetDir)
+            tgt_new                 := &TargetDir{}
+            tgt_new.MessageChannel  =  tgt.MessageChannel
+            tgt_new.Path                 =  tgt.Path
+            tgt_new.InfoIn               =  tgt.InfoIn
+            tgt_new.InfoOut              =  tgt.InfoOut
+            tgt_new.InOutChannelsCreated =  true
+            subdirs[tgt.Path]            =  tgt_new
+
+            go Start( new_items, tgt.MessageChannel, &subdirs )
+            // reload chaser >
+            return nil
+
+
+
+        }
+        // 
 
         } else if inform_about_exit == true {
+
+            // < reload chaser 
+
+            tgt.MessageChannel <- "Inform about exit :+-:"
 
             var new_items = []string { tgt.Path }
 
@@ -299,16 +345,16 @@ func (tgt *TargetDir) ChasingDir () (err error){
             tgt_new.Path                 =  tgt.Path
             tgt_new.InfoIn               =  tgt.InfoIn
             tgt_new.InfoOut              =  tgt.InfoOut
-            tgt_new.InOutChannelsCreated = true
+            tgt_new.InOutChannelsCreated =  true
             subdirs[tgt.Path]            =  tgt_new
 
-            go Start( new_items, tgt.MessageChannel , &subdirs )
-
+            go Start( new_items, tgt.MessageChannel, &subdirs )
+            // reload chaser >
             return nil
 
         }
         //
-        if ( tgt.Marker != tgt.OldMarker ) {
+        if ( tgt.Marker != tgt.OldMarker ) && ( tgt.OldMarker != "" )  {
 
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true
