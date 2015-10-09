@@ -256,6 +256,8 @@ func (tgt *Target) ChasingFile() (err error){
 func (tgt *TargetDir) ChasingDir () (err error){
 
     tgt.MessageChannel <- "start chasing of dir : "+tgt.Path
+    tgt.MessageChannel <- "InfoInArray len : " +fmt.Sprintf("%d",len(tgt.InfoInArray))+"path : "+tgt.Path+"\n"
+    tgt.MessageChannel <- "InfoOutArray len : " +fmt.Sprintf("%d",len(tgt.InfoOutArray))+"path : "+tgt.Path+"\n"
    //dup
     for {
         var inform_about_exit bool
