@@ -125,7 +125,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
            //      go subdirs[i].ChasingDir()
 
            // }
-    }else if err == nil {
+    } else if err == nil {
 
       // 
       //if err.Error()!="isnt_reg" {
@@ -138,12 +138,11 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
           go target.ChasingFile()
       //}
 
-    }
+        }
     }
     for i:=range (*subdirs) {
 
         //message_channel <- "subdir : " +subdirs[i].Path
-
         // ебучее говно : поиск родительской директории для этой субдиректории в массиве субдиректорий 
         dir := filepath.Dir(i)
         // ааа бляять - мои мозги !!!! 
@@ -155,10 +154,11 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
                 (*subdirs)[dir].InfoOut         =   make(chan string,1)
 
             }
+
             (*subdirs)[dir].Dir             =   parent_dir.Path
 
-            parent_dir.InfoInArray       =  append(parent_dir.InfoInArray, (*subdirs)[dir].InfoIn)
-            parent_dir.InfoOutArray      =  append(parent_dir.InfoOutArray, (*subdirs)[dir].InfoOut)
+            parent_dir.InfoInArray          =  append(parent_dir.InfoInArray, (*subdirs)[dir].InfoIn)
+            parent_dir.InfoOutArray         =  append(parent_dir.InfoOutArray, (*subdirs)[dir].InfoOut)
 
         }
 
@@ -306,7 +306,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
                             //go Start( new_items, tgt.MessageChannel, &subdirs )
                             // reload chaser >
-                            //return nil
+                            return nil
 
                     } else { tgt.InfoOut <- tgt.Path }
                    } else { return nil  }
@@ -327,6 +327,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
             subdirs[tgt.Path]            =  tgt_new
 
             go Start( new_items, tgt.MessageChannel, &subdirs )
+            tgt_new.MessageChannel <- "Exiting : " + tgt.Path
             // reload chaser >
             return nil
 
@@ -350,7 +351,9 @@ func (tgt *TargetDir) ChasingDir () (err error){
             tgt_new.InOutChannelsCreated =  true
             subdirs[tgt.Path]            =  tgt_new
 
+
             go Start( new_items, tgt.MessageChannel, &subdirs )
+            tgt_new.MessageChannel <- "Exiting (root) : " + tgt.Path
             // reload chaser >
             return nil
 
