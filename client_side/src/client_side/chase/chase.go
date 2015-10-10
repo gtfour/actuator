@@ -88,7 +88,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
                     tgt_dir                := &TargetDir{}
                     tgt_dir.MessageChannel =  message_channel
                     tgt_dir.Path           =  path
-                    (*subdirs)[path]          =  tgt_dir
+                    (*subdirs)[path]       =  tgt_dir
 
                 //go tgt_dir.ChasingDir()  // i commented this line because it caused chasing directory before assisgning all linked channels to channel Array's
                 }
@@ -146,6 +146,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
         // ебучее говно : поиск родительской директории для этой субдиректории в массиве субдиректорий 
         dir := filepath.Dir(i)
         // ааа бляять - мои мозги !!!! 
+        fmt.Printf("-| subdir name : %s \n", i)
         if parent_dir, ok := (*subdirs)[dir]; ok {
 
             if (!(*subdirs)[dir].InOutChannelsCreated ) {
@@ -155,7 +156,8 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
 
             }
 
-            (*subdirs)[dir].Dir             =   parent_dir.Path
+            (*subdirs)[dir].Dir             =   dir
+            fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
 
             parent_dir.InfoInArray          =  append(parent_dir.InfoInArray, (*subdirs)[dir].InfoIn)
             parent_dir.InfoOutArray         =  append(parent_dir.InfoOutArray, (*subdirs)[dir].InfoOut)
@@ -260,6 +262,9 @@ func (tgt *Target) ChasingFile() (err error){
 
 func (tgt *TargetDir) ChasingDir () (err error){
 
+
+    fmt.Printf(" AFTER START>> current_dir :%s parent_dir:%s\n",tgt.Path,tgt.Dir)
+
     tgt.MessageChannel <- ">>| Start chasing of dir : "+tgt.Path
 
     tgt.MessageChannel <- ">>| InfoInArray len : " +fmt.Sprintf("%d",len(tgt.InfoInArray))+"path : "+tgt.Path+"\n"
@@ -359,13 +364,14 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
         }
 
-        //if ( tgt.Dir == "") { tgt.MessageChannel <- "Chasing Root Dir :++:" }
+        //if ( tgt.Dir == "") { tgt.MessageChannel <- "Chasing Root Dir :++:<<"+tgt.Path+">>" }
         //
         if ( tgt.Marker != tgt.OldMarker ) {
-
+           tgt.MessageChannel <- "ask child path <START:" + tgt.Path+": send true>"
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true
            }
+           tgt.MessageChannel <- "ask child path <END:" + tgt.Path+": >"
 
            var current_targets []string
            var NewInfoInArray  []chan   bool
@@ -391,11 +397,13 @@ func (tgt *TargetDir) ChasingDir () (err error){
            tgt.InfoOutArray =  NewInfoOutArray
            //var new_items = []string {  tgt.Path  }
            //go Start(new_items,tgt.MessageChannel)
+           tgt.MessageChannel <- "send false <: START"+tgt.Path+" :>"
            for chan_id := range tgt.InfoInArray {
 
                    tgt.InfoInArray[chan_id] <- false
 
            }
+           tgt.MessageChannel <- "send false <: END"+tgt.Path+" :>"
            //go Start( new_items, tgt.MessageChannel )
            tgt.MessageChannel <- "Inform about exit :<" + tgt.Path + ">:"
            inform_about_exit = true
