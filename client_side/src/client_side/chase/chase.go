@@ -151,18 +151,18 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
         fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
         if parent_dir, ok := (*subdirs)[dir]; ok {
 
-            if (!(*subdirs)[dir].InOutChannelsCreated ) {
+            if (!(*subdirs)[i].InOutChannelsCreated ) {
 
-                (*subdirs)[dir].InfoIn          =   make(chan bool,1)
-                (*subdirs)[dir].InfoOut         =   make(chan string,1)
+                (*subdirs)[i].InfoIn          =   make(chan bool,1)
+                (*subdirs)[i].InfoOut         =   make(chan string,1)
 
             }
 
-            (*subdirs)[dir].Dir             =   dir
-            //fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
+            (*subdirs)[i].Dir             =   dir
+            fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
 
-            parent_dir.InfoInArray          =  append(parent_dir.InfoInArray, (*subdirs)[dir].InfoIn)
-            parent_dir.InfoOutArray         =  append(parent_dir.InfoOutArray, (*subdirs)[dir].InfoOut)
+            parent_dir.InfoInArray          =  append(parent_dir.InfoInArray, (*subdirs)[i].InfoIn)
+            parent_dir.InfoOutArray         =  append(parent_dir.InfoOutArray, (*subdirs)[i].InfoOut)
 
         }
 
