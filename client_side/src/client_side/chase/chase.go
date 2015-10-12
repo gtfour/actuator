@@ -144,11 +144,15 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
 
         //message_channel <- "subdir : " +subdirs[i].Path
         // ебучее говно : поиск родительской директории для этой субдиректории в массиве субдиректорий 
+
         dir := filepath.Dir(i)
+
         // ааа бляять - мои мозги !!!! 
         // need to replace dir to i 
-        fmt.Printf("-| subdir name : %s \n", i)
-        fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
+
+
+        //fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
+
         if parent_dir, ok := (*subdirs)[dir]; ok {
 
             if (!(*subdirs)[i].InOutChannelsCreated ) {
@@ -159,20 +163,20 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
             }
 
             (*subdirs)[i].Dir             =   dir
-            fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
+            //fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
 
             parent_dir.InfoInArray          =  append(parent_dir.InfoInArray, (*subdirs)[i].InfoIn)
             parent_dir.InfoOutArray         =  append(parent_dir.InfoOutArray, (*subdirs)[i].InfoOut)
 
         }
-
         //go subdirs[i].ChasingDir()
 
     }
 
     for i:=range (*subdirs) {
 
-        message_channel <- "subdir : " +(*subdirs)[i].Path
+        //message_channel <- "subdir : " +(*subdirs)[i].Path
+
         go (*subdirs)[i].ChasingDir()
 
     }
@@ -235,7 +239,7 @@ func (tgt *Target) ChasingFile() (err error){
 
                         tgt.OldMarker=tgt.Marker } else {
 
-                        time.Sleep(10 * time.Millisecond) }
+                         time.Sleep(200 * time.Millisecond) }
 
                     //tgt.OldMarker=tgt.Marker
 
@@ -255,7 +259,7 @@ func (tgt *Target) ChasingFile() (err error){
           if (tgt.Marker!=tgt.OldMarker) {
 
               go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {
-              time.Sleep(10 * time.Millisecond) }
+              time.Sleep(200 * time.Millisecond)  }
                     //tgt.OldMarker=tgt.Marker
       }
     }
@@ -267,11 +271,11 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
     //fmt.Printf(" AFTER START>> current_dir :|%s| parent_dir:|%s|\n",tgt.Path,tgt.Dir)
 
-    tgt.MessageChannel <- ">>| Start chasing of dir : "+tgt.Path
+    //tgt.MessageChannel <- ">>| Start chasing of dir : "+tgt.Path
 
-    fmt.Printf("CHASING current_dir :|%s| parent_dir:|%s|\n",tgt.Path,tgt.Dir)
-    tgt.MessageChannel <- ">>| InfoInArray len : " +fmt.Sprintf("%d",len(tgt.InfoInArray))+"path : "+tgt.Path+"\n"
-    tgt.MessageChannel <- ">>| InfoOutArray len : " +fmt.Sprintf("%d",len(tgt.InfoOutArray))+"path : "+tgt.Path+"\n"
+    //fmt.Printf("CHASING current_dir :|%s| parent_dir:|%s|\n",tgt.Path,tgt.Dir)
+    //tgt.MessageChannel <- ">>| InfoInArray len : " +fmt.Sprintf("%d",len(tgt.InfoInArray))+"path : "+tgt.Path+"\n"
+    //tgt.MessageChannel <- ">>| InfoOutArray len : " +fmt.Sprintf("%d",len(tgt.InfoOutArray))+"path : "+tgt.Path+"\n"
 
     var inform_about_exit bool
 
@@ -299,6 +303,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
                     if ( ask_path==true ) {
                         if ( inform_about_exit == true ) {
                             tgt.InfoOut        <- "|exited|"
+                            fmt.Printf("\n|exited| has been sent  %s\n",tgt.Path)
                             _                  =  <-tgt.InfoIn /* second signal should be false */
                             // < reload chaser (incorrect place to put chaser) 
                             //tgt.MessageChannel <- "Inform about exit :+-:"
@@ -317,7 +322,10 @@ func (tgt *TargetDir) ChasingDir () (err error){
                             // reload chaser >
                             return nil
 
-                    } else { tgt.InfoOut <- tgt.Path }
+                    } else { tgt.InfoOut <- tgt.Path
+                             fmt.Printf("\nPath has been sent %s\n",tgt.Path)
+                             _           =  <-tgt.InfoIn
+                             return nil }
                    } else {  /*fmt.Printf("%s EXITING-- >> ",tgt.Path)*/  ; return nil  }
 
                 default:
@@ -327,13 +335,14 @@ func (tgt *TargetDir) ChasingDir () (err error){
         if ( inform_about_exit == true ) {
 
             tgt.MessageChannel           <- "Inform about exit :+-:"
-            var new_items                = []string { tgt.Path }
+            var new_items                =  []string { tgt.Path }
             subdirs                      := make(map[string]*TargetDir)
             tgt_new                      := &TargetDir{}
             tgt_new.MessageChannel       =  tgt.MessageChannel
             tgt_new.Path                 =  tgt.Path
             tgt_new.InfoIn               =  tgt.InfoIn
             tgt_new.InfoOut              =  tgt.InfoOut
+            tgt_new.Dir                  =  tgt.Dir
             tgt_new.InOutChannelsCreated =  true
             subdirs[tgt.Path]            =  tgt_new
 
@@ -374,9 +383,11 @@ func (tgt *TargetDir) ChasingDir () (err error){
         //
         if ( tgt.Marker != tgt.OldMarker ) {
            tgt.MessageChannel <- "ask child path <START:" + tgt.Path+": send true>"
+
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true
            }
+
            tgt.MessageChannel <- "ask child path <END:" + tgt.Path+": >"
 
            var current_targets []string
@@ -386,7 +397,12 @@ func (tgt *TargetDir) ChasingDir () (err error){
            for chan_id  :=  range tgt.InfoOutArray {
            // collect channels linked to alive childs
                //select{
+                       fmt.Printf("Get path value for :%d ",chan_id)
+
                /*case*/path_value  :=<-tgt.InfoOutArray[chan_id]/*:*/
+
+                       fmt.Printf("path value for :%s \n",path_value)
+
 
                        if ( path_value      !=  "|exited|" ) {
                            current_targets  =  append( current_targets, path_value )
@@ -415,7 +431,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
            inform_about_exit = true
            //return nil
            //tgt.OldMarker  =  tgt.Marker
-        } else { time.Sleep( 10 * time.Millisecond ) }
+        } else { time.Sleep( 200 * time.Millisecond )  }
     }
 }
 
@@ -428,10 +444,12 @@ func (tgt *Target) Reporting () {
 
 func Listen() (messages chan string){
 
+    target_dir_path             := "/tmp/test"
+
     messages                    =  make(chan string,100)
-    var test_dir                =  []string { "/tmp/test" }
+    var test_dir                =  []string { target_dir_path }
     target                      :=  &TargetDir{}
-    target.Path                 =  "/tmp/test"
+    target.Path                 =  target_dir_path
     target.InfoIn               =  make(chan bool,1)
     target.InfoOut              =  make(chan string,1)
     target.InOutChannelsCreated =  true
