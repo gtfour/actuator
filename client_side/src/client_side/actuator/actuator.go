@@ -1,5 +1,5 @@
-package actuator
-//package main
+//package actuator
+package main
 //
 // actuator
 // client side
@@ -10,9 +10,9 @@ import "time"
 import "bufio"
 import "syscall"
 //
-// import _ "net/http/pprof"
-// import "net/http"
-//import "fmt"
+import _ "net/http/pprof"
+import "net/http"
+import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 
@@ -294,6 +294,7 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
     for file:= range dir_content{
 
         file_struct:=&File{}
+        fmt.Printf("\n---Get md5 : %s \n",path+"/"+dir_content[file]) // /proc/1/task/1/cwd/proc/kcore
         err=file_struct.Get_md5_file(path+"/"+dir_content[file])
 
         if err==nil {
@@ -329,6 +330,7 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
           }
         }
     }
+    
     return nil
     // os.Readdirnames
 }
@@ -350,7 +352,7 @@ func (file_struct *File) Get_md5_file (path string) (err error){
 
     is_readable := RegularFileIsReadable( path ) // check was failed by timeout controll . It fails when opens /proc/kmsg or other strange files
 
-    if is_readable==false { /*fmt.Printf("\n<Not readable %s>",path)*/  ;  return is_not_readable }
+    if is_readable==false { fmt.Printf("\n<Not readable %s>",path)  ;  return is_not_readable }
 
     // check's>
 
@@ -373,13 +375,15 @@ func (file_struct *File) Get_md5_file (path string) (err error){
     file_struct.Sum = mdsum
     file_struct.Dir = filepath.Dir(path)
 
+    fmt.Printf("\nIo copy finished  %s",path)
+
     return nil
 
 }
 
 
 
-/*func main() {
+func main() {
 
         go func() {
 	    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
@@ -387,7 +391,7 @@ func (file_struct *File) Get_md5_file (path string) (err error){
 
 
         dir_struct:=&Directory{}
-        dir_struct.Get_md5_dir("/tmp/mtime_test")
+        dir_struct.Get_md5_dir("/proc/1")
 
 
         counter:=0
@@ -408,9 +412,9 @@ func (file_struct *File) Get_md5_file (path string) (err error){
         file:=&File{}
 
         fmt.Println("::Checking file::")
-        err:=file.Get_md5_file("/proc/1/task/1/cwd/proc/iomem")
+        err:=file.Get_md5_file("/proc/1/task/1/cwd/proc/kmsg")
 
         fmt.Printf("Path:%s Sum:%x Dir:%s \n",file.Path,file.Sum,file.Dir)
         fmt.Println(err)
 
-    }*/
+    }
