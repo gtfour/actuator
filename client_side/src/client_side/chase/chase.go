@@ -265,9 +265,11 @@ func (tgt *Target) ChasingFile() (err error){
 func (tgt *TargetDir) ChasingDir () (err error){
 
 
-    fmt.Printf(" AFTER START>> current_dir :%s parent_dir:%s\n",tgt.Path,tgt.Dir)
+    fmt.Printf(" AFTER START>> current_dir :|%s| parent_dir:|%s|\n",tgt.Path,tgt.Dir)
 
-    tgt.MessageChannel <- ">>| Start chasing of dir : "+tgt.Path
+    //tgt.MessageChannel <- ">>| Start chasing of dir : "+tgt.Path
+
+    fmt.Printf("CHASING current_dir :|%s| parent_dir:|%s|\n",tgt.Path,tgt.Dir)
 
     tgt.MessageChannel <- ">>| InfoInArray len : " +fmt.Sprintf("%d",len(tgt.InfoInArray))+"path : "+tgt.Path+"\n"
 
@@ -277,7 +279,9 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
     tgt.OldMarker , err =  actuator.Get_mtime(tgt.Path)
 
+
     if err != nil { return err }
+
 
    //dup
     for {
