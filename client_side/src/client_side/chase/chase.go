@@ -146,7 +146,9 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
         // ебучее говно : поиск родительской директории для этой субдиректории в массиве субдиректорий 
         dir := filepath.Dir(i)
         // ааа бляять - мои мозги !!!! 
+        // need to replace dir to i 
         fmt.Printf("-| subdir name : %s \n", i)
+        fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
         if parent_dir, ok := (*subdirs)[dir]; ok {
 
             if (!(*subdirs)[dir].InOutChannelsCreated ) {
@@ -157,7 +159,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
             }
 
             (*subdirs)[dir].Dir             =   dir
-            fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
+            //fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
 
             parent_dir.InfoInArray          =  append(parent_dir.InfoInArray, (*subdirs)[dir].InfoIn)
             parent_dir.InfoOutArray         =  append(parent_dir.InfoOutArray, (*subdirs)[dir].InfoOut)
