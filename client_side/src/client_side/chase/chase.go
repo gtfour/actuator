@@ -265,14 +265,12 @@ func (tgt *Target) ChasingFile() (err error){
 func (tgt *TargetDir) ChasingDir () (err error){
 
 
-    fmt.Printf(" AFTER START>> current_dir :|%s| parent_dir:|%s|\n",tgt.Path,tgt.Dir)
+    //fmt.Printf(" AFTER START>> current_dir :|%s| parent_dir:|%s|\n",tgt.Path,tgt.Dir)
 
-    //tgt.MessageChannel <- ">>| Start chasing of dir : "+tgt.Path
+    tgt.MessageChannel <- ">>| Start chasing of dir : "+tgt.Path
 
     fmt.Printf("CHASING current_dir :|%s| parent_dir:|%s|\n",tgt.Path,tgt.Dir)
-
     tgt.MessageChannel <- ">>| InfoInArray len : " +fmt.Sprintf("%d",len(tgt.InfoInArray))+"path : "+tgt.Path+"\n"
-
     tgt.MessageChannel <- ">>| InfoOutArray len : " +fmt.Sprintf("%d",len(tgt.InfoOutArray))+"path : "+tgt.Path+"\n"
 
     var inform_about_exit bool
@@ -286,7 +284,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
    //dup
     for {
 
-        //  tgt.MessageChannel <- "for part ::  " + tgt.Path + " : " + fmt.Sprintf("%t",inform_about_exit)
+        //if tgt.Dir != "" { tgt.MessageChannel <- "for part ::  " + tgt.Path + " : " + fmt.Sprintf("%t",inform_about_exit) }
         //  var inform_about_exit bool
 
         tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
@@ -320,7 +318,9 @@ func (tgt *TargetDir) ChasingDir () (err error){
                             return nil
 
                     } else { tgt.InfoOut <- tgt.Path }
-                   } else { return nil  }
+                   } else {  /*fmt.Printf("%s EXITING-- >> ",tgt.Path)*/  ; return nil  }
+
+                default:
             }
         // correct place to put chaser
 
@@ -435,6 +435,7 @@ func Listen() (messages chan string){
     target.InfoIn               =  make(chan bool,1)
     target.InfoOut              =  make(chan string,1)
     target.InOutChannelsCreated =  true
+    target.MessageChannel       =  messages
     subdirs                     := make(map[string]*TargetDir)
     subdirs[target.Path]        =  target
 
