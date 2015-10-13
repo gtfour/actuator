@@ -1,5 +1,5 @@
-//package actuator
-package main
+package actuator
+//package main
 //
 // actuator
 // client side
@@ -10,11 +10,12 @@ import "time"
 import "bufio"
 import "syscall"
 //
-import _ "net/http/pprof"
-import "net/http"
-import "fmt"
+//import _ "net/http/pprof"
+//import "net/http"
+//import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
+// Bug with opening /proc/1/task/1/cwd/proc/kcore" still does not fixed !!!
 
 type inodes []uint64
 type strings []string
@@ -102,6 +103,10 @@ func RegularFileIsReadable (path string) (readable bool) {
         return false
     }
 
+
+    //empty,err:= IsEmpty(path)
+    //fmt.Printf("File is empty  %t  Err:  %s",empty,err.Error())
+
     manage_chn:=make(chan bool,1)
 
     var content []string
@@ -184,7 +189,7 @@ func IsEmpty(path string) (empty bool, err error) {
 
     size :=  file_info.Size()
 
-    if size==0 { empty=true  } else { empty=false }
+    if size==0 { empty=true  } else { empty=false /* ; fmt.Printf("\nFile path: %s  size : %d \n",path,size)*/ }
 
     return
 }
@@ -294,7 +299,7 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
     for file:= range dir_content{
 
         file_struct:=&File{}
-        fmt.Printf("\n---Get md5 : %s \n",path+"/"+dir_content[file]) // /proc/1/task/1/cwd/proc/kcore
+        // fmt.Printf("\n---Get md5 : %s \n",path+"/"+dir_content[file]) // /proc/1/task/1/cwd/proc/kcore
         err=file_struct.Get_md5_file(path+"/"+dir_content[file])
 
         if err==nil {
@@ -352,7 +357,7 @@ func (file_struct *File) Get_md5_file (path string) (err error){
 
     is_readable := RegularFileIsReadable( path ) // check was failed by timeout controll . It fails when opens /proc/kmsg or other strange files
 
-    if is_readable==false { fmt.Printf("\n<Not readable %s>",path)  ;  return is_not_readable }
+    if is_readable==false { /*fmt.Printf("\n<Not readable %s>",path)  ;*/  return is_not_readable }
 
     // check's>
 
@@ -375,20 +380,20 @@ func (file_struct *File) Get_md5_file (path string) (err error){
     file_struct.Sum = mdsum
     file_struct.Dir = filepath.Dir(path)
 
-    fmt.Printf("\nIo copy finished  %s",path)
+    //fmt.Printf("\nIo copy finished  %s",path)
 
     return nil
 
 }
 
 
+/*
 
 func main() {
 
         go func() {
 	    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
         }()
-
 
         dir_struct:=&Directory{}
         dir_struct.Get_md5_dir("/proc/1")
@@ -408,13 +413,21 @@ func main() {
 
         fmt.Println(Get_mtime("/tmp/does_not_exist"))
         // 
-        // test
+        // test 
         file:=&File{}
 
         fmt.Println("::Checking file::")
-        err:=file.Get_md5_file("/proc/1/task/1/cwd/proc/kmsg")
 
-        fmt.Printf("Path:%s Sum:%x Dir:%s \n",file.Path,file.Sum,file.Dir)
-        fmt.Println(err)
+        empty, err:= IsEmpty("/proc/1/task/1/cwd/proc/kcore")
 
-    }
+        var emsg string
+        if err == nil { emsg="nil" } else { emsg=err.Error() }
+
+        fmt.Printf("\nFile is empty  %t Err: %s \n", empty, emsg )
+
+        err=file.Get_md5_file("/proc/1/task/1/cwd/proc/kcore")
+
+        //fmt.Printf("Path:%s Sum:%x Dir:%s \n",file.Path,file.Sum,file.Dir)
+        //fmt.Println(err)
+
+    } */
