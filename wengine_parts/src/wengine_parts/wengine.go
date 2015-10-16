@@ -51,7 +51,7 @@ func main() {
 func makeHandlerFunc(filepath string,messages chan string, reqtype string) (handle_func func(w http.ResponseWriter, r *http.Request),err error) {
 
     if reqtype == "html_get" {
-   
+ 
     handle_func=func(w http.ResponseWriter, r *http.Request) {
 
     text , _ := readFile(filepath)
