@@ -14,6 +14,32 @@ import "net/http"
 //
 // Before adding TaskMNG
 
+var FILES_PER_GR                           = 1000
+var TIMEOUT_MS              time.Duration  = 200
+var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
+
+type TaskManagerProxy struct {
+
+
+}
+
+
+
+type TaskManager struct {
+
+
+}
+
+func ( tm *TaskManager ) Iteration ()  {
+
+
+}
+
+func ( tm *TaskManager ) Append () {
+
+
+}
+
 
 type Target struct {
 
@@ -91,7 +117,6 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
                     tgt_dir.Path           =  path
                     (*subdirs)[path]       =  tgt_dir
 
-                //go tgt_dir.ChasingDir()  // i commented this line because it caused chasing directory before assisgning all linked channels to channel Array's
                 }
             }
             for file_id :=range dir_struct.Files {
@@ -111,48 +136,25 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
                     subdir.InfoInArray  =  append(subdir.InfoInArray,target.InfoIn)
                     subdir.InfoOutArray =  append(subdir.InfoOutArray,target.InfoOut)
 
-                }//else {
-                //    target.InfoIn = request_channel
-                //    target.InfoOut = response_channel
-                //}
+                }
                 go target.ChasingFile()
 
             }
-            //for i:=range subdirs {
 
-           //      message_channel<-"chasing subdir : " + subdirs[i].Path
-                 // directory.Dir = filepath.Dir(path)
-
-           //      go subdirs[i].ChasingDir()
-
-           // }
     } else if err == nil {
 
-      // 
-      //if err.Error()!="isnt_reg" {
           target                 :=  Target{}
           target.Path            =   targets[id]
           target.OldMarker       =   string(file_struct.Sum)
-          //target.InfoIn = request_channel
-          //target.InfoOut = response_channel
+
           target.MessageChannel  =   message_channel
           go target.ChasingFile()
-      //}
 
         }
     }
     for i:=range (*subdirs) {
 
-        //message_channel <- "subdir : " +subdirs[i].Path
-        // ебучее говно : поиск родительской директории для этой субдиректории в массиве субдиректорий 
-
         dir := filepath.Dir(i)
-
-        // ааа бляять - мои мозги !!!! 
-        // need to replace dir to i 
-
-
-        //fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
 
         if parent_dir, ok := (*subdirs)[dir]; ok {
 
@@ -164,13 +166,11 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
             }
 
             (*subdirs)[i].Dir             =   dir
-            //fmt.Printf(">> BEFORE START : current_dir : %s parent_dir: %s\n",i,dir)
 
             parent_dir.InfoInArray          =  append(parent_dir.InfoInArray, (*subdirs)[i].InfoIn)
             parent_dir.InfoOutArray         =  append(parent_dir.InfoOutArray, (*subdirs)[i].InfoOut)
 
         }
-        //go subdirs[i].ChasingDir()
 
     }
 
@@ -234,7 +234,7 @@ func (tgt *Target) ChasingFile() (err error){
 
                         tgt.OldMarker=tgt.Marker } else {
 
-                         time.Sleep(200 * time.Millisecond) }
+                         time.Sleep( TIMEOUT_MS * time.Millisecond ) }
 
                     //tgt.OldMarker=tgt.Marker
 
@@ -253,7 +253,7 @@ func (tgt *Target) ChasingFile() (err error){
           if (tgt.Marker!=tgt.OldMarker) {
 
               go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {
-              time.Sleep(200 * time.Millisecond)  }
+              time.Sleep( TIMEOUT_MS  * time.Millisecond)  }
                     //tgt.OldMarker=tgt.Marker
       }
     }
@@ -364,7 +364,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
            inform_about_exit = true
 
-        } else { time.Sleep( 200 * time.Millisecond )  }
+        } else { time.Sleep( TIMEOUT_MS * time.Millisecond )  }
     }
 }
 
@@ -412,7 +412,7 @@ func main() {
                 fmt.Println(message)
 
             default:
-                time.Sleep(1000 * time.Millisecond)
+                time.Sleep( LOG_CHANNEL_TIMEOUT_MS * time.Millisecond)
                 fmt.Println("No messages")
 
         }
