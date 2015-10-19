@@ -12,34 +12,6 @@ import _ "net/http/pprof"
 import "net/http"
 //
 //
-// Before adding TaskMNG
-
-var FILES_PER_GR                           = 1000
-var TIMEOUT_MS              time.Duration  = 200
-var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
-
-type TaskManagerProxy struct {
-
-
-}
-
-
-
-type TaskManager struct {
-
-
-}
-
-func ( tm *TaskManager ) Iteration ()  {
-
-
-}
-
-func ( tm *TaskManager ) Append () {
-
-
-}
-
 
 type Target struct {
 
@@ -48,8 +20,6 @@ type Target struct {
     OldMarker      string
     Marker         string
     Modified       bool
-    EventGroup     string
-    EventType      string
     InfoIn         chan bool
     InfoOut        chan string
     MessageChannel chan string
@@ -326,6 +296,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
 
             go Start( new_items, tgt.MessageChannel, &subdirs )
+
             return nil
 
         }
