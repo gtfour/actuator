@@ -1,43 +1,45 @@
-//package chase
-package main
+package chase
+//package main
 
 import "client_side/actuator"
 //import "os"
-import "fmt"
+//import "fmt"
 import "time"
 import "path/filepath"
 //
 //pprof debug
-import _ "net/http/pprof"
-import "net/http"
+//import _ "net/http/pprof"
+//import "net/http"
 //
 //
 
 type Target struct {
 
-    Path           string
-    Dir            string
-    OldMarker      string
-    Marker         string
-    Modified       bool
-    InfoIn         chan bool
-    InfoOut        chan string
-    MessageChannel chan string
+    Path             string
+    Dir              string
+    OldMarker        string
+    Marker           string
+    Modified         bool
+    InfoIn           chan bool
+    InfoOut          chan string
+    MessageChannel   chan string
+    InformAboutExit  bool
 
 }
 
 type TargetDir struct {
 
-    Path                 string
-    Dir                  string
-    OldMarker            string
-    Marker               string
+    Target
+    //Path                 string
+    //Dir                  string
+    //OldMarker            string
+    //Marker               string
     InOutChannelsCreated bool
-    InfoIn               chan bool
-    InfoOut              chan string
+    //InfoIn               chan bool
+    //InfoOut              chan string
     InfoInArray          []chan bool
     InfoOutArray         []chan string
-    MessageChannel       chan   string
+    //MessageChannel       chan   string
 
 }
 
@@ -107,7 +109,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
                     subdir.InfoOutArray =  append(subdir.InfoOutArray,target.InfoOut)
 
                 }
-                go target.ChasingFile()
+                go target.Chasing()
 
             }
 
@@ -118,7 +120,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
           target.OldMarker       =   string(file_struct.Sum)
 
           target.MessageChannel  =   message_channel
-          go target.ChasingFile()
+          go target.Chasing()
 
         }
     }
@@ -146,7 +148,9 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
 
     for i:=range (*subdirs) {
 
-        go (*subdirs)[i].ChasingDir()
+        (*subdirs)[i].OldMarker , err =  actuator.Get_mtime((*subdirs)[i].Path) // this code has been moved here from top of Chasing()
+        if err != nil { continue }
+        go (*subdirs)[i].Chasing()
 
     }
 
@@ -158,11 +162,11 @@ func Stop()(err error) {
 }
 
 
-func (tgt *Target) ChasingFile() (err error){
+func (tgt *Target) Chasing() (err error){
 
-    for {
+    //for {
 
-       var inform_about_exit bool
+        //var inform_about_exit bool
 
         if ( tgt.Dir!="" ) {
 
@@ -172,7 +176,7 @@ func (tgt *Target) ChasingFile() (err error){
 
                     if ( ask_path==true ) {
 
-                        if ( inform_about_exit==true ) {
+                        if ( tgt.InformAboutExit==true ) {
 
                             tgt.InfoOut  <- "|exited|"
 
@@ -196,7 +200,7 @@ func (tgt *Target) ChasingFile() (err error){
 
                         tgt.MessageChannel<-"child is faced with ERROR :" + tgt.Path + "::>>" + err.Error()
 
-                        inform_about_exit=true  }
+                        tgt.InformAboutExit=true  }
 
                     if ( tgt.Marker!=tgt.OldMarker ) {
 
@@ -226,19 +230,19 @@ func (tgt *Target) ChasingFile() (err error){
               time.Sleep( TIMEOUT_MS  * time.Millisecond)  }
                     //tgt.OldMarker=tgt.Marker
       }
-    }
+    //}
     return nil
 }
 
-func (tgt *TargetDir) ChasingDir () (err error){
+func (tgt *TargetDir) Chasing () (err error){
 
-    var inform_about_exit bool
+    //var inform_about_exit bool
 
-    tgt.OldMarker , err =  actuator.Get_mtime(tgt.Path)
+    //tgt.OldMarker , err =  actuator.Get_mtime(tgt.Path) // ????? Need to be FIXED!!!! // It seems that has been fixed // following code has moved to Start func
 
-    if err != nil { return err }
+    //if err != nil { return err }
 
-    for {
+    //for {
 
         tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
 
@@ -248,7 +252,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
             select {
                 case ask_path:= <-tgt.InfoIn:
                     if ( ask_path==true ) {
-                        if ( inform_about_exit == true ) {
+                        if ( tgt.InformAboutExit == true ) {
                             tgt.InfoOut        <- "|exited|"
                             _                  =  <-tgt.InfoIn /* second signal should be false */
                             return nil
@@ -261,7 +265,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
                 default:
             }
 
-        if ( inform_about_exit == true ) {
+        if ( tgt.InformAboutExit == true ) {
 
             var new_items                =  []string { tgt.Path }
             subdirs                      := make(map[string]*TargetDir)
@@ -280,7 +284,7 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
         }
 
-        } else if inform_about_exit == true {
+        } else if tgt.InformAboutExit == true {
 
 
             var new_items = []string { tgt.Path }
@@ -333,10 +337,11 @@ func (tgt *TargetDir) ChasingDir () (err error){
 
            }
 
-           inform_about_exit = true
+           tgt.InformAboutExit = true
 
         } else { time.Sleep( TIMEOUT_MS * time.Millisecond )  }
-    }
+    //}
+    return nil
 }
 
 
@@ -368,7 +373,7 @@ func Listen() (messages chan string) {
 
 }
 
-func main() {
+/*func main() {
 
     messages:=Listen()
 
@@ -390,4 +395,4 @@ func main() {
 
     }
 
-}
+}*/
