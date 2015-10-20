@@ -17,7 +17,6 @@ type Target struct {
 
     Path             string
     Dir              string
-    //SelfType         string
     OldMarker        string
     Marker           string
     InfoIn           chan bool
@@ -29,7 +28,6 @@ type Target struct {
 }
 
 func ( tgt *Target ) GetDir()  string { return tgt.Dir }
-//func ( tgt *Target ) GetType() string { return tgt.SelfType }
 func ( tgt *Target ) GetPath() string { return tgt.Path }
 
 type TargetDir struct {
@@ -42,17 +40,12 @@ type TargetDir struct {
 }
 
 func ( tgt *TargetDir ) GetDir()  string { return tgt.Dir }
-//func ( tgt *TargetDir ) GetType() string { return tgt.SelfType }
 func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
 
 
 func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
-    //request_channel:=make(chan bool)
-    //response_channel:=make(chan string)
 
-    message_channel <- "Starting" // message just for information
-
-    //subdirs := make(map[string]*TargetDir) // make subdirs map 
+    message_channel <- "Starting"
 
     for id :=range targets {
 
@@ -62,19 +55,15 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
         if err.Error()=="is_dir" { // if file is directory
 
-            //fmt.Println(err.Error())
-
             dir_struct := &actuator.Directory{}
 
             err := dir_struct.Get_md5_dir(targets[id]) // collect information about included files and directories 
 
             if err !=nil { continue } // was a return err
-            //add root dir
 
             if _, ok := (*subdirs)[targets[id]]; ok == false { // if global subdirs map does'not contain this item  targets[id] , create and add item to subdirs
 
                 tgt_dir                := &TargetDir{}
-                //tgt_dir.SelfType       =  "dir"
                 tgt_dir.MessageChannel =  message_channel // bind to main info-channel
                 tgt_dir.Path           =  targets[id]
                 (*subdirs)[targets[id]]   =  tgt_dir
@@ -88,7 +77,6 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
                 if _, ok := (*subdirs)[path]; ok == false { // check global subdir map again and add each included subdir if it is not included yet 
 
                     tgt_dir                := &TargetDir{}
-                    //tgt_dir.SelfType       =  "dir"
                     tgt_dir.MessageChannel =  message_channel
                     tgt_dir.Path           =  path
                     (*subdirs)[path]       =  tgt_dir
@@ -100,7 +88,6 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
                 file_struct            :=  dir_struct.Files[file_id]
 
                 target                 :=  Target{}
-                //target.SelfType        =  "file"
                 target.Path            =   file_struct.Path
                 target.OldMarker       =   string(file_struct.Sum)
                 target.MessageChannel  =   message_channel
@@ -114,7 +101,6 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
                     subdir.InfoOutArray =  append(subdir.InfoOutArray,target.InfoOut)
 
                 }
-                //go target.Chasing()
                 wp.AppendTarget(&target)
 
             }
@@ -122,12 +108,10 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
     } else if err == nil {
 
           target                 :=  Target{}
-          //target.SelfType        =  "file"
           target.Path            =   targets[id]
           target.OldMarker       =   string(file_struct.Sum)
 
           target.MessageChannel  =   message_channel
-          //go target.Chasing()
           wp.AppendTarget(&target)
 
         }
@@ -368,7 +352,7 @@ func (tgt *Target) Reporting () {
 
 func Listen() (messages chan string) {
 
-    target_dir_path             :=  "/proc/net"
+    target_dir_path             :=  "/tmp/test"
 
     messages                    =   make(chan string,100)
     var test_dir                =   []string { target_dir_path }
@@ -384,7 +368,7 @@ func Listen() (messages chan string) {
     wp                          :=  WPCreate()
 
 
-    Start( test_dir, messages, &wp, &subdirs )
+    Start( test_dir, messages, wp, &subdirs )
 
     return
 

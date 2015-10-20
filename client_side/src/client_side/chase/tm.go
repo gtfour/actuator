@@ -2,7 +2,7 @@ package chase
 //package main
 
 import "time"
-//import "fmt"
+import "fmt"
 
 
 var FILES_PER_GR                           = 1000 // if FILES_PER_GR is very big - TargetsCount type should be modified 
@@ -14,7 +14,6 @@ type AbstractTarget interface {
 
     GetDir()  string
     Chasing() error
-    //GetType() string
     GetPath() string
 
 }
@@ -45,6 +44,8 @@ type Worker struct {
 
 func ( w *Worker ) Start ()  {
 
+
+    fmt.Printf("\nWorker is started . Len of targets %d\n",len(w.Targets))
     for {
         select {
 
@@ -78,18 +79,32 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
 
 }
 
-func WPCreate () (wp WorkerPool) {
+func WPCreate () (wp *WorkerPool) {
 
-    wp.AddWorker()
+    fmt.Printf("\nWPCreate started <==>\n")
+
+    wp          = &WorkerPool{}
+    wp.Workers  = make([]*Worker, 0)
+
+    fmt.Printf("\nWPCreate BEFORE AddWorker <==>\n")
+
+    nw := wp.AddWorker()
+
+    fmt.Printf("\nWPCreate AddWorker finished<==>\n")
+
+    if nw == wp.Workers[0] { fmt.Printf("\nEqual\n")  }
 
     workers := wp.Workers
+
+    fmt.Printf("\nWPCreate middle <==>\n")
 
     for i:= range workers {
 
         go workers[i].Start()
 
     }
-    return wp
+    fmt.Printf("\nWPCreate finished <==>\n")
+    return
 
 }
 
@@ -108,9 +123,14 @@ func ( wp *WorkerPool ) Stop () {
 
 func (wp *WorkerPool)  AddWorker()(w *Worker){
 
-    //w           =   &Worker{}
+    w           =   &Worker{}
+    //fmt.Printf("\n:: AddWorker started ::\n")
     w.Stop      =   make(chan bool)
+    //fmt.Printf("\n::                   :: channel  created \n")
+    //fmt.Printf("\nLen wp workers : %d \n", len(wp.Workers))
     wp.Workers  =   append(wp.Workers, w)
+    go w.Start()
+    //fmt.Printf("\nExit from AddWorker\n")
     return
 
 
@@ -119,6 +139,7 @@ func (wp *WorkerPool)  AddWorker()(w *Worker){
 func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     var create_new_worker bool
+    fmt.Printf("\nAppend target %s ",tgt.GetPath())
 
     for w:= range wp.Workers {
 
@@ -127,6 +148,8 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
         for wtgt := range worker.Targets {
 
             worker_target_dir := worker.Targets[wtgt]
+
+            fmt.Printf("\ntgt.Dir: %s  wtgt.Path: %s\n",tgt.GetDir(),worker_target_dir.GetPath())
 
             if tgt.GetDir() == worker_target_dir.GetPath() { create_new_worker = true }
 
