@@ -55,11 +55,15 @@ func ( w *Worker ) Start ()  {
 
             default:
 
+                fmt.Printf("\nStart cicle ; targets len %d\n",len(w.Targets))
                 for tgt := range w.Targets {
+
                     w.Targets[tgt].Chasing()
+
                 }
 
         }
+        time.Sleep( TIMEOUT_MS * time.Millisecond )
 
     }
 
@@ -84,7 +88,7 @@ func WPCreate () (wp *WorkerPool) {
     fmt.Printf("\nWPCreate started <==>\n")
 
     wp          = &WorkerPool{}
-    wp.Workers  = make([]*Worker, 0)
+    //wp.Workers  = make([]*Worker, 0)
 
     fmt.Printf("\nWPCreate BEFORE AddWorker <==>\n")
 
@@ -139,17 +143,19 @@ func (wp *WorkerPool)  AddWorker()(w *Worker){
 func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     var create_new_worker bool
-    fmt.Printf("\nAppend target %s ",tgt.GetPath())
+
+    fmt.Printf("\nAppend target %s  Len of wp.Workers %d\n",tgt.GetPath(),len(wp.Workers))
 
     for w:= range wp.Workers {
 
+        fmt.Printf("\n workers array %d  \n",w)
         worker := wp.Workers[w]
 
         for wtgt := range worker.Targets {
 
             worker_target_dir := worker.Targets[wtgt]
 
-            fmt.Printf("\ntgt.Dir: %s  wtgt.Path: %s\n",tgt.GetDir(),worker_target_dir.GetPath())
+            //fmt.Printf("\ntgt.Dir: %s  wtgt.Path: %s\n",tgt.GetDir(),worker_target_dir.GetPath())
 
             if tgt.GetDir() == worker_target_dir.GetPath() { create_new_worker = true }
 
