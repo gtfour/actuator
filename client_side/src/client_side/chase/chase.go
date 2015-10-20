@@ -4,7 +4,7 @@ package chase
 import "client_side/actuator"
 //import "os"
 //import "fmt"
-import "time"
+//import "time"
 import "path/filepath"
 //
 //pprof debug
@@ -17,34 +17,36 @@ type Target struct {
 
     Path             string
     Dir              string
+    //SelfType         string
     OldMarker        string
     Marker           string
-    Modified         bool
     InfoIn           chan bool
     InfoOut          chan string
     MessageChannel   chan string
+    WorkerPool       *WorkerPool
     InformAboutExit  bool
 
 }
 
+func ( tgt *Target ) GetDir()  string { return tgt.Dir }
+//func ( tgt *Target ) GetType() string { return tgt.SelfType }
+func ( tgt *Target ) GetPath() string { return tgt.Path }
+
 type TargetDir struct {
 
     Target
-    //Path                 string
-    //Dir                  string
-    //OldMarker            string
-    //Marker               string
     InOutChannelsCreated bool
-    //InfoIn               chan bool
-    //InfoOut              chan string
     InfoInArray          []chan bool
     InfoOutArray         []chan string
-    //MessageChannel       chan   string
 
 }
 
+func ( tgt *TargetDir ) GetDir()  string { return tgt.Dir }
+//func ( tgt *TargetDir ) GetType() string { return tgt.SelfType }
+func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
 
-func Start (targets []string, message_channel chan string , subdirs *map[string]*TargetDir )(err error){
+
+func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
     //request_channel:=make(chan bool)
     //response_channel:=make(chan string)
 
@@ -72,6 +74,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
             if _, ok := (*subdirs)[targets[id]]; ok == false { // if global subdirs map does'not contain this item  targets[id] , create and add item to subdirs
 
                 tgt_dir                := &TargetDir{}
+                //tgt_dir.SelfType       =  "dir"
                 tgt_dir.MessageChannel =  message_channel // bind to main info-channel
                 tgt_dir.Path           =  targets[id]
                 (*subdirs)[targets[id]]   =  tgt_dir
@@ -85,6 +88,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
                 if _, ok := (*subdirs)[path]; ok == false { // check global subdir map again and add each included subdir if it is not included yet 
 
                     tgt_dir                := &TargetDir{}
+                    //tgt_dir.SelfType       =  "dir"
                     tgt_dir.MessageChannel =  message_channel
                     tgt_dir.Path           =  path
                     (*subdirs)[path]       =  tgt_dir
@@ -96,6 +100,7 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
                 file_struct            :=  dir_struct.Files[file_id]
 
                 target                 :=  Target{}
+                //target.SelfType        =  "file"
                 target.Path            =   file_struct.Path
                 target.OldMarker       =   string(file_struct.Sum)
                 target.MessageChannel  =   message_channel
@@ -109,18 +114,21 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
                     subdir.InfoOutArray =  append(subdir.InfoOutArray,target.InfoOut)
 
                 }
-                go target.Chasing()
+                //go target.Chasing()
+                wp.AppendTarget(&target)
 
             }
 
     } else if err == nil {
 
           target                 :=  Target{}
+          //target.SelfType        =  "file"
           target.Path            =   targets[id]
           target.OldMarker       =   string(file_struct.Sum)
 
           target.MessageChannel  =   message_channel
-          go target.Chasing()
+          //go target.Chasing()
+          wp.AppendTarget(&target)
 
         }
     }
@@ -148,9 +156,12 @@ func Start (targets []string, message_channel chan string , subdirs *map[string]
 
     for i:=range (*subdirs) {
 
-        (*subdirs)[i].OldMarker , err =  actuator.Get_mtime((*subdirs)[i].Path) // this code has been moved here from top of Chasing()
+        target_subdir := (*subdirs)[i]
+
+        target_subdir.OldMarker , err =  actuator.Get_mtime(target_subdir.Path) // this code has been moved here from top of Chasing()
         if err != nil { continue }
-        go (*subdirs)[i].Chasing()
+        //go (*subdirs)[i].Chasing()
+        wp.AppendTarget(target_subdir)
 
     }
 
@@ -206,9 +217,9 @@ func (tgt *Target) Chasing() (err error){
 
                         go  tgt.Reporting()
 
-                        tgt.OldMarker=tgt.Marker } else {
+                        tgt.OldMarker=tgt.Marker } /*else {
 
-                         time.Sleep( TIMEOUT_MS * time.Millisecond ) }
+                         time.Sleep( TIMEOUT_MS * time.Millisecond ) }*/
 
                     //tgt.OldMarker=tgt.Marker
 
@@ -226,8 +237,8 @@ func (tgt *Target) Chasing() (err error){
 
           if (tgt.Marker!=tgt.OldMarker) {
 
-              go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } else {
-              time.Sleep( TIMEOUT_MS  * time.Millisecond)  }
+              go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } /*else {
+              time.Sleep( TIMEOUT_MS  * time.Millisecond)  }*/
                     //tgt.OldMarker=tgt.Marker
       }
     //}
@@ -272,13 +283,15 @@ func (tgt *TargetDir) Chasing () (err error){
             tgt_new                      := &TargetDir{}
             tgt_new.MessageChannel       =  tgt.MessageChannel
             tgt_new.Path                 =  tgt.Path
+            //tgt_new.SelfType             =  tgt.SelfType
             tgt_new.InfoIn               =  tgt.InfoIn
             tgt_new.InfoOut              =  tgt.InfoOut
             tgt_new.Dir                  =  tgt.Dir
             tgt_new.InOutChannelsCreated =  true
+            tgt_new.WorkerPool           =  tgt.WorkerPool
             subdirs[tgt.Path]            =  tgt_new
 
-            go Start( new_items, tgt.MessageChannel, &subdirs )
+            go Start( new_items, tgt.MessageChannel, tgt.WorkerPool, &subdirs )
 
             return nil
 
@@ -293,13 +306,15 @@ func (tgt *TargetDir) Chasing () (err error){
             tgt_new                      := &TargetDir{}
             tgt_new.MessageChannel       =  tgt.MessageChannel
             tgt_new.Path                 =  tgt.Path
+            //tgt_new.SelfType             =  tgt.SelfType
             tgt_new.InfoIn               =  tgt.InfoIn
             tgt_new.InfoOut              =  tgt.InfoOut
             tgt_new.InOutChannelsCreated =  true
+            tgt_new.WorkerPool           =  tgt.WorkerPool
             subdirs[tgt.Path]            =  tgt_new
 
 
-            go Start( new_items, tgt.MessageChannel, &subdirs )
+            go Start( new_items, tgt.MessageChannel, tgt.WorkerPool, &subdirs )
 
             return nil
 
@@ -339,7 +354,7 @@ func (tgt *TargetDir) Chasing () (err error){
 
            tgt.InformAboutExit = true
 
-        } else { time.Sleep( TIMEOUT_MS * time.Millisecond )  }
+        } /*else { time.Sleep( TIMEOUT_MS * time.Millisecond )  }*/
     //}
     return nil
 }
@@ -359,15 +374,17 @@ func Listen() (messages chan string) {
     var test_dir                =   []string { target_dir_path }
     target                      :=  &TargetDir{}
     target.Path                 =   target_dir_path
+    //target.SelfType             =   "dir"
     target.InfoIn               =   make(chan bool,1)
     target.InfoOut              =   make(chan string,1)
     target.InOutChannelsCreated =   true
     target.MessageChannel       =   messages
     subdirs                     :=  make(map[string]*TargetDir)
     subdirs[target.Path]        =   target
+    wp                          :=  WPCreate()
 
 
-    Start( test_dir, messages, &subdirs )
+    Start( test_dir, messages, &wp, &subdirs )
 
     return
 

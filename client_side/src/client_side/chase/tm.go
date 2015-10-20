@@ -12,9 +12,14 @@ var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
 type AbstractTarget interface {
 
+    GetDir()  string
     Chasing() error
+    //GetType() string
+    GetPath() string
 
 }
+
+//func (a *AbstractTarget) GetDir() string { return a.Dir }
 
 
 
@@ -30,7 +35,7 @@ type Worker struct {
 
     //FunListFile *[](tgt *Target)     func(   )
     //FunListFile *[](tgt *TargetDir)  func(   )
-    Targets       []*Target
+    Targets       []AbstractTarget
     TargetsCount  int32
     Stop          chan bool
     //TargetDirs  []*TargetDir
@@ -59,13 +64,21 @@ func ( w *Worker ) Start ()  {
 
 }
 
-func ( w *Worker ) Append ( tgt *Target ) {
+func ( w *Worker ) Append ( tgt AbstractTarget ) {
 
-    w.Targets = append(w.Targets,tgt)
+    //if tgt.GetType() == "dir" {
+
+        w.Targets = append(w.Targets,tgt)
+
+    //} else {
+
+        //w.Targets = append(w.Targets,tgt.(*Target))
+
+    //}
 
 }
 
-func WPcreate () (wp WorkerPool, err error) {
+func WPCreate () (wp WorkerPool) {
 
     wp.AddWorker()
 
@@ -76,7 +89,7 @@ func WPcreate () (wp WorkerPool, err error) {
         go workers[i].Start()
 
     }
-    return wp, nil
+    return wp
 
 }
 
@@ -95,7 +108,7 @@ func ( wp *WorkerPool ) Stop () {
 
 func (wp *WorkerPool)  AddWorker()(w *Worker){
 
-    w           =   &Worker{}
+    //w           =   &Worker{}
     w.Stop      =   make(chan bool)
     wp.Workers  =   append(wp.Workers, w)
     return
@@ -103,8 +116,7 @@ func (wp *WorkerPool)  AddWorker()(w *Worker){
 
 }
 
-func ( wp *WorkerPool ) AppendTarget ( tgt *Target ) () {
-
+func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     var create_new_worker bool
 
@@ -116,7 +128,7 @@ func ( wp *WorkerPool ) AppendTarget ( tgt *Target ) () {
 
             worker_target_dir := worker.Targets[wtgt]
 
-            if tgt.Dir == worker_target_dir.Path { create_new_worker = true }
+            if tgt.GetDir() == worker_target_dir.GetPath() { create_new_worker = true }
 
        }
        if create_new_worker == false { worker.Append(tgt) ; break  }
