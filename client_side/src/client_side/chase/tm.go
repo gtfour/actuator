@@ -18,7 +18,6 @@ type AbstractTarget interface {
 
 }
 
-//func (a *AbstractTarget) GetDir() string { return a.Dir }
 
 
 
@@ -32,8 +31,6 @@ type WorkerPool struct {
 
 type Worker struct {
 
-    //FunListFile *[](tgt *Target)     func(   )
-    //FunListFile *[](tgt *TargetDir)  func(   )
     Targets       []AbstractTarget
     TargetsFuncs  []func() error
     TargetsCount  int32
@@ -56,12 +53,16 @@ func ( w *Worker ) Start ()  {
 
             default:
 
-                fmt.Printf("\nStart cicle ; targets len %d\n",len(w.Targets))
+                fmt.Printf("\nStart cicle ; targets len %d\n",len(w.TargetsFuncs))
                 for tgt := range w.TargetsFuncs {
 
                     fmt.Printf("\ncicle %d\n",tgt)
                     //w.Targets[tgt].Chasing()
-                    w.TargetsFuncs[tgt]()
+                    if w.TargetsFuncs[tgt]!=nil {
+
+                        w.TargetsFuncs[tgt]()
+
+                    } else { fmt.Printf("\nPointer is nil %d\n",tgt) }
                     fmt.Printf("\n=========\n")
 
                 }

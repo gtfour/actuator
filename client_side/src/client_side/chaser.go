@@ -9,7 +9,8 @@ import "time"
 
 func main() {
 
-    messages:=chase.Listen()
+    path     := "/proc/net"
+    messages := chase.Listen(path)
 
     go func() {
         fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
