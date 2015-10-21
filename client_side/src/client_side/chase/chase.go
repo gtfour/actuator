@@ -352,7 +352,7 @@ func (tgt *Target) Reporting () {
 
 func Listen() (messages chan string) {
 
-    target_dir_path             :=  "/proc/net"
+    target_dir_path             :=  "/tmp/test"
 
     messages                    =   make(chan string,100)
     var test_dir                =   []string { target_dir_path }

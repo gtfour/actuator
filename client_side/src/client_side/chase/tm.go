@@ -35,6 +35,7 @@ type Worker struct {
     //FunListFile *[](tgt *Target)     func(   )
     //FunListFile *[](tgt *TargetDir)  func(   )
     Targets       []AbstractTarget
+    TargetsFuncs  []func() error
     TargetsCount  int32
     Stop          chan bool
     //TargetDirs  []*TargetDir
@@ -56,9 +57,12 @@ func ( w *Worker ) Start ()  {
             default:
 
                 fmt.Printf("\nStart cicle ; targets len %d\n",len(w.Targets))
-                for tgt := range w.Targets {
+                for tgt := range w.TargetsFuncs {
 
-                    w.Targets[tgt].Chasing()
+                    fmt.Printf("\ncicle %d\n",tgt)
+                    //w.Targets[tgt].Chasing()
+                    w.TargetsFuncs[tgt]()
+                    fmt.Printf("\n=========\n")
 
                 }
 
@@ -74,6 +78,7 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
     //if tgt.GetType() == "dir" {
 
         w.Targets = append(w.Targets,tgt)
+        w.TargetsFuncs = append(w.TargetsFuncs,tgt.Chasing)
 
     //} else {
 
@@ -98,15 +103,15 @@ func WPCreate () (wp *WorkerPool) {
 
     if nw == wp.Workers[0] { fmt.Printf("\nEqual\n")  }
 
-    workers := wp.Workers
+    //  workers := wp.Workers
 
     fmt.Printf("\nWPCreate middle <==>\n")
 
-    for i:= range workers {
+    //  for i:= range workers {
 
-        go workers[i].Start()
+    //     go workers[i].Start()
 
-    }
+    //   }
     fmt.Printf("\nWPCreate finished <==>\n")
     return
 
