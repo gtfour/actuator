@@ -3,7 +3,7 @@ package chase
 
 import "client_side/actuator"
 //import "os"
-//import "fmt"
+import "fmt" // for  debug
 //import "time"
 import "path/filepath"
 //
@@ -76,10 +76,11 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
                 if _, ok := (*subdirs)[path]; ok == false { // check global subdir map again and add each included subdir if it is not included yet 
 
-                    tgt_dir                := &TargetDir{}
-                    tgt_dir.MessageChannel =  message_channel
-                    tgt_dir.Path           =  path
-                    (*subdirs)[path]       =  tgt_dir
+                    tgt_dir                 :=  &TargetDir{}
+                    tgt_dir.MessageChannel  =   message_channel
+                    tgt_dir.WorkerPool      =   wp
+                    tgt_dir.Path            =   path
+                    (*subdirs)[path]        =   tgt_dir
 
                 }
             }
@@ -87,10 +88,11 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
                 file_struct            :=  dir_struct.Files[file_id]
 
-                target                 :=  Target{}
+                target                 :=  Target{} //  I have to find difference between Target{} and &Target{}
                 target.Path            =   file_struct.Path
                 target.OldMarker       =   string(file_struct.Sum)
                 target.MessageChannel  =   message_channel
+                target.WorkerPool      =   wp
                 target.InfoIn          =   make(chan bool,1)
                 target.InfoOut         =   make(chan string,1)
 
@@ -101,6 +103,7 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
                     subdir.InfoOutArray =  append(subdir.InfoOutArray,target.InfoOut)
 
                 }
+                if ( wp == nil ) { fmt.Printf("\n wp is nil : Start()  files in dir \n")} else { fmt.Printf("\nWp is not nil -- files in dir\n") }
                 wp.AppendTarget(&target)
 
             }
@@ -112,6 +115,7 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
           target.OldMarker       =   string(file_struct.Sum)
 
           target.MessageChannel  =   message_channel
+          if ( wp == nil ) { fmt.Printf("\n wp is nil : Start() single files \n")} else { fmt.Printf("\nWp is not nil -- single files\n") }
           wp.AppendTarget(&target)
 
         }
@@ -145,6 +149,7 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
         target_subdir.OldMarker , err =  actuator.Get_mtime(target_subdir.Path) // this code has been moved here from top of Chasing()
         if err != nil { continue }
         //go (*subdirs)[i].Chasing()
+         if ( wp == nil ) { fmt.Printf("\n wp is nil : Start() subdirs \n")} else { fmt.Printf("\nWp is not nil -- subdirs\n") }
         wp.AppendTarget(target_subdir)
 
     }
@@ -368,7 +373,7 @@ func Listen( path string ) ( messages chan string ) {
     wp                          :=  WPCreate()
 
 
-    Start( test_dir, messages, wp, &subdirs )
+    Start( test_dir, messages, &wp, &subdirs )
 
     return
 

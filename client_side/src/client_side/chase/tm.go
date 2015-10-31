@@ -11,38 +11,26 @@ var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
 
 type AbstractTarget interface {
-
     GetDir()  string
     Chasing() error
     GetPath() string
-
 }
 
-
-
-
 type WorkerPool struct {
-
     Workers         []*Worker
     WKillers        []chan bool
-
 }
 
 
 type Worker struct {
-
     Targets       []AbstractTarget
     TargetsFuncs  []func() error
     TargetsCount  int32
     Stop          chan bool
     //TargetDirs  []*TargetDir
-
-
 }
 
 func ( w *Worker ) Start ()  {
-
-
     fmt.Printf("\nWorker is started . Len of targets %d\n",len(w.Targets))
     for {
         select {
@@ -66,12 +54,9 @@ func ( w *Worker ) Start ()  {
                     fmt.Printf("\n=========\n")
 
                 }
-
         }
         time.Sleep( TIMEOUT_MS * time.Millisecond )
-
     }
-
 }
 
 func ( w *Worker ) Append ( tgt AbstractTarget ) {
@@ -80,40 +65,27 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
 
         w.Targets = append(w.Targets,tgt)
         w.TargetsFuncs = append(w.TargetsFuncs,tgt.Chasing)
-
     //} else {
-
         //w.Targets = append(w.Targets,tgt.(*Target))
-
     //}
-
 }
 
-func WPCreate () (wp *WorkerPool) {
+func WPCreate () (wp WorkerPool) {
 
     fmt.Printf("\nWPCreate started <==>\n")
-
-    wp          = &WorkerPool{}
-    //wp.Workers  = make([]*Worker, 0)
-
+    //wp          = &WorkerPool{}
+    wp.Workers  = make([]*Worker, 0)
     fmt.Printf("\nWPCreate BEFORE AddWorker <==>\n")
-
     nw := wp.AddWorker()
-
     fmt.Printf("\nWPCreate AddWorker finished<==>\n")
-
     if nw == wp.Workers[0] { fmt.Printf("\nEqual\n")  }
-
     //  workers := wp.Workers
-
     fmt.Printf("\nWPCreate middle <==>\n")
-
     //  for i:= range workers {
-
     //     go workers[i].Start()
-
     //   }
     fmt.Printf("\nWPCreate finished <==>\n")
+    
     return
 
 }
@@ -150,6 +122,8 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     var create_new_worker bool
 
+
+    fmt.Printf("\n===  === Appending target %s \n",tgt.GetPath())
     fmt.Printf("\nAppend target %s  Len of wp.Workers %d\n",tgt.GetPath(),len(wp.Workers))
 
     for w:= range wp.Workers {
