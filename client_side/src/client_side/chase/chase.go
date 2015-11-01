@@ -3,7 +3,7 @@ package chase
 
 import "client_side/actuator"
 //import "os"
-import "fmt" // for  debug
+//import "fmt" // for  debug
 //import "time"
 import "path/filepath"
 //
@@ -103,7 +103,6 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
                     subdir.InfoOutArray =  append(subdir.InfoOutArray,target.InfoOut)
 
                 }
-                if ( wp == nil ) { fmt.Printf("\n wp is nil : Start()  files in dir \n")} else { fmt.Printf("\nWp is not nil -- files in dir\n") }
                 wp.AppendTarget(&target)
 
             }
@@ -115,7 +114,6 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
           target.OldMarker       =   string(file_struct.Sum)
 
           target.MessageChannel  =   message_channel
-          if ( wp == nil ) { fmt.Printf("\n wp is nil : Start() single files \n")} else { fmt.Printf("\nWp is not nil -- single files\n") }
           wp.AppendTarget(&target)
 
         }
@@ -149,7 +147,6 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
         target_subdir.OldMarker , err =  actuator.Get_mtime(target_subdir.Path) // this code has been moved here from top of Chasing()
         if err != nil { continue }
         //go (*subdirs)[i].Chasing()
-         if ( wp == nil ) { fmt.Printf("\n wp is nil : Start() subdirs \n")} else { fmt.Printf("\nWp is not nil -- subdirs\n") }
         wp.AppendTarget(target_subdir)
 
     }
@@ -172,23 +169,10 @@ func (tgt *Target) Chasing() (err error){
 
             select {
 
-                case ask_path:= <-tgt.InfoIn:
+                case <-tgt.InfoIn:
 
-                    if ( ask_path==true ) {
+                            return nil
 
-                        if ( tgt.InformAboutExit==true ) {
-
-                            tgt.InfoOut  <- "|exited|"
-
-                             _           =  <-tgt.InfoIn /* second signal should be false */
-
-                            return nil  } else {
-
-                                tgt.InfoOut <- tgt.Path  }
-
-                    } else {
-
-                        return nil }
 
                 default:
 
@@ -206,11 +190,9 @@ func (tgt *Target) Chasing() (err error){
 
                         go  tgt.Reporting()
 
-                        tgt.OldMarker=tgt.Marker } /*else {
+                        tgt.OldMarker=tgt.Marker }
 
-                         time.Sleep( TIMEOUT_MS * time.Millisecond ) }*/
 
-                    //tgt.OldMarker=tgt.Marker
 
         }
 
@@ -220,29 +202,17 @@ func (tgt *Target) Chasing() (err error){
 
           if err:=file.Get_md5_file(tgt.Path); err == nil {
 
-              tgt.Marker=string(file.Sum) } else {
-
-              /*tgt.InfoOut <- "|exited|"  }  ;*/ return err }
+              tgt.Marker=string(file.Sum) } else { return err }
 
           if (tgt.Marker!=tgt.OldMarker) {
 
-              go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  } /*else {
-              time.Sleep( TIMEOUT_MS  * time.Millisecond)  }*/
-                    //tgt.OldMarker=tgt.Marker
+              go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  }
       }
-    //}
     return nil
 }
 
 func (tgt *TargetDir) Chasing () (err error){
 
-    //var inform_about_exit bool
-
-    //tgt.OldMarker , err =  actuator.Get_mtime(tgt.Path) // ????? Need to be FIXED!!!! // It seems that has been fixed // following code has moved to Start func
-
-    //if err != nil { return err }
-
-    //for {
 
         tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
 
@@ -250,18 +220,8 @@ func (tgt *TargetDir) Chasing () (err error){
 
         if tgt.Dir != "" {
             select {
-                case ask_path:= <-tgt.InfoIn:
-                    if ( ask_path==true ) {
-                        if ( tgt.InformAboutExit == true ) {
-                            tgt.InfoOut        <- "|exited|"
-                            _                  =  <-tgt.InfoIn /* second signal should be false */
+                case <-tgt.InfoIn:
                             return nil
-
-                    } else { tgt.InfoOut <- tgt.Path
-                             _           =  <-tgt.InfoIn
-                             return nil }
-                   } else { return nil }
-
                 default:
             }
 
@@ -272,7 +232,6 @@ func (tgt *TargetDir) Chasing () (err error){
             tgt_new                      := &TargetDir{}
             tgt_new.MessageChannel       =  tgt.MessageChannel
             tgt_new.Path                 =  tgt.Path
-            //tgt_new.SelfType             =  tgt.SelfType
             tgt_new.InfoIn               =  tgt.InfoIn
             tgt_new.InfoOut              =  tgt.InfoOut
             tgt_new.Dir                  =  tgt.Dir
@@ -295,7 +254,6 @@ func (tgt *TargetDir) Chasing () (err error){
             tgt_new                      := &TargetDir{}
             tgt_new.MessageChannel       =  tgt.MessageChannel
             tgt_new.Path                 =  tgt.Path
-            //tgt_new.SelfType             =  tgt.SelfType
             tgt_new.InfoIn               =  tgt.InfoIn
             tgt_new.InfoOut              =  tgt.InfoOut
             tgt_new.InOutChannelsCreated =  true
@@ -315,36 +273,9 @@ func (tgt *TargetDir) Chasing () (err error){
                tgt.InfoInArray[chan_id] <- true
            }
 
-           var current_targets []string
-           var NewInfoInArray  []chan   bool
-           var NewInfoOutArray []chan   string
-
-           for chan_id  :=  range tgt.InfoOutArray {
-
-               path_value  :=<-tgt.InfoOutArray[chan_id]
-
-                       if ( path_value      !=  "|exited|" ) {
-                           current_targets  =  append( current_targets, path_value )
-                           NewInfoInArray   =  append( NewInfoInArray, tgt.InfoInArray[chan_id] )
-                           NewInfoOutArray  =  append( NewInfoOutArray, tgt.InfoOutArray[chan_id] )
-                       } else {
-                           tgt.InfoInArray[chan_id] <- false
-                       }
-           }
-
-           tgt.InfoInArray  =  NewInfoInArray
-           tgt.InfoOutArray =  NewInfoOutArray
-
-           for chan_id := range tgt.InfoInArray {
-
-                   tgt.InfoInArray[chan_id] <- false
-
-           }
-
            tgt.InformAboutExit = true
 
-        } /*else { time.Sleep( TIMEOUT_MS * time.Millisecond )  }*/
-    //}
+        }
     return nil
 }
 

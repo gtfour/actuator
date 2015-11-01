@@ -9,7 +9,7 @@ import "time"
 
 func main() {
 
-    path     := "/proc/net"
+    path     := "/tmp/test"
     messages := chase.Listen(path)
 
     go func() {
@@ -31,4 +31,3 @@ func main() {
     }
 
 }
-
