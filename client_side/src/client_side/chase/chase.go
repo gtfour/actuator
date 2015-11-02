@@ -3,7 +3,7 @@ package chase
 
 import "client_side/actuator"
 //import "os"
-//import "fmt" // for  debug
+import "fmt" // for  debug
 //import "time"
 import "path/filepath"
 //
@@ -76,11 +76,11 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
                 if _, ok := (*subdirs)[path]; ok == false { // check global subdir map again and add each included subdir if it is not included yet 
 
-                    tgt_dir                 :=  &TargetDir{}
+                    tgt_dir                 :=  TargetDir{} // try to change &TargetDir{} to TargetDir{}
                     tgt_dir.MessageChannel  =   message_channel
                     tgt_dir.WorkerPool      =   wp
                     tgt_dir.Path            =   path
-                    (*subdirs)[path]        =   tgt_dir
+                    (*subdirs)[path]        =   &tgt_dir
 
                 }
             }
@@ -103,6 +103,7 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
                     subdir.InfoOutArray =  append(subdir.InfoOutArray,target.InfoOut)
 
                 }
+                if (wp==nil) {fmt.Printf("wp is nill dir files ")}
                 wp.AppendTarget(&target)
 
             }
@@ -112,8 +113,10 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
           target                 :=  Target{}
           target.Path            =   targets[id]
           target.OldMarker       =   string(file_struct.Sum)
+          target.WorkerPool      =   wp // new 02-11-2015 03:00
 
           target.MessageChannel  =   message_channel
+          if (wp==nil) {fmt.Printf("wp is nill single files ")}
           wp.AppendTarget(&target)
 
         }
@@ -147,6 +150,7 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
         target_subdir.OldMarker , err =  actuator.Get_mtime(target_subdir.Path) // this code has been moved here from top of Chasing()
         if err != nil { continue }
         //go (*subdirs)[i].Chasing()
+        if (wp==nil) {fmt.Printf("wp is nill dir subdirs ")}
         wp.AppendTarget(target_subdir)
 
     }
