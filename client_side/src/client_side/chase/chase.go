@@ -63,9 +63,10 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
             if _, ok := (*subdirs)[targets[id]]; ok == false { // if global subdirs map does'not contain this item  targets[id] , create and add item to subdirs
 
-                tgt_dir                := &TargetDir{}
-                tgt_dir.MessageChannel =  message_channel // bind to main info-channel
-                tgt_dir.Path           =  targets[id]
+                tgt_dir                   := &TargetDir{}
+                tgt_dir.MessageChannel    =  message_channel // bind to main info-channel
+                tgt_dir.Path              =  targets[id]
+                tgt_dir.WorkerPool        =   wp // Deirz@golang.cjr advice  
                 (*subdirs)[targets[id]]   =  tgt_dir
 
             }
@@ -168,6 +169,7 @@ func (tgt *Target) Chasing() (err error){
     //for {
 
         //var inform_about_exit bool
+        if (tgt.WorkerPool==nil) {fmt.Printf("%s  wp is nil",tgt.Path)}
 
         if ( tgt.Dir!="" ) {
 
@@ -219,6 +221,8 @@ func (tgt *TargetDir) Chasing () (err error){
 
 
         tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
+
+        if (tgt.WorkerPool==nil) {fmt.Printf("%s wp is nil",tgt.Path)}
 
         if err != nil { return err }
 
@@ -295,6 +299,7 @@ func Listen( path string ) ( messages chan string ) {
     target_dir_path             :=  path
 
     messages                    =   make(chan string,100)
+    wp                          :=  WPCreate()
     var test_dir                =   []string { target_dir_path }
     target                      :=  &TargetDir{}
     target.Path                 =   target_dir_path
@@ -303,9 +308,10 @@ func Listen( path string ) ( messages chan string ) {
     target.InfoOut              =   make(chan string,1)
     target.InOutChannelsCreated =   true
     target.MessageChannel       =   messages
+    target.WorkerPool           =   &wp // Deirz@golang.cjr advice
     subdirs                     :=  make(map[string]*TargetDir)
     subdirs[target.Path]        =   target
-    wp                          :=  WPCreate()
+
 
 
     Start( test_dir, messages, &wp, &subdirs )
