@@ -2,7 +2,7 @@ package chase
 //package main
 
 import "time"
-import "fmt"
+//import "fmt"
 
 
 var FILES_PER_GR                           = 1000 // if FILES_PER_GR is very big - TargetsCount type should be modified 
@@ -24,14 +24,12 @@ type WorkerPool struct {
 
 type Worker struct {
     Targets       []AbstractTarget
-    TargetsFuncs  []func() error
     TargetsCount  int32
     Stop          chan bool
     //TargetDirs  []*TargetDir
 }
 
 func ( w *Worker ) Start ()  {
-    fmt.Printf("\nWorker is started . Len of targets %d\n",len(w.Targets))
     for {
         select {
 
@@ -41,17 +39,13 @@ func ( w *Worker ) Start ()  {
 
             default:
 
-                fmt.Printf("\nStart cicle ; targets len %d\n",len(w.TargetsFuncs))
-                for tgt := range w.TargetsFuncs {
+                for tgt := range w.Targets {
 
-                    fmt.Printf("\ncicle %d\n",tgt)
-                    //w.Targets[tgt].Chasing()
-                    if w.TargetsFuncs[tgt]!=nil {
+                    if w.Targets[tgt].Chasing!=nil {
 
-                        w.TargetsFuncs[tgt]()
+                        w.Targets[tgt].Chasing()
 
-                    } else { fmt.Printf("\nPointer is nil %d\n",tgt) }
-                    fmt.Printf("\n=========\n")
+                    }
 
                 }
         }
@@ -62,30 +56,20 @@ func ( w *Worker ) Start ()  {
 func ( w *Worker ) Append ( tgt AbstractTarget ) {
 
     //if tgt.GetType() == "dir" {
+        var tgt_replaced bool
+        for wtgt:= range w.Targets {
 
-        w.Targets = append(w.Targets,tgt)
-        w.TargetsFuncs = append(w.TargetsFuncs,tgt.Chasing)
-    //} else {
-        //w.Targets = append(w.Targets,tgt.(*Target))
-    //}
+            if w.Targets[wtgt].GetPath() == tgt.GetPath() { w.Targets[wtgt] = tgt ; tgt_replaced = true }
+
+        }
+        if tgt_replaced == false { w.Targets = append(w.Targets,tgt) }
 }
 
 func WPCreate () (wp WorkerPool) {
 
-    fmt.Printf("\nWPCreate started <==>\n")
-    //wp          = &WorkerPool{}
     wp.Workers  = make([]*Worker, 0)
-    fmt.Printf("\nWPCreate BEFORE AddWorker <==>\n")
-    nw := wp.AddWorker()
-    fmt.Printf("\nWPCreate AddWorker finished<==>\n")
-    if nw == wp.Workers[0] { fmt.Printf("\nEqual\n")  }
-    //  workers := wp.Workers
-    fmt.Printf("\nWPCreate middle <==>\n")
-    //  for i:= range workers {
-    //     go workers[i].Start()
-    //   }
-    fmt.Printf("\nWPCreate finished <==>\n")
-    
+    wp.AddWorker()
+
     return
 
 }
@@ -106,13 +90,9 @@ func ( wp *WorkerPool ) Stop () {
 func (wp *WorkerPool)  AddWorker()(w *Worker){
 
     w           =   &Worker{}
-    //fmt.Printf("\n:: AddWorker started ::\n")
     w.Stop      =   make(chan bool)
-    //fmt.Printf("\n::                   :: channel  created \n")
-    //fmt.Printf("\nLen wp workers : %d \n", len(wp.Workers))
     wp.Workers  =   append(wp.Workers, w)
     go w.Start()
-    //fmt.Printf("\nExit from AddWorker\n")
     return
 
 
@@ -123,19 +103,15 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
     var create_new_worker bool
 
 
-    fmt.Printf("\n===  === Appending target %s \n",tgt.GetPath())
-    fmt.Printf("\nAppend target %s  Len of wp.Workers %d\n",tgt.GetPath(),len(wp.Workers))
 
     for w:= range wp.Workers {
 
-        fmt.Printf("\n workers array %d  \n",w)
         worker := wp.Workers[w]
 
         for wtgt := range worker.Targets {
 
             worker_target_dir := worker.Targets[wtgt]
 
-            //fmt.Printf("\ntgt.Dir: %s  wtgt.Path: %s\n",tgt.GetDir(),worker_target_dir.GetPath())
 
             if tgt.GetDir() == worker_target_dir.GetPath() { create_new_worker = true }
 
@@ -143,6 +119,5 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
        if create_new_worker == false { worker.Append(tgt) ; break  }
     }
     if create_new_worker == true { w := wp.AddWorker() ; w.Append(tgt) }
-    //fmt.Printf("%t",create_new_worker)
 
 }
