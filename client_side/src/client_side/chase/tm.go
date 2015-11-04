@@ -2,7 +2,6 @@ package chase
 //package main
 
 import "time"
-//import "fmt"
 
 
 var FILES_PER_GR                           = 1000 // if FILES_PER_GR is very big - TargetsCount type should be modified 
@@ -102,8 +101,6 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     var create_new_worker bool
 
-
-
     for w:= range wp.Workers {
 
         worker := wp.Workers[w]
@@ -112,10 +109,10 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
             worker_target_dir := worker.Targets[wtgt]
 
+            if tgt.GetDir() == worker_target_dir.GetPath() { create_new_worker = true ; break } // mistake
 
-            if tgt.GetDir() == worker_target_dir.GetPath() { create_new_worker = true }
+        }
 
-       }
        if create_new_worker == false { worker.Append(tgt) ; break  }
     }
     if create_new_worker == true { w := wp.AddWorker() ; w.Append(tgt) }
