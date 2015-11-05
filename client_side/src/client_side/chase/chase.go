@@ -194,6 +194,7 @@ func (tgt *Target) Chasing() (err error){
 
                     if ( tgt.Marker!=tgt.OldMarker ) {
 
+                        fmt.Printf("\nMarkers are different %s\n",tgt.Path)
                         go  tgt.Reporting()
 
                         tgt.OldMarker=tgt.Marker }
@@ -211,6 +212,7 @@ func (tgt *Target) Chasing() (err error){
               tgt.Marker=string(file.Sum) } else { return err }
 
           if (tgt.Marker!=tgt.OldMarker) {
+              fmt.Printf("\nMarkers are different %s\n",tgt.Path)
 
               go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  }
       }
@@ -275,7 +277,8 @@ func (tgt *TargetDir) Chasing () (err error){
 
         }
 
-        if ( tgt.Marker != tgt.OldMarker ) {
+        if ( tgt.Marker!=tgt.OldMarker ) {
+           fmt.Printf("\nMarkers are different %s\n",tgt.Path)
 
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true

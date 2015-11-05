@@ -1,7 +1,9 @@
 package chase
-//package main
 
+
+import "fmt"
 import "time"
+import "math/rand"
 
 
 var FILES_PER_GR                           = 1000 // if FILES_PER_GR is very big - TargetsCount type should be modified 
@@ -23,6 +25,7 @@ type WorkerPool struct {
 
 type Worker struct {
     Targets       []AbstractTarget
+    Id            int32
     TargetsCount  int32
     Stop          chan bool
     //TargetDirs  []*TargetDir
@@ -30,6 +33,7 @@ type Worker struct {
 
 func ( w *Worker ) Start ()  {
     for {
+        fmt.Printf("\n<-- Worker is working %d-->\n",w.Id)
         select {
 
             case <-w.Stop:
@@ -88,7 +92,12 @@ func ( wp *WorkerPool ) Stop () {
 
 func (wp *WorkerPool)  AddWorker()(w *Worker){
 
+
+
+    fmt.Printf("\nCreate new worker\n")
     w           =   &Worker{}
+    rand.Seed( time.Now().UTC().UnixNano())
+    w.Id        =   rand.Int31()
     w.Stop      =   make(chan bool)
     wp.Workers  =   append(wp.Workers, w)
     go w.Start()
@@ -99,6 +108,8 @@ func (wp *WorkerPool)  AddWorker()(w *Worker){
 
 func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
+    fmt.Printf("\n Appending target %s \n",tgt.GetPath())
+
     var create_new_worker bool
 
     for w:= range wp.Workers {
@@ -108,13 +119,15 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
         for wtgt := range worker.Targets {
 
             worker_target_dir := worker.Targets[wtgt]
-
+            fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
             if tgt.GetDir() == worker_target_dir.GetPath() { create_new_worker = true ; break } // mistake
 
         }
 
-       if create_new_worker == false { worker.Append(tgt) ; break  }
+       if create_new_worker == false { worker.Append(tgt) ; break  } else  { create_new_worker=false }
+
+       if w == len(wp.Workers) { create_new_worker=true  }
     }
-    if create_new_worker == true { w := wp.AddWorker() ; w.Append(tgt) }
+    if create_new_worker == true { fmt.Printf("\n<< Ask to create new worker >>\n")  ;  w := wp.AddWorker() ; w.Append(tgt) }
 
 }
