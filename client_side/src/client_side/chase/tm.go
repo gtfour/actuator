@@ -62,6 +62,7 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
         var tgt_replaced bool
         for wtgt:= range w.Targets {
 
+            // have mistake . Also need to check all workers in wp pool
             if w.Targets[wtgt].GetPath() == tgt.GetPath() { w.Targets[wtgt] = tgt ; tgt_replaced = true }
 
         }
@@ -120,7 +121,10 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
             worker_target_dir := worker.Targets[wtgt]
             fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
-            if tgt.GetDir() == worker_target_dir.GetPath() { create_new_worker = true ; break } // mistake
+            if tgt.GetDir() == worker_target_dir.GetPath() { // HAVE to add check tgt.GetPath == worker_target_dir.GetDir()
+                create_new_worker = true
+                break
+            }
 
         }
 
