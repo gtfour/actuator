@@ -6,7 +6,7 @@ import "time"
 import "math/rand"
 
 
-var TGT_PER_GR int64                           = 1000 // if FILES_PER_GR is very big - TargetsCount type should be modified 
+var TGT_PER_GR int64                       = 4 // if FILES_PER_GR is very big - TargetsCount type should be modified 
 var TIMEOUT_MS              time.Duration  = 200
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
@@ -33,7 +33,7 @@ type Worker struct {
 
 func ( w *Worker ) Start ()  {
     for {
-        fmt.Printf("\n<-- Worker is working %d-->\n",w.Id)
+        //fmt.Printf("\n<-- Worker is working %d-->\n",w.Id)
         select {
 
             case <-w.Stop:
@@ -87,7 +87,7 @@ func (wp *WorkerPool)  AddWorker()(){
 
 
 
-    fmt.Printf("\nCreate new worker\n")
+    fmt.Printf("\n -- Create new worker\n")
     w           :=   &Worker{}
     rand.Seed( time.Now().UTC().UnixNano())
     w.Id        =   rand.Int31()
@@ -111,12 +111,14 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
         if int64(len(worker.Targets)) > max_targets { max_targets=int64(len(worker.Targets)) }
 
-        for wtgt := range worker.Targets {
+        if tgt_replaced == false {
+            for wtgt := range worker.Targets {
 
-            worker_target_dir := worker.Targets[wtgt]
-            fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
-            if tgt.GetPath() == worker_target_dir.GetPath() { worker_target_dir=tgt  ; tgt_replaced=true  ; break }
+                worker_target_dir := worker.Targets[wtgt]
+                 fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
+                if tgt.GetPath() == worker_target_dir.GetPath() { worker_target_dir=tgt  ; tgt_replaced=true  ; break }
 
+            }
         }
 
 
@@ -128,6 +130,7 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
         wp.Workers[rand_digit].Append(tgt)
     }
 
+    fmt.Printf("\nMax targets %d\n",max_targets)
     if max_targets > TGT_PER_GR { wp.AddWorker() }
 
 }
