@@ -64,6 +64,8 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
 func WPCreate () (wp WorkerPool) {
 
     wp.Workers  = make([]*Worker, 0)
+    // try to create two workers instead of one
+    wp.AddWorker()
     wp.AddWorker()
 
     return
@@ -102,24 +104,21 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     fmt.Printf("\n Appending target %s \n",tgt.GetPath())
 
-    var tgt_replaced bool
-    var max_targets  int64
+    var tgt_replaced  bool
+    var all_tgt_count int64
 
     for w:= range wp.Workers {
 
         worker := wp.Workers[w]
 
-        if int64(len(worker.Targets)) > max_targets { max_targets=int64(len(worker.Targets)) }
-
-        if tgt_replaced == false {
             for wtgt := range worker.Targets {
 
                 worker_target_dir := worker.Targets[wtgt]
                  fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
                 if tgt.GetPath() == worker_target_dir.GetPath() { worker_target_dir=tgt  ; tgt_replaced=true  ; break }
+                all_tgt_count=all_tgt_count+1
 
             }
-        }
 
 
     }
@@ -130,7 +129,7 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
         wp.Workers[rand_digit].Append(tgt)
     }
 
-    fmt.Printf("\nMax targets %d\n",max_targets)
-    if max_targets > TGT_PER_GR { wp.AddWorker() }
+    average_tgt_per_worker:=all_tgt_count/int64(len(wp.Workers))
+    if average_tgt_per_worker > TGT_PER_GR { wp.AddWorker() }
 
 }
