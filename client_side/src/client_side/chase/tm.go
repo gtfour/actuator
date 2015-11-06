@@ -6,7 +6,7 @@ import "time"
 import "math/rand"
 
 
-var TGT_PER_GR int64                       = 4 // if FILES_PER_GR is very big - TargetsCount type should be modified 
+var TGT_PER_GR int64                       = 50 // if FILES_PER_GR is very big - TargetsCount type should be modified 
 var TIMEOUT_MS              time.Duration  = 200
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
@@ -114,7 +114,7 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
             for wtgt := range worker.Targets {
 
                 worker_target_dir := worker.Targets[wtgt]
-                 fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
+                //fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
                 if tgt.GetPath() == worker_target_dir.GetPath() { worker_target_dir=tgt  ; tgt_replaced=true  ; break }
                 all_tgt_count=all_tgt_count+1
 

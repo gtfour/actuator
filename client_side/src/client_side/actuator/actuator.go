@@ -20,6 +20,8 @@ import "syscall"
 type inodes []uint64
 type strings []string
 
+var OPEN_FILE_TIMEOUT time.Duration = 5
+
 
 type File struct {
     Path  string
@@ -113,7 +115,7 @@ func RegularFileIsReadable (path string) (readable bool) {
 
     go ReadFileWithTimeoutControll( file, manage_chn, &content)
 
-    time.Sleep(1 * time.Millisecond)
+    time.Sleep(OPEN_FILE_TIMEOUT * time.Millisecond)
 
     select {
         case is_readable:=<-manage_chn:
