@@ -42,14 +42,24 @@ func ( w *Worker ) Start ()  {
 
             default:
 
+                var unused_tgt_numbers []int // array for store tgt numbers whose should be removed from w.Targets
+                targets_count:=len(w.Targets)
                 for tgt := range w.Targets {
 
                     if w.Targets[tgt].Chasing!=nil {
 
-                        w.Targets[tgt].Chasing()
+                        err:=w.Targets[tgt].Chasing()
+                        if err != nil { unused_tgt_numbers=append(unused_tgt_numbers,tgt) }
 
                     }
 
+                }
+                // remove tgt's whose Chasing was returned with err!=nil  w.Targets
+                for i := range unused_tgt_numbers {
+                    tgt_num:=unused_tgt_numbers[i]
+                    if (targets_count == len(w.Targets) ) {
+                        w.Targets = append(w.Targets[:tgt_num], w.Targets[tgt_num+1:]...)
+                    }
                 }
         }
         time.Sleep( TIMEOUT_MS * time.Millisecond )

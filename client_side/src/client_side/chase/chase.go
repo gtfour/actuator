@@ -168,9 +168,6 @@ func (tgt *Target) Chasing() (err error){
 
     //for {
 
-        //var inform_about_exit bool
-        if (tgt.WorkerPool==nil) {fmt.Printf("%s  wp is nil",tgt.Path)}
-
         if ( tgt.Dir!="" ) {
 
             select {
@@ -188,9 +185,11 @@ func (tgt *Target) Chasing() (err error){
 
                         tgt.Marker=string(file.Sum) } else {
 
-                        tgt.MessageChannel<-"child is faced with ERROR :" + tgt.Path + "::>>" + err.Error()
+                        tgt.MessageChannel<-"child is faced with ERROR :" + tgt.Path + "::>>|" + err.Error()+"|"
 
-                        tgt.InformAboutExit=true  }
+                        tgt.InformAboutExit=true
+
+                        return err }
 
                     if ( tgt.Marker!=tgt.OldMarker ) {
 
@@ -223,6 +222,8 @@ func (tgt *TargetDir) Chasing () (err error){
 
 
         tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
+
+        if err!= nil { fmt.Printf("\nError during opening %s\n",tgt.Path) }
 
         if (tgt.WorkerPool==nil) {fmt.Printf("%s wp is nil",tgt.Path)}
 
