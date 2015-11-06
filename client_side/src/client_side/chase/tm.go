@@ -6,7 +6,7 @@ import "time"
 import "math/rand"
 
 
-var FILES_PER_GR                           = 1000 // if FILES_PER_GR is very big - TargetsCount type should be modified 
+var TGT_PER_GR int64                           = 1000 // if FILES_PER_GR is very big - TargetsCount type should be modified 
 var TIMEOUT_MS              time.Duration  = 200
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
@@ -58,15 +58,7 @@ func ( w *Worker ) Start ()  {
 
 func ( w *Worker ) Append ( tgt AbstractTarget ) {
 
-    //if tgt.GetType() == "dir" {
-        var tgt_replaced bool
-        for wtgt:= range w.Targets {
-
-            // have mistake . Also need to check all workers in wp pool
-            if w.Targets[wtgt].GetPath() == tgt.GetPath() { w.Targets[wtgt] = tgt ; tgt_replaced = true }
-
-        }
-        if tgt_replaced == false { w.Targets = append(w.Targets,tgt) }
+        w.Targets = append(w.Targets,tgt)
 }
 
 func WPCreate () (wp WorkerPool) {
@@ -91,18 +83,17 @@ func ( wp *WorkerPool ) Stop () {
 }
 
 
-func (wp *WorkerPool)  AddWorker()(w *Worker){
+func (wp *WorkerPool)  AddWorker()(){
 
 
 
     fmt.Printf("\nCreate new worker\n")
-    w           =   &Worker{}
+    w           :=   &Worker{}
     rand.Seed( time.Now().UTC().UnixNano())
     w.Id        =   rand.Int31()
     w.Stop      =   make(chan bool)
     wp.Workers  =   append(wp.Workers, w)
     go w.Start()
-    return
 
 
 }
@@ -111,27 +102,32 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     fmt.Printf("\n Appending target %s \n",tgt.GetPath())
 
-    var create_new_worker bool
+    var tgt_replaced bool
+    var max_targets  int64
 
     for w:= range wp.Workers {
 
         worker := wp.Workers[w]
 
+        if int64(len(worker.Targets)) > max_targets { max_targets=int64(len(worker.Targets)) }
+
         for wtgt := range worker.Targets {
 
             worker_target_dir := worker.Targets[wtgt]
             fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
-            if tgt.GetDir() == worker_target_dir.GetPath() { // HAVE to add check tgt.GetPath == worker_target_dir.GetDir()
-                create_new_worker = true
-                break
-            }
+            if tgt.GetPath() == worker_target_dir.GetPath() { worker_target_dir=tgt  ; tgt_replaced=true  ; break }
 
         }
 
-       if create_new_worker == false { worker.Append(tgt) ; break  } else  { create_new_worker=false }
 
-       if w == len(wp.Workers) { create_new_worker=true  }
     }
-    if create_new_worker == true { fmt.Printf("\n<< Ask to create new worker >>\n")  ;  w := wp.AddWorker() ; w.Append(tgt) }
+    if tgt_replaced == false {
+        var rand_digit int32
+        rand.Seed( time.Now().UTC().UnixNano())
+        rand_digit = rand.Int31n(int32(len(wp.Workers)))
+        wp.Workers[rand_digit].Append(tgt)
+    }
+
+    if max_targets > TGT_PER_GR { wp.AddWorker() }
 
 }

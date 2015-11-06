@@ -249,6 +249,11 @@ func (tgt *TargetDir) Chasing () (err error){
             tgt_new.WorkerPool           =  tgt.WorkerPool
             subdirs[tgt.Path]            =  tgt_new
 
+            // watafa possible mistake cause  was found . it is tgt.InformAboutExit 
+            tgt.InformAboutExit = false
+            // second possible mistake cause
+            tgt.OldMarker=tgt.Marker
+
             go Start( new_items, tgt.MessageChannel, tgt.WorkerPool, &subdirs )
 
             return nil
@@ -270,6 +275,10 @@ func (tgt *TargetDir) Chasing () (err error){
             tgt_new.WorkerPool           =  tgt.WorkerPool
             subdirs[tgt.Path]            =  tgt_new
 
+            // watafa possible mistake was found . it is tgt.InformAboutExit 
+            tgt.InformAboutExit = false
+            // second possible mistake cause
+            tgt.OldMarker=tgt.Marker
 
             go Start( new_items, tgt.MessageChannel, tgt.WorkerPool, &subdirs )
 
