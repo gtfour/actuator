@@ -115,18 +115,32 @@ func RegularFileIsReadable (path string) (readable bool) {
 
     go ReadFileWithTimeoutControll( file, manage_chn, &content)
 
-    time.Sleep(OPEN_FILE_TIMEOUT * time.Millisecond)
+    first_timeout_period :=OPEN_FILE_TIMEOUT/2
+    time.Sleep(first_timeout_period * time.Millisecond)
 
     select {
-        case is_readable:=<-manage_chn:
+        case <-manage_chn:
+            select {
+                <-manage_chn:
+                    defer file.Close()
+                    readable=true
+                default:
+                    time.Sleep((OPEN_FILE_TIMEOUT-first_timeout_period) * time.Millisecond)
+                    select {
+                        <-manage_chn:
+                            defer file.Close()
+                            readable=true
+                        default:
+                            file.Close()
+                            readable=false
 
-            if is_readable == true /* true means first line was read  */ { read_is_completed :=<-manage_chn ; if read_is_completed == false /* false means YES  */  {   defer file.Close() ; readable=true  } }
+                    }
+            }
 
         default:
-
             file.Close()
+            // set check method to GetMtime
             readable=false
-
     }
     //for i:=range content {
     //    fmt.Printf("%s",content[i])
@@ -156,8 +170,9 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
             eof = true
         } else if err != nil {
 
-            if ( !read_start_signal_sent  ) { readable<-true ;  readable<-false } else { readable<-false  }
-
+            if ( !read_start_signal_sent  ) {
+                readable<-true
+                readable<-false } else { readable<-false  }
             return nil
         }
     }
