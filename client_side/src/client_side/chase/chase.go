@@ -14,16 +14,17 @@ import "path/filepath"
 //
 
 type Target struct {
-
-    Path             string
-    Dir              string
-    OldMarker        string
-    Marker           string
-    InfoIn           chan bool
-    InfoOut          chan string
-    MessageChannel   chan string
-    WorkerPool       *WorkerPool
-    InformAboutExit  bool
+    Path                          string
+    Dir                           string
+    OldMarker                     string
+    Marker                        string
+    InfoIn                        chan bool
+    InfoOut                       chan string
+    MessageChannel                chan string
+    WorkerPool                    *WorkerPool
+    InformAboutExit               bool
+    KeepChaseWhenDoesNotExist     bool
+    MarkerGetttingModeIsMtime     bool // "mtime" or "md5sum"
 
 }
 

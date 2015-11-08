@@ -121,13 +121,13 @@ func RegularFileIsReadable (path string) (readable bool) {
     select {
         case <-manage_chn:
             select {
-                <-manage_chn:
+                case <-manage_chn:
                     defer file.Close()
                     readable=true
                 default:
                     time.Sleep((OPEN_FILE_TIMEOUT-first_timeout_period) * time.Millisecond)
                     select {
-                        <-manage_chn:
+                        case <-manage_chn:
                             defer file.Close()
                             readable=true
                         default:
