@@ -120,17 +120,21 @@ func RegularFileIsReadable (path string) (err error) {
 
     select {
         case <-manage_chn:
+            fmt.Printf("\nFirst signal recieved %s\n",path)
             select {
                 case <-manage_chn:
+                    fmt.Printf("\nSecond signal recieved\n")
                     defer file.Close()
                     return nil
                 default:
                     time.Sleep((OPEN_FILE_TIMEOUT-first_timeout_period) * time.Millisecond)
                     select {
                         case <-manage_chn:
+                            fmt.Printf("\nSecond signal recieved\n")
                             defer file.Close()
                             return nil
                         default:
+                            fmt.Printf("\nDid'nt recieve second signal\n")
                             file.Close()
                             return Have_to_switch_to_mtime
 
@@ -138,6 +142,7 @@ func RegularFileIsReadable (path string) (err error) {
             }
 
         default:
+            fmt.Printf("\nDid'nt recieve second signal\n")
             file.Close()
             // set check method to GetMtime
             return Have_to_switch_to_mtime
@@ -323,6 +328,7 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
         if err==nil || err==Have_to_switch_to_mtime  {
                 //var subdir_added bool
+                if err == Have_to_switch_to_mtime {fmt.Printf("\n -- Switched to mtime marker mode -- \n")}
                 file_struct.MarkerGetttingModeIsMtime = true 
                 directory.Files=append(directory.Files,file_struct)
                 //for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) {subdir_added=true ; break  } }
@@ -378,12 +384,14 @@ func (file_struct *File) Get_md5_file (path string) (err error){
 
     if err == Have_to_switch_to_mtime {
 
-        file_struct.Path  =  path
-        mtime,err         :=  Get_mtime(path)
-        if err!=nil { return err }
-        file_struct.Sum   = []byte(mtime)
-        file_struct.Dir = filepath.Dir(path)
-        return Have_to_switch_to_mtime
+        fmt.Printf("\n == Switched to mtime marker == \n")
+        file_struct.Path   =  path
+        mtime,err          :=  Get_mtime(path)
+        fmt.Printf("\n == Get_mtime  Error %v== \n",err)
+        if err!=nil        { return err }
+        file_struct.Sum    = []byte(mtime)
+        file_struct.Dir    = filepath.Dir(path)
+        return             Have_to_switch_to_mtime
 
     } else if err!= nil { return err }
 

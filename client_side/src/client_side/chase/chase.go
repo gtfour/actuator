@@ -214,10 +214,24 @@ func (tgt *Target) Chasing() (err error){
        } else {
 
           file:=&actuator.File{}
+          var marker string
 
-          if err:=file.Get_md5_file(tgt.Path); err == nil {
+          if tgt.MarkerGetttingModeIsMtime == true {
+              marker,err= actuator.Get_mtime(tgt.Path)
+          } else {
+              err=file.Get_md5_file(tgt.Path)
+              marker=string(file.Sum)
+          }
+          if err!= nil && err!=actuator.Have_to_switch_to_mtime {
+              tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
+              tgt.InformAboutExit=true
+              return err
+           } else if err==actuator.Have_to_switch_to_mtime {
+               tgt.MarkerGetttingModeIsMtime = true
+           }
+          tgt.Marker = marker
 
-              tgt.Marker=string(file.Sum) } else { return err }
+
 
           if (tgt.Marker!=tgt.OldMarker) {
               fmt.Printf("\nMarkers are different %s\n",tgt.Path)
