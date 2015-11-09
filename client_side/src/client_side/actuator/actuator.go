@@ -44,12 +44,12 @@ type Directory struct {
 
 }
 
-var   cant_open_file         =  errors.New("cant_open")
-var   Is_dir_error           =  errors.New("is_dir")
-var   is_not_regular         =  errors.New("isnt_reg")
-var   is_not_readable        =  errors.New("isnt_read")
-var   ino_not_found          =  errors.New("ino_not_found")
-var   dup_inode              =  errors.New("dup_inode")
+var   cant_open_file          =  errors.New("cant_open")
+var   Is_dir_error            =  errors.New("is_dir")
+var   is_not_regular          =  errors.New("isnt_reg")
+var   is_not_readable         =  errors.New("isnt_read")
+var   ino_not_found           =  errors.New("ino_not_found")
+var   dup_inode               =  errors.New("dup_inode")
 var   Have_to_switch_to_mtime =  errors.New("switch_to_mtime")
                                                             // we are switching to MTIME method // 
 
@@ -134,6 +134,8 @@ func RegularFileIsReadable (path string) (err error) {
                             defer file.Close()
                             return nil
                         default:
+                            // In case when we are not recieving second signal in time modification marker getting  method is switching to 'lazy mode'
+                            // We just getting file modification time
                             fmt.Printf("\nDid'nt recieve second signal\n")
                             file.Close()
                             return Have_to_switch_to_mtime
@@ -142,15 +144,13 @@ func RegularFileIsReadable (path string) (err error) {
             }
 
         default:
+            // In case when we are not recieving second signal in time modification marker getting  method is switching to 'lazy mode'
+            // We just getting file modification time
             fmt.Printf("\nDid'nt recieve second signal\n")
             file.Close()
             // set check method to GetMtime
             return Have_to_switch_to_mtime
     }
-    //for i:=range content {
-    //    fmt.Printf("%s",content[i])
-    //}
-    //fmt.Printf("\n%s check is done %t\n",path,readable)
 
     return nil
 
@@ -328,8 +328,8 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
         if err==nil || err==Have_to_switch_to_mtime  {
                 //var subdir_added bool
-                if err == Have_to_switch_to_mtime {fmt.Printf("\n -- Switched to mtime marker mode -- \n")}
-                file_struct.MarkerGetttingModeIsMtime = true 
+                if err == Have_to_switch_to_mtime {fmt.Printf("\n -- Switched to mtime marker mode -- %s -- \n",path+"/"+dir_content[file])}
+                file_struct.MarkerGetttingModeIsMtime = true
                 directory.Files=append(directory.Files,file_struct)
                 //for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) {subdir_added=true ; break  } }
                 //if subdir_added==false { directory.SubDirs=append(directory.SubDirs,path) }
