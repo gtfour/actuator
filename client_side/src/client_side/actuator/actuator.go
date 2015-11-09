@@ -12,7 +12,7 @@ import "syscall"
 //
 //import _ "net/http/pprof"
 //import "net/http"
-// import "fmt"
+import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 // Bug with opening /proc/1/task/1/cwd/proc/kcore" still does not fixed !!!
@@ -133,6 +133,7 @@ func RegularFileIsReadable (path string) (err error) {
                         default:
                             // In case when we are not recieving second signal in time modification marker getting  method is switching to 'lazy mode'
                             // We just getting file modification time
+                            fmt.Printf("\nswitch to mtime\n")
                             file.Close()
                             return Have_to_switch_to_mtime
 
@@ -142,6 +143,7 @@ func RegularFileIsReadable (path string) (err error) {
         default:
             // In case when we are not recieving second signal in time modification marker getting  method is switching to 'lazy mode'
             // We just getting file modification time
+            fmt.Printf("\nswitch to mtime\n")
             file.Close()
             // set check method to GetMtime
             return Have_to_switch_to_mtime
@@ -322,7 +324,9 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
         if err==nil || err==Have_to_switch_to_mtime  {
                 //var subdir_added bool
                 //if err == Have_to_switch_to_mtime {fmt.Printf("\n -- Switched to mtime marker mode -- %s -- \n",path+"/"+dir_content[file])}
-                file_struct.MarkerGetttingModeIsMtime = true
+                if err == Have_to_switch_to_mtime {
+                    file_struct.MarkerGetttingModeIsMtime = true
+                }
                 directory.Files=append(directory.Files,file_struct)
                 //for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) {subdir_added=true ; break  } }
                 //if subdir_added==false { directory.SubDirs=append(directory.SubDirs,path) }

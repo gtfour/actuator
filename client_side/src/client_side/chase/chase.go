@@ -183,6 +183,7 @@ func (tgt *Target) Chasing() (err error){
                     file  :=  &actuator.File{}
                     var marker string
                     if tgt.MarkerGetttingModeIsMtime == true {
+                        fmt.Printf("\n>>Marker getting mode is mtime>>\n")
                         marker,err= actuator.Get_mtime(tgt.Path)
                     } else {
                         err=file.Get_md5_file(tgt.Path)
@@ -199,7 +200,7 @@ func (tgt *Target) Chasing() (err error){
                     }
                     tgt.Marker = marker
 
-
+                    fmt.Printf("\nOldMarker: |%s|  Marker: |%s|\n",tgt.OldMarker,marker)
                     if ( tgt.Marker!=tgt.OldMarker ) {
 
                         fmt.Printf("\nMarkers are different %s\n",tgt.Path)
@@ -230,7 +231,7 @@ func (tgt *Target) Chasing() (err error){
                tgt.MarkerGetttingModeIsMtime = true
            }
           tgt.Marker = marker
-
+          fmt.Printf("\nOldMarker: |%s|  Marker: |%s|\n",tgt.OldMarker,marker)
 
 
           if (tgt.Marker!=tgt.OldMarker) {
