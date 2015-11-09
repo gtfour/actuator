@@ -51,39 +51,27 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
     for id :=range targets {
 
         file_struct:=&actuator.File{} // create File instance
-
         err := file_struct.Get_md5_file(targets[id]) // calculate File md5 sum 
-
         if err.Error()=="is_dir" { // if file is directory
-
             dir_struct := &actuator.Directory{}
-
             err := dir_struct.Get_md5_dir(targets[id]) // collect information about included files and directories 
-
             if err !=nil { continue } // was a return err
-
             if _, ok := (*subdirs)[targets[id]]; ok == false { // if global subdirs map does'not contain this item  targets[id] , create and add item to subdirs
-
                 tgt_dir                   := &TargetDir{}
                 tgt_dir.MessageChannel    =  message_channel // bind to main info-channel
                 tgt_dir.Path              =  targets[id]
                 tgt_dir.WorkerPool        =   wp // Deirz@golang.cjr advice  
                 (*subdirs)[targets[id]]   =  tgt_dir
-
             }
             // 
             for subname:=range dir_struct.SubDirs  { // iteration of each included subdir
-
                 path := dir_struct.SubDirs[subname]
-
                 if _, ok := (*subdirs)[path]; ok == false { // check global subdir map again and add each included subdir if it is not included yet 
-
                     tgt_dir                 :=  TargetDir{} // try to change &TargetDir{} to TargetDir{}
                     tgt_dir.MessageChannel  =   message_channel
                     tgt_dir.WorkerPool      =   wp
                     tgt_dir.Path            =   path
                     (*subdirs)[path]        =   &tgt_dir
-
                 }
             }
             for file_id :=range dir_struct.Files {
@@ -110,15 +98,15 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
             }
 
-    } else if err == nil {
+    } else if err == nil || err.Error()=="switch_to_mtime"  {
 
           target                 :=  Target{}
           target.Path            =   targets[id]
           target.OldMarker       =   string(file_struct.Sum)
           target.WorkerPool      =   wp // new 02-11-2015 03:00
 
-          target.MessageChannel  =   message_channel
-          if (wp==nil) {fmt.Printf("wp is nill single files ")}
+	  target.MessageChannel  =   message_channel
+	  if (wp==nil) {fmt.Printf("wp is nill single files ")}
           wp.AppendTarget(&target)
 
         }

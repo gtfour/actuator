@@ -12,7 +12,7 @@ import "syscall"
 //
 //import _ "net/http/pprof"
 //import "net/http"
-//import "fmt"
+import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 // Bug with opening /proc/1/task/1/cwd/proc/kcore" still does not fixed !!!
@@ -42,32 +42,28 @@ type Directory struct {
 
 }
 
-var is_dir_error     =  errors.New("is_dir")
-
-var is_not_regular   =  errors.New("isnt_reg")
-
-var is_not_readable  =  errors.New("isnt_read")
-
-var ino_not_found    =  errors.New("ino_not_found")
-
-var dup_inode        =  errors.New("dup_inode")
-
+var cant_open_file         =  errors.New("cant_open")
+var is_dir_error           =  errors.New("is_dir")
+var is_not_regular         =  errors.New("isnt_reg")
+var is_not_readable        =  errors.New("isnt_read")
+var ino_not_found          =  errors.New("ino_not_found")
+var dup_inode              =  errors.New("dup_inode")
+var have_to_swith_to_mtime =  errors.New("switch_to_mtime") // In case when calculating MD5-sum  is very difficult //
+                                                            // we are switching to MTIME method // 
 
 
-func (array inodes) IncludeValue ( value uint64 ) ( has bool ){
 
+func (array inodes) IncludeValue ( value uint64 ) ( includes bool ){
 
-    for i:=range array { if value==array[i] { has=true ; break } }
-
+    for i:=range array { if value==array[i] { includes=true ; break } }
     return
 
 }
 
-func ( array strings ) IncludeValue ( value string ) (has bool) {
+func ( array strings ) IncludeValue ( value string ) (includes bool) {
 
 
-    for i:=range array { if value==array[i] { has=true ; break } }
-
+    for i:=range array { if value==array[i] { includes=true ; break } }
     return
 
 }
@@ -92,7 +88,7 @@ func GetFileIndexNumber(path string)(ino uint64,err error) {
 
 
 
-func RegularFileIsReadable (path string) (readable bool) {
+func RegularFileIsReadable (path string) (err error) {
 
     // thanks for "postman" from golang@cjr for this great idea
     // this function is preventing blocking during reading files like a /proc/1/task/1/cwd/proc/kmsg
@@ -102,7 +98,9 @@ func RegularFileIsReadable (path string) (readable bool) {
     defer file.Close()
 
     if err!=nil {
-        return false
+
+        return cant_open_file
+
     }
 
 
@@ -123,16 +121,16 @@ func RegularFileIsReadable (path string) (readable bool) {
             select {
                 case <-manage_chn:
                     defer file.Close()
-                    readable=true
+                    return nil
                 default:
                     time.Sleep((OPEN_FILE_TIMEOUT-first_timeout_period) * time.Millisecond)
                     select {
                         case <-manage_chn:
                             defer file.Close()
-                            readable=true
+                            return nil
                         default:
                             file.Close()
-                            readable=false
+                            return have_to_swith_to_mtime
 
                     }
             }
@@ -140,14 +138,14 @@ func RegularFileIsReadable (path string) (readable bool) {
         default:
             file.Close()
             // set check method to GetMtime
-            readable=false
+            return have_to_swith_to_mtime
     }
     //for i:=range content {
     //    fmt.Printf("%s",content[i])
     //}
     //fmt.Printf("\n%s check is done %t\n",path,readable)
 
-    return
+    return nil
 
 }
 
@@ -160,6 +158,8 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 
     var read_start_signal_sent bool
 
+    fmt.Printf("\nStart reading file \n")
+    defer fmt.Printf("\nEnd reading via defer\n")
     for lino := 1; !eof; lino++ {
         if lino ==2 {  readable<-true ; read_start_signal_sent=true  }
         line, err := buffered_reader.ReadString('\n')
@@ -352,7 +352,6 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
           }
         }
     }
-    
     return nil
     // os.Readdirnames
 }
@@ -372,9 +371,20 @@ func (file_struct *File) Get_md5_file (path string) (err error){
 
     if ( err!=nil ) { return err }
 
-    is_readable := RegularFileIsReadable( path ) // check was failed by timeout controll . It fails when opens /proc/kmsg or other strange files
+    err = RegularFileIsReadable( path ) // check was failed by timeout controll . It fails when opens /proc/kmsg or other strange files
 
-    if is_readable==false { /*fmt.Printf("\n<Not readable %s>",path)  ;*/  return is_not_readable }
+    if err == have_to_swith_to_mtime {
+
+        file_struct.Path  =  path
+        mtime,err         :=  Get_mtime(path)
+        if err!=nil { return err }
+        file_struct.Sum   = []byte(mtime)
+        file_struct.Dir = filepath.Dir(path)
+        return nil
+
+    } else if err!= nil { return err }
+
+    //if is_readable==false { /*fmt.Printf("\n<Not readable %s>",path)  ;*/  return is_not_readable }
 
     // check's>
 
@@ -402,49 +412,3 @@ func (file_struct *File) Get_md5_file (path string) (err error){
     return nil
 
 }
-
-
-/*
-
-func main() {
-
-        go func() {
-	    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
-        }()
-
-        dir_struct:=&Directory{}
-        dir_struct.Get_md5_dir("/proc/1")
-
-
-        counter:=0
-        for file := range dir_struct.Files {
-
-            file_struct := dir_struct.Files[file]
-
-            fmt.Printf("Filename: %s MD5Sum:  %x\n",file_struct.Path,file_struct.Sum)
-            counter+=1
-
-        }
-        fmt.Println(":: mtime ::")
-        fmt.Printf("counter %s",counter)
-
-        fmt.Println(Get_mtime("/tmp/does_not_exist"))
-        // 
-        // test 
-        file:=&File{}
-
-        fmt.Println("::Checking file::")
-
-        empty, err:= IsEmpty("/proc/1/task/1/cwd/proc/kcore")
-
-        var emsg string
-        if err == nil { emsg="nil" } else { emsg=err.Error() }
-
-        fmt.Printf("\nFile is empty  %t Err: %s \n", empty, emsg )
-
-        err=file.Get_md5_file("/proc/1/task/1/cwd/proc/kcore")
-
-        //fmt.Printf("Path:%s Sum:%x Dir:%s \n",file.Path,file.Sum,file.Dir)
-        //fmt.Println(err)
-
-    } */
