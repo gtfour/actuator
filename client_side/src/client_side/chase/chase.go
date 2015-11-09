@@ -14,6 +14,7 @@ import "path/filepath"
 //
 
 type Target struct {
+
     Path                          string
     Dir                           string
     OldMarker                     string
@@ -24,7 +25,8 @@ type Target struct {
     WorkerPool                    *WorkerPool
     InformAboutExit               bool
     KeepChaseWhenDoesNotExist     bool
-    MarkerGetttingModeIsMtime     bool // "mtime" or "md5sum"
+    MarkerGetttingModeIsMtime     bool // "mtime" or "md5sum" ; could be automatically modified during chase 
+    KeepChaseWhenDoesNotExist     bool // Do not remove from Worker targets array when some error has been caused
 
 }
 
@@ -183,7 +185,6 @@ func (tgt *Target) Chasing() (err error){
                     file  :=  &actuator.File{}
                     var marker string
                     if tgt.MarkerGetttingModeIsMtime == true {
-                        fmt.Printf("\n>>Marker getting mode is mtime>>\n")
                         marker,err= actuator.Get_mtime(tgt.Path)
                     } else {
                         err=file.Get_md5_file(tgt.Path)
@@ -200,10 +201,8 @@ func (tgt *Target) Chasing() (err error){
                     }
                     tgt.Marker = marker
 
-                    fmt.Printf("\nOldMarker: |%s|  Marker: |%s|\n",tgt.OldMarker,marker)
                     if ( tgt.Marker!=tgt.OldMarker ) {
 
-                        fmt.Printf("\nMarkers are different %s\n",tgt.Path)
                         go  tgt.Reporting()
 
                         tgt.OldMarker=tgt.Marker }
@@ -231,11 +230,9 @@ func (tgt *Target) Chasing() (err error){
                tgt.MarkerGetttingModeIsMtime = true
            }
           tgt.Marker = marker
-          fmt.Printf("\nOldMarker: |%s|  Marker: |%s|\n",tgt.OldMarker,marker)
 
 
           if (tgt.Marker!=tgt.OldMarker) {
-              fmt.Printf("\nMarkers are different %s\n",tgt.Path)
 
               go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  }
       }
@@ -312,7 +309,6 @@ func (tgt *TargetDir) Chasing () (err error){
         }
 
         if ( tgt.Marker!=tgt.OldMarker ) {
-           fmt.Printf("\nMarkers are different %s\n",tgt.Path)
 
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true
