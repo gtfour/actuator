@@ -9,7 +9,7 @@ import "time"
 
 func main() {
 
-    path     := "/etc"
+    path     := "/sys"
     messages := chase.Listen(path)
 
     go func() {
