@@ -24,9 +24,8 @@ type Target struct {
     MessageChannel                chan string
     WorkerPool                    *WorkerPool
     InformAboutExit               bool
-    KeepChaseWhenDoesNotExist     bool
     MarkerGetttingModeIsMtime     bool // "mtime" or "md5sum" ; could be automatically modified during chase 
-    KeepChaseWhenDoesNotExist     bool // Do not remove from Worker targets array when some error has been caused
+    KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
 
 }
 
@@ -183,6 +182,7 @@ func (tgt *Target) Chasing() (err error){
                 default:
 
                     file  :=  &actuator.File{}
+                    tgtMarkerGettingModeCurrent := tgt.MarkerGetttingModeIsMtime
                     var marker string
                     if tgt.MarkerGetttingModeIsMtime == true {
                         marker,err= actuator.Get_mtime(tgt.Path)
@@ -200,13 +200,20 @@ func (tgt *Target) Chasing() (err error){
                         tgt.MarkerGetttingModeIsMtime = true
                     }
                     tgt.Marker = marker
+          // This check "tgtMarkerGettingModeCurrent == tgtMarkerGettingModeNew" should prevents comparing kind of Mtime value and
+          // Md5sum value . This may cause when tgt.MarkerGetttingModeIsMtime was modified from False to True
+          // was not tested yet !!!!
+          // Seems that best method to test this is create automount share
+          // or maybe i can try to change file perm
+                    tgtMarkerGettingModeNew := tgt.MarkerGetttingModeIsMtime
 
-                    if ( tgt.Marker!=tgt.OldMarker ) {
+
+                    if ( tgt.Marker!=tgt.OldMarker && tgtMarkerGettingModeCurrent == tgtMarkerGettingModeNew ) {
 
                         go  tgt.Reporting()
 
                         tgt.OldMarker=tgt.Marker }
-
+                     
 
 
         }
@@ -215,6 +222,8 @@ func (tgt *Target) Chasing() (err error){
 
           file:=&actuator.File{}
           var marker string
+
+          tgtMarkerGettingModeCurrent := tgt.MarkerGetttingModeIsMtime
 
           if tgt.MarkerGetttingModeIsMtime == true {
               marker,err= actuator.Get_mtime(tgt.Path)
@@ -231,8 +240,15 @@ func (tgt *Target) Chasing() (err error){
            }
           tgt.Marker = marker
 
+          tgtMarkerGettingModeNew := tgt.MarkerGetttingModeIsMtime
 
-          if (tgt.Marker!=tgt.OldMarker) {
+          // This check "tgtMarkerGettingModeCurrent == tgtMarkerGettingModeNew" should prevents comparing kind of Mtime value and
+          // Md5sum value . This may cause when tgt.MarkerGetttingModeIsMtime was modified from False to True
+          // was not tested yet !!!!
+          // Seems that best method to test this is create automount share
+          // or maybe i can try to change file perm
+
+          if (tgt.Marker!=tgt.OldMarker && tgtMarkerGettingModeCurrent == tgtMarkerGettingModeNew ) {
 
               go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  }
       }

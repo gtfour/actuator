@@ -51,6 +51,7 @@ var   is_not_readable         =  errors.New("isnt_read")
 var   ino_not_found           =  errors.New("ino_not_found")
 var   dup_inode               =  errors.New("dup_inode")
 var   Have_to_switch_to_mtime =  errors.New("switch_to_mtime")
+var   Permission_denied       =  os.ErrPermission
                                                             // we are switching to MTIME method // 
 
 
@@ -321,10 +322,10 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
         // fmt.Printf("\n---Get md5 : %s \n",path+"/"+dir_content[file]) // /proc/1/task/1/cwd/proc/kcore
         err=file_struct.Get_md5_file(path+"/"+dir_content[file])
 
-        if err==nil || err==Have_to_switch_to_mtime  {
+        if err==nil || err==Have_to_switch_to_mtime || err == Permission_denied  {
                 //var subdir_added bool
                 //if err == Have_to_switch_to_mtime {fmt.Printf("\n -- Switched to mtime marker mode -- %s -- \n",path+"/"+dir_content[file])}
-                if err == Have_to_switch_to_mtime {
+                if err == Have_to_switch_to_mtime || err == Permission_denied  {
                     file_struct.MarkerGetttingModeIsMtime = true
                 }
                 directory.Files=append(directory.Files,file_struct)
