@@ -46,13 +46,17 @@ func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
 
 func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
 
+    // Bug was found : when i passing an file name not a dir name to func to func Start 
+    // nil point dereference error is causing . It happens because subdirs is nil ( i suppose )
+    // Solution: Seems that problem was caused when i was trying to get text message of error which was nil . "is_dir"
+
     message_channel <- "Starting"
 
     for id :=range targets {
 
         file_struct:=&actuator.File{} // create File instance
         err := file_struct.Get_md5_file(targets[id]) // calculate File md5 sum 
-        if err.Error()=="is_dir" { // if file is directory
+        if err==actuator.Is_dir_error { // if file is directory
             dir_struct := &actuator.Directory{}
             err := dir_struct.Get_md5_dir(targets[id]) // collect information about included files and directories 
             if err !=nil { continue } // was a return err
@@ -79,6 +83,11 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
                 file_struct            :=  dir_struct.Files[file_id]
 
                 target                 :=  Target{} //  I have to find difference between Target{} and &Target{}
+
+                if file_struct.MarkerGetttingModeIsMtime == true {
+                    target.MarkerGetttingModeIsMtime = true
+                }
+
                 target.Path            =   file_struct.Path
                 target.OldMarker       =   string(file_struct.Sum)
                 target.MessageChannel  =   message_channel
@@ -98,10 +107,13 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
             }
 
-    } else if err == nil || err.Error()=="switch_to_mtime"  {
+    } else if err == nil || err==actuator.Have_to_switch_to_mtime  {
 
           target                 :=  Target{}
           target.Path            =   targets[id]
+          if file_struct.MarkerGetttingModeIsMtime == true {
+              target.MarkerGetttingModeIsMtime = true
+          }
           target.OldMarker       =   string(file_struct.Sum)
           target.WorkerPool      =   wp // new 02-11-2015 03:00
 
@@ -169,16 +181,24 @@ func (tgt *Target) Chasing() (err error){
                 default:
 
                     file  :=  &actuator.File{}
+                    var marker string
+                    if tgt.MarkerGetttingModeIsMtime == true {
+                        marker,err= actuator.Get_mtime(tgt.Path)
+                    } else {
+                        err=file.Get_md5_file(tgt.Path)
+                        marker=string(file.Sum)
 
-                    if err:=file.Get_md5_file(tgt.Path) ; err==nil {
-
-                        tgt.Marker=string(file.Sum) } else {
-
-                        tgt.MessageChannel<-"child is faced with ERROR :" + tgt.Path + "::>>|" + err.Error()+"|"
-
+                    }
+                    if err!= nil && err!=actuator.Have_to_switch_to_mtime {
+                        tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
                         tgt.InformAboutExit=true
+                        return err
 
-                        return err }
+                    } else if err==actuator.Have_to_switch_to_mtime {
+                        tgt.MarkerGetttingModeIsMtime = true
+                    }
+                    tgt.Marker = marker
+
 
                     if ( tgt.Marker!=tgt.OldMarker ) {
 

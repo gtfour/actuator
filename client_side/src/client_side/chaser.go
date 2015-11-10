@@ -9,7 +9,7 @@ import "time"
 
 func main() {
 
-    path     := "/proc"
+    path     := "/proc/kmsg"
     messages := chase.Listen(path)
 
     go func() {

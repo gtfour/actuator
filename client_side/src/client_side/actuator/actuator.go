@@ -24,11 +24,13 @@ var OPEN_FILE_TIMEOUT time.Duration = 5
 
 
 type File struct {
-    Path  string
-    Dir   string
-    Sum   []byte
-    Type  string
-    Inode uint64
+    Path                          string
+    Dir                           string
+    Sum                           []byte
+    Type                          string
+    Inode                         uint64
+    MarkerGetttingModeIsMtime     bool // in case when file size is very big and opening takes more than OPEN_FILE_TIMEOUT
+                                       // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
 }
 
 type Directory struct {
@@ -42,13 +44,13 @@ type Directory struct {
 
 }
 
-var cant_open_file         =  errors.New("cant_open")
-var is_dir_error           =  errors.New("is_dir")
-var is_not_regular         =  errors.New("isnt_reg")
-var is_not_readable        =  errors.New("isnt_read")
-var ino_not_found          =  errors.New("ino_not_found")
-var dup_inode              =  errors.New("dup_inode")
-var have_to_swith_to_mtime =  errors.New("switch_to_mtime") // In case when calculating MD5-sum  is very difficult //
+var   cant_open_file         =  errors.New("cant_open")
+var   Is_dir_error           =  errors.New("is_dir")
+var   is_not_regular         =  errors.New("isnt_reg")
+var   is_not_readable        =  errors.New("isnt_read")
+var   ino_not_found          =  errors.New("ino_not_found")
+var   dup_inode              =  errors.New("dup_inode")
+var   Have_to_switch_to_mtime =  errors.New("switch_to_mtime")
                                                             // we are switching to MTIME method // 
 
 
@@ -130,7 +132,7 @@ func RegularFileIsReadable (path string) (err error) {
                             return nil
                         default:
                             file.Close()
-                            return have_to_swith_to_mtime
+                            return Have_to_switch_to_mtime
 
                     }
             }
@@ -138,7 +140,7 @@ func RegularFileIsReadable (path string) (err error) {
         default:
             file.Close()
             // set check method to GetMtime
-            return have_to_swith_to_mtime
+            return Have_to_switch_to_mtime
     }
     //for i:=range content {
     //    fmt.Printf("%s",content[i])
@@ -319,14 +321,15 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
         // fmt.Printf("\n---Get md5 : %s \n",path+"/"+dir_content[file]) // /proc/1/task/1/cwd/proc/kcore
         err=file_struct.Get_md5_file(path+"/"+dir_content[file])
 
-        if err==nil {
+        if err==nil || err==Have_to_switch_to_mtime  {
                 //var subdir_added bool
+                file_struct.MarkerGetttingModeIsMtime = true 
                 directory.Files=append(directory.Files,file_struct)
                 //for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) {subdir_added=true ; break  } }
                 //if subdir_added==false { directory.SubDirs=append(directory.SubDirs,path) }
         }
 
-        if err == is_dir_error {
+        if err == Is_dir_error {
 
             another_dir                   :=  &Directory{}
             another_dir.DiscoveredInodes  =   directory.DiscoveredInodes
@@ -367,20 +370,20 @@ func (file_struct *File) Get_md5_file (path string) (err error){
 
     isdir, err := IsDir(path)
 
-    if ( isdir==true && err==nil ) { return is_dir_error }
+    if ( isdir==true && err==nil ) { return Is_dir_error }
 
     if ( err!=nil ) { return err }
 
     err = RegularFileIsReadable( path ) // check was failed by timeout controll . It fails when opens /proc/kmsg or other strange files
 
-    if err == have_to_swith_to_mtime {
+    if err == Have_to_switch_to_mtime {
 
         file_struct.Path  =  path
         mtime,err         :=  Get_mtime(path)
         if err!=nil { return err }
         file_struct.Sum   = []byte(mtime)
         file_struct.Dir = filepath.Dir(path)
-        return nil
+        return Have_to_switch_to_mtime
 
     } else if err!= nil { return err }
 
