@@ -30,6 +30,7 @@ type Prop struct {
     IsEmpty             bool
     IsReadable          bool
     IsRegular           bool
+    Dir                 string
     Mtime               string
     HashSum             string
     HashSumType         string //md5
@@ -103,7 +104,8 @@ func GetProp (path string) (p Prop,err error){
     if found==false { p.InoFound=false  } else { p.InoFound=true  ; p.Inode = stat_object.Ino }
 
     if RegularFileIsReadable(file) == nil {
-        p.IsReadable= true
+        p.IsReadable       = true
+        p.HashSumAvailable = true
     } else {
         p.IsReadable       = false
         p.HashSumAvailable = false
@@ -128,7 +130,18 @@ func GetProp (path string) (p Prop,err error){
 
         mtime_struct  := file_stat.ModTime()
         p.Mtime       =  string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00"))
+        if p.HashSumAvailable == false { p.HashSum = p.Mtime  }
     }
+
+    if p.HashSumAvailable == true && p.IsReadable==true && p.IsRegular == true && p.IsDir == false {
+
+        var result []byte
+        hash := md5.New()
+        if _,err = io.Copy(hash, file); err !=nil {
+            p.HashSumAvailable = false
+        }else { p.HashSum = string(hash.Sum(result))  }
+    }
+    p.Dir = filepath.Dir(path)
     return p,nil
 
 }
@@ -261,15 +274,15 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
     for file:= range directory.Prop.DirContent{
 
-        file_struct:=&File{}
-        // fmt.Printf("\n---Get md5 : %s \n",path+"/"+dir_content[file]) // /proc/1/task/1/cwd/proc/kcore
-        err=file_struct.Get_md5_file(path+"/"+directory.Prop.DirContent[file])
+        file_struct  :=  &File{}
+        file_path    :=  path+"/"+directory.Prop.DirContent[file]
+        err=file_struct.GetFileProp( file_path )
 
         if err==nil || err==Have_to_switch_to_mtime || err == Permission_denied  {
                 //var subdir_added bool
                 //if err == Have_to_switch_to_mtime {fmt.Printf("\n -- Switched to mtime marker mode -- %s -- \n",path+"/"+dir_content[file])}
                 if err == Have_to_switch_to_mtime || err == Permission_denied  {
-                    file_struct.MarkerGetttingModeIsMtime = true
+                    file_struct.Prop.HashSumAvailable = false
                 }
                 directory.Files=append(directory.Files,file_struct)
                 //for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) {subdir_added=true ; break  } }
@@ -307,59 +320,14 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 }
 
 
-func (file_struct *File) Get_md5_file (path string) (err error){
+func (file_struct *File) GetFileProp (path string) (err error){
 
-    //IsEmpty(path)
-    //
-    var result []byte
 
-    //<check's 
+    prop,err         := GetProp(path)
+    file_struct.Prop = &prop
+    file_struct.Path =  path
 
-    isdir, err := IsDir(path)
-
-    if ( isdir==true && err==nil ) { return Is_dir_error }
-
-    if ( err!=nil ) { return err }
-
-    err = RegularFileIsReadable( path ) // check was failed by timeout controll . It fails when opens /proc/kmsg or other strange files
-
-    if err == Have_to_switch_to_mtime {
-
-        //fmt.Printf("\n == Switched to mtime marker == \n")
-        file_struct.Path   =  path
-        mtime,err          :=  Get_mtime(path)
-        //fmt.Printf("\n == Get_mtime  Error %v== \n",err)
-        if err!=nil        { return err }
-        file_struct.Sum    = []byte(mtime)
-        file_struct.Dir    = filepath.Dir(path)
-        return             Have_to_switch_to_mtime
-
-    } else if err!= nil { return err }
-
-    //if is_readable==false { /*fmt.Printf("\n<Not readable %s>",path)  ;*/  return is_not_readable }
-
-    // check's>
-
-    new_file, err := os.Open(path)
-
-    defer new_file.Close()
-
-    hash := md5.New()
-
-    //fmt.Printf("\nIo copy starting %s",path)
-
-    if _,err = io.Copy(hash, new_file); err !=nil {
-
-        return err
-    }
-
-    mdsum:=hash.Sum(result)
-
-    file_struct.Path = path
-    file_struct.Sum = mdsum
-    file_struct.Dir = filepath.Dir(path)
-
-    //fmt.Printf("\nIo copy finished  %s",path)
+    if err!= nil { return err }
 
     return nil
 
