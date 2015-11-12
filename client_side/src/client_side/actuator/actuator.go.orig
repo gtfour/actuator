@@ -20,44 +20,27 @@ import "fmt"
 type inodes []uint64
 type strings []string
 
-var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
-
-type Prop struct {
-
-    Inode               uint64
-    InoFound            bool
-    IsDir               bool
-    IsEmpty             bool
-    IsReadable          bool
-    IsRegular           bool
-    Mtime               string
-    HashSum             string
-    HashSumType         string //md5
-    HashSumAvailable    bool
-    Perm                string
-    Owner               string
-    OwnerGroup          string
-    Size                int64
-    DirContent          []string
-
-
-}
+var OPEN_FILE_TIMEOUT time.Duration = 5
 
 
 type File struct {
-    Path  string
-    Dir   string
-    Prop  *Prop
+    Path                          string
+    Dir                           string
+    Sum                           []byte
+    Type                          string
+    Inode                         uint64
+    MarkerGetttingModeIsMtime     bool // in case when file size is very big and opening takes more than OPEN_FILE_TIMEOUT
+                                       // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
 }
 
 type Directory struct {
 
     Path             string
     Inode            uint64
+    //Dir              string
     Files            []*File
     SubDirs          strings
     DiscoveredInodes inodes
-    Prop             *Prop
 
 }
 
@@ -88,59 +71,44 @@ func ( array strings ) IncludeValue ( value string ) (includes bool) {
 
 }
 
-func GetProp (path string) (p Prop,err error){
 
-    p               =  Prop{}
-    file, err       :=  os.Open(path)
-    defer           file.Close()
-    if( err!=nil )  { return p,err  }
-    file_stat, err  :=  os.Stat(path)
-    //defer           file_stat.Close()
-    if( err!=nil )  { return p,err  }
 
-    stat_interface     :=  file_stat.Sys()
-    stat_object,found  :=  stat_interface.(*syscall.Stat_t)
-    if found==false { p.InoFound=false  } else { p.InoFound=true  ; p.Inode = stat_object.Ino }
+func GetFileIndexNumber(path string)(ino uint64,err error) {
 
-    if RegularFileIsReadable(file) == nil {
-        p.IsReadable= true
-    } else {
-        p.IsReadable       = false
-        p.HashSumAvailable = false
-    }
+    fi, err:=os.Stat(path)
 
-    file_info,err    :=  file.Stat()
-    if err==nil {
-        p.Size       =  file_info.Size()
-        if p.Size==0 { p.IsEmpty=true  } else { p.IsEmpty = false }
+    if err != nil { return 0, err }
 
-        file_mode :=  file_info.Mode()
-        if file_mode.IsDir()==true {
-            p.IsDir = true
-        } else {
-            file_type := string(file_mode.String()[0])
-            if ( file_type == "-" ) {  p.IsRegular = true } else { p.IsRegular = false  }
-        }
-        if p.IsDir == true  {
-            content,err  := file.Readdirnames(-1)
-            if err == nil { p.DirContent = content }
-        }
+    stat_interface    := fi.Sys()
 
-        mtime_struct  := file_stat.ModTime()
-        p.Mtime       =  string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00"))
-    }
-    return p,nil
+    stat_object,found := stat_interface.(*syscall.Stat_t) // type assert
+
+    if found==false { return 0, ino_not_found  }
+
+    return stat_object.Ino, nil
 
 }
 
 
 
-
-func RegularFileIsReadable (file *os.File) (err error) {
+func RegularFileIsReadable (path string) (err error) {
 
     // thanks for "postman" from golang@cjr for this great idea
     // this function is preventing blocking during reading files like a /proc/1/task/1/cwd/proc/kmsg
 
+    file, err := os.Open(path)
+
+    defer file.Close()
+
+    if err!=nil {
+
+        return cant_open_file
+
+    }
+
+
+    //empty,err:= IsEmpty(path)
+    //fmt.Printf("File is empty  %t  Err:  %s",empty,err.Error())
 
     manage_chn:=make(chan bool,1)
 
@@ -218,19 +186,105 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 }
 
 
+
+func IsEmpty(path string) (empty bool, err error) {
+
+    file, err := os.Open(path)
+
+    defer file.Close()
+
+    if err != nil {
+
+        return false, err
+
+    }
+
+    file_info , err := file.Stat()
+
+    if err != nil {
+
+        return false,err
+
+    }
+
+    size :=  file_info.Size()
+
+    if size==0 { empty=true  } else { empty=false /* ; fmt.Printf("\nFile path: %s  size : %d \n",path,size)*/ }
+
+    return
+}
+
+func IsDir(path string)(isdir bool,err error) {
+
+    file, err := os.Open(path)
+
+    //fmt.Println(path)
+
+    defer file.Close()
+
+    if err != nil {
+
+        return false, err
+
+    }
+
+    file_info , err := file.Stat()
+
+    if err != nil {
+
+        return false,err
+
+    }
+
+    file_mode :=  file_info.Mode()
+
+    if file_mode.IsDir()==true {
+
+        isdir = true
+
+    } else {
+
+
+        file_type := string(file_mode.String()[0])
+
+        if ( file_type == "-" ) {  err = nil } else { err = is_not_regular }
+
+    }
+
+    return
+}
+
+func Get_mtime( path string )( mtime string, err error ) {
+
+    fi, err:=os.Stat(path)
+
+    if err!=nil { return mtime,err }
+
+    mtime_struct:=fi.ModTime()
+
+    return string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00")),nil
+
+}
+
+
 func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
     //var dir_struct Directory
 
-    
-    prop , err := GetProp(path)
+    dir, err := os.Open(path)
+    defer dir.Close()
+
+    directory.Path = path
+
     if err != nil {
         return  err
     }
 
-    directory.Path = path
-    directory.Prop = &prop
+    dir_content , err := dir.Readdirnames(-1)
 
+    if err != nil {
+        return  err
+    }
 
 
     // check inode number 
@@ -238,15 +292,18 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
     //directory.Dir = filepath.Dir(path)
 
+    inode,err := GetFileIndexNumber(path)
 
-    if directory.Prop.InoFound == false { return ino_not_found }
+    if err!=nil { return ino_not_found }
 
-    if ( directory.DiscoveredInodes.IncludeValue( directory.Prop.Inode ) ) {
+    directory.Inode = inode
+
+    if ( directory.DiscoveredInodes.IncludeValue( directory.Inode ) ) {
 
 
                 return dup_inode } else {
 
-                directory.DiscoveredInodes = append( directory.DiscoveredInodes, directory.Prop.Inode )
+                directory.DiscoveredInodes = append( directory.DiscoveredInodes, directory.Inode )
 
     }
 
@@ -259,11 +316,11 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
     //
 
-    for file:= range directory.Prop.DirContent{
+    for file:= range dir_content{
 
         file_struct:=&File{}
         // fmt.Printf("\n---Get md5 : %s \n",path+"/"+dir_content[file]) // /proc/1/task/1/cwd/proc/kcore
-        err=file_struct.Get_md5_file(path+"/"+directory.Prop.DirContent[file])
+        err=file_struct.Get_md5_file(path+"/"+dir_content[file])
 
         if err==nil || err==Have_to_switch_to_mtime || err == Permission_denied  {
                 //var subdir_added bool
