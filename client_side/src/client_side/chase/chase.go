@@ -55,11 +55,12 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
     for id :=range targets {
 
-        file_struct:=&actuator.File{} // create File instance
-        err := file_struct.Get_md5_file(targets[id]) // calculate File md5 sum 
-        if err==actuator.Is_dir_error { // if file is directory
+        fstruct           := &actuator.File{} // create File instance
+        fstruct.Prop, err =  actuator.GetProp(targets[id]) // calculate File md5 sum 
+
+        if fstruct.Prop.IsDir == true  { // if file is directory
             dir_struct := &actuator.Directory{}
-            err := dir_struct.Get_md5_dir(targets[id]) // collect information about included files and directories 
+            err := dir_struct.GetHashSumDir(targets[id]) // collect information about included files and directories 
             if err !=nil { continue } // was a return err
             if _, ok := (*subdirs)[targets[id]]; ok == false { // if global subdirs map does'not contain this item  targets[id] , create and add item to subdirs
                 tgt_dir                   := &TargetDir{}
@@ -85,12 +86,15 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
                 target                 :=  Target{} //  I have to find difference between Target{} and &Target{}
 
-                if file_struct.MarkerGetttingModeIsMtime == true {
+                if file_struct.Prop.HashSumAvailable == false {
                     target.MarkerGetttingModeIsMtime = true
+                    target.OldMarker       =   file_struct.Prop.Mtime
+                } else {
+                    target.OldMarker       =   file_struct.Prop.HashSum
+
                 }
 
                 target.Path            =   file_struct.Path
-                target.OldMarker       =   string(file_struct.Sum)
                 target.MessageChannel  =   message_channel
                 target.WorkerPool      =   wp
                 target.InfoIn          =   make(chan bool,1)
@@ -108,14 +112,16 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
             }
 
-    } else if err == nil || err==actuator.Have_to_switch_to_mtime  {
+    } else if fstruct.Prop.IsRegular == true  {
 
           target                 :=  Target{}
           target.Path            =   targets[id]
-          if file_struct.MarkerGetttingModeIsMtime == true {
+          if fstruct.Prop.HashSumAvailable == false && fstruct.Prop.MtimeAvailable == true {
               target.MarkerGetttingModeIsMtime = true
+              target.OldMarker       =   fstruct.Prop.Mtime
+          } else if fstruct.Prop.HashSumAvailable == true {
+              target.OldMarker       =   fstruct.Prop.HashSum
           }
-          target.OldMarker       =   string(file_struct.Sum)
           target.WorkerPool      =   wp // new 02-11-2015 03:00
 
 	  target.MessageChannel  =   message_channel
@@ -149,9 +155,10 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
     for i:=range (*subdirs) {
 
         target_subdir := (*subdirs)[i]
-
-        target_subdir.OldMarker , err =  actuator.Get_mtime(target_subdir.Path) // this code has been moved here from top of Chasing()
+        prop,err      :=  actuator.GetProp(target_subdir.Path)
         if err != nil { continue }
+
+        target_subdir.OldMarker  =  prop.Mtime // this code has been moved here from top of Chasing()
         //go (*subdirs)[i].Chasing()
         if (wp==nil) {fmt.Printf("wp is nill dir subdirs ")}
         wp.AppendTarget(target_subdir)
@@ -181,22 +188,23 @@ func (tgt *Target) Chasing() (err error){
 
                 default:
 
-                    file  :=  &actuator.File{}
-                    tgtMarkerGettingModeCurrent := tgt.MarkerGetttingModeIsMtime
-                    var marker string
-                    if tgt.MarkerGetttingModeIsMtime == true {
-                        marker,err= actuator.Get_mtime(tgt.Path)
-                    } else {
-                        err=file.Get_md5_file(tgt.Path)
-                        marker=string(file.Sum)
-
-                    }
-                    if err!= nil && err!=actuator.Have_to_switch_to_mtime {
+                    file           :=  &actuator.File{}
+                    file.Prop,err  =   actuator.GetProp(tgt.Path)
+                    if err!= nil {
                         tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
                         tgt.InformAboutExit=true
                         return err
 
-                    } else if err==actuator.Have_to_switch_to_mtime {
+                    }
+                    tgtMarkerGettingModeCurrent := tgt.MarkerGetttingModeIsMtime
+                    var marker string
+                    if tgt.MarkerGetttingModeIsMtime == true {
+                        marker= file.Prop.Mtime
+                    } else {
+                        marker= file.Prop.HashSum
+
+                    }
+                    if file.Prop.HashSumAvailable == false && file.Prop.MtimeAvailable == true  {
                         tgt.MarkerGetttingModeIsMtime = true
                     }
                     tgt.Marker = marker
@@ -213,31 +221,31 @@ func (tgt *Target) Chasing() (err error){
                         go  tgt.Reporting()
 
                         tgt.OldMarker=tgt.Marker }
-                     
 
 
         }
 
        } else {
 
-          file:=&actuator.File{}
-          var marker string
-
-          tgtMarkerGettingModeCurrent := tgt.MarkerGetttingModeIsMtime
-
-          if tgt.MarkerGetttingModeIsMtime == true {
-              marker,err= actuator.Get_mtime(tgt.Path)
-          } else {
-              err=file.Get_md5_file(tgt.Path)
-              marker=string(file.Sum)
-          }
-          if err!= nil && err!=actuator.Have_to_switch_to_mtime {
+          file           :=  &actuator.File{}
+          file.Prop,err  =   actuator.GetProp(tgt.Path)
+          if err!= nil {
               tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
               tgt.InformAboutExit=true
-              return err
-           } else if err==actuator.Have_to_switch_to_mtime {
-               tgt.MarkerGetttingModeIsMtime = true
-           }
+          return err
+
+          }
+          tgtMarkerGettingModeCurrent := tgt.MarkerGetttingModeIsMtime
+          var marker string
+          if tgt.MarkerGetttingModeIsMtime == true {
+                  marker= file.Prop.Mtime
+          } else {
+              marker= file.Prop.HashSum
+
+          }
+          if file.Prop.HashSumAvailable == false && file.Prop.MtimeAvailable == true  {
+              tgt.MarkerGetttingModeIsMtime = true
+          }
           tgt.Marker = marker
 
           tgtMarkerGettingModeNew := tgt.MarkerGetttingModeIsMtime

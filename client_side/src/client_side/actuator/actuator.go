@@ -32,6 +32,7 @@ type Prop struct {
     IsRegular           bool
     Dir                 string
     Mtime               string
+    MtimeAvailable      bool
     HashSum             string
     HashSumType         string //md5
     HashSumAvailable    bool
@@ -40,6 +41,7 @@ type Prop struct {
     OwnerGroup          string
     Size                int64
     DirContent          []string
+    DirContentAvailable bool
 
 
 }
@@ -89,9 +91,9 @@ func ( array strings ) IncludeValue ( value string ) (includes bool) {
 
 }
 
-func GetProp (path string) (p Prop,err error){
+func GetProp (path string) (p *Prop,err error){
 
-    p               =  Prop{}
+    p               =  &Prop{}
     file, err       :=  os.Open(path)
     defer           file.Close()
     if( err!=nil )  { return p,err  }
@@ -125,11 +127,12 @@ func GetProp (path string) (p Prop,err error){
         }
         if p.IsDir == true  {
             content,err  := file.Readdirnames(-1)
-            if err == nil { p.DirContent = content }
+            if err == nil { p.DirContent = content ; p.DirContentAvailable = true } else { p.DirContentAvailable = false }
         }
 
-        mtime_struct  := file_stat.ModTime()
-        p.Mtime       =  string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00"))
+        mtime_struct     := file_stat.ModTime()
+        p.Mtime          =  string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00"))
+        p.MtimeAvailable = true
         if p.HashSumAvailable == false { p.HashSum = p.Mtime  }
     }
 
@@ -231,18 +234,17 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 }
 
 
-func ( directory *Directory ) Get_md5_dir (path string) (err error){
+func ( directory *Directory ) GetHashSumDir (path string) (err error){
 
     //var dir_struct Directory
 
-    
     prop , err := GetProp(path)
     if err != nil {
         return  err
     }
 
     directory.Path = path
-    directory.Prop = &prop
+    directory.Prop = prop
 
 
 
@@ -274,27 +276,21 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 
     for file:= range directory.Prop.DirContent{
 
-        file_struct  :=  &File{}
-        file_path    :=  path+"/"+directory.Prop.DirContent[file]
-        err=file_struct.GetFileProp( file_path )
+        fstruct            :=  &File{}
+        file_path          :=  path+"/"+directory.Prop.DirContent[file]
+        fstruct.Prop, err  =   GetProp( file_path )
+        if err !=nil { continue }
 
-        if err==nil || err==Have_to_switch_to_mtime || err == Permission_denied  {
-                //var subdir_added bool
-                //if err == Have_to_switch_to_mtime {fmt.Printf("\n -- Switched to mtime marker mode -- %s -- \n",path+"/"+dir_content[file])}
-                if err == Have_to_switch_to_mtime || err == Permission_denied  {
-                    file_struct.Prop.HashSumAvailable = false
-                }
-                directory.Files=append(directory.Files,file_struct)
-                //for i:=range directory.SubDirs { if (directory.SubDirs[i]==path) {subdir_added=true ; break  } }
-                //if subdir_added==false { directory.SubDirs=append(directory.SubDirs,path) }
+        if fstruct.Prop.IsRegular == true && fstruct.Prop.MtimeAvailable == true && fstruct.Prop.IsDir == false  {
+                directory.Files=append(directory.Files,fstruct)
         }
 
-        if err == Is_dir_error {
+        if fstruct.Prop.IsDir == true && fstruct.Prop.DirContentAvailable == true  {
 
             another_dir                   :=  &Directory{}
             another_dir.DiscoveredInodes  =   directory.DiscoveredInodes
-            subdir_path                   :=  path+"/"+dir_content[file]
-            err                           =   another_dir.Get_md5_dir( subdir_path )
+            subdir_path                   :=  path+"/"+directory.Prop.DirContent[file]
+            err                           =   another_dir.GetHashSumDir( subdir_path )
 
             if (err!=nil) { continue }
 
@@ -320,15 +316,3 @@ func ( directory *Directory ) Get_md5_dir (path string) (err error){
 }
 
 
-func (file_struct *File) GetFileProp (path string) (err error){
-
-
-    prop,err         := GetProp(path)
-    file_struct.Prop = &prop
-    file_struct.Path =  path
-
-    if err!= nil { return err }
-
-    return nil
-
-}
