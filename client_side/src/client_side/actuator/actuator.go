@@ -93,6 +93,7 @@ func ( array strings ) IncludeValue ( value string ) (includes bool) {
 
 func GetProp (path string) (p *Prop,err error){
 
+
     p               =  &Prop{}
     file, err       :=  os.Open(path)
     defer           file.Close()
@@ -100,6 +101,8 @@ func GetProp (path string) (p *Prop,err error){
     file_stat, err  :=  os.Stat(path)
     //defer           file_stat.Close()
     if( err!=nil )  { return p,err  }
+
+    fmt.Printf("\n -- Getting prop --\n")
 
     stat_interface     :=  file_stat.Sys()
     stat_object,found  :=  stat_interface.(*syscall.Stat_t)
@@ -114,6 +117,8 @@ func GetProp (path string) (p *Prop,err error){
     }
 
     file_info,err    :=  file.Stat()
+    fmt.Printf("\n<< Printing error >>\n")
+    if err != nil { fmt.Printf("\n error not null %v\n",err) } else { fmt.Printf("\n error is nil  \n")  }
     if err==nil {
         p.Size       =  file_info.Size()
         if p.Size==0 { p.IsEmpty=true  } else { p.IsEmpty = false }
@@ -127,12 +132,13 @@ func GetProp (path string) (p *Prop,err error){
         }
         if p.IsDir == true  {
             content,err  := file.Readdirnames(-1)
+            fmt.Printf("\n This dir is Dir \n")
             if err == nil { p.DirContent = content ; p.DirContentAvailable = true } else { p.DirContentAvailable = false }
         }
 
         mtime_struct     := file_stat.ModTime()
         p.Mtime          =  string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00"))
-        p.MtimeAvailable = true
+        p.MtimeAvailable =  true
         if p.HashSumAvailable == false { p.HashSum = p.Mtime  }
     }
 
@@ -237,11 +243,14 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 func ( directory *Directory ) GetHashSumDir (path string) (err error){
 
     //var dir_struct Directory
-
+    fmt.Println("\n == Starting  ==\n")
     prop , err := GetProp(path)
     if err != nil {
+        fmt.Println("\n Exiting  \n")
         return  err
     }
+
+    fmt.Printf("\n Dir content is available : %t  \n", prop.DirContentAvailable)
 
     directory.Path = path
     directory.Prop = prop
@@ -280,6 +289,10 @@ func ( directory *Directory ) GetHashSumDir (path string) (err error){
         file_path          :=  path+"/"+directory.Prop.DirContent[file]
         fstruct.Prop, err  =   GetProp( file_path )
         if err !=nil { continue }
+
+        fmt.Println("\n :Debug:  \n")
+        fmt.Printf("\n%s\n",file_path)
+        fmt.Println("\n : : \n")
 
         if fstruct.Prop.IsRegular == true && fstruct.Prop.MtimeAvailable == true && fstruct.Prop.IsDir == false  {
                 directory.Files=append(directory.Files,fstruct)
