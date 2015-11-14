@@ -6,6 +6,7 @@ import "client_side/actuator"
 import "fmt" // for  debug
 //import "time"
 import "path/filepath"
+import "reflect"
 //
 //pprof debug
 //import _ "net/http/pprof"
@@ -19,6 +20,7 @@ type Target struct {
     Dir                           string
     OldMarker                     string
     Marker                        string
+    Prop                          *actuator.Prop // try to use Prop comparing instead of using markers
     InfoIn                        chan bool
     InfoOut                       chan string
     MessageChannel                chan string
@@ -188,77 +190,45 @@ func (tgt *Target) Chasing() (err error){
 
                 default:
 
-                    file           :=  &actuator.File{}
-                    file.Prop,err  =   actuator.GetProp(tgt.Path)
+                    actual_prop, err  :=   actuator.GetProp(tgt.Path)
+
                     if err!= nil {
                         tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
                         tgt.InformAboutExit=true
                         return err
 
                     }
-                    tgtMarkerGettingModeCurrent := tgt.MarkerGetttingModeIsMtime
-                    var marker string
-                    if tgt.MarkerGetttingModeIsMtime == true {
-                        marker= file.Prop.Mtime
-                    } else {
-                        marker= file.Prop.HashSum
-
-                    }
-                    if file.Prop.HashSumAvailable == false && file.Prop.MtimeAvailable == true  {
-                        tgt.MarkerGetttingModeIsMtime = true
-                    }
-                    tgt.Marker = marker
-          // This check "tgtMarkerGettingModeCurrent == tgtMarkerGettingModeNew" should prevents comparing kind of Mtime value and
-          // Md5sum value . This may cause when tgt.MarkerGetttingModeIsMtime was modified from False to True
-          // was not tested yet !!!!
-          // Seems that best method to test this is create automount share
-          // or maybe i can try to change file perm
-                    tgtMarkerGettingModeNew := tgt.MarkerGetttingModeIsMtime
 
 
-                    if ( tgt.Marker!=tgt.OldMarker && tgtMarkerGettingModeCurrent == tgtMarkerGettingModeNew ) {
+                    if ( reflect.DeepEqual(actual_prop, tgt.Prop) == false ) {
 
                         go  tgt.Reporting()
 
-                        tgt.OldMarker=tgt.Marker }
+                        tgt.Prop = actual_prop }
 
 
-        }
+                    }
 
        } else {
+           actual_prop, err  :=   actuator.GetProp(tgt.Path)
 
-          file           :=  &actuator.File{}
-          file.Prop,err  =   actuator.GetProp(tgt.Path)
-          if err!= nil {
-              tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
-              tgt.InformAboutExit=true
-          return err
+           if err!= nil {
+           tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
+           tgt.InformAboutExit=true
+           return err
 
-          }
-          tgtMarkerGettingModeCurrent := tgt.MarkerGetttingModeIsMtime
-          var marker string
-          if tgt.MarkerGetttingModeIsMtime == true {
-                  marker= file.Prop.Mtime
-          } else {
-              marker= file.Prop.HashSum
+           }
 
-          }
-          if file.Prop.HashSumAvailable == false && file.Prop.MtimeAvailable == true  {
-              tgt.MarkerGetttingModeIsMtime = true
-          }
-          tgt.Marker = marker
 
-          tgtMarkerGettingModeNew := tgt.MarkerGetttingModeIsMtime
+           if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
 
-          // This check "tgtMarkerGettingModeCurrent == tgtMarkerGettingModeNew" should prevents comparing kind of Mtime value and
-          // Md5sum value . This may cause when tgt.MarkerGetttingModeIsMtime was modified from False to True
-          // was not tested yet !!!!
-          // Seems that best method to test this is create automount share
-          // or maybe i can try to change file perm
+               go  tgt.Reporting()
 
-          if (tgt.Marker!=tgt.OldMarker && tgtMarkerGettingModeCurrent == tgtMarkerGettingModeNew ) {
+               tgt.Prop = actual_prop
 
-              go tgt.Reporting() ; tgt.OldMarker=tgt.Marker  }
+           }
+
+
       }
     return nil
 }
@@ -266,7 +236,7 @@ func (tgt *Target) Chasing() (err error){
 func (tgt *TargetDir) Chasing () (err error){
 
 
-        tgt.Marker, err  =  actuator.Get_mtime(tgt.Path)
+        actual_prop, err  :=  actuator.GetProp(tgt.Path)
 
         if err!= nil { fmt.Printf("\nError during opening %s\n",tgt.Path) }
 
@@ -281,30 +251,30 @@ func (tgt *TargetDir) Chasing () (err error){
                 default:
             }
 
-        if ( tgt.InformAboutExit == true ) {
+            if ( tgt.InformAboutExit == true ) {
 
-            var new_items                =  []string { tgt.Path }
-            subdirs                      := make(map[string]*TargetDir)
-            tgt_new                      := &TargetDir{}
-            tgt_new.MessageChannel       =  tgt.MessageChannel
-            tgt_new.Path                 =  tgt.Path
-            tgt_new.InfoIn               =  tgt.InfoIn
-            tgt_new.InfoOut              =  tgt.InfoOut
-            tgt_new.Dir                  =  tgt.Dir
-            tgt_new.InOutChannelsCreated =  true
-            tgt_new.WorkerPool           =  tgt.WorkerPool
-            subdirs[tgt.Path]            =  tgt_new
+                var new_items                =  []string { tgt.Path }
+                subdirs                      := make(map[string]*TargetDir)
+                tgt_new                      := &TargetDir{}
+                tgt_new.MessageChannel       =  tgt.MessageChannel
+                tgt_new.Path                 =  tgt.Path
+                tgt_new.InfoIn               =  tgt.InfoIn
+                tgt_new.InfoOut              =  tgt.InfoOut
+                tgt_new.Dir                  =  tgt.Dir
+                tgt_new.InOutChannelsCreated =  true
+                tgt_new.WorkerPool           =  tgt.WorkerPool
+                subdirs[tgt.Path]            =  tgt_new
 
-            // watafa possible mistake cause  was found . it is tgt.InformAboutExit 
-            tgt.InformAboutExit = false
-            // second possible mistake cause
-            tgt.OldMarker=tgt.Marker
+                // watafa possible mistake cause  was found . it is tgt.InformAboutExit 
+                tgt.InformAboutExit = false
+                // second possible mistake cause
+                tgt.Prop=actual_prop
 
-            go Start( new_items, tgt.MessageChannel, tgt.WorkerPool, &subdirs )
+                go Start( new_items, tgt.MessageChannel, tgt.WorkerPool, &subdirs )
 
-            return nil
+                return nil
 
-        }
+            }
 
         } else if tgt.InformAboutExit == true {
 
@@ -324,7 +294,7 @@ func (tgt *TargetDir) Chasing () (err error){
             // watafa possible mistake was found . it is tgt.InformAboutExit 
             tgt.InformAboutExit = false
             // second possible mistake cause
-            tgt.OldMarker=tgt.Marker
+            tgt.Prop=actual_prop
 
             go Start( new_items, tgt.MessageChannel, tgt.WorkerPool, &subdirs )
 
@@ -332,7 +302,7 @@ func (tgt *TargetDir) Chasing () (err error){
 
         }
 
-        if ( tgt.Marker!=tgt.OldMarker ) {
+        if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
 
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true
