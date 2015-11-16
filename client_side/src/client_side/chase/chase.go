@@ -18,15 +18,12 @@ type Target struct {
 
     Path                          string
     Dir                           string
-    OldMarker                     string
-    Marker                        string
     Prop                          *actuator.Prop // try to use Prop comparing instead of using markers
     InfoIn                        chan bool
     InfoOut                       chan string
     MessageChannel                chan string
     WorkerPool                    *WorkerPool
     InformAboutExit               bool
-    MarkerGetttingModeIsMtime     bool // "mtime" or "md5sum" ; could be automatically modified during chase 
     KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
 
 }
