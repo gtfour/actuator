@@ -37,6 +37,8 @@ type Prop struct {
     HashSumType         string //md5
     HashSumAvailable    bool
     Perm                string
+    Uid                 uint32
+    Gid                 uint32
     Owner               string
     OwnerGroup          string
     Size                int64
@@ -109,6 +111,8 @@ func GetProp (path string) (p *Prop,err error){
     stat_interface     :=  file_stat.Sys()
     stat_object,found  :=  stat_interface.(*syscall.Stat_t)
     if found==false { p.InoFound=false  } else { p.InoFound=true  ; p.Inode = stat_object.Ino }
+    p.Uid  = stat_object.Uid
+    p.Gid  = stat_object.Gid
 
     if RegularFileIsReadable(file_same) == nil {
         p.IsReadable       = true
