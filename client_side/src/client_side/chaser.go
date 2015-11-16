@@ -9,7 +9,7 @@ import "time"
 
 func main() {
 
-    path     := "/proc/net"
+    path     := "/tmp/test"
     messages :=   make(chan string,100)
     wp       :=  chase.WPCreate()
     _ = chase.Listen(path, messages, wp)

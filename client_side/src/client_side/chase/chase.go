@@ -65,11 +65,11 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
             err := dir_struct.GetHashSumDir(targets[id]) // collect information about included files and directories 
             if err !=nil { continue } // was a return err
             if _, ok := (*subdirs)[targets[id]]; ok == false { // if global subdirs map does'not contain this item  targets[id] , create and add item to subdirs
-                tgt_dir                   := &TargetDir{}
+                tgt_dir                   := TargetDir{}
                 tgt_dir.MessageChannel    =  message_channel // bind to main info-channel
                 tgt_dir.Path              =  targets[id]
                 tgt_dir.WorkerPool        =   wp // Deirz@golang.cjr advice  
-                (*subdirs)[targets[id]]   =  tgt_dir
+                (*subdirs)[targets[id]]   =  &tgt_dir
             }
             // 
             for subname:=range dir_struct.SubDirs  { // iteration of each included subdir
@@ -85,16 +85,12 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
             for file_id :=range dir_struct.Files {
 
                 file_struct            :=  dir_struct.Files[file_id]
+                prop,err               :=  actuator.GetProp(file_struct.Path)
+
+                if err!=nil { continue }
 
                 target                 :=  Target{} //  I have to find difference between Target{} and &Target{}
-
-                if file_struct.Prop.HashSumAvailable == false {
-                    target.MarkerGetttingModeIsMtime = true
-                    target.OldMarker       =   file_struct.Prop.Mtime
-                } else {
-                    target.OldMarker       =   file_struct.Prop.HashSum
-
-                }
+                target.Prop            =  prop
 
                 target.Path            =   file_struct.Path
                 target.MessageChannel  =   message_channel
@@ -118,12 +114,9 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
 
           target                 :=  Target{}
           target.Path            =   targets[id]
-          if fstruct.Prop.HashSumAvailable == false && fstruct.Prop.MtimeAvailable == true {
-              target.MarkerGetttingModeIsMtime = true
-              target.OldMarker       =   fstruct.Prop.Mtime
-          } else if fstruct.Prop.HashSumAvailable == true {
-              target.OldMarker       =   fstruct.Prop.HashSum
-          }
+          prop,err               :=  actuator.GetProp(targets[id])
+          if err!= nil { continue }
+          target.Prop            =   prop
           target.WorkerPool      =   wp // new 02-11-2015 03:00
 
 	  target.MessageChannel  =   message_channel
@@ -160,7 +153,7 @@ func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdi
         prop,err      :=  actuator.GetProp(target_subdir.Path)
         if err != nil { continue }
 
-        target_subdir.OldMarker  =  prop.Mtime // this code has been moved here from top of Chasing()
+        target_subdir.Prop  = prop
         //go (*subdirs)[i].Chasing()
         if (wp==nil) {fmt.Printf("wp is nill dir subdirs ")}
         wp.AppendTarget(target_subdir)
