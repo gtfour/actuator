@@ -6,7 +6,7 @@ import "client_side/actuator"
 
 func main() {
 
-    path     := "/tmp/test/hello.txt"
+    path     := "/tmp/test"
     dir      := &actuator.Directory{}
     err      := dir.GetHashSumDir(path)
     if err== nil {
