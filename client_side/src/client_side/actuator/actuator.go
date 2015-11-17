@@ -12,7 +12,7 @@ import "syscall"
 //
 //import _ "net/http/pprof"
 //import "net/http"
-import "fmt"
+// import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 // Bug with opening /proc/1/task/1/cwd/proc/kcore" still does not fixed !!!
@@ -94,21 +94,23 @@ func ( array strings ) IncludeValue ( value string ) (includes bool) {
 func GetProp (path string) (p *Prop,err error){
 
 
-    p               =  &Prop{}
-    file, err       :=  os.Open(path)
+    p                    =  &Prop{}
+    file, err            :=  os.Open(path)
+    file_same, err_same  :=  os.Open(path)
     defer           file.Close()
-    if( err!=nil )  { return p,err  }
+    defer           file_same.Close()
+    if( err!=nil || err_same!=nil )  { return p,err  }
     file_stat, err  :=  os.Stat(path)
     //defer           file_stat.Close()
     if( err!=nil )  { return p,err  }
 
-    fmt.Printf("\n -- Getting prop --\n")
+    //fmt.Printf("\n -- Getting prop --\n")
 
     stat_interface     :=  file_stat.Sys()
     stat_object,found  :=  stat_interface.(*syscall.Stat_t)
     if found==false { p.InoFound=false  } else { p.InoFound=true  ; p.Inode = stat_object.Ino }
 
-    if RegularFileIsReadable(file) == nil {
+    if RegularFileIsReadable(file_same) == nil {
         p.IsReadable       = true
         p.HashSumAvailable = true
     } else {
@@ -117,8 +119,8 @@ func GetProp (path string) (p *Prop,err error){
     }
 
     file_info,err    :=  file.Stat()
-    fmt.Printf("\n<< Printing error >>\n")
-    if err != nil { fmt.Printf("\n error not null %v\n",err) } else { fmt.Printf("\n error is nil  \n")  }
+    //fmt.Printf("\n<< Printing error >>\n")
+    //if err != nil { fmt.Printf("\n error not null %v\n",err) } else { fmt.Printf("\n error is nil  \n")  }
     if err==nil {
         p.Size       =  file_info.Size()
         if p.Size==0 { p.IsEmpty=true  } else { p.IsEmpty = false }
@@ -132,7 +134,7 @@ func GetProp (path string) (p *Prop,err error){
         }
         if p.IsDir == true  {
             content,err  := file.Readdirnames(-1)
-            fmt.Printf("\n This dir is Dir \n")
+            //fmt.Printf("\n This dir is Dir \n")
             if err == nil { p.DirContent = content ; p.DirContentAvailable = true } else { p.DirContentAvailable = false }
         }
 
@@ -188,7 +190,7 @@ func RegularFileIsReadable (file *os.File) (err error) {
                         default:
                             // In case when we are not recieving second signal in time modification marker getting  method is switching to 'lazy mode'
                             // We just getting file modification time
-                            fmt.Printf("\nswitch to mtime\n")
+                            //fmt.Printf("\nswitch to mtime\n")
                             file.Close()
                             return Have_to_switch_to_mtime
 
@@ -198,7 +200,7 @@ func RegularFileIsReadable (file *os.File) (err error) {
         default:
             // In case when we are not recieving second signal in time modification marker getting  method is switching to 'lazy mode'
             // We just getting file modification time
-            fmt.Printf("\nswitch to mtime\n")
+            //fmt.Printf("\nswitch to mtime\n")
             file.Close()
             // set check method to GetMtime
             return Have_to_switch_to_mtime
@@ -243,14 +245,14 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 func ( directory *Directory ) GetHashSumDir (path string) (err error){
 
     //var dir_struct Directory
-    fmt.Println("\n == Starting  ==\n")
+    //fmt.Println("\n == Starting  ==\n")
     prop , err := GetProp(path)
     if err != nil {
-        fmt.Println("\n Exiting  \n")
+        //fmt.Println("\n Exiting  \n")
         return  err
     }
 
-    fmt.Printf("\n Dir content is available : %t  \n", prop.DirContentAvailable)
+    //fmt.Printf("\n Dir content is available : %t  \n", prop.DirContentAvailable)
 
     directory.Path = path
     directory.Prop = prop
@@ -287,12 +289,13 @@ func ( directory *Directory ) GetHashSumDir (path string) (err error){
 
         fstruct            :=  &File{}
         file_path          :=  path+"/"+directory.Prop.DirContent[file]
+        fstruct.Path       =   file_path
         fstruct.Prop, err  =   GetProp( file_path )
         if err !=nil { continue }
 
-        fmt.Println("\n :Debug:  \n")
-        fmt.Printf("\n%s\n",file_path)
-        fmt.Println("\n : : \n")
+        //fmt.Println("\n :Debug:  \n")
+        //fmt.Printf("\n%s\n",file_path)
+        //fmt.Println("\n : : \n")
 
         if fstruct.Prop.IsRegular == true && fstruct.Prop.MtimeAvailable == true && fstruct.Prop.IsDir == false  {
                 directory.Files=append(directory.Files,fstruct)

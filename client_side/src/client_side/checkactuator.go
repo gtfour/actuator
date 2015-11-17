@@ -15,7 +15,7 @@ func main() {
             file:=dir.Files[i]
             fmt.Printf("\n --- \n")
             fmt.Println(file.Path)
-            fmt.Println(file.Prop.HashSum)
+            fmt.Println(string(file.Prop.HashSum))
             fmt.Printf("\n --- \n")
 
 
