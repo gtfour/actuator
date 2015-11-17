@@ -30,6 +30,7 @@ type Prop struct {
     IsEmpty             bool
     IsReadable          bool
     IsRegular           bool
+    Type                string
     Dir                 string
     Mtime               string
     MtimeAvailable      bool
@@ -134,6 +135,7 @@ func GetProp (path string) (p *Prop,err error){
             p.IsDir = true
         } else {
             file_type := string(file_mode.String()[0])
+            p.Type = file_type
             if ( file_type == "-" ) {  p.IsRegular = true } else { p.IsRegular = false  }
         }
         if p.IsDir == true  {
