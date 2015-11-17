@@ -137,6 +137,7 @@ func GetProp (path string) (p *Prop,err error){
             //fmt.Printf("\n This dir is Dir \n")
             if err == nil { p.DirContent = content ; p.DirContentAvailable = true } else { p.DirContentAvailable = false }
         }
+        p.Perm           =  string(file_mode.Perm())
 
         mtime_struct     := file_stat.ModTime()
         p.Mtime          =  string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00"))
