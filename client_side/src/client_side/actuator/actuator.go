@@ -43,7 +43,7 @@ type Prop struct {
     Owner               string
     OwnerGroup          string
     Size                int64
-    DirContent          []string
+    DirContent          []string `ignore`
     DirContentAvailable bool
 
 

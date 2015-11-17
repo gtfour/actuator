@@ -3,6 +3,7 @@ package main
 import "fmt"
 import "reflect"
 import "errors"
+import "client_side/actuator"
 
 var   structFieldCountMissmatched = errors.New("structs have different fields count")
 
@@ -15,39 +16,12 @@ type CompNote struct {
 
 }
 
-type Prop struct {
-
-    Inode               uint64
-    InoFound            bool
-    IsDir               bool
-    IsEmpty             bool
-    IsReadable          bool
-    IsRegular           bool
-    Dir                 string
-    Mtime               string
-    MtimeAvailable      bool
-    HashSum             string
-    HashSumType         string //md5
-    HashSumAvailable    bool
-    Type                string
-    Perm                string
-    Uid                 uint32
-    Gid                 uint32
-    Owner               string
-    OwnerGroup          string
-    Size                int64
-    DirContent          []string
-    DirContentAvailable bool
-
-
-}
-
 
 
 func main(){
 
-    test1:=Prop{DirContentAvailable:true,Inode:67,Perm:"rwx"}
-    test2:=Prop{DirContentAvailable:false,Inode:67,Perm:"r-x"}
+    test1:=actuator.Prop{DirContentAvailable:true,Inode:67,Perm:"rwx"}
+    test2:=actuator.Prop{DirContentAvailable:false,Inode:67,Perm:"r-x"}
     _,_=CompareProp(test1,test2)
 
 
@@ -61,7 +35,7 @@ func main(){
 }
 
 
-func CompareProp(old_prop,new_prop Prop)(err error,comparison_result []CompNote) {
+func CompareProp(old_prop,new_prop actuator.Prop)(err error,comparison_result []CompNote) {
 
     valueOld:=reflect.ValueOf(old_prop)
     valueNew:=reflect.ValueOf(new_prop)
@@ -74,7 +48,8 @@ func CompareProp(old_prop,new_prop Prop)(err error,comparison_result []CompNote)
     for i := 0; i <= old_field_count-1; i++  {
 
         //fmt.Printf("\nField %s is equal before %s -> after: %s\n",field.Field(i).Name,valueOld.Field(i).String(),valueNew.Field(i).String())
-        if fmt.Sprint(valueOld.Field(i))!=fmt.Sprint(valueNew.Field(i)) {
+        fmt.Printf("\nfield tag: %s\n",field.Field(i).Tag)
+        if fmt.Sprint(valueOld.Field(i))!=fmt.Sprint(valueNew.Field(i)) && string(field.Field(i).Tag)!="ignore" {
 
             fmt.Printf("\nField: %s is different before: %s -> after: %s\n",field.Field(i).Name,fmt.Sprint(valueOld.Field(i)),fmt.Sprint(valueNew.Field(i)))
 
@@ -84,8 +59,6 @@ func CompareProp(old_prop,new_prop Prop)(err error,comparison_result []CompNote)
 
     }
     return nil,comparison_result
-
-
 
 }
 
