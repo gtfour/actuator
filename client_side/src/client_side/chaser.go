@@ -10,7 +10,9 @@ import "time"
 func main() {
 
     path     := "/tmp/test"
-    messages := chase.Listen(path)
+    messages :=   make(chan string,100)
+    wp       :=  chase.WPCreate()
+    _ = chase.Listen(path, messages, wp)
 
     go func() {
         fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))

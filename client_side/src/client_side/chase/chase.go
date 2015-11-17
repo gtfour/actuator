@@ -321,12 +321,12 @@ func (tgt *Target) Reporting () {
 
 }
 
-func Listen( path string ) ( messages chan string ) {
+func Listen( path string,  messages chan string, wp WorkerPool )(err error) {
 
     target_dir_path             :=  path
 
-    messages                    =   make(chan string,100)
-    wp                          :=  WPCreate()
+    // // messages                    =   make(chan string,100)
+    // // wp                          :=  WPCreate()
     var test_dir                =   []string { target_dir_path }
     target                      :=  &TargetDir{}
     target.Path                 =   target_dir_path
@@ -343,7 +343,7 @@ func Listen( path string ) ( messages chan string ) {
 
     Start( test_dir, messages, &wp, &subdirs )
 
-    return
+    return nil
 
 }
 
