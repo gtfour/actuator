@@ -8,7 +8,8 @@ const (
 
 type Event struct {
 
-
+    Date string
+    Path string
 
 }
 

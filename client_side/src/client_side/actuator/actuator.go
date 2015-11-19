@@ -9,10 +9,11 @@ import ( "path/filepath")
 import "time"
 import "bufio"
 import "syscall"
+import "reflect"
 //
 //import _ "net/http/pprof"
 //import "net/http"
-// import "fmt"
+import "fmt"
 
 // Now it skips symlinks and other shit like a pipes and character devices
 // Bug with opening /proc/1/task/1/cwd/proc/kcore" still does not fixed !!!
@@ -21,6 +22,15 @@ type inodes []uint64
 type strings []string
 
 var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
+
+type CompNote struct {
+
+    Field    string
+    Before   string
+    After    string
+
+
+}
 
 type Prop struct {
 
@@ -336,6 +346,36 @@ func ( directory *Directory ) GetHashSumDir (path string) (err error){
     }
     return nil
     // os.Readdirnames
+}
+
+func CompareProp(old_prop,new_prop Prop)(err error,comparison_result []CompNote) {
+
+    valueOld:=reflect.ValueOf(old_prop)
+    valueNew:=reflect.ValueOf(new_prop)
+
+    field:=reflect.TypeOf(old_prop)
+
+    old_field_count := valueOld.NumField()
+    //new_field_count := valueNew.NumField()
+
+    for i := 0; i <= old_field_count-1; i++  {
+
+        //fmt.Printf("\nField %s is equal before %s -> after: %s\n",field.Field(i).Name,valueOld.Field(i).String(),valueNew.Field(i).String())
+        //fmt.Printf("\nfield tag: %s\n",field.Field(i).Tag)
+        if fmt.Sprint(valueOld.Field(i))!=fmt.Sprint(valueNew.Field(i)) && string(field.Field(i).Tag)!="ignore" {
+
+            //fmt.Printf("\nField: %s is different before: %s -> after: %s\n",field.Field(i).Name,fmt.Sprint(valueOld.Field(i)),fmt.Sprint(valueNew.Field(i)))
+             cnote:=CompNote{Field:field.Field(i).Name,Before:fmt.Sprint(valueOld.Field(i)),After:fmt.Sprint(valueNew.Field(i))}
+             comparison_result=append(comparison_result,cnote)
+
+
+        }
+
+
+
+    }
+    return nil,comparison_result
+
 }
 
 
