@@ -56,7 +56,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
     for id :=range targets {
 
         fstruct           := &actuator.File{} // create File instance
-        fstruct.Prop, err =  actuator.GetProp(targets[id]) // calculate File md5 sum 
+        fstruct.Prop =  actuator.GetProp(targets[id]) // calculate File md5 sum 
 
         if fstruct.Prop.IsDir == true  { // if file is directory
             dir_struct := &actuator.Directory{}
@@ -83,9 +83,9 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
             for file_id :=range dir_struct.Files {
 
                 file_struct            :=  dir_struct.Files[file_id]
-                prop,err               :=  actuator.GetProp(file_struct.Path)
+                prop               :=  actuator.GetProp(file_struct.Path)
 
-                if err!=nil { continue }
+                if prop.Error == true { continue }
 
                 target                 :=  Target{} //  I have to find difference between Target{} and &Target{}
                 target.Prop            =  prop
@@ -112,8 +112,8 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
 
           target                 :=  Target{}
           target.Path            =   targets[id]
-          prop,err               :=  actuator.GetProp(targets[id])
-          if err!= nil { continue }
+          prop               :=  actuator.GetProp(targets[id])
+          if prop.Error == true  { continue }
           target.Prop            =   prop
           target.WorkerPool      =   wp // new 02-11-2015 03:00
 
@@ -148,8 +148,8 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
     for i:=range (*subdirs) {
 
         target_subdir := (*subdirs)[i]
-        prop,err      :=  actuator.GetProp(target_subdir.Path)
-        if err != nil { continue }
+        prop      :=  actuator.GetProp(target_subdir.Path)
+        if prop.Error == true { continue }
 
         target_subdir.Prop  = prop
         //go (*subdirs)[i].Chasing()
@@ -181,10 +181,13 @@ func (tgt *Target) Chasing() (err error){
 
                 default:
 
-                    actual_prop, err  :=   actuator.GetProp(tgt.Path)
+                    actual_prop  :=   actuator.GetProp(tgt.Path)
 
-                    if err!= nil {
-                        tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
+                    if actual_prop.Error == true {
+                        error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"} 
+                        cnote      :=evebridge.CompNotes{Path:tgt.Path}
+                        cnote.List = append(cnote.List, error_field)
+                        tgt.MessageChannel <- cnote
                         tgt.InformAboutExit=true
                         return err
 
@@ -203,12 +206,15 @@ func (tgt *Target) Chasing() (err error){
                     }
 
        } else {
-           actual_prop, err  :=   actuator.GetProp(tgt.Path)
+           actual_prop  :=   actuator.GetProp(tgt.Path)
 
-           if err!= nil {
-           tgt.MessageChannel<-"child gets this ERROR :" + tgt.Path + ":>" + err.Error()+"|"
-           tgt.InformAboutExit=true
-           return err
+           if actual_prop.Error == true {
+               error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"}
+               cnote      :=evebridge.CompNotes{Path:tgt.Path}
+               cnote.List = append(cnote.List, error_field)
+               tgt.MessageChannel <- cnote
+               tgt.InformAboutExit=true
+               return err
 
            }
 
@@ -231,9 +237,9 @@ func (tgt *Target) Chasing() (err error){
 func (tgt *TargetDir) Chasing () (err error){
 
 
-        actual_prop, err  :=  actuator.GetProp(tgt.Path)
+        actual_prop  :=  actuator.GetProp(tgt.Path)
 
-        if err!= nil { fmt.Printf("\nError during opening %s\n",tgt.Path) }
+        if actual_prop.Error == true { fmt.Printf("\nError during opening %s\n",tgt.Path) }
 
         if (tgt.WorkerPool==nil) {fmt.Printf("%s wp is nil",tgt.Path)}
 

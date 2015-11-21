@@ -11,7 +11,7 @@ import "client_side/evebridge"
 func main() {
 
     path     := "/tmp/test"
-    messages :=   make(chan string,100)
+    messages :=   make(chan evebridge.CompNotes,100)
     wp       :=  chase.WPCreate()
     _ = chase.Listen(path, messages, wp)
 
