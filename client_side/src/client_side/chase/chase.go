@@ -2,6 +2,7 @@ package chase
 //package main
 
 import "client_side/actuator"
+import "client_side/evebridge"
 //import "os"
 import "fmt" // for  debug
 //import "time"
@@ -21,7 +22,7 @@ type Target struct {
     Prop                          *actuator.Prop // try to use Prop comparing instead of using markers
     InfoIn                        chan bool
     InfoOut                       chan string
-    MessageChannel                chan string
+    MessageChannel                chan evebridge.CompNotes
     WorkerPool                    *WorkerPool
     InformAboutExit               bool
     KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
@@ -44,13 +45,13 @@ func ( tgt *TargetDir ) GetDir()  string { return tgt.Dir }
 func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
 
 
-func Start (targets []string, message_channel chan string ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
+func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
 
     // Bug was found : when i passing an file name not a dir name to func to func Start 
     // nil point dereference error is causing . It happens because subdirs is nil ( i suppose )
     // Solution: Seems that problem was caused when i was trying to get text message of error which was nil . "is_dir"
 
-    message_channel <- "Starting"
+    //message_channel <- "Starting"
 
     for id :=range targets {
 
@@ -191,9 +192,10 @@ func (tgt *Target) Chasing() (err error){
 
 
                     //if ( reflect.DeepEqual(actual_prop, tgt.Prop) == false ) {
-                    if comparison_result:=actuator.CompareProp(actual_prop, tgt.Prop); len(comparison_result)>0 {
+                    if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
 
-                        go  tgt.Reporting()
+                        //go  tgt.Reporting()
+                        tgt.MessageChannel <- comparison_notes
 
                         tgt.Prop = actual_prop }
 
@@ -212,9 +214,10 @@ func (tgt *Target) Chasing() (err error){
 
 
            //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
-           if comparison_result:=actuator.CompareProp(actual_prop, tgt.Prop); len(comparison_result)>0 {
+           if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
 
-               go  tgt.Reporting()
+               //go  tgt.Reporting()
+               tgt.MessageChannel <- comparison_notes
 
                tgt.Prop = actual_prop
 
@@ -295,7 +298,8 @@ func (tgt *TargetDir) Chasing () (err error){
         }
 
         //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
-        if comparison_result:=actuator.CompareProp(actual_prop, tgt.Prop); len(comparison_result)>0 {
+        if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
+           tgt.MessageChannel <- comparison_notes
 
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true
@@ -308,13 +312,13 @@ func (tgt *TargetDir) Chasing () (err error){
 }
 
 
-func (tgt *Target) Reporting () {
+//func (tgt *Target) Reporting () {
 
-    tgt.MessageChannel <- tgt.Path+"file was modified"
+//    tgt.MessageChannel <- tgt.Path+"file was modified"
 
-}
+//}
 
-func Listen( path string,  messages chan string, wp WorkerPool )(err error) {
+func Listen( path string,  messages chan evebridge.CompNotes , wp WorkerPool )(err error) {
 
     target_dir_path             :=  path
 

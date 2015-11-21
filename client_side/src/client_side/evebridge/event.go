@@ -18,6 +18,14 @@ type Event struct {
 
 }
 
+type CompNotes struct {
+
+    Path string
+    List []CompNote 
+
+
+}
+
 type CompNote struct {
 
     Field    string
@@ -27,7 +35,7 @@ type CompNote struct {
 
 }
 
-func Handle(messages chan CompNote )(err error) {
+func Handle(messages chan CompNotes )(err error) {
 
     for {
 

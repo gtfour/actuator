@@ -10,6 +10,7 @@ import "time"
 import "bufio"
 import "syscall"
 import "reflect"
+import "client_side/evebridge"
 //
 //import _ "net/http/pprof"
 //import "net/http"
@@ -348,10 +349,10 @@ func ( directory *Directory ) GetHashSumDir (path string) (err error){
     // os.Readdirnames
 }
 
-func CompareProp(old_prop,new_prop Prop)(comparison_result []CompNote) {
+func CompareProp(old_prop,new_prop *Prop, path string)(cnotes evebridge.CompNotes) {
 
-    valueOld:=reflect.ValueOf(old_prop)
-    valueNew:=reflect.ValueOf(new_prop)
+    valueOld:=reflect.ValueOf(old_prop).Elem()
+    valueNew:=reflect.ValueOf(new_prop).Elem()
 
     field:=reflect.TypeOf(old_prop)
 
@@ -361,14 +362,15 @@ func CompareProp(old_prop,new_prop Prop)(comparison_result []CompNote) {
 
         if fmt.Sprint(valueOld.Field(i))!=fmt.Sprint(valueNew.Field(i)) && string(field.Field(i).Tag)!="ignore" {
 
-             cnote:=CompNote{Field:field.Field(i).Name,Before:fmt.Sprint(valueOld.Field(i)),After:fmt.Sprint(valueNew.Field(i))}
-             comparison_result=append(comparison_result,cnote)
+             cnote:=evebridge.CompNote{Field:field.Field(i).Name,Before:fmt.Sprint(valueOld.Field(i)),After:fmt.Sprint(valueNew.Field(i))}
+             cnotes.List=append(cnotes.List, cnote)
 
 
         }
 
     }
-    return comparison_result
+    cnotes.Path = path
+    return cnotes
 }
 
 
