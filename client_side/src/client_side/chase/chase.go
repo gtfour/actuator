@@ -6,7 +6,7 @@ import "client_side/actuator"
 import "fmt" // for  debug
 //import "time"
 import "path/filepath"
-import "reflect"
+//import "reflect"
 //
 //pprof debug
 //import _ "net/http/pprof"
@@ -190,7 +190,8 @@ func (tgt *Target) Chasing() (err error){
                     }
 
 
-                    if ( reflect.DeepEqual(actual_prop, tgt.Prop) == false ) {
+                    //if ( reflect.DeepEqual(actual_prop, tgt.Prop) == false ) {
+                    if comparison_result:=actuator.CompareProp(actual_prop, tgt.Prop); len(comparison_result)>0 {
 
                         go  tgt.Reporting()
 
@@ -210,7 +211,8 @@ func (tgt *Target) Chasing() (err error){
            }
 
 
-           if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
+           //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
+           if comparison_result:=actuator.CompareProp(actual_prop, tgt.Prop); len(comparison_result)>0 {
 
                go  tgt.Reporting()
 
@@ -292,7 +294,8 @@ func (tgt *TargetDir) Chasing () (err error){
 
         }
 
-        if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
+        //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
+        if comparison_result:=actuator.CompareProp(actual_prop, tgt.Prop); len(comparison_result)>0 {
 
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true

@@ -5,7 +5,8 @@ import "net/http"
 import "fmt"
 //
 import "client_side/chase"
-import "time"
+import "client_side/evebridge"
+// import "time"
 
 func main() {
 
@@ -17,19 +18,7 @@ func main() {
     go func() {
         fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
     }()
+    evebridge.Handle(messages)
 
-    for {
-
-        select{
-            case message:=<-messages:
-                fmt.Println(message)
-
-            default:
-                time.Sleep( chase.LOG_CHANNEL_TIMEOUT_MS * time.Millisecond)
-                fmt.Println("No messages")
-
-        }
-
-    }
 
 }

@@ -348,7 +348,7 @@ func ( directory *Directory ) GetHashSumDir (path string) (err error){
     // os.Readdirnames
 }
 
-func CompareProp(old_prop,new_prop Prop)(err error,comparison_result []CompNote) {
+func CompareProp(old_prop,new_prop Prop)(comparison_result []CompNote) {
 
     valueOld:=reflect.ValueOf(old_prop)
     valueNew:=reflect.ValueOf(new_prop)
@@ -356,26 +356,19 @@ func CompareProp(old_prop,new_prop Prop)(err error,comparison_result []CompNote)
     field:=reflect.TypeOf(old_prop)
 
     old_field_count := valueOld.NumField()
-    //new_field_count := valueNew.NumField()
 
     for i := 0; i <= old_field_count-1; i++  {
 
-        //fmt.Printf("\nField %s is equal before %s -> after: %s\n",field.Field(i).Name,valueOld.Field(i).String(),valueNew.Field(i).String())
-        //fmt.Printf("\nfield tag: %s\n",field.Field(i).Tag)
         if fmt.Sprint(valueOld.Field(i))!=fmt.Sprint(valueNew.Field(i)) && string(field.Field(i).Tag)!="ignore" {
 
-            //fmt.Printf("\nField: %s is different before: %s -> after: %s\n",field.Field(i).Name,fmt.Sprint(valueOld.Field(i)),fmt.Sprint(valueNew.Field(i)))
              cnote:=CompNote{Field:field.Field(i).Name,Before:fmt.Sprint(valueOld.Field(i)),After:fmt.Sprint(valueNew.Field(i))}
              comparison_result=append(comparison_result,cnote)
 
 
         }
 
-
-
     }
-    return nil,comparison_result
-
+    return comparison_result
 }
 
 

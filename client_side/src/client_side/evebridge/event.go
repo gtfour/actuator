@@ -1,5 +1,10 @@
 package evebridge
 
+import "time"
+import "fmt"
+
+var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
+
 const (
       INITIALIZED  =  0 // initialized
       CREATED      =  1
@@ -10,6 +15,34 @@ type Event struct {
 
     Date string
     Path string
+
+}
+
+type CompNote struct {
+
+    Field    string
+    Before   string
+    After    string
+
+
+}
+
+func Handle(messages chan CompNote )(err error) {
+
+    for {
+
+        select{
+            case message:=<-messages:
+                fmt.Println(message)
+
+            default:
+                time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
+                fmt.Println("No messages")
+
+        }
+
+    }
+
 
 }
 

@@ -35,7 +35,7 @@ func main(){
 }
 
 
-func CompareProp(old_prop,new_prop actuator.Prop)(err error,comparison_result []CompNote) {
+func CompareProp(old_prop,new_prop *actuator.Prop)(err error,comparison_result []CompNote) {
 
     valueOld:=reflect.ValueOf(old_prop)
     valueNew:=reflect.ValueOf(new_prop)
