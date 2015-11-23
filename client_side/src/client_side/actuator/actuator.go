@@ -352,18 +352,23 @@ func ( directory *Directory ) GetHashSumDir (path string) (err error){
 
 func CompareProp(old_prop,new_prop *Prop, path string)(cnotes evebridge.CompNotes) {
 
+
     valueOld:=reflect.ValueOf(old_prop).Elem()
     valueNew:=reflect.ValueOf(new_prop).Elem()
 
-    field:=reflect.TypeOf(old_prop)
+    //fmt.Printf("\n Compare prop: %s %s %s\n",path,valueOld.Kind(),valueNew.Kind())
+    //fmt.Printf("\n"+fmt.Sprint(valueOld.Kind())+" -- "+fmt.Sprint(valueNew.Kind())+"\n")
+
+    field:=reflect.TypeOf(old_prop).Elem()
 
     old_field_count := valueOld.NumField()
 
     for i := 0; i <= old_field_count-1; i++  {
 
-        if fmt.Sprint(valueOld.Field(i))!=fmt.Sprint(valueNew.Field(i)) && string(field.Field(i).Tag)!="ignore" {
+        if string(field.Field(i).Tag)!="ignore" &&  fmt.Sprint(valueOld.Field(i).Interface())!=fmt.Sprint(valueNew.Field(i).Interface()) {
 
-             cnote:=evebridge.CompNote{Field:field.Field(i).Name,Before:fmt.Sprint(valueOld.Field(i)),After:fmt.Sprint(valueNew.Field(i))}
+
+             cnote:=evebridge.CompNote{Field:field.Field(i).Name,Before:fmt.Sprint(valueOld.Field(i).Interface()),After:fmt.Sprint(valueNew.Field(i).Interface())}
              cnotes.List=append(cnotes.List, cnote)
 
 

@@ -123,9 +123,9 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
             for wtgt := range worker.Targets {
 
-                worker_target_dir := worker.Targets[wtgt]
+                worker_target := worker.Targets[wtgt]
                 //fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
-                if tgt.GetPath() == worker_target_dir.GetPath() { worker_target_dir=tgt  ; tgt_replaced=true  ; break }
+                if tgt.GetPath() == worker_target.GetPath() { worker_target=tgt  ; tgt_replaced=true  ; break }
                 all_tgt_count=all_tgt_count+1
 
             }

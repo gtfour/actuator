@@ -55,8 +55,8 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
 
     for id :=range targets {
 
-        fstruct           := &actuator.File{} // create File instance
-        fstruct.Prop =  actuator.GetProp(targets[id]) // calculate File md5 sum 
+        fstruct       := &actuator.File{} // create File instance
+        fstruct.Prop  =  actuator.GetProp(targets[id]) // calculate File md5 sum 
 
         if fstruct.Prop.IsDir == true  { // if file is directory
             dir_struct := &actuator.Directory{}
@@ -306,6 +306,7 @@ func (tgt *TargetDir) Chasing () (err error){
         //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
         if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
            tgt.MessageChannel <- comparison_notes
+           tgt.Prop = actual_prop
 
            for chan_id :=range tgt.InfoInArray {
                tgt.InfoInArray[chan_id] <- true
