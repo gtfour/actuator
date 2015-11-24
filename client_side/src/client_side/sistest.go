@@ -8,7 +8,12 @@ func main() {
 
 storage:=sistory.Open()
 
-fmt.Printf("Error:  %v",storage.Error)
+spirit_prop:=&sistory.SpiritProp{Size:122,Path:"/tmp/test/hello22.txt"}
+_=storage.UploadSpirit(spirit_prop)
+data:=storage.CallSpirit("/tmp/test/hello22.txt")
+
+
+fmt.Printf("Data:  %s",string(data))
 
 storage.Close()
 

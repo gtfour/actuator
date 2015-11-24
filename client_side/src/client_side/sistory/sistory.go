@@ -1,6 +1,6 @@
 package sistory
 import "github.com/boltdb/bolt"
-//import "fmt"
+import "fmt"
 
 var db_path string =  "/tmp/sis.db"
 var comments =  []string {`//` , `#`}
@@ -15,6 +15,7 @@ type SpiritProp struct {
     Path           string
     Type           string
     Seek           uint64 // just for log-files
+    Size           uint64
     Lines          []string
     IgnoreComment  bool
 
@@ -22,7 +23,7 @@ type SpiritProp struct {
 
 type Difference struct {
 
-    
+    field string
 
 
 
@@ -43,12 +44,18 @@ func (s *Storage) Close () {
 
 }
 
-func(s *Storage) CallSpirit(path string) {
+func(s *Storage) CallSpirit (path string) (data []byte)  {
 
 
-    return
+    
+    s.Db.View(func (tx *bolt.Tx) error {
+        bucket:=tx.Bucket([]byte(path))
+        if bucket == nil { fmt.Printf("Bucket is nil") ; return nil}
+        data=bucket.Get([]byte("hello_key"))
+        return nil
+    })
 
-
+    return data
 
 }
 
@@ -70,8 +77,28 @@ func Compare( newbie, spirit *SpiritProp ) (difference []string)  {
 
 }
 
-func (sp *SpiritProp)  UploadSpirit() {
+func(s *Storage) UploadSpirit (sp *SpiritProp) (err error) {
 
+    s.Db.Update( func(tx *bolt.Tx) error {
+        // replace existing bucket if exists
+        bucket:=tx.Bucket([]byte(sp.Path))
+        if bucket != nil { /* if bucket exists - remove it */
+            err = tx.DeleteBucket([]byte(sp.Path))
+            if err != nil { return err }
+        }
+        bucket, err =tx.CreateBucket([]byte(sp.Path))
+        if err!= nil { return err }
+        return bucket.Put([]byte("hello_key"),[]byte("hello_value"))
+    })
 
+    /*s.db.Update(func(tx *bolt.Tx) error {
+    b, err := tx.CreateBucketIfNotExists([]byte(sp.Path))
+    if err != nil {
+        return err
+    }
+    return b.Put([]byte("2015-01-01"), []byte("My New Year post"))
+    })*/
+
+    return nil
 
 }
