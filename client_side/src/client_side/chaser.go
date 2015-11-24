@@ -10,7 +10,7 @@ import "client_side/evebridge"
 
 func main() {
 
-    path     := "/tmp/test"
+    path     := "/sys/class/scsi_host/host0"
     messages :=   make(chan evebridge.CompNotes,100)
     wp       :=  chase.WPCreate()
     _ = chase.Listen(path, messages, wp)
