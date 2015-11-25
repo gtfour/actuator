@@ -24,14 +24,14 @@ type strings []string
 
 var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
 
-type CompNote struct {
+//type CompNote struct {
 
-    Field    string
-    Before   string
-    After    string
+//    Field    string
+//    Before   string
+//    After    string
 
 
-}
+//}
 
 type Prop struct {
 
@@ -374,6 +374,22 @@ func CompareProp(old_prop,new_prop *Prop, path string)(cnotes evebridge.CompNote
 
         }
 
+    }
+    cnotes.Path = path
+    return cnotes
+}
+
+func Initial(prop *Prop, path string) (cnotes evebridge.CompNotes) {
+
+    value:=reflect.ValueOf(prop).Elem()
+    fields_count := value.NumField()
+    field:=reflect.TypeOf(prop).Elem()
+
+    for i := 0; i <= fields_count-1; i++  {
+        cnote:=evebridge.CompNote{ Field:field.Field(i).Name,
+                                   Before:"",
+                                   After:fmt.Sprint(value.Field(i).Interface()) }
+        cnotes.List=append(cnotes.List, cnote)
     }
     cnotes.Path = path
     return cnotes

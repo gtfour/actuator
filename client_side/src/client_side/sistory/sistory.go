@@ -1,6 +1,7 @@
 package sistory
 import "github.com/boltdb/bolt"
 import "fmt"
+import "ioutil"
 
 var db_path string =  "/tmp/sis.db"
 var comments =  []string {`//` , `#`}
@@ -61,6 +62,10 @@ func(s *Storage) CallSpirit (path string) (data []byte)  {
 
 func CreateNewbie (path string)(sp SpiritProp)  {
 
+    content, err := ioutil.ReadFile(sp.Path)
+    if err!= nil { return err }
+
+
 
     return
 
@@ -78,6 +83,9 @@ func Compare( newbie, spirit *SpiritProp ) (difference []string)  {
 }
 
 func(s *Storage) UploadSpirit (sp *SpiritProp) (err error) {
+
+    content, err := ioutil.ReadFile(sp.Path)
+    if err!= nil { return err }
 
     s.Db.Update( func(tx *bolt.Tx) error {
         // replace existing bucket if exists

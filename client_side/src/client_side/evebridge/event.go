@@ -20,8 +20,9 @@ type Event struct {
 
 type CompNotes struct {
 
-    Path string
-    List []CompNote 
+    Path  string
+    State int8
+    List  []CompNote
 
 
 }

@@ -31,6 +31,8 @@ type Target struct {
 
 func ( tgt *Target ) GetDir()  string { return tgt.Dir }
 func ( tgt *Target ) GetPath() string { return tgt.Path }
+func ( tgt *Target ) GetProp() *actuator.Prop { return tgt.Prop }
+func ( tgt *Target ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
 
 type TargetDir struct {
 
@@ -43,6 +45,8 @@ type TargetDir struct {
 
 func ( tgt *TargetDir ) GetDir()  string { return tgt.Dir }
 func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
+func ( tgt *TargetDir ) GetProp() *actuator.Prop { return tgt.Prop }
+func ( tgt *TargetDir ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
 
 
 func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){

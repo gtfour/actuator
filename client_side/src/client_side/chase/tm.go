@@ -4,6 +4,8 @@ package chase
 import "fmt"
 import "time"
 import "math/rand"
+import "client_side/actuator"
+import "client_side/evebridge"
 
 
 var TGT_PER_GR int64                       = 50 // if FILES_PER_GR is very big - TargetsCount type should be modified 
@@ -15,6 +17,8 @@ type AbstractTarget interface {
     GetDir()  string
     Chasing() error
     GetPath() string
+    GetProp() *actuator.Prop
+    GetMessageChannel() chan evebridge.CompNotes
 }
 
 type WorkerPool struct {
@@ -137,6 +141,8 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
         rand.Seed( time.Now().UTC().UnixNano())
         rand_digit = rand.Int31n(int32(len(wp.Workers)))
         wp.Workers[rand_digit].Append(tgt)
+
+        tgt.GetMessageChannel() <- actuator.Initial(tgt.GetProp(), tgt.GetPath())
     }
 
     average_tgt_per_worker:=all_tgt_count/int64(len(wp.Workers))
