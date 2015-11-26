@@ -1,1 +1,1 @@
-package schablya
+package cuda
