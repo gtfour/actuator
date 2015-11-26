@@ -52,6 +52,5 @@ func Handle(messages chan CompNotes )(err error) {
 
     }
 
-
 }
 
