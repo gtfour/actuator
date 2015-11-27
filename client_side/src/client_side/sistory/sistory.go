@@ -1,7 +1,7 @@
 package sistory
 import "github.com/boltdb/bolt"
 import "fmt"
-import "ioutil"
+import "io/ioutil"
 
 var db_path string =  "/tmp/sis.db"
 var comments =  []string {`//` , `#`}
@@ -48,11 +48,10 @@ func (s *Storage) Close () {
 func(s *Storage) CallSpirit (path string) (data []byte)  {
 
 
-    
     s.Db.View(func (tx *bolt.Tx) error {
         bucket:=tx.Bucket([]byte(path))
-        if bucket == nil { fmt.Printf("Bucket is nil") ; return nil}
-        data=bucket.Get([]byte("hello_key"))
+        if bucket == nil { fmt.Printf("Bucket is nil") ; return nil }
+        data=bucket.Get([]byte("content"))
         return nil
     })
 
@@ -63,11 +62,12 @@ func(s *Storage) CallSpirit (path string) (data []byte)  {
 func CreateNewbie (path string)(sp SpiritProp)  {
 
     content, err := ioutil.ReadFile(sp.Path)
-    if err!= nil { return err }
+    if err!= nil { return sp }
+    fmt.Printf("%s",content)
 
 
 
-    return
+    return sp
 
 
 
@@ -85,6 +85,7 @@ func Compare( newbie, spirit *SpiritProp ) (difference []string)  {
 func(s *Storage) UploadSpirit (sp *SpiritProp) (err error) {
 
     content, err := ioutil.ReadFile(sp.Path)
+    fmt.Printf("%s",content)
     if err!= nil { return err }
 
     s.Db.Update( func(tx *bolt.Tx) error {
@@ -96,7 +97,7 @@ func(s *Storage) UploadSpirit (sp *SpiritProp) (err error) {
         }
         bucket, err =tx.CreateBucket([]byte(sp.Path))
         if err!= nil { return err }
-        return bucket.Put([]byte("hello_key"),[]byte("hello_value"))
+        return bucket.Put([]byte("content"),[]byte(`{"192.168.236.11":"controller","127.0.0.1":"localhost"}`))
     })
 
     /*s.db.Update(func(tx *bolt.Tx) error {

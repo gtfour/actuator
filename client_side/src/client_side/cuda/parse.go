@@ -1,9 +1,44 @@
 package cuda
 
 import "os"
-import "strings"
 import "bufio"
 import "io"
+import "strings"
+import "fmt"
+
+var comments         =  []string {`//` , `#`}
+var delimiters       =  []string {":", "="}
+var enum_delimiters  =  []string {",",";"}
+var word_delimiters  =  []string {"-","_"}
+var word_quotes      =  []string {`"`, "'"}
+var brackets         =  []string {"[","]","<","/>",">","{","}",")","("}
+var section_brackets =  []string {"[","]","<","/>",">"}
+
+
+type Section struct {
+
+
+}
+
+
+func Parse(entry string) ( interface{} ) {
+
+    sub_entries      :=  strings.Split(entry," ")
+    sub_entries_len  :=  len(sub_entries)
+    switch {
+        case sub_entries_len == 1:
+            fmt.Printf("sub en len is 1")
+        case sub_entries_len == 2:
+             fmt.Printf("sub en len is 2")
+
+
+
+
+    }
+
+    return nil
+
+}
 
 func ParseFile( filename string ) ( err error ) {
 

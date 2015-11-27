@@ -2,22 +2,30 @@ package main
 
 import "client_side/sistory"
 import "fmt"
+import "encoding/json"
+
 
 
 func main() {
 
-storage:=sistory.Open()
+    var test map[string]interface{} // kpmý@golang.cjr advice
 
-spirit_prop:=&sistory.SpiritProp{Size:122,Path:"/tmp/test/hello22.txt"}
-_=storage.UploadSpirit(spirit_prop)
-data:=storage.CallSpirit("/tmp/test/hello22.txt")
+    storage:=sistory.Open()
 
+    spirit_prop:=&sistory.SpiritProp{Size:122,Path:"/tmp/test/hello22.txt"}
 
-fmt.Printf("Data:  %s",string(data))
+    err:=storage.UploadSpirit(spirit_prop)
 
-storage.Close()
+    fmt.Printf("%v",err)
 
+    data:=storage.CallSpirit("/tmp/test/hello22.txt")
 
+    fmt.Printf("Data: %s\n",string(data))
+    err = json.Unmarshal(data, &test)
 
+    fmt.Printf("%v %v\n", test, err)
+    fmt.Printf("%s\n", test["192.168.236.11"])
+
+    storage.Close()
 
 }
