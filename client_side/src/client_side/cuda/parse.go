@@ -10,9 +10,9 @@ var comments         =  []string {`//` , `#`}
 var delimiters       =  []string {":", "="}
 var enum_delimiters  =  []string {",",";"}
 var word_delimiters  =  []string {"-","_"}
-var word_quotes      =  []string {`"`, "'"}
 var brackets         =  []string {"[","]","<","/>",">","{","}",")","("}
 var section_brackets =  []string {"[","]","<","/>",">"}
+var quotes           =  [2]string {`"`, "'"}
 
 
 type Section struct {
@@ -20,8 +20,19 @@ type Section struct {
 
 }
 
+func SeparatorIndexes (entry, sep string) (indexes []int) {
 
-func Parse(entry string) ( interface{} ) {
+    chars := strings.Split(entry,"")
+    for char := range chars {
+        if chars[char] == sep {
+            indexes=append(indexes, char)
+        }
+    }
+    return indexes
+}
+
+
+func Parser(entry string) ( interface{} ) {
 
     sub_entries      :=  strings.Split(entry," ")
     sub_entries_len  :=  len(sub_entries)
@@ -31,12 +42,32 @@ func Parse(entry string) ( interface{} ) {
         case sub_entries_len == 2:
              fmt.Printf("sub en len is 2")
 
-
-
-
     }
 
     return nil
+}
+
+func QuotesParse ( entry string) ( word_set [2]string, complete [2]bool  ) {
+
+    //var single_quotes_count        int32
+    //var double_quotes_count        int32
+    // var another = [2]int8 {1,0}
+    for i:=range quotes {
+        quote:=quotes[i]
+        if strings.Count(entry, quote)%2 == 0 {
+            complete[i] = true
+        } else {
+            complete[i] = false
+        }
+        word_set[i] = strings.Replace(entry, quote, "", -888)
+
+    }
+    return word_set, complete
+}
+
+func EqualParse (entry string) () {
+
+
 
 }
 
