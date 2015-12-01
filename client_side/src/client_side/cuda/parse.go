@@ -5,6 +5,7 @@ import "bufio"
 import "io"
 import "strings"
 import "fmt"
+import "regexp"
 
 var comments         =  []string {`//` , `#`}
 var delimiters       =  []string {":", "="}
@@ -18,17 +19,6 @@ var quotes           =  [2]string {`"`, "'"}
 type Section struct {
 
 
-}
-
-func SeparatorIndexes (entry, sep string) (indexes []int) {
-
-    chars := strings.Split(entry,"")
-    for char := range chars {
-        if chars[char] == sep {
-            indexes=append(indexes, char)
-        }
-    }
-    return indexes
 }
 
 
@@ -45,6 +35,32 @@ func Parser(entry string) ( interface{} ) {
     }
 
     return nil
+}
+
+func GetSeparatorIndexes (entry, sep string) (indexes []int) {
+
+    chars := strings.Split(entry,"")
+    for char := range chars {
+        if chars[char] == sep {
+            indexes=append(indexes, char)
+        }
+    }
+    return indexes
+}
+
+func GetWordIndexes (entry string) (indexes []int) {
+
+    reg:=regexp.MustCompile("[[:alnum:]-]+")
+    match:= reg.FindAllString(entry, -1)
+    match_indexes := reg.FindAllStringIndex(entry, -1)
+    for i := range match_indexes{
+        fmt.Printf("\n%s>>\n",entry[match_indexes[i][0]:match_indexes[i][1]])
+    }
+    for i := range match {
+        fmt.Printf("\n--%s--\n",match[i])
+
+    }
+    return indexes
 }
 
 func QuotesParse ( entry string) ( word_set [2]string, complete [2]bool  ) {
