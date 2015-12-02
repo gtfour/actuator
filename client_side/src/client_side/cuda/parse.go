@@ -13,7 +13,7 @@ var enum_delimiters  =  []string {",",";"}
 var word_delimiters  =  []string {"-","_"}
 var brackets         =  []string {"[","]","<","/>",">","{","}",")","("}
 var section_brackets =  []string {"[","]","<","/>",">"}
-var quotes           =  [2]string {`"`, "'"}
+var quotes           =  [2]string {`"`, "'", "`"}
 
 
 type Section struct {
@@ -62,8 +62,24 @@ func GetWordIndexes (entry string) (indexes []int) {
     }
     return indexes
 }
+func GroupByQuotes (line string) (words []string) {
 
-func QuotesParse ( entry string) ( word_set [2]string, complete [2]bool  ) {
+    words := strings.Split(line," ")
+    for i := range words {
+        word:=words[i]
+        QuotesSpreading(word)
+
+
+
+
+    }
+
+
+
+    return words
+}
+
+func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
 
     //var single_quotes_count        int32
     //var double_quotes_count        int32
