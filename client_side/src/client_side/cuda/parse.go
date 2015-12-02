@@ -127,6 +127,25 @@ func EqualSignEscape (entry string) (words_indexes [][]int) {
 
 }
 
+func DebugCharCounter (line  string) (heads, foots []string) {
+
+    lineAsArray:=strings.Split(line,"")
+
+    head:=""
+    foot:=""
+    for i:=0 ; i<len(lineAsArray) ; i++ {
+
+        delim:=""
+        delim_template:=" %s%s "
+        for z:=2;z<=len(fmt.Sprint(i));z++ {delim+=" "}
+        head+=fmt.Sprintf(delim_template, lineAsArray[i], delim)
+        foot+=fmt.Sprintf("|%d|",i)
+        if (i%10==0)&&(i!=0) || (i+1==len(line))  { heads=append(heads,head) ; foots=append(foots,foot) ; head="" ; foot="" }
+
+    }
+    return heads, foots
+}
+
 func ParseFile( filename string ) ( err error ) {
 
     file, err   := os.Open(filename)

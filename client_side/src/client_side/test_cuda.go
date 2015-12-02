@@ -6,9 +6,13 @@ import "strings"
 
 
 func main() {
-
+          
     line:=`"UUID=6904489d-da97-46be-bee7-7ffdac09cf20" /home/user/Downloads/ ext3 errors=remount-ro 0       1`
-    fmt.Printf("\n Line:  %s\n",line)
+    fmt.Printf("%s",line)
+    heads,foots:=cuda.DebugCharCounter(line)
+    for i:=range heads {
+        fmt.Printf("\n%s\n%s\n",heads[i],foots[i])
+    }
     lineAsArray:=strings.Split(line,"")
     quota_indexes:=cuda.GetQuotesIndexes(line)
     fmt.Printf("\n quota indexes:  %v\n",quota_indexes)
