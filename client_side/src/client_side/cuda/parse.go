@@ -7,13 +7,14 @@ import "strings"
 import "fmt"
 import "regexp"
 
-var comments         =  []string {`//` , `#`}
-var delimiters       =  []string {":", "="}
-var enum_delimiters  =  []string {",",";"}
-var word_delimiters  =  []string {"-","_"}
-var brackets         =  []string {"[","]","<","/>",">","{","}",")","("}
-var section_brackets =  []string {"[","]","<","/>",">"}
-var quotes           =  [3]string {`"`, "'", "`"}
+var comments                  =  []string {`//` , `#`}
+var delimiters                =  []string {":", "="}
+var enum_delimiters           =  []string {",",";"}
+var word_delimiters           =  []string {"-","_"}
+var brackets                  =  []string {"[","]","<","/>",">","{","}",")","("}
+var section_brackets_square   =  [2]string {"[","]"}
+var section_brackets_triangle =  [3]string {"<",">","/>"}
+var quotes                    =  [3]string {`"`, "'", "`"}
 
 
 type Section struct {
@@ -124,6 +125,16 @@ func EqualSignEscape (entry string) (words_indexes [][]int) {
         offset+=len(word)+1 // 1 is equal sign
     }
     return words_indexes
+
+}
+
+func SectionNameEscape ( entry string ) ( name, tag string , double bool ) {
+
+    opening        :=0
+    closing        :=1
+    closing_slashed:=2
+    
+    return
 
 }
 

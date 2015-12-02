@@ -18,11 +18,12 @@ func main() {
     fmt.Printf("\n quota indexes:  %v\n",quota_indexes)
     pairs:=cuda.GroupByQuotes(lineAsArray, quota_indexes)
     for i:=range pairs {
-         fmt.Printf("\nSend to equalsign: %s\n",line[pairs[i][0]:pairs[i][1]])
-         escape_eqal:=cuda.EqualSignEscape(line[pairs[i][0]:pairs[i][1]])
+         line_chunk:=line[pairs[i][0]+1:pairs[i][1]]
+         fmt.Printf("\nSend to equalsign: %s\n",line_chunk)
+         escape_eqal:=cuda.EqualSignEscape(line_chunk)
          fmt.Printf("\n escape_eqal:  %v\n",escape_eqal)
          for z:= range escape_eqal {
-             fmt.Printf("\n%v\n", line[escape_eqal[z][0]:escape_eqal[z][1]])
+             fmt.Printf("\n%v\n", line_chunk[escape_eqal[z][0]:escape_eqal[z][1]])
          }
     }
     fmt.Printf("\npairs:  %v\n",pairs)
