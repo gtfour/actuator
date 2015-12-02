@@ -13,7 +13,7 @@ var enum_delimiters  =  []string {",",";"}
 var word_delimiters  =  []string {"-","_"}
 var brackets         =  []string {"[","]","<","/>",">","{","}",")","("}
 var section_brackets =  []string {"[","]","<","/>",">"}
-var quotes           =  [2]string {`"`, "'", "`"}
+var quotes           =  [3]string {`"`, "'", "`"}
 
 
 type Section struct {
@@ -62,28 +62,44 @@ func GetWordIndexes (entry string) (indexes []int) {
     }
     return indexes
 }
-func GroupByQuotes (line string) (words []string) {
 
-    words := strings.Split(line," ")
-    for i := range words {
-        word:=words[i]
-        QuotesSpreading(word)
+func GetQuotesIndexes (line string) ( indexes []int) {
+
+    lineAsArray:=strings.Split(line,"")
+    for char:= range lineAsArray {
+        for q:=range quotes {
+            quote:=quotes[q]
+            if lineAsArray[char] == quote {
+                indexes = append(indexes, char)
+            }
+        }
+    }
+    return
+}
 
 
+func GroupByQuotes (lineAsArray []string, quotes_indexes []int) (quotes_pairs [][]int) {
 
-
+    pending := make(map[string]int)
+    for char:= range quotes_indexes {
+        quote:=quotes_indexes[char]
+        quoteInPending:=false
+        quote_value:=lineAsArray[quote]
+        for key, _ := range pending { if quote_value == key { quoteInPending = true } }
+        if quoteInPending == false {
+            pending[quote_value] = quote
+        } else {
+            var new_pair = []int  { pending[quote_value],quote }
+            quotes_pairs = append(quotes_pairs, new_pair)
+            delete(pending, quote_value)
+        }
     }
 
-
-
-    return words
+    return
 }
 
 func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
 
-    //var single_quotes_count        int32
-    //var double_quotes_count        int32
-    // var another = [2]int8 {1,0}
     for i:=range quotes {
         quote:=quotes[i]
         if strings.Count(entry, quote)%2 == 0 {
@@ -92,7 +108,6 @@ func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
             complete[i] = false
         }
         word_set[i] = strings.Replace(entry, quote, "", -888)
-
     }
     return word_set, complete
 }
