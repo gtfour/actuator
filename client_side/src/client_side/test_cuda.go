@@ -1,13 +1,13 @@
 package main
 import "client_side/cuda"
 import "fmt"
-import "strings"
+//import "strings"
 // split each file and each line in file by space and save into slice of byte()  slices
 
 
 func main() {
           
-    line:=`"UUID=6904489d-da97-46be-bee7-7ffdac09cf20" /home/user/Downloads/ ext3 errors=remount-ro 0       1`
+    /*line:=`"UUID=6904489d-da97-46be-bee7-7ffdac09cf20" /home/user/Downloads/ ext3 errors=remount-ro 0       1`
     fmt.Printf("%s",line)
     heads,foots:=cuda.DebugCharCounter(line)
     for i:=range heads {
@@ -26,6 +26,8 @@ func main() {
              fmt.Printf("\n%v\n", line_chunk[escape_eqal[z][0]:escape_eqal[z][1]])
          }
     }
-    fmt.Printf("\npairs:  %v\n",pairs)
+    fmt.Printf("\npairs:  %v\n",pairs)*/
+    _,_,_=cuda.SectionNameEscape("DEFAULT]")
+    fmt.Printf("%s",cuda.RemoveSpaces(`  <Directory "/THDL/thdl-site">       `,1))
 
 }

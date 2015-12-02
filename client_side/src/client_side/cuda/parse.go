@@ -1,8 +1,8 @@
 package cuda
 
-import "os"
-import "bufio"
-import "io"
+//import "os"
+//import "bufio"
+//import "io"
 import "strings"
 import "fmt"
 import "regexp"
@@ -15,6 +15,7 @@ var brackets                  =  []string {"[","]","<","/>",">","{","}",")","("}
 var section_brackets_square   =  [2]string {"[","]"}
 var section_brackets_triangle =  [3]string {"<",">","/>"}
 var quotes                    =  [3]string {`"`, "'", "`"}
+// ⣳ 
 
 
 type Section struct {
@@ -128,12 +129,25 @@ func EqualSignEscape (entry string) (words_indexes [][]int) {
 
 }
 
-func SectionNameEscape ( entry string ) ( name, tag string , double bool ) {
+func SectionNameEscape ( entry string ) ( name, tag string , section_type int ) {
+
+    square         :=0
+    //triangle       :=1
+    //curly          :=2
 
     opening        :=0
     closing        :=1
-    closing_slashed:=2
-    
+    //closing_slashed:=2
+
+
+    if strings.Index(entry,section_brackets_square[opening]) == 0 && strings.Index(entry,section_brackets_square[closing]) == (len(entry)-1) {
+
+        return name, "", square
+
+    }
+    //opening        :=0
+    //closing        :=1
+    //closing_slashed:=2
     return
 
 }
@@ -157,7 +171,41 @@ func DebugCharCounter (line  string) (heads, foots []string) {
     return heads, foots
 }
 
-func ParseFile( filename string ) ( err error ) {
+func RemoveSpaces(entry string, remove_type int)(new_entry string) {
+
+
+    leading:=0
+    closing:=1
+    both   :=2
+
+
+    lineAsArray:=strings.Split(entry, "")
+    leadingChar:=0
+    closingChar:=len(entry)
+    for char := range lineAsArray {
+        if remove_type==leading || remove_type==both {
+            if lineAsArray[char]==" " {
+                continue
+            } else {
+                leadingChar=char
+                if remove_type==leading { break }
+            }
+        }
+        if remove_type==closing || remove_type==both {
+             closing_char:=len(lineAsArray)-1-char
+             if lineAsArray[closing_char]==" " {
+                 continue
+             } else  {
+                 closingChar=closing_char
+                 if remove_type==closing { break }
+             }
+
+        }
+    }
+    return entry[leadingChar:closingChar]
+}
+
+/*func ParseFile( filename string ) ( err error ) {
 
     file, err   := os.Open(filename)
     if err!=nil {
@@ -187,4 +235,4 @@ func ParseFile( filename string ) ( err error ) {
     }
     return nil
 
-}
+}*/
