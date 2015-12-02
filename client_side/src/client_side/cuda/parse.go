@@ -89,7 +89,7 @@ func GroupByQuotes (lineAsArray []string, quotes_indexes []int) (quotes_pairs []
         if quoteInPending == false {
             pending[quote_value] = quote
         } else {
-            var new_pair = []int  { pending[quote_value],quote }
+            var new_pair = []int  { pending[quote_value],quote } // 1 added for ignoring quotes  themselves
             quotes_pairs = append(quotes_pairs, new_pair)
             delete(pending, quote_value)
         }
@@ -112,9 +112,18 @@ func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
     return word_set, complete
 }
 
-func EqualParse (entry string) () {
+func EqualSignEscape (entry string) (words_indexes [][]int) {
 
-
+    wordSplittedByEqualSign:= strings.Split(entry, "=")
+    offset:=0
+    for i := range wordSplittedByEqualSign {
+        word:=wordSplittedByEqualSign[i]
+        word_index:=strings.Index(entry[offset:], word)
+        var new_pair =  []int {(word_index+offset),(len(word)+offset)}
+        words_indexes=append(words_indexes, new_pair)
+        offset+=len(word)+1 // 1 is equal sign
+    }
+    return words_indexes
 
 }
 
