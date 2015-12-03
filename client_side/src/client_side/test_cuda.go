@@ -22,21 +22,13 @@ func main() {
          }
     }
     fmt.Printf("\npairs:  %v\n",pairs)*/
-    line:="1:hello:::test:2"
+    line:="       if a>2 && b==3 {"
 
     cuda.DebugPrintCharCounter(line)
-
-    colon_indexes:=cuda.Escape_Colon(line)
-    for i := range colon_indexes {
-        start:=colon_indexes[i][0]
-        end  :=colon_indexes[i][1]
-        if start <= end {
-            fmt.Printf("%s\n",line[start:end+1])
-        } else {
-            fmt.Printf("<None>\n")
-        }
-    }
-
-    fmt.Printf("\n%v",colon_indexes)
+    name,tag,sectype:=cuda.Escape_Section(line)
+    fmt.Printf("--\n%v\n%v\n%v\n--",name,tag,sectype)
+    //indexes:=cuda.RemoveSpaces(line,2)
+    //fmt.Printf("\n%v",indexes)
+    //fmt.Printf("\n%s",line[indexes[0]:indexes[1]+1])
 
 }

@@ -14,6 +14,7 @@ var word_delimiters           =  []string {"-","_"}
 var brackets                  =  []string {"[","]","<","/>",">","{","}",")","("}
 var section_brackets_square   =  [2]string {"[","]"}
 var section_brackets_triangle =  [3]string {"<",">","</"}
+var section_brackets_curly    =  [2]string {"{","}"}
 var quotes                    =  [3]string {`"`, "'", "`"}
 // ⣳ 
 
@@ -129,11 +130,11 @@ func Escape_EqualSign (entry string) (words_indexes [][]int) {
 
 }
 
-func Escape_SectionName ( entry string ) ( name, tag []int , section_type int ) {
+func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
 
     square         :=0
     triangle       :=1
-    //curly          :=2
+    curly          :=2
 
     opening        :=0
     closing        :=1
@@ -157,13 +158,10 @@ func Escape_SectionName ( entry string ) ( name, tag []int , section_type int ) 
 
     if (triangle_section_opening_index == 0 || triangle_section_opening_slashed_index == 0) && (strings.Index(entry,section_brackets_triangle[closing]) == (len(entry)-1)) {
 
-
-
             opening_index:=1
             //replacing 1 to 2 because "</"-has two characters but "<"-just one
             if (triangle_section_opening_slashed_index == 0){ opening_index=2 }
             space_indexes:=GetSeparatorIndexes(entry, " ")
-            fmt.Printf("space index \n%v\n", space_indexes)
             var name_index  = []int {}
             var tag_index   = []int {}
             if len(space_indexes)>0 {
@@ -177,9 +175,36 @@ func Escape_SectionName ( entry string ) ( name, tag []int , section_type int ) 
             return name_index, tag_index, triangle
 
     }
-    //opening        :=0
-    //closing        :=1
-    //closing_slashed:=2
+    // When section has curly type
+    cleaned_entry_indexes:=RemoveSpaces(entry,2)
+    cleaned_entry:=entry[cleaned_entry_indexes[0]:cleaned_entry_indexes[1]+1]
+    curly_section_opening_index:=strings.Index(cleaned_entry,section_brackets_curly[opening])
+    if curly_section_opening_index == (len(cleaned_entry)-1) {
+        if curly_section_opening_index == 0 {
+            return []int {0,0} , []int {0,0} , curly
+        } else {
+             spaces:=GetSeparatorIndexes(cleaned_entry, " ")
+             var first_space_index   int
+             var second_space_index  int
+             var name_index  = []int {}
+             var tag_index   = []int {}
+             if len(spaces) > 0  { first_space_index  = spaces[0] }
+             if len(spaces) > 1  { second_space_index = spaces[1] }
+
+             cleaned_entry_start_index:=strings.Index(entry, cleaned_entry)
+             fmt.Printf("\ncleaned_entry|%v|   cleaned_entry_start_index|%v|  spaces|%v|\n",cleaned_entry, cleaned_entry_start_index, spaces)
+
+             name_index = []int {cleaned_entry_start_index,cleaned_entry_start_index+first_space_index-1}
+             tag_index  = []int {cleaned_entry_start_index+first_space_index+1,cleaned_entry_start_index+second_space_index-1}
+             if len(spaces)<=2 {
+                 return name_index, tag_index, curly
+             } else {
+                 tag_index = []int {cleaned_entry_start_index+first_space_index+1,curly_section_opening_index-1}
+                 return name_index, tag_index, curly
+
+             }
+        }
+    }
     return
 
 }
@@ -238,7 +263,7 @@ func RemoveSpaces(entry string, remove_type int)([]int) {
 
         if (remove_type==closing || remove_type==both) && (lineAsArray[closing_char]!=" ")  {
                  if closeReady != true {
-                     closingChar=closing_char+1
+                     closingChar=closing_char // +1
                      closeReady=true
                      if remove_type==closing { break }
                  }
