@@ -114,7 +114,7 @@ func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
     return word_set, complete
 }
 
-func EqualSignEscape (entry string) (words_indexes [][]int) {
+func Escape_EqualSign (entry string) (words_indexes [][]int) {
 
     wordSplittedByEqualSign:= strings.Split(entry, "=")
     offset:=0
@@ -129,7 +129,7 @@ func EqualSignEscape (entry string) (words_indexes [][]int) {
 
 }
 
-func SectionNameEscape ( entry string ) ( name, tag []int , section_type int ) {
+func Escape_SectionName ( entry string ) ( name, tag []int , section_type int ) {
 
     square         :=0
     triangle       :=1
@@ -203,6 +203,15 @@ func DebugCharCounter (line  string) (heads, foots []string) {
     return heads, foots
 }
 
+func DebugPrintCharCounter (line string) {
+
+    heads,foots:=DebugCharCounter(line)
+    for i:=range heads {
+        fmt.Printf("\n%s\n%s\n",heads[i],foots[i])
+    }
+
+}
+
 func RemoveSpaces(entry string, remove_type int)([]int) {
 
     leading    :=0
@@ -241,14 +250,38 @@ func RemoveSpaces(entry string, remove_type int)([]int) {
     return []int {leadingChar,closingChar}
 }
 
-func EscapeSequence(entry string)(sequences [][]int) {
-
+func Escape_Sequence(entry string)(sequences [][]int) {
 
     return sequences
 
+}
 
+func Escape_Colon(entry string)(indexes [][]int) {
 
-
+    colon_indexes:=GetSeparatorIndexes(entry, ":")
+    fmt.Printf("\nColon indexes: %v \n",colon_indexes)
+    lineAsArray:=strings.Split(entry,"")
+    prev_colon_index:=0
+    for i := range colon_indexes {
+        offset:=1
+        if i == 0 && colon_indexes[i]!=0  { offset = 0 }
+        if i<=(len(colon_indexes)-1){
+            start := prev_colon_index+offset
+            end   := colon_indexes[i]-1
+            // Warning: When there is nothing between two colons start may be bigger than end . It may cause error when will try print string
+            // with intervals. Example: someword[start:end]
+            indexes=append(indexes,[]int { start, end})
+        }
+        prev_colon_index=colon_indexes[i]
+        if i == (len(colon_indexes)-1) {
+            start := colon_indexes[i]+offset
+            end   := (len(lineAsArray)-1)
+            // Warning: When there is nothing between two colons start may be bigger than end . It may cause error when will try print string
+            // with intervals. Example: someword[start:end]
+            indexes=append(indexes,[]int { start, end})
+        }
+    }
+    return indexes
 }
 
 /*func ParseFile( filename string ) ( err error ) {
