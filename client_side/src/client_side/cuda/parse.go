@@ -9,11 +9,11 @@ import "regexp"
 
 var comments                  =  []string {`//` , `#`}
 var delimiters                =  []string {":", "="}
-var enum_delimiters           =  []string {",",";"}
+var sequence                  =  []string {",",";"}
 var word_delimiters           =  []string {"-","_"}
 var brackets                  =  []string {"[","]","<","/>",">","{","}",")","("}
 var section_brackets_square   =  [2]string {"[","]"}
-var section_brackets_triangle =  [3]string {"<",">","/>"}
+var section_brackets_triangle =  [3]string {"<",">","</"}
 var quotes                    =  [3]string {`"`, "'", "`"}
 // ⣳ 
 
@@ -129,20 +129,52 @@ func EqualSignEscape (entry string) (words_indexes [][]int) {
 
 }
 
-func SectionNameEscape ( entry string ) ( name, tag string , section_type int ) {
+func SectionNameEscape ( entry string ) ( name, tag []int , section_type int ) {
 
     square         :=0
-    //triangle       :=1
+    triangle       :=1
     //curly          :=2
 
     opening        :=0
     closing        :=1
-    //closing_slashed:=2
+    opening_slashed:=2
+
+    // When section has square type
+    square_section_opening_index := strings.Index(entry,section_brackets_square[opening])
+    square_section_closing_index := strings.Index(entry,section_brackets_square[closing])
+
+    if square_section_opening_index  == 0 && square_section_closing_index  == (len(entry)-1) {
+
+        return []int {1, square_section_closing_index}, tag , square
+
+    }
+
+    // When section has trianle type
+
+    triangle_section_opening_index         := strings.Index(entry, section_brackets_triangle[opening])
+    triangle_section_opening_slashed_index := strings.Index(entry, section_brackets_triangle[opening_slashed])
+    triangle_section_closing_index         := strings.Index(entry, section_brackets_triangle[closing])
+
+    if (triangle_section_opening_index == 0 || triangle_section_opening_slashed_index == 0) && (strings.Index(entry,section_brackets_triangle[closing]) == (len(entry)-1)) {
 
 
-    if strings.Index(entry,section_brackets_square[opening]) == 0 && strings.Index(entry,section_brackets_square[closing]) == (len(entry)-1) {
 
-        return name, "", square
+            opening_index:=1
+            //replacing 1 to 2 because "</"-has two characters but "<"-just one
+            if (triangle_section_opening_slashed_index == 0){ opening_index=2 }
+            space_indexes:=GetSeparatorIndexes(entry, " ")
+            fmt.Printf("space index \n%v\n", space_indexes)
+            var name_index  = []int {}
+            var tag_index   = []int {}
+            if len(space_indexes)>0 {
+                first_space_index:=space_indexes[0]
+                name_index  =[]int {opening_index, first_space_index-1}
+                tag_index   =[]int {first_space_index+1, triangle_section_closing_index-1}
+            } else {
+                name_index =[]int {opening_index, triangle_section_closing_index-1}
+                tag_index  =[]int {0,0}
+            }
+            return name_index, tag_index, triangle
 
     }
     //opening        :=0
@@ -173,11 +205,9 @@ func DebugCharCounter (line  string) (heads, foots []string) {
 
 func RemoveSpaces(entry string, remove_type int)([]int) {
 
-
     leading    :=0
     closing    :=1
     both       :=2
-
 
     lineAsArray:=strings.Split(entry, "")
     leadingChar:=0
@@ -209,6 +239,16 @@ func RemoveSpaces(entry string, remove_type int)([]int) {
     }
     if closingChar<leadingChar { return []int {0,0} }
     return []int {leadingChar,closingChar}
+}
+
+func EscapeSequence(entry string)(sequences [][]int) {
+
+
+    return sequences
+
+
+
+
 }
 
 /*func ParseFile( filename string ) ( err error ) {

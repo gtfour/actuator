@@ -26,10 +26,13 @@ func main() {
          }
     }
     fmt.Printf("\npairs:  %v\n",pairs)*/
-    _,_,_=cuda.SectionNameEscape("DEFAULT]")
-    //line :=`   <Directory "/THDL/thdl-site">       `
-    line:=""
-    indexes:=cuda.RemoveSpaces(line,2)
-    fmt.Printf("%s",line[indexes[0]:indexes[1]])
+    line:="</Directory>"
+    name_index,tag_index,section_type:=cuda.SectionNameEscape(line)
+    heads,foots:=cuda.DebugCharCounter(line)
+    for i:=range heads {
+        fmt.Printf("\n%s\n%s\n",heads[i],foots[i])
+    }
+    fmt.Printf("\n%v\n%v\n%v",name_index,tag_index,section_type)
+
 
 }
