@@ -6,7 +6,6 @@ import "fmt"
 
 
 func main() {
-          
     /*line:=`"UUID=6904489d-da97-46be-bee7-7ffdac09cf20" /home/user/Downloads/ ext3 errors=remount-ro 0       1`
     fmt.Printf("%s",line)
     heads,foots:=cuda.DebugCharCounter(line)
@@ -28,6 +27,9 @@ func main() {
     }
     fmt.Printf("\npairs:  %v\n",pairs)*/
     _,_,_=cuda.SectionNameEscape("DEFAULT]")
-    fmt.Printf("%s",cuda.RemoveSpaces(`  <Directory "/THDL/thdl-site">       `,1))
+    //line :=`   <Directory "/THDL/thdl-site">       `
+    line:=""
+    indexes:=cuda.RemoveSpaces(line,2)
+    fmt.Printf("%s",line[indexes[0]:indexes[1]])
 
 }

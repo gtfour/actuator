@@ -171,38 +171,44 @@ func DebugCharCounter (line  string) (heads, foots []string) {
     return heads, foots
 }
 
-func RemoveSpaces(entry string, remove_type int)(new_entry string) {
+func RemoveSpaces(entry string, remove_type int)([]int) {
 
 
-    leading:=0
-    closing:=1
-    both   :=2
+    leading    :=0
+    closing    :=1
+    both       :=2
 
 
     lineAsArray:=strings.Split(entry, "")
     leadingChar:=0
-    closingChar:=len(entry)
+    closingChar:=len(entry)-1
+    leadReady:=false
+    closeReady:=false
     for char := range lineAsArray {
-        if remove_type==leading || remove_type==both {
-            if lineAsArray[char]==" " {
-                continue
-            } else {
-                leadingChar=char
-                if remove_type==leading { break }
-            }
+        if (remove_type==leading || remove_type==both) && lineAsArray[char] != " " {
+                if leadReady != true {
+
+                    leadingChar=char
+                    leadReady=true
+                    if remove_type==leading { break }
+
+                }
         }
-        if remove_type==closing || remove_type==both {
-             closing_char:=len(lineAsArray)-1-char
-             if lineAsArray[closing_char]==" " {
-                 continue
-             } else  {
-                 closingChar=closing_char
-                 if remove_type==closing { break }
-             }
+
+        closing_char:=len(lineAsArray)-1-char
+
+        if (remove_type==closing || remove_type==both) && (lineAsArray[closing_char]!=" ")  {
+                 if closeReady != true {
+                     closingChar=closing_char+1
+                     closeReady=true
+                     if remove_type==closing { break }
+                 }
 
         }
+        if closeReady && leadReady { break }
     }
-    return entry[leadingChar:closingChar]
+    if closingChar<leadingChar { return []int {0,0} }
+    return []int {leadingChar,closingChar}
 }
 
 /*func ParseFile( filename string ) ( err error ) {
