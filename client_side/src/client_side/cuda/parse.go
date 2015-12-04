@@ -178,10 +178,11 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
     // When section has curly type
     cleaned_entry_indexes:=RemoveSpaces(entry,2)
     cleaned_entry:=entry[cleaned_entry_indexes[0]:cleaned_entry_indexes[1]+1]
-    cleaned_entry_nametag_indexes := RemoveSpaces(cleaned_entry[:(len(cleaned_entry)-1)],2)
-    cleaned_entry_nametag_end_index := strings.Index(entry, cleaned_entry)+(cleaned_entry_nametag_indexes[1]-cleaned_entry_nametag_indexes[0])
+    nametag_indexes := RemoveSpaces(cleaned_entry[:(len(cleaned_entry)-1)],2)
+    fmt.Printf("\nnametag_indexes:|%v|\n", nametag_indexes)
+    nametag_end_index := strings.Index(entry, cleaned_entry)+(nametag_indexes[1]-nametag_indexes[0])
+    fmt.Printf("\nnametag_tag_endindex:|%v|\n", nametag_end_index)
 
-    fmt.Printf("\n| cleaned entry last index : %v\n|", cleaned_entry_nametag_end_index)
     curly_section_opening_index:=strings.Index(cleaned_entry,section_brackets_curly[opening])
     if curly_section_opening_index == (len(cleaned_entry)-1) {
         if curly_section_opening_index == 0 {
@@ -190,20 +191,21 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
              fmt.Printf("\n^^Cleaned Entry: |%s| ^^\n",cleaned_entry)
              spaces:=GetSeparatorIndexes(cleaned_entry, " ")
              var first_space_index   int
-             var second_space_index  int
+             //var second_space_index  int
              var name_index  = []int {}
              var tag_index   = []int {}
              if len(spaces) > 0  { first_space_index  = spaces[0] }
-             if len(spaces) > 1  { second_space_index = spaces[1] }
+             //if len(spaces) > 1  { second_space_index = spaces[1] }
 
              cleaned_entry_start_index:=strings.Index(entry, cleaned_entry)
              fmt.Printf("\ncleaned_entry|%v|   cleaned_entry_start_index|%v|  spaces|%v|\n",cleaned_entry, cleaned_entry_start_index, spaces)
 
              name_index = []int {cleaned_entry_start_index,cleaned_entry_start_index+first_space_index-1}
-             tag_index  = []int {cleaned_entry_start_index+first_space_index+1,cleaned_entry_start_index+second_space_index-1}
-             if len(spaces)<=2 {
-                 return name_index, tag_index, curly
-             } else {
+             tag_index  = []int {cleaned_entry_start_index+first_space_index+1,nametag_end_index}
+             return name_index, tag_index, curly
+             //if len(spaces)<=2 {
+                 //return name_index, tag_index, curly
+             //} else {
                  // take first element is CleanedEntry first index
                  // CleanedEntry means entry  without leading and ending spaces 
                  // Example: entry        : "     server   {   "
@@ -213,17 +215,16 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
                  //                   cleaned_entry        : "if a>2 && b==3 {"
                  //                   spaces               : [2,6,9,14]
                  //                   spaces[len(spaces)-1]:  14   // it is last space in cleaned entry
-                 var nameAndtagLastIndex int
-                 last_space_inside_cleaned_entry:=spaces[len(spaces)-1]
-                 if curly_section_opening_index-last_space_inside_cleaned_entry== 1 {
-                     nameAndtagLastIndex = cleaned_entry_start_index+last_space_inside_cleaned_entry-1
-                 } else {
-                     nameAndtagLastIndex = cleaned_entry_start_index+curly_section_opening_index-1
-                 }
-                 tag_index = []int {cleaned_entry_start_index+first_space_index+1, nameAndtagLastIndex}
-                 return name_index, tag_index, curly
+                 //last_space_inside_cleaned_entry:=spaces[len(spaces)-1]
 
-             }
+                 //if curly_section_opening_index-last_space_inside_cleaned_entry== 1 {
+                 //    tag_index = []int {cleaned_entry_start_index+first_space_index+1, nametag_end_index}
+                 //} else {
+                 //tag_index = []int {cleaned_entry_start_index+first_space_index+1, nametag_end_index}
+                 //}
+                 //return name_index, tag_index, curly
+
+             //}
         }
     }
     return
