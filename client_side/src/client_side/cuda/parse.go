@@ -199,7 +199,23 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
              if len(spaces)<=2 {
                  return name_index, tag_index, curly
              } else {
-                 tag_index = []int {cleaned_entry_start_index+first_space_index+1,curly_section_opening_index-1}
+                 // take first element is CleanedEntry first index
+                 // CleanedEntry means entry  without leading and ending spaces 
+                 // Example: entry        : "     server   {   "
+                 //          cleaned_entry: "server   {"
+                 //          spaces       : [6,7,8] 
+                 // Another Example:  entry                : "       if a>2 && b==3 {"
+                 //                   cleaned_entry        : "if a>2 && b==3 {"
+                 //                   spaces               : [2,6,9,14]
+                 //                   spaces[len(spaces)-1]:  14   // it is last space in cleaned entry
+                 var nameAndtagLastIndex int
+                 last_space_inside_cleaned_entry:=spaces[len(spaces)-1]
+                 if curly_section_opening_index-last_space_inside_cleaned_entry== 1 {
+                     nameAndtagLastIndex = cleaned_entry_start_index+last_space_inside_cleaned_entry-1
+                 } else {
+                     nameAndtagLastIndex = curly_section_opening_index-1
+                 }
+                 tag_index = []int {cleaned_entry_start_index+first_space_index+1, nameAndtagLastIndex}
                  return name_index, tag_index, curly
 
              }
