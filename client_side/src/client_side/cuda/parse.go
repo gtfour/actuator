@@ -178,6 +178,10 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
     // When section has curly type
     cleaned_entry_indexes:=RemoveSpaces(entry,2)
     cleaned_entry:=entry[cleaned_entry_indexes[0]:cleaned_entry_indexes[1]+1]
+    cleaned_entry_nametag_indexes := RemoveSpaces(cleaned_entry[:(len(cleaned_entry)-1)],2)
+    cleaned_entry_nametag_end_index := strings.Index(entry, cleaned_entry)+(cleaned_entry_nametag_indexes[1]-cleaned_entry_nametag_indexes[0])
+
+    fmt.Printf("\n| cleaned entry last index : %v\n|", cleaned_entry_nametag_end_index)
     curly_section_opening_index:=strings.Index(cleaned_entry,section_brackets_curly[opening])
     if curly_section_opening_index == (len(cleaned_entry)-1) {
         if curly_section_opening_index == 0 {
