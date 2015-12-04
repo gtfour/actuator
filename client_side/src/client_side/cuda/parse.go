@@ -183,6 +183,7 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
         if curly_section_opening_index == 0 {
             return []int {0,0} , []int {0,0} , curly
         } else {
+             fmt.Printf("\n^^Cleaned Entry: |%s| ^^\n",cleaned_entry)
              spaces:=GetSeparatorIndexes(cleaned_entry, " ")
              var first_space_index   int
              var second_space_index  int
@@ -213,7 +214,7 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
                  if curly_section_opening_index-last_space_inside_cleaned_entry== 1 {
                      nameAndtagLastIndex = cleaned_entry_start_index+last_space_inside_cleaned_entry-1
                  } else {
-                     nameAndtagLastIndex = curly_section_opening_index-1
+                     nameAndtagLastIndex = cleaned_entry_start_index+curly_section_opening_index-1
                  }
                  tag_index = []int {cleaned_entry_start_index+first_space_index+1, nameAndtagLastIndex}
                  return name_index, tag_index, curly
