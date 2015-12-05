@@ -1,8 +1,8 @@
 package cuda
 
-//import "os"
-//import "bufio"
-//import "io"
+import "os"
+import "bufio"
+import "io"
 import "strings"
 import "fmt"
 import "regexp"
@@ -39,6 +39,46 @@ func Parser(entry string) ( interface{} ) {
 
     return nil
 }
+
+func Escape_Spaces (entry string) (indexes [][]int) {
+    // 
+    // Duplicate spaces will be present as one
+    //
+    entry            =  ReplaceTabsToSpaces(entry)
+    lineAsArray      := strings.Split(entry,"")
+    var pair         =  []int { -1, -1 }
+    for i := range lineAsArray {
+        char:=lineAsArray[i]
+        if char == " " && pair[0]!=-1 {
+            pair[1] = i-1
+            indexes = append( indexes, []int {pair[0], pair[1]})
+            pair = []int { -1, -1 }
+        } else if pair[0] == -1 && char != " " {
+            pair[0] = i
+        }
+        if i == len(lineAsArray)-1 && pair[0]!=-1 {
+            indexes = append( indexes, []int {pair[0], i})
+        }
+    }
+    return indexes
+}
+
+func IsComment(entry string) (comment bool) {
+
+    for i:= range comments {
+        if strings.HasPrefix(entry, comments[i]) == true {
+            return true
+        }
+    }
+    return false
+}
+
+func ReplaceTabsToSpaces ( entry string ) ( string ) {
+
+    return strings.Replace(entry, "	", " ", -1)
+
+}
+
 
 func GetSeparatorIndexes (entry, sep string) (indexes []int) {
 
@@ -331,7 +371,7 @@ func Escape_Colon(entry string)(indexes [][]int) {
     return indexes
 }
 
-/*func ParseFile( filename string ) ( err error ) {
+func AcidParseFile( filename string ) ( err error ) {
 
     file, err   := os.Open(filename)
     if err!=nil {
@@ -361,4 +401,5 @@ func Escape_Colon(entry string)(indexes [][]int) {
     }
     return nil
 
-}*/
+}
+
