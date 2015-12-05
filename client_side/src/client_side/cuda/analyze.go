@@ -5,6 +5,7 @@ var splitted_by_colon  int = 1
 
 
 
+
 func AcidPriorityAnalyzer (entry string) () {
     //lineSplitBySpace:=
     //lineSplitByQuote:=
@@ -16,3 +17,5 @@ func Specs(entry string) ()  {
 
 
 }
+
+//func 
