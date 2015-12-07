@@ -1,5 +1,6 @@
 package cuda
 import "strings"
+import "fmt"
 
 /*
 var splitted_by_space  int = 0
@@ -13,34 +14,36 @@ var OPEN_SL_SECTION_TRIANGLE int = 3   //   </
 var CLOSE_SECTION_TRIANGLE   int = 4   //   >
 var OPEN_SECTION_ROUND       int = 5   //   (
 var CLOSE_SECTION_ROUND      int = 6   //   )
+var OPEN_SECTION_CURLY       int = 7   //   {
+var CLOSE_SECTION_CURLY      int = 8   //   {
 
-var SINGLE_QUOTE             int = 7   //   '
-var DOUBLE_QUOTE             int = 8   //   "
-var GRAVE_QUOTE              int = 9   //   `
+var SINGLE_QUOTE             int = 8   //   '
+var DOUBLE_QUOTE             int = 9   //   "
+var GRAVE_QUOTE              int = 10   //   `
 
-var HYPHEN                   int = 10  // -
-var MINUS                    int = 10  // -
-var PLUS                     int = 11
-var UNDERSCORE               int = 12  // _
-var EQUAL                    int = 13  // = 
-var COLON                    int = 14  // : 
-var SEMICOLON                int = 15  // ;
-var COMMA                    int = 16  // ,
-var DOT                      int = 17
+var HYPHEN                   int = 11  // -
+var MINUS                    int = 11  // -
+var PLUS                     int = 12  // +
+var UNDERSCORE               int = 13  // _
+var EQUAL                    int = 14  // = 
+var COLON                    int = 15  // : 
+var SEMICOLON                int = 16  // ;
+var COMMA                    int = 17  // ,
+var DOT                      int = 18  // .
 
-var SLASH                    int = 18  // /
-var BACKSLASH                int = 19  // \
-var PIPE                     int = 20  // |
-var ASTERISK                 int = 21  // *
-var NUMBER                   int = 22  // #
-var PENIS                    int = 23  // o|o
-var DOLLAR                   int = 24  // $
-var AMPERSAND                int = 25  // &
-var SUFFIX                   int = 26  // ^
-var PERCENT                  int = 27  // %
-var MAIL                     int = 28  // @
-var EXCLAM                   int = 29  // !
-var TILDE                    int = 30  // ~
+var SLASH                    int = 19  // /
+var BACKSLASH                int = 20  // \
+var PIPE                     int = 21  // |
+var ASTERISK                 int = 22  // *
+var NUMBER                   int = 23  // #
+var PENIS                    int = 24  // o|o
+var DOLLAR                   int = 25  // $
+var AMPERSAND                int = 26  // &
+var SUFFIX                   int = 27  // ^
+var PERCENT                  int = 28  // %
+var MAIL                     int = 29  // @
+var EXCLAM                   int = 30  // !
+var TILDE                    int = 31  // ~
 
 //var SIGNS = make(map[int]string)
 //SIGNS[OPEN_SECTION_SQUARE]="["
@@ -49,14 +52,66 @@ var TILDE                    int = 30  // ~
 
 
 
+func SignMap()(signs map[int]string) {
+    signs=make(map[int]string)
+    signs[OPEN_SECTION_SQUARE]      ="["
+    signs[CLOSE_SECTION_SQUARE]     ="]"
+    signs[OPEN_SECTION_TRIANGLE]    ="<"
+    signs[OPEN_SL_SECTION_TRIANGLE] ="</"
+    signs[CLOSE_SECTION_TRIANGLE]   =">"
+    signs[OPEN_SECTION_ROUND]       ="("
+    signs[CLOSE_SECTION_ROUND]      =")"
+    signs[OPEN_SECTION_CURLY]       ="{"
+    signs[CLOSE_SECTION_CURLY]      ="}"
+
+    signs[SINGLE_QUOTE]             ="'"
+    signs[DOUBLE_QUOTE]             =`"`
+    signs[GRAVE_QUOTE]              ="`"
+
+    signs[HYPHEN]                   ="-"
+    signs[PLUS]                     ="+"
+    signs[UNDERSCORE]               ="_"
+    signs[EQUAL]                    ="="
+    signs[COLON]                    =":"
+    signs[SEMICOLON]                =";"
+    signs[COMMA]                    =","
+    signs[DOT]                      ="."
+
+    signs[SLASH]                    ="/"
+    signs[BACKSLASH]                =`\`
+    signs[PIPE]                     ="|"
+    signs[ASTERISK]                 ="*"
+    signs[NUMBER]                   ="#"
+    signs[DOLLAR]                   ="$"
+    signs[AMPERSAND]                ="&"
+    signs[SUFFIX]                   ="^"
+    signs[PERCENT]                  ="%"
+    signs[MAIL]                     ="@"
+    signs[EXCLAM]                   ="!"
+    signs[TILDE]                    ="~"
+
+    return
 
 
+}
 
+func GetKeyByValue(signs map[int]string, string_value string) (key int) {
+
+
+    for key, value :=range signs {
+        if value == string_value {
+            return key
+        }
+
+    }
+    return -1
+}
 
 //var SQ_CU
 func GetSignIndex(entry string)(indexes [][]int) {
 
-   //lineAsArray:=strings.Split(entry,"")
+   lineAsArray:=strings.Split(entry,"")
+   fmt.Printf("%v", lineAsArray)
 
 
 

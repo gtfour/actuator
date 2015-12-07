@@ -56,8 +56,10 @@ func main() {
     //indexes:=cuda.RemoveSpaces(line,2)
     //fmt.Printf("\n%v",indexes)
     //fmt.Printf("\n%s",line[indexes[0]:indexes[1]+1])
-    line1:="hosts:          files mdns4_minimal [NOTFOUND=return] dns mdns4"
+    /*line1:="hosts:          files mdns4_minimal [NOTFOUND=return] dns mdns4"
     cuda.DebugPrintCharCounter(cuda.ReplaceTabsToSpaces(line1))
-    indexes:=cuda.Escape_Spaces(line1);fmt.Printf("%v",indexes)
+    indexes:=cuda.Escape_Spaces(line1);fmt.Printf("%v",indexes)*/
+
+    fmt.Printf("\n%v\n", cuda.SignMap())
 
 }
