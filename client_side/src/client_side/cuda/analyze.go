@@ -1,6 +1,6 @@
 package cuda
 import "strings"
-import "fmt"
+//import "fmt"
 
 /*
 var splitted_by_space  int = 0
@@ -108,15 +108,24 @@ func GetKeyByValue(signs map[int]string, string_value string) (key int) {
 }
 
 //var SQ_CU
-func GetSignIndex(entry string)(indexes [][]int) {
+func GetSignIndex(entry string)(map[int][]int) {
 
+   sign_map:=SignMap()
+   sign_indexes:=make(map[int][]int)
    lineAsArray:=strings.Split(entry,"")
-   fmt.Printf("%v", lineAsArray)
+   for i := range lineAsArray {
+       char:=lineAsArray[i]
+       charSignKey:=GetKeyByValue(sign_map, char)
+       if charSignKey > 0 {
+           if _, ok := sign_indexes[charSignKey]; ok==false {
+               sign_indexes[charSignKey]= []int {}
+           }
+           sign_indexes[charSignKey]=append(sign_indexes[charSignKey], i)
 
+       }
 
-
-
-    return
+    }
+    return sign_indexes
 
 }
 
@@ -149,6 +158,7 @@ var SECTION_SQUARE_OPEN = int  0
 */
 
 func SortByNested ( entry string ) () {
+
 
 
 
