@@ -13,7 +13,7 @@ func AcidPriorityAnalyzer (entry string) () {
 
 }
 
-func Specs(entry string) ()  {
+func AcidSequencer(entry string) ()  {
 
 
 }

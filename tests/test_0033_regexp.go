@@ -5,10 +5,15 @@ import "fmt"
 func main() {
 
 
-    test:="{Hello}"
-    nRx:= regexp.MustCompile("[{|}]")
+    var test = []string { "[Hello]", "<Hello>" , "server { " }
+    
+    nRx:= regexp.MustCompile("[\\[|\\]|\\}|\\{|\\:|\\;|\\<|\\>|\\</]")
     var result = [][]int {}
-    result=nRx.FindAllStringIndex(test, -1)
+    for i := range test {
+        result=nRx.FindAllStringIndex(test[i], -1)
+        fmt.Printf("\n%v\n", test[i])
+        fmt.Printf("\n%v\n=====", result)
+    }
     fmt.Printf("\n%v\n",result)
 
 
