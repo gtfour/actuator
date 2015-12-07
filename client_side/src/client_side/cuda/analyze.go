@@ -1,4 +1,5 @@
 package cuda
+import "strings"
 
 /*
 var splitted_by_space  int = 0
@@ -41,6 +42,10 @@ var MAIL                     int = 28  // @
 var EXCLAM                   int = 29  // !
 var TILDE                    int = 30  // ~
 
+//var SIGNS = make(map[int]string)
+//SIGNS[OPEN_SECTION_SQUARE]="["
+//SIGNS := map[int]string{ EXCLAM : "!" }
+
 
 
 
@@ -49,7 +54,16 @@ var TILDE                    int = 30  // ~
 
 
 //var SQ_CU
+func GetSignIndex(entry string)(indexes [][]int) {
 
+   //lineAsArray:=strings.Split(entry,"")
+
+
+
+
+    return
+
+}
 
 
 
@@ -78,3 +92,9 @@ var SECTION_SQUARE_OPEN = int  0
 
 
 */
+
+func SortByNested ( entry string ) () {
+
+
+
+}
