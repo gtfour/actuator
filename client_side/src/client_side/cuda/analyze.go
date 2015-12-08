@@ -107,6 +107,26 @@ func GetKeyByValue(signs map[int]string, string_value string) (key int) {
     return -1
 }
 
+func ValueExists(signs map[int]string,value string)(found bool ) {
+
+    values:=GetMapValues(signs)
+    for i := range values {
+        if values[i]==value {
+            found=true
+        }
+    }
+    return found
+
+}
+
+func GetMapValues(signs map[int]string)(values []string ){
+
+    for _, value := range signs {
+        values=append(values, value)
+    }
+    return values
+}
+
 //var SQ_CU
 func GetSignIndex(entry string)(map[int][]int) {
 
@@ -161,5 +181,23 @@ func SortByNested ( entry string ) () {
 
 
 
+
+}
+
+func GetSignScope( lineAsArray []string, sign int, sign_pos int) (scope [][2]int) {
+
+    switch {
+        case sign==EQUAL:
+            var first_part [2]int
+            var last_part  [2]int
+            first_part[0] = 0
+            first_part[1] = sign_pos-1
+            last_part[0] = sign_pos+1
+            last_part[1] = len(lineAsArray)-1
+            scope=append(scope,first_part)
+            scope=append(scope,last_part)
+            return scope
+    }
+    return scope
 
 }
