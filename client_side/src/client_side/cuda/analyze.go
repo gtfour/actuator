@@ -1,6 +1,6 @@
 package cuda
 import "strings"
-//import "fmt"
+import "fmt"
 
 /*
 var splitted_by_space  int = 0
@@ -44,6 +44,20 @@ var PERCENT                  int = 28  // %
 var MAIL                     int = 29  // @
 var EXCLAM                   int = 30  // !
 var TILDE                    int = 31  // ~
+
+
+
+var RIGHT                            int = 123  // :) ahaha blya
+var LEFT                             int = 321  // :)
+
+var NOT_FOUND                        int = 2000 //  
+
+var JUST_WORDS_DIGITS                int = 3001
+var JUST_WORDS_DIGITS_HYPHENS        int = 3002
+var JUST_WORDS_DIGITS_HYPHENS_PATHES int = 3003
+
+var FINISH_WITH_SPACE                int = 4000
+var FINISH_WITH_SAME_SIGN            int = 4001
 
 //var SIGNS = make(map[int]string)
 //SIGNS[OPEN_SECTION_SQUARE]="["
@@ -200,4 +214,36 @@ func GetSignScope( lineAsArray []string, sign int, sign_pos int) (scope [][2]int
     }
     return scope
 
+}
+
+
+func GoTillAnyOfSign(lineAsArray []string,signs  []int, since int , direction int ) (index int, code int) {
+
+    for i:= range lineAsArray {
+
+        fmt.Printf("--\n%i\n--",i)
+
+        if direction==RIGHT {
+
+
+        } else if direction==LEFT {
+
+
+
+        } else {
+
+            return -1, NOT_FOUND
+
+        }
+
+
+    }
+
+    return index, NOT_FOUND
+
+}
+
+func CheckMatchingRx( entry string ) (code int) {
+
+    return code
 }
