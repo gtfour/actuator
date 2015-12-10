@@ -157,8 +157,9 @@ func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
     return word_set, complete
 }
 
-func Escape_EqualSign (entry string) (words_indexes [][]int) {
+func Escape_EqualSign (lineAsArray []string) (words_indexes [][]int) {
 
+    entry:=strings.Join(lineAsArray, "")
     wordSplittedByEqualSign:= strings.Split(entry, "=")
     offset:=0
     for i := range wordSplittedByEqualSign {
@@ -385,6 +386,22 @@ func Escape_Colon(entry string)(indexes [][]int) {
     }
     return indexes
 }
+
+func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
+
+    // return function used for parse entry
+
+    if sign == "=" {
+
+        return Escape_EqualSign
+
+    }
+
+
+    return function
+
+}
+
 
 func AcidParseFile( filename string ) ( err error ) {
 

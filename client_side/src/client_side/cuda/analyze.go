@@ -128,10 +128,10 @@ func GetKeyByValue(signs map[int]string, string_value string) (key int) {
     return -1
 }
 
-func IsSymbolIn(symbols ...[]string, char string) (yes bool) {
+func IsSymbolIn(char string, symbols_sets ...[]string) (yes bool) {
 
-    for i:= symbol_sets {
-        set:=symbol_sets[i]
+    for i := range symbols_sets {
+        set := symbols_sets[i]
         for s := range set {
 
             symbol:=set[s]
@@ -145,6 +145,7 @@ func IsSymbolIn(symbols ...[]string, char string) (yes bool) {
 
         }
     }
+    return
 
 
 }
@@ -248,7 +249,12 @@ func GetSignScope( lineAsArray []string, sign int, sign_pos int) (scope [][2]int
 
 func GoTillAnyOfSign( lineAsArray []string, signs []int, since int, direction int ) ( index int, code int ) {
 
+
+    
     for i:= range lineAsArray {
+
+        i = since
+        if since<0 {i=0}
 
         fmt.Printf("--\n%i\n--",i)
 
