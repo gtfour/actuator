@@ -7,6 +7,10 @@ var splitted_by_space  int = 0
 var splitted_by_colon  int = 1
 */
 
+var ABC = [52]string  { "A","a","B","b","C","c","D","d","E","e","F","f","G","g","H","h","I","i","J","j","K","k","L","l","M","m","N","n","O","o","P","p","Q","q","R","r","S","s","T","t","U","u","V","v","W","w","X","x","Y","y","Z","z" }
+
+var NUMBERS = [10]string { "0","1","2","3","4","5","6","7","8","9" }
+
 var OPEN_SECTION_SQUARE      int = 0   //   [
 var CLOSE_SECTION_SQUARE     int = 1   //   ]
 var OPEN_SECTION_TRIANGLE    int = 2   //   <
@@ -142,7 +146,7 @@ func GetMapValues(signs map[int]string)(values []string ){
 }
 
 //var SQ_CU
-func GetSignIndex(entry string)(map[int][]int) {
+func GetSignsIndexes(entry string)(map[int][]int) {
 
    sign_map:=SignMap()
    sign_indexes:=make(map[int][]int)
@@ -214,10 +218,11 @@ func GetSignScope( lineAsArray []string, sign int, sign_pos int) (scope [][2]int
     }
     return scope
 
+
 }
 
 
-func GoTillAnyOfSign(lineAsArray []string,signs  []int, since int , direction int ) (index int, code int) {
+func GoTillAnyOfSign( lineAsArray []string, signs []int, since int, direction int ) ( index int, code int ) {
 
     for i:= range lineAsArray {
 
@@ -228,14 +233,11 @@ func GoTillAnyOfSign(lineAsArray []string,signs  []int, since int , direction in
 
         } else if direction==LEFT {
 
-
-
         } else {
 
             return -1, NOT_FOUND
 
         }
-
 
     }
 
@@ -247,3 +249,5 @@ func CheckMatchingRx( entry string ) (code int) {
 
     return code
 }
+
+

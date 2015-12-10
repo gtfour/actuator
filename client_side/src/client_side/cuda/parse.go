@@ -343,6 +343,23 @@ func Escape_Sequence(entry string)(sequences [][]int) {
 
 }
 
+func RemoveDupSpaces ( entry string ) (new_entry string) {
+
+    entry=ReplaceTabsToSpaces(entry)
+    lineAsArray:=strings.Split(entry,"")
+    for i := range lineAsArray {
+
+        char:=lineAsArray[i]
+        if (char==" ") && (len(lineAsArray)-1>i) && (lineAsArray[i+1]==" ")   {
+
+        } else {
+            new_entry+=char
+        }
+
+    }
+    return new_entry
+}
+
 func Escape_Colon(entry string)(indexes [][]int) {
 
     colon_indexes:=GetSeparatorIndexes(entry, ":")
