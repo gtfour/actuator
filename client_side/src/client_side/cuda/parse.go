@@ -15,7 +15,6 @@ var brackets                  =  []string {"[","]","<","/>",">","{","}",")","("}
 var section_brackets_square   =  [2]string {"[","]"}
 var section_brackets_triangle =  [3]string {"<",">","</"}
 var section_brackets_curly    =  [2]string {"{","}"}
-var quotes                    =  [3]string {`"`, "'", "`"}
 // ⣳ 
 
 
@@ -108,9 +107,10 @@ func GetWordIndexes (entry string) (indexes []int) {
     return indexes
 }
 
-func GetQuotesIndexes (line string) ( indexes []int) {
+func GetQuotesIndexes (lineAsArray []string) ( indexes []int) {
 
-    lineAsArray:=strings.Split(line,"")
+    var quotes                    =  [3]string {`"`, "'", "`"}
+
     for char:= range lineAsArray {
         for q:=range quotes {
             quote:=quotes[q]
@@ -123,7 +123,9 @@ func GetQuotesIndexes (line string) ( indexes []int) {
 }
 
 
-func GroupByQuotes (lineAsArray []string, quotes_indexes []int) (quotes_pairs [][]int) {
+func GroupByQuotes (lineAsArray []string) (quotes_pairs [][]int) {
+
+    quotes_indexes := GetQuotesIndexes(lineAsArray)
 
     pending := make(map[string]int)
     for char:= range quotes_indexes {
@@ -143,7 +145,33 @@ func GroupByQuotes (lineAsArray []string, quotes_indexes []int) (quotes_pairs []
     return
 }
 
+func Escape_Quote_FunctionBuilder( quote string   ) ( quotes_escaper  func ( lineAsArray []string ) ([][]int ) ) {
+
+    // returns function to find single pair of text between specialized quote
+
+
+    quotes_escaper = func(lineAsArray []string) ( indexes [][]int) {
+
+        pair := []int {-1,-1}
+        for i:= range lineAsArray {
+            char:=lineAsArray[i]
+            if char == quote {
+                if pair[0]==-1 { pair[0] = i+1  } else { pair[1] = i-1 ; break  }
+
+            }
+
+        }
+        indexes=append(indexes, pair)
+        return indexes
+    }
+
+    return quotes_escaper
+
+}
+
 func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
+
+    var quotes                    =  [3]string {`"`, "'", "`"}
 
     for i:=range quotes {
         quote:=quotes[i]
@@ -392,9 +420,10 @@ func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
     // return function used for parse entry
 
     if sign == "=" {
-
         return Escape_EqualSign
-
+    }
+    if sign == `"` || sign == "'" || sign ==  "`" {
+        return GroupByQuotes
     }
 
 

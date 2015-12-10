@@ -133,21 +133,15 @@ func IsSymbolIn(char string, symbols_sets ...[]string) (yes bool) {
     for i := range symbols_sets {
         set := symbols_sets[i]
         for s := range set {
-
             symbol:=set[s]
             if symbol == char {
                 yes = true
                 break
-
             }
-
-
-
         }
+        if yes == true { break }
     }
     return
-
-
 }
 
 func ValueExists(signs map[int]string,value string)(found bool ) {
