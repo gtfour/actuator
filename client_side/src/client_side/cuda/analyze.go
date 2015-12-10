@@ -7,9 +7,12 @@ var splitted_by_space  int = 0
 var splitted_by_colon  int = 1
 */
 
-var ABC = [52]string  { "A","a","B","b","C","c","D","d","E","e","F","f","G","g","H","h","I","i","J","j","K","k","L","l","M","m","N","n","O","o","P","p","Q","q","R","r","S","s","T","t","U","u","V","v","W","w","X","x","Y","y","Z","z" }
+var ABC = []string  { "A","a","B","b","C","c","D","d","E","e","F","f","G","g","H","h","I","i","J","j","K","k","L","l","M","m","N","n","O","o","P","p","Q","q","R","r","S","s","T","t","U","u","V","v","W","w","X","x","Y","y","Z","z" }
 
-var NUMBERS = [10]string { "0","1","2","3","4","5","6","7","8","9" }
+var NUMBERS                     = []string { "0","1","2","3","4","5","6","7","8","9" }
+var WORD_DELIM                  = []string {"_","-"}
+var PATH_DELIM                  = []string {"/"}
+
 
 var OPEN_SECTION_SQUARE      int = 0   //   [
 var CLOSE_SECTION_SQUARE     int = 1   //   ]
@@ -123,6 +126,27 @@ func GetKeyByValue(signs map[int]string, string_value string) (key int) {
 
     }
     return -1
+}
+
+func IsSymbolIn(symbols ...[]string, char string) (yes bool) {
+
+    for i:= symbol_sets {
+        set:=symbol_sets[i]
+        for s := range set {
+
+            symbol:=set[s]
+            if symbol == char {
+                yes = true
+                break
+
+            }
+
+
+
+        }
+    }
+
+
 }
 
 func ValueExists(signs map[int]string,value string)(found bool ) {

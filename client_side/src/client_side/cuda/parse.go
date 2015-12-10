@@ -44,8 +44,8 @@ func Escape_Spaces (entry string) (indexes [][]int) {
     // 
     // Duplicate spaces will be present as one
     //
-    entry            =  ReplaceTabsToSpaces(entry)
-    lineAsArray      := strings.Split(entry,"")
+    oldlineAsArray      := strings.Split(entry,"")
+    lineAsArray      := ReplaceTabsToSpaces(oldlineAsArray)
     var pair         =  []int { -1, -1 }
     for i := range lineAsArray {
         char:=lineAsArray[i]
@@ -73,9 +73,11 @@ func IsComment(entry string) (comment bool) {
     return false
 }
 
-func ReplaceTabsToSpaces ( entry string ) ( string ) {
+func ReplaceTabsToSpaces ( lineAsArray []string ) ( newlineAsArray []string ) {
 
-    return strings.Replace(entry, "	", " ", -1)
+    entry:=strings.Join(lineAsArray, "")
+    new_entry:=strings.Replace(entry, "	", " ", -1)
+    return strings.Split(new_entry,"")
 
 }
 
@@ -343,22 +345,18 @@ func Escape_Sequence(entry string)(sequences [][]int) {
 
 }
 
-func RemoveDupSpaces ( entry string ) (new_entry string) {
+func RemoveDupSpaces ( lineAsArray []string ) (new_entry string) {
 
-    entry=ReplaceTabsToSpaces(entry)
-    lineAsArray:=strings.Split(entry,"")
-    for i := range lineAsArray {
 
+    newlineAsArray:=ReplaceTabsToSpaces(lineAsArray)
+
+    for i := range newlineAsArray {
         char:=lineAsArray[i]
-        if (char==" ") && (len(lineAsArray)-1>i) && (lineAsArray[i+1]==" ")   {
-
-        } else {
-            new_entry+=char
-        }
-
+        if (char==" ") && (len(lineAsArray)-1>i) && (lineAsArray[i+1]==" ") {} else { new_entry+=char }
     }
     return new_entry
 }
+
 
 func Escape_Colon(entry string)(indexes [][]int) {
 
