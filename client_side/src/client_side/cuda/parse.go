@@ -1,8 +1,5 @@
 package cuda
 
-import "os"
-import "bufio"
-import "io"
 import "strings"
 import "fmt"
 import "regexp"
@@ -186,7 +183,7 @@ func Escape_EqualSign (lineAsArray []string) (words_indexes [][]int) {
     for i := range wordSplittedByEqualSign {
         word:=wordSplittedByEqualSign[i]
         word_index:=strings.Index(entry[offset:], word)
-        var new_pair =  []int {(word_index+offset),(len(word)+offset)}
+        var new_pair =  []int {(word_index+offset),(len(word)-1+offset)}
         words_indexes=append(words_indexes, new_pair)
         offset+=len(word)+1 // 1 is equal sign
     }
@@ -423,37 +420,3 @@ func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
     return function
 
 }
-
-
-func AcidParseFile( filename string ) ( err error ) {
-
-    file, err   := os.Open(filename)
-    if err!=nil {
-
-        return err
-    }
-    buffered_reader:=bufio.NewReader(file)
-    eof := false
-
-    for lino := 1; !eof; lino++ {
-
-
-        line, err := buffered_reader.ReadString('\n')
-
-        if err == io.EOF {
-            err = nil
-            eof = true
-        } else if err != nil {
-            return err
-        }
-
-        if ( strings.HasPrefix(line, "Package") || strings.HasPrefix(line, "Status") ||  strings.HasPrefix(line, "Architecture") || strings.HasPrefix(line, "Version")){
-        }
-
-
-
-    }
-    return nil
-
-}
-

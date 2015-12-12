@@ -6,6 +6,8 @@ import "fmt"
 var splitted_by_space  int = 0
 var splitted_by_colon  int = 1
 */
+/* when it facing with an of the delimiters keep it in mind and try to find next . then group text between 
+both delimiters to array  */
 
 var ABC = []string  { "A","a","B","b","C","c","D","d","E","e","F","f","G","g","H","h","I","i","J","j","K","k","L","l","M","m","N","n","O","o","P","p","Q","q","R","r","S","s","T","t","U","u","V","v","W","w","X","x","Y","y","Z","z" }
 
@@ -244,7 +246,6 @@ func GetSignScope( lineAsArray []string, sign int, sign_pos int) (scope [][2]int
 func GoTillAnyOfSign( lineAsArray []string, signs []int, since int, direction int ) ( index int, code int ) {
 
 
-    
     for i:= range lineAsArray {
 
         i = since
@@ -270,8 +271,39 @@ func GoTillAnyOfSign( lineAsArray []string, signs []int, since int, direction in
 }
 
 func CheckMatchingRx( entry string ) (code int) {
-
     return code
 }
 
+func PopArrray( double [][]int) (single []int) {
+    if len(double)  ==  1 {
+        single=double[0]
+    }
+    return single
+}
 
+func PrepareData ( lineAsArray []string ) ([][]int) {
+
+    //var cleanData = [][]int {}
+    var delims    = [][]int {}
+    //var words     = [][]int {}
+    var delimPair = []int   {-1, -1}
+
+    for i:= range lineAsArray {
+        char:=lineAsArray[i]
+        if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
+            if delimPair[0] == -1 {
+                delimPair[0]= i
+            }else {
+                delimPair[1] = i
+                if ((i>=(len(lineAsArray)-1)) || ((i<len(lineAsArray)-2) && (IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == true))) {
+                    delims=append(delims, delimPair)
+                    delimPair=[]int{-1, -1}
+                }
+            }
+        } else {
+
+
+        }
+    }
+    return delims
+}
