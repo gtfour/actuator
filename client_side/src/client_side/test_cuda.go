@@ -25,5 +25,7 @@ func main() {
     fmt.Printf("\n --- \n")
     fmt.Printf("%s",line2[first_part[0]:first_part[1]])
     fmt.Printf("%s",line2[second_part[0]:second_part[1]])
+    fmt.Printf("\n-----\n")
+    fmt.Printf("\n --- \n %v",cuda.PrepareData(lineAsArray2))
 
 }

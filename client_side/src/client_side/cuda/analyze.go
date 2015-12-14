@@ -288,14 +288,21 @@ func PrepareData ( lineAsArray []string ) ([][]int) {
     //var words     = [][]int {}
     var delimPair = []int   {-1, -1}
 
+    fmt.Printf("\n[ Array len %d  ]\n",len(lineAsArray))
     for i:= range lineAsArray {
+        fmt.Printf("\n==================      for counter -->>  %d ==================\n",i)
         char:=lineAsArray[i]
         if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
+            fmt.Printf("\nspecial character: %s >>\n",char)
+            fmt.Printf("\n next symbol is word: %v >>\n", IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM))
+            fmt.Printf("\nlen(lineAsArray)-2) : %d\n",(len(lineAsArray)-2))
             if delimPair[0] == -1 {
                 delimPair[0]= i
             }else {
                 delimPair[1] = i
-                if ((i>=(len(lineAsArray)-1)) || ((i<len(lineAsArray)-2) && (IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == true))) {
+                fmt.Printf("\nlen(lineAsArray)-1) : %d\n",(len(lineAsArray)-1))
+                if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true))) {
+                    fmt.Printf("\n     -- Condition matched \n")
                     delims=append(delims, delimPair)
                     delimPair=[]int{-1, -1}
                 }
