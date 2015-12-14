@@ -294,11 +294,11 @@ func PrepareData ( lineAsArray []string ) ([][]int) {
         char:=lineAsArray[i]
         if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
             fmt.Printf("\nspecial character: %s >>\n",char)
-            fmt.Printf("\n next symbol is word: %v >>\n", IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM))
+            //fmt.Printf("\n next symbol is word: %v >>\n", IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM))
             fmt.Printf("\nlen(lineAsArray)-2) : %d\n",(len(lineAsArray)-2))
             if delimPair[0] == -1 {
                 delimPair[0]= i
-            }else {
+            }
                 delimPair[1] = i
                 fmt.Printf("\nlen(lineAsArray)-1) : %d\n",(len(lineAsArray)-1))
                 if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true))) {
@@ -306,7 +306,6 @@ func PrepareData ( lineAsArray []string ) ([][]int) {
                     delims=append(delims, delimPair)
                     delimPair=[]int{-1, -1}
                 }
-            }
         } else {
 
 

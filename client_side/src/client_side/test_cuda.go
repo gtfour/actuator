@@ -8,7 +8,7 @@ import "strings"
 func main() {
 
     //line:="  2  2 2 2   2 22    32 32 3 23 2 32                               333"
-    line2:="hello = 1"
+    line2:=" hell=1 "
     lineAsArray2:=strings.Split(line2, "")
     //sign_map:=cuda.SignMap()
     cuda.DebugPrintCharCounter(line2)
