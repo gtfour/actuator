@@ -12,6 +12,11 @@ var brackets                  =  []string {"[","]","<","/>",">","{","}",")","("}
 var section_brackets_square   =  [2]string {"[","]"}
 var section_brackets_triangle =  [3]string {"<",">","</"}
 var section_brackets_curly    =  [2]string {"{","}"}
+
+var LEADING int                  = 0
+var CLOSING int                  = 1
+var BOTH    int                  = 2
+
 // ⣳ 
 
 
@@ -193,6 +198,9 @@ func Escape_EqualSign (lineAsArray []string) (words_indexes [][]int) {
 
 func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
 
+    entryAsArray:=strings.Split(entry,"")
+
+
     square         :=0
     triangle       :=1
     curly          :=2
@@ -237,9 +245,10 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
 
     }
     // When section has curly type
-    cleaned_entry_indexes:=RemoveSpaces(entry,2)
+    cleaned_entry_indexes:=RemoveSpaces(entryAsArray,2)
     cleaned_entry:=entry[cleaned_entry_indexes[0]:cleaned_entry_indexes[1]+1]
-    nametag_indexes := RemoveSpaces(cleaned_entry[:(len(cleaned_entry)-1)],2)
+    cleaned_entry_asArray:=strings.Split(cleaned_entry,"")
+    nametag_indexes := RemoveSpaces(cleaned_entry_asArray, 2)
     fmt.Printf("\nnametag_indexes:|%v|\n", nametag_indexes)
     nametag_end_index := strings.Index(entry, cleaned_entry)+(nametag_indexes[1]-nametag_indexes[0])
     fmt.Printf("\nnametag_tag_endindex:|%v|\n", nametag_end_index)
@@ -320,35 +329,35 @@ func DebugPrintCharCounter (line string) {
 
 }
 
-func RemoveSpaces(entry string, remove_type int)([]int) {
+func RemoveSpaces(lineAsArray []string, remove_type int)([]int) {
 
-    leading    :=0
-    closing    :=1
-    both       :=2
+    LEADING    :=0
+    CLOSING    :=1
+    BOTH       :=2
 
-    lineAsArray:=strings.Split(entry, "")
+    //lineAsArray:=strings.Split(entry, "")
     leadingChar:=0
-    closingChar:=len(entry)-1
+    closingChar:=len(lineAsArray)-1
     leadReady:=false
     closeReady:=false
     for char := range lineAsArray {
-        if (remove_type==leading || remove_type==both) && lineAsArray[char] != " " {
+        if (remove_type==LEADING || remove_type==BOTH) && lineAsArray[char] != " " {
                 if leadReady != true {
 
                     leadingChar=char
                     leadReady=true
-                    if remove_type==leading { break }
+                    if remove_type==LEADING { break }
 
                 }
         }
 
         closing_char:=len(lineAsArray)-1-char
 
-        if (remove_type==closing || remove_type==both) && (lineAsArray[closing_char]!=" ")  {
+        if (remove_type==CLOSING || remove_type==BOTH) && (lineAsArray[closing_char]!=" ")  {
                  if closeReady != true {
                      closingChar=closing_char // +1
                      closeReady=true
-                     if remove_type==closing { break }
+                     if remove_type==CLOSING { break }
                  }
 
         }
@@ -408,6 +417,12 @@ func Escape_Colon(entry string)(indexes [][]int) {
 func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
 
     // return function used for parse entry
+
+    sign_asArray:=strings.Split(sign,"")
+    clean_sign_indexes:=RemoveSpaces(sign_asArray,BOTH)
+    clean_sign:=sign[clean_sign_indexes[0]:clean_sign_indexes[1]+1]
+
+    sign=clean_sign
 
     if sign == "=" {
         return Escape_EqualSign

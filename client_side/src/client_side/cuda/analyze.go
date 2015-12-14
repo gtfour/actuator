@@ -14,6 +14,7 @@ var ABC = []string  { "A","a","B","b","C","c","D","d","E","e","F","f","G","g","H
 var NUMBERS                     = []string { "0","1","2","3","4","5","6","7","8","9" }
 var WORD_DELIM                  = []string {"_","-"}
 var PATH_DELIM                  = []string {"/"}
+var URL                         = []string {"://"}
 
 
 var OPEN_SECTION_SQUARE      int = 0   //   [
@@ -290,19 +291,14 @@ func PrepareData ( lineAsArray []string ) ([][]int) {
 
     fmt.Printf("\n[ Array len %d  ]\n",len(lineAsArray))
     for i:= range lineAsArray {
-        fmt.Printf("\n==================      for counter -->>  %d ==================\n",i)
         char:=lineAsArray[i]
         if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
-            fmt.Printf("\nspecial character: %s >>\n",char)
             //fmt.Printf("\n next symbol is word: %v >>\n", IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM))
-            fmt.Printf("\nlen(lineAsArray)-2) : %d\n",(len(lineAsArray)-2))
             if delimPair[0] == -1 {
                 delimPair[0]= i
             }
                 delimPair[1] = i
-                fmt.Printf("\nlen(lineAsArray)-1) : %d\n",(len(lineAsArray)-1))
                 if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true))) {
-                    fmt.Printf("\n     -- Condition matched \n")
                     delims=append(delims, delimPair)
                     delimPair=[]int{-1, -1}
                 }
