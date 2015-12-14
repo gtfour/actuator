@@ -320,3 +320,14 @@ func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected [
     }
     return selected
 }
+
+func GetAnotherSign( sign string )( another_signs []string) {
+
+    //var DOUBLE_SIGNS = [][]string { {"[", "]"}, { "<" , "</" , ">"} , {"(" , ")"}, {"{", "}"}, {"'", "'" }, {`"`,`"`}, {"`","`"} }
+
+
+
+
+    return another_signs
+
+}
