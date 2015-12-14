@@ -12,6 +12,10 @@ func main() {
     lineAsArray2:=strings.Split(line2, "")
     cuda.DebugPrintCharCounter(line2)
     parser:=cuda.MakeParser("   =   ")
+
+    delims_indexes:=cuda.GetDelimsIndexes(lineAsArray2)
+
+    
     fmt.Printf("\n parsed_string : %v \n",parser(lineAsArray2))
 
 }

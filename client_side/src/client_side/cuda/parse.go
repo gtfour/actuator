@@ -147,21 +147,21 @@ func GroupByQuotes (lineAsArray []string) (quotes_pairs [][]int) {
     return
 }
 
-func Escape_Quote_FunctionBuilder( quote string   ) ( quotes_escaper  func ( lineAsArray []string ) ([][]int ) ) {
+func EscapeDoubleSign_functionBuilder( sign string   ) ( doublesign_escaper  func ( lineAsArray []string ) ([][]int ) ) {
 
     // returns function to find single pair of text between specialized quote
-    quotes_escaper = func(lineAsArray []string) ( indexes [][]int) {
+    doublesign_escaper = func(lineAsArray []string) ( indexes [][]int) {
         pair := []int {-1,-1}
         for i:= range lineAsArray {
             char:=lineAsArray[i]
-            if char == quote {
+            if char == sign {
                 if pair[0]==-1 { pair[0] = i+1  } else { pair[1] = i-1 ; break  }
             }
         }
         indexes=append(indexes, pair)
         return indexes
     }
-    return quotes_escaper
+    return doublesign_escaper
 }
 
 func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
@@ -427,8 +427,8 @@ func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
     if sign == "=" {
         return Escape_EqualSign
     }
-    if sign == `"` || sign == "'" || sign ==  "`" {
-        return Escape_Quote_FunctionBuilder(sign)
+    if sign == `"` || sign == "'" || sign ==  "`" || sign ==  "(" || sign ==  ")" {
+        return EscapeDoubleSign_functionBuilder(sign)
     }
 
 

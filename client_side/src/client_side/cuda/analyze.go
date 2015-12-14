@@ -282,7 +282,7 @@ func PopArrray( double [][]int) (single []int) {
     return single
 }
 
-func PrepareData ( lineAsArray []string ) ([][]int) {
+func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
 
     //var cleanData = [][]int {}
     var delims    = [][]int {}
@@ -308,4 +308,15 @@ func PrepareData ( lineAsArray []string ) ([][]int) {
         }
     }
     return delims
+}
+
+func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected []string) {
+
+    for i := range  lineAsArray {
+        char:= lineAsArray[i]
+        if i>=selected_indexes[0] && i<=selected_indexes[1] {
+            selected = append(selected, char)
+        }
+    }
+    return selected
 }
