@@ -147,15 +147,20 @@ func GroupByQuotes (lineAsArray []string) (quotes_pairs [][]int) {
     return
 }
 
-func EscapeDoubleSign_functionBuilder( sign string   ) ( doublesign_escaper  func ( lineAsArray []string ) ([][]int ) ) {
+func EscapeDoubleSign_functionBuilder( sign_start, sign_end string   ) ( doublesign_escaper  func ( lineAsArray []string ) ([][]int ) ) {
 
-    // returns function to find single pair of text between specialized quote
+    // returns function to find single pair of text between specialized sign
     doublesign_escaper = func(lineAsArray []string) ( indexes [][]int) {
         pair := []int {-1,-1}
         for i:= range lineAsArray {
             char:=lineAsArray[i]
-            if char == sign {
-                if pair[0]==-1 { pair[0] = i+1  } else { pair[1] = i-1 ; break  }
+            if char == sign_start && pair[0] == -1  {
+                pair[0] = i+1
+                continue
+            }
+            if char == sign_end && pair[1] == -1  {
+                pair[1] = i-1
+                continue
             }
         }
         indexes=append(indexes, pair)
@@ -427,8 +432,8 @@ func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
     if sign == "=" {
         return Escape_EqualSign
     }
-    if sign == `"` || sign == "'" || sign ==  "`" || sign ==  "(" || sign ==  ")" {
-        return EscapeDoubleSign_functionBuilder(sign)
+    if IsSymbolIn(sign, DOUBLE_SIGNS_LIST )  {
+        return EscapeDoubleSign_functionBuilder(sign, GetSignPair(sign))
     }
 
 

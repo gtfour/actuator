@@ -16,6 +16,8 @@ var WORD_DELIM                  = []string {"_","-"}
 var PATH_DELIM                  = []string {"/"}
 var URL                         = []string {"://"}
 
+var DOUBLE_SIGNS_LIST = []string { "[", "]", "<" , ">", "</" ,  "(" , ")", "{", "}", "'", "'" , `"`,`"`, "`","`" }
+
 
 var OPEN_SECTION_SQUARE      int = 0   //   [
 var CLOSE_SECTION_SQUARE     int = 1   //   ]
@@ -69,9 +71,11 @@ var JUST_WORDS_DIGITS_HYPHENS_PATHES int = 3003
 var FINISH_WITH_SPACE                int = 4000
 var FINISH_WITH_SAME_SIGN            int = 4001
 
+
 //var SIGNS = make(map[int]string)
 //SIGNS[OPEN_SECTION_SQUARE]="["
 //SIGNS := map[int]string{ EXCLAM : "!" }
+
 
 
 
@@ -321,13 +325,20 @@ func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected [
     return selected
 }
 
-func GetAnotherSign( sign string )( another_signs []string) {
+func GetSignPair( sign string )( another_sign string) {
 
-    //var DOUBLE_SIGNS = [][]string { {"[", "]"}, { "<" , "</" , ">"} , {"(" , ")"}, {"{", "}"}, {"'", "'" }, {`"`,`"`}, {"`","`"} }
-
-
-
-
-    return another_signs
+    var DOUBLE_SIGNS_PAIRS = [][2]string { {"[", "]"}, { "<" , ">"} , {"</" , ">"}  ,  {"(" , ")"}, {"{", "}"}, {"'", "'" }, {`"`,`"`}, {"`","`"} }
+    var REPLACE01    = [2]int {1,0}
+    for pairs := range DOUBLE_SIGNS_PAIRS {
+        pair:=DOUBLE_SIGNS_PAIRS[pairs]
+        for elem := range pair {
+            if sign == pair[elem] {
+                second_index:=REPLACE01[elem]
+                another_sign = pair[second_index]
+                break
+            }
+        }
+    }
+    return another_sign
 
 }
