@@ -17,6 +17,7 @@ var PATH_DELIM                  = []string {"/"}
 var URL                         = []string {"://"}
 
 var DOUBLE_SIGNS_LIST = []string { "[", "]", "<" , ">", "</" ,  "(" , ")", "{", "}", "'", "'" , `"`,`"`, "`","`" }
+var SINGLE_SIGNS_LIST = []string { "="," ",":" }
 
 
 var OPEN_SECTION_SQUARE      int = 0   //   [
@@ -288,6 +289,8 @@ func PopArrray( double [][]int) (single []int) {
 
 func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
 
+    // have to add check when two 
+
     //var cleanData = [][]int {}
     var delims    = [][]int {}
     //var words     = [][]int {}
@@ -301,15 +304,18 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
             if delimPair[0] == -1 {
                 delimPair[0]= i
             }
-                delimPair[1] = i
-                if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true))) {
-                    delims=append(delims, delimPair)
-                    delimPair=[]int{-1, -1}
-                }
-        } else {
+            delimPair[1] = i
+            if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true))) {
 
+                    delimAsArray:=GetFixedArrayChars(lineAsArray, delimPair)
+                    delim_split_space:=Escape_Spaces(delimAsArray)
+                    if len(delim_split_space) == 0 {
+                        delims=append(delims, delimPair)
+                        delimPair=[]int{-1, -1}
+                    }
 
-        }
+            }
+        } else { }
     }
     return delims
 }
@@ -340,5 +346,21 @@ func GetSignPair( sign string )( another_sign string) {
         }
     }
     return another_sign
+
+}
+
+func PrepareData(lineAsArray []string, delims_indexes [][]int ) (data [][][]int) {
+
+    // will be loop func 
+    for d := range  delims_indexes {
+        delim_pair:=delims_indexes[d]
+        delimAsArray:=GetFixedArrayChars(lineAsArray, delim_pair)
+        delim:=strings.Join(delimAsArray,"")
+        parser:=MakeParser(delim)
+        subdata:=parser(lineAsArray)
+        data=append(data,subdata)
+
+    }
+    return data
 
 }

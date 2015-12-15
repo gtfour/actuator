@@ -41,11 +41,10 @@ func Parser(entry string) ( interface{} ) {
     return nil
 }
 
-func Escape_Spaces (entry string) (indexes [][]int) {
+func Escape_Spaces (oldlineAsArray []string) (indexes [][]int) {
     // 
     // Duplicate spaces will be present as one
     //
-    oldlineAsArray      := strings.Split(entry,"")
     lineAsArray      := ReplaceTabsToSpaces(oldlineAsArray)
     var pair         =  []int { -1, -1 }
     for i := range lineAsArray {
@@ -168,6 +167,29 @@ func EscapeDoubleSign_functionBuilder( sign_start, sign_end string   ) ( doubles
     }
     return doublesign_escaper
 }
+
+func EscapeSingleSign_functionBuilder( sign  string   ) ( singlesign_escaper  func ( lineAsArray []string ) ([][]int ) ) {
+
+    // returns function to find single pair of text between specialized sign
+    singlesign_escaper = func(lineAsArray []string) ( indexes [][]int) {
+
+    entry:=strings.Join(lineAsArray, "")
+    wordSplittedByEqualSign:= strings.Split(entry, sign)
+    offset:=0
+    for i := range wordSplittedByEqualSign {
+        word:=wordSplittedByEqualSign[i]
+        word_index:=strings.Index(entry[offset:], word)
+        var new_pair =  []int {(word_index+offset),(len(word)-1+offset)}
+        indexes=append(indexes, new_pair)
+        offset+=len(word)+1 // 1 is equal sign
+
+        }
+
+        return indexes
+    }
+    return singlesign_escaper
+}
+
 
 func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
 
@@ -428,14 +450,14 @@ func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
     clean_sign:=sign[clean_sign_indexes[0]:clean_sign_indexes[1]+1]
 
     sign=clean_sign
+    if sign == "" { sign = " " }
 
-    if sign == "=" {
-        return Escape_EqualSign
+    if IsSymbolIn(sign, SINGLE_SIGNS_LIST ) {
+        return EscapeSingleSign_functionBuilder(sign)
     }
     if IsSymbolIn(sign, DOUBLE_SIGNS_LIST )  {
         return EscapeDoubleSign_functionBuilder(sign, GetSignPair(sign))
     }
-
 
     return function
 
