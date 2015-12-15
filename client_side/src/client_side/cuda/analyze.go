@@ -296,27 +296,33 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
     //var words     = [][]int {}
     var delimPair = []int   {-1, -1}
 
-    //var offset int
+    var offset int
     for i:= range lineAsArray {
-        //offset = i
+        offset = i
         // have to add offset
         char:=lineAsArray[i]
         if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
             //fmt.Printf("\n next symbol is word: %v >>\n", IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM))
             if delimPair[0] == -1 {
+
                 delimPair[0]= i
+
             }
             delimPair[1] = i
-            if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true))) {
+            // seems error caused because i forgot abot space symbol
+            if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true)) ) {
 
-                    delimAsArray:=GetFixedArrayChars(lineAsArray, delimPair)
-                    fmt.Printf("\n [ delimAsArray : |||%v|||\n", delimAsArray)
+                    delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset], delimPair)
+                    fmt.Printf("\n lineAsArray[delimPair[0]:offset] : |||%v|||  \n", lineAsArray[delimPair[0]:offset])
                     delim_split_space:=Escape_Spaces(delimAsArray)
                     if len(delim_split_space) == 1 {
                         delims=append(delims, delimPair)
                         delimPair=[]int{-1, -1}
                     } else {
+                        fmt.Printf("\n -- delims splitted by space -- %v --\n",delim_split_space)
                         for sd := range delim_split_space {
+                           delim_ss_pair:=delim_split_space[sd]
+                           if len(delim_ss_pair) == 2 { delim_ss_pair[0]=delim_ss_pair[0]+offset ; delim_ss_pair[1]=delim_ss_pair[1]+offset  }
                            delims = append(delims, delim_split_space[sd])
                         }
                         delimPair=[]int{-1, -1}
