@@ -444,18 +444,22 @@ func Escape_Colon(entry string)(indexes [][]int) {
 func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
 
     // return function used for parse entry
+    fmt.Printf("\nParserMaker: |%s|\n", sign)
 
     sign_asArray:=strings.Split(sign,"")
     clean_sign_indexes:=RemoveSpaces(sign_asArray,BOTH)
     clean_sign:=sign[clean_sign_indexes[0]:clean_sign_indexes[1]+1]
 
     sign=clean_sign
-    if sign == "" { sign = " " }
+    fmt.Printf("\nParserMaker:Checking sign\n")
+    if sign == "" { sign = " " } // if delimiter was space we have to restore it
 
     if IsSymbolIn(sign, SINGLE_SIGNS_LIST ) {
+        fmt.Printf(":: MakeParser :: single :: sign %v ", sign)
         return EscapeSingleSign_functionBuilder(sign)
     }
     if IsSymbolIn(sign, DOUBLE_SIGNS_LIST )  {
+        fmt.Printf(":: MakeParser :: double :: sign %v ", sign)
         return EscapeDoubleSign_functionBuilder(sign, GetSignPair(sign))
     }
 

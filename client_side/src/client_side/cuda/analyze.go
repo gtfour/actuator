@@ -296,8 +296,10 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
     //var words     = [][]int {}
     var delimPair = []int   {-1, -1}
 
-    fmt.Printf("\n[ Array len %d  ]\n",len(lineAsArray))
+    //var offset int
     for i:= range lineAsArray {
+        //offset = i
+        // have to add offset
         char:=lineAsArray[i]
         if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
             //fmt.Printf("\n next symbol is word: %v >>\n", IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM))
@@ -308,9 +310,15 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
             if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true))) {
 
                     delimAsArray:=GetFixedArrayChars(lineAsArray, delimPair)
+                    fmt.Printf("\n [ delimAsArray : |||%v|||\n", delimAsArray)
                     delim_split_space:=Escape_Spaces(delimAsArray)
-                    if len(delim_split_space) == 0 {
+                    if len(delim_split_space) == 1 {
                         delims=append(delims, delimPair)
+                        delimPair=[]int{-1, -1}
+                    } else {
+                        for sd := range delim_split_space {
+                           delims = append(delims, delim_split_space[sd])
+                        }
                         delimPair=[]int{-1, -1}
                     }
 
@@ -359,7 +367,6 @@ func PrepareData(lineAsArray []string, delims_indexes [][]int ) (data [][][]int)
         parser:=MakeParser(delim)
         subdata:=parser(lineAsArray)
         data=append(data,subdata)
-
     }
     return data
 
