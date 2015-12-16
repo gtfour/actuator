@@ -287,14 +287,14 @@ func PopArrray( double [][]int) (single []int) {
     return single
 }
 
-func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
+func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
 
     // have to add check when two 
 
     //var cleanData = [][]int {}
-    var delims    = [][]int {}
     //var words     = [][]int {}
-    var delimPair = []int   {-1, -1}
+    var delimPair = []int   {-1,-1}
+    var dataPair  = []int   {-1,-1}
 
     var offset int
     for i:= range lineAsArray {
@@ -303,6 +303,13 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
         char:=lineAsArray[i]
         if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
             //fmt.Printf("\n next symbol is word: %v >>\n", IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM))
+            if dataPair[0]  != -1 {
+                dataPair[1] = i - 1 // make pair with previous element as second member of pair 
+                data      = append(data, dataPair)
+                dataPair  = []int   {-1,-1}
+
+
+            }
             if delimPair[0] == -1 {
 
                 delimPair[0]= i
@@ -314,9 +321,7 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
 
                     // +1 because see /actuator/tests/test_0038_arr.go
                     delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset+1], []int { 0, (delimPair[1]-delimPair[0]) }) // have to add +1 .but   why !??!? 
-                    fmt.Printf("\ndelimAsArray:|%v|\n",delimAsArray)
                     delim_split_space:=Escape_Spaces(delimAsArray)
-                    fmt.Printf("\nDelims:|%v|Len:|%d|\n",delim_split_space,len(delim_split_space))
                     if len(delim_split_space) == 1 {
                         delims=append(delims, delimPair)
                         delimPair=[]int{-1, -1}
@@ -335,9 +340,13 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
                     }
 
             }
-        } else { }
+        } else {
+            if dataPair[0]  == -1 {
+                dataPair[0] = i
+            }
+        }
     }
-    return delims
+    return delims,data
 }
 
 func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected []string) {

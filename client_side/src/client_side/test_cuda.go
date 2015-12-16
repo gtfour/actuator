@@ -8,7 +8,7 @@ import "strings"
 func main() {
 
     //line:="  2  2 2 2   2 22    32 32 3 23 2 32                               333"
-    line2:="           name   =   [ my_name ]      "
+    line2:=`log_format:  main`
     //line3:="                                     "
     //line3:="}}  }}"
     lineAsArray2:=strings.Split(line2, "")
@@ -16,8 +16,8 @@ func main() {
     cuda.DebugPrintCharCounter(line2)
     //parser:=cuda.MakeParser("[")
 
-    delims_indexes:=cuda.GetDelimsIndexes(lineAsArray2)
-    fmt.Printf("\nlineAsArray2: %v\n delims_indexes: %v \n" , lineAsArray2, delims_indexes)
+    delims,data:=cuda.GetIndexes(lineAsArray2)
+    fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
 
     /*for i := range delims_indexes{
 
