@@ -312,9 +312,11 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
             // seems error caused because i forgot abot space symbol
             if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true)) ) {
 
-                    delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset], []int { (delimPair[0]-delimPair[0]), (delimPair[1]-delimPair[0]) })
-                    fmt.Printf("\ndelimAsArray|%v|\n",delimAsArray)
+                    // +1 because see /actuator/tests/test_0038_arr.go
+                    delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset+1], []int { 0, (delimPair[1]-delimPair[0]) }) // have to add +1 .but   why !??!? 
+                    fmt.Printf("\ndelimAsArray:|%v|\n",delimAsArray)
                     delim_split_space:=Escape_Spaces(delimAsArray)
+                    fmt.Printf("\nDelims:|%v|Len:|%d|\n",delim_split_space,len(delim_split_space))
                     if len(delim_split_space) == 1 {
                         delims=append(delims, delimPair)
                         delimPair=[]int{-1, -1}
@@ -326,8 +328,8 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
                     } else {
                         for sd := range delim_split_space {
                            delim_ss_pair:=delim_split_space[sd]
-                           if len(delim_ss_pair) == 2 { delim_ss_pair[0]=delim_ss_pair[0]+offset ; delim_ss_pair[1]=delim_ss_pair[1]+offset  }
-                           delims = append(delims, delim_split_space[sd])
+                           if len(delim_ss_pair) == 2 { delim_ss_pair[0]=delim_ss_pair[0]+delimPair[0] ; delim_ss_pair[1]=delim_ss_pair[1]+delimPair[0]  }
+                           delims = append(delims, delim_ss_pair)
                         }
                         delimPair=[]int{-1, -1}
                     }
@@ -340,11 +342,18 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
 
 func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected []string) {
 
+    /*fmt.Printf("\n|||| Debug ||||\n")
+    DebugPrintCharCounter(strings.Join(lineAsArray,""))
+    fmt.Printf("== selected_indexes: %v\n",selected_indexes)
+    fmt.Printf("\n||||       ||||\n")*/
+
     for i := range  lineAsArray {
         char:= lineAsArray[i]
-        if i>=selected_indexes[0] && i<=selected_indexes[1] {
-            selected = append(selected, char)
-        }
+        if len(selected_indexes) == 2 {
+            if i>=selected_indexes[0] && i<=selected_indexes[1] {
+                selected = append(selected, char)
+            }
+        } else { break }
     }
     return selected
 }
