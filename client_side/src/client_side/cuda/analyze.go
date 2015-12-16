@@ -312,14 +312,18 @@ func GetDelimsIndexes ( lineAsArray []string ) ([][]int) {
             // seems error caused because i forgot abot space symbol
             if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true)) ) {
 
-                    delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset], delimPair)
-                    fmt.Printf("\n lineAsArray[delimPair[0]:offset] : |||%v|||  \n", lineAsArray[delimPair[0]:offset])
+                    delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset], []int { (delimPair[0]-delimPair[0]), (delimPair[1]-delimPair[0]) })
+                    fmt.Printf("\ndelimAsArray|%v|\n",delimAsArray)
                     delim_split_space:=Escape_Spaces(delimAsArray)
                     if len(delim_split_space) == 1 {
                         delims=append(delims, delimPair)
                         delimPair=[]int{-1, -1}
+                    } else if len(delim_split_space) == 0   {
+                       // it  seems that there are just a lot of spaces in delimAsArray  and nothing else  
+                        delimPair[1] = delimPair[0]
+                        delims=append(delims, delimPair)
+                        delimPair=[]int{-1, -1}
                     } else {
-                        fmt.Printf("\n -- delims splitted by space -- %v --\n",delim_split_space)
                         for sd := range delim_split_space {
                            delim_ss_pair:=delim_split_space[sd]
                            if len(delim_ss_pair) == 2 { delim_ss_pair[0]=delim_ss_pair[0]+offset ; delim_ss_pair[1]=delim_ss_pair[1]+offset  }
