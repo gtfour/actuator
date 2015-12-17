@@ -16,7 +16,8 @@ func main() {
     app.Static("/static","/actuator/wapour/static")
 
     app.GET("/overview", overview.Overview( gin.H{"static_url":STATIC_URL}) )
-    app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}) )
+    //app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL, "navigation_items":[]string{"Events","Actions","Triggers"}}) )
+    app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}))
 
     app.Run(":8090")
 
