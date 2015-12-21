@@ -26,7 +26,7 @@
         {{range $key := .navigation_items}}
         <li class="treeview">
           <a href="#">
-            <i class="fa fa-dashboard"></i> <span>{{ $key.Name }}</span> <i class="fa fa-angle-left pull-right"></i>
+            <i class="fa {{ $key.Icon }}"></i> <span>{{ $key.Name }}</span> <i class="fa fa-angle-left pull-right"></i>
           </a>
           <ul class="treeview-menu">
             {{range $subkey := $key.SubItems }}
@@ -34,7 +34,6 @@
             {{end}}
           </ul>
         </li>
-        <li><a href="../../documentation/index.html"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
         {{end}}
       </ul>
       {{end}} 
