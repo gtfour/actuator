@@ -21,7 +21,7 @@ func wshandler  (w http.ResponseWriter, r *http.Request ) {
             if err != nil {
                 break
             }
-            conn.WriteMessage(t, msg)
+            conn.WriteMessage(t, []byte(string(msg)+"\nhello\n"))
 
         }
 }
