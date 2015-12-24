@@ -87,6 +87,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
             for file_id :=range dir_struct.Files {
 
                 file_struct            :=  dir_struct.Files[file_id]
+                fmt.Printf("\ntgt path :%s\n",file_struct.Path)
                 prop               :=  actuator.GetProp(file_struct.Path)
 
                 if prop.Error == true { continue }

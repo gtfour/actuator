@@ -117,6 +117,7 @@ func (wp *WorkerPool)  AddWorker()(){
 func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     fmt.Printf("\n Appending target %s \n",tgt.GetPath())
+    //bug has been found : can't add targets more than 2 worker * TGT_PER_GR
 
     var tgt_replaced  bool
     var all_tgt_count int64
@@ -147,5 +148,7 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     average_tgt_per_worker:=all_tgt_count/int64(len(wp.Workers))
     if average_tgt_per_worker > TGT_PER_GR { wp.AddWorker() }
+
+    fmt.Printf("\ntarget %s  has been appended \n", tgt.GetPath())
 
 }

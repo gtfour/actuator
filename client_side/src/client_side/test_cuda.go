@@ -8,7 +8,7 @@ import "strings"
 func main() {
 
     //line:="  2  2 2 2   2 22    32 32 3 23 2 32                               333"
-    line2:=`log_format:  main`
+    line2:=`Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"`
     //line3:="                                     "
     //line3:="}}  }}"
     lineAsArray2:=strings.Split(line2, "")

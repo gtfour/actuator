@@ -307,13 +307,9 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
                 dataPair[1] = i - 1 // make pair with previous element as second member of pair 
                 data      = append(data, dataPair)
                 dataPair  = []int   {-1,-1}
-
-
             }
             if delimPair[0] == -1 {
-
                 delimPair[0]= i
-
             }
             delimPair[1] = i
             // seems error caused because i forgot abot space symbol
@@ -343,6 +339,10 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
         } else {
             if dataPair[0]  == -1 {
                 dataPair[0] = i
+            }
+            if (i==(len(lineAsArray)-1)) {
+                dataPair[1] = i
+                data      = append(data, dataPair)
             }
         }
     }
