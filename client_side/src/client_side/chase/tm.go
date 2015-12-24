@@ -50,7 +50,7 @@ func ( w *Worker ) Start ()  {
                 targets_count:=len(w.Targets)
                 for tgt := range w.Targets {
 
-                    if w.Targets[tgt].Chasing!=nil {
+                    if w.Targets[tgt].Chasing!=nil  {
 
                         err:=w.Targets[tgt].Chasing()
                         if err != nil { unused_tgt_numbers=append(unused_tgt_numbers,tgt) }
@@ -118,6 +118,7 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     fmt.Printf("\n Appending target %s \n",tgt.GetPath())
     //bug has been found : can't add targets more than 2 worker * TGT_PER_GR
+    // lol, seems that linked to message channel size
 
     var tgt_replaced  bool
     var all_tgt_count int64
@@ -130,7 +131,7 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
                 worker_target := worker.Targets[wtgt]
                 //fmt.Printf("\n tgt.Dir %s     worker_target_dir.Path %s\n",tgt.GetDir(),worker_target_dir.GetPath())
-                if tgt.GetPath() == worker_target.GetPath() { worker_target=tgt  ; tgt_replaced=true  ; break }
+                if tgt.GetPath() == worker_target.GetPath() { worker_target=tgt  ; tgt_replaced=true }   //; break }
                 all_tgt_count=all_tgt_count+1
 
             }
@@ -143,12 +144,11 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
         rand_digit = rand.Int31n(int32(len(wp.Workers)))
         wp.Workers[rand_digit].Append(tgt)
 
-        tgt.GetMessageChannel() <- actuator.Initial(tgt.GetProp(), tgt.GetPath())
+        //tgt.GetMessageChannel() <- actuator.Initial(tgt.GetProp(), tgt.GetPath())
     }
 
     average_tgt_per_worker:=all_tgt_count/int64(len(wp.Workers))
     if average_tgt_per_worker > TGT_PER_GR { wp.AddWorker() }
 
-    fmt.Printf("\ntarget %s  has been appended \n", tgt.GetPath())
 
 }
