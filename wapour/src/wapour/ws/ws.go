@@ -7,21 +7,25 @@ import "fmt"
 var wsupgrader = websocket.Upgrader {
     ReadBufferSize:  1024,
     WriteBufferSize: 1024,
+    CheckOrigin: func(r *http.Request) bool {
+                return true
+        },
 }
 
 func wshandler  (w http.ResponseWriter, r *http.Request ) {
 
        conn,err := wsupgrader.Upgrade(w, r, nil)
         if err !=nil {
-            fmt.Println("Failed to set websocket upgrade: %+v", err )
+            fmt.Println("Failed to set websocket upgrade: %v", err )
             return
         }
         for {
             t, msg, err:= conn.ReadMessage()
+            fmt.Printf("\nmsg %v\n",string(msg))
             if err != nil {
                 break
             }
-            conn.WriteMessage(t, []byte(string(msg)+"\nhello\n"))
+            conn.WriteMessage(t, []byte(string(msg)))
 
         }
 }

@@ -43,7 +43,7 @@ func CreateConnection ( origin, url string ) ( ws *websocket.Conn, err error ) {
 func main() {
 
     origin    :=  "http://127.0.0.1"
-    url       :=  "ws://127.0.0.1:8080/entry"
+    url       :=  "ws://127.0.0.1:8090/ws"
 
     ws,err :=  websocket.Dial( url, "", origin )
 
@@ -53,7 +53,7 @@ func main() {
 
     }
 
-    test:=&Event{Author:"venom",Body:"Package json implements encoding and decoding of JSON objects as defined in RFC 4627.\n The mapping between JSON objects and Go values is described in the documentation for the Marshal and Unmarshal functions.\nParsing a format like JSON in a statically typed language like Go presents a bit of a problem.\nIf anything could show up in the JSON body, how does the compiler know how to setup memory to have a spot to place everything?\n"}
+    test:=&Event{Author:"venom",Body:"Package:zenity-3.4.0-0ubuntu4\n"}
 
     test_serialized, err := json.Marshal(test)
 
