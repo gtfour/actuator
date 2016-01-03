@@ -53,7 +53,7 @@ func main() {
 
     }
 
-    test:=&Event{Author:"venom",Body:"Package:zenity-3.4.0-0ubuntu4\n"}
+    test:=&Event{Author:"venom",Body:"zenity-3.4.0-0ubuntu4"}
 
     test_serialized, err := json.Marshal(test)
 

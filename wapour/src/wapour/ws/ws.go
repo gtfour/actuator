@@ -12,7 +12,7 @@ var wsupgrader = websocket.Upgrader {
         },
 }
 
-func wshandler  (w http.ResponseWriter, r *http.Request ) {
+func wshandler (w http.ResponseWriter, r *http.Request ) {
 
        conn,err := wsupgrader.Upgrade(w, r, nil)
         if err !=nil {
@@ -26,7 +26,6 @@ func wshandler  (w http.ResponseWriter, r *http.Request ) {
                 break
             }
             conn.WriteMessage(t, []byte(string(msg)))
-
         }
 }
 
@@ -35,7 +34,8 @@ func wshandler  (w http.ResponseWriter, r *http.Request ) {
 func WS(data  gin.H)( func(c *gin.Context) ) {
 
     return func(c *gin.Context)  {
-        wshandler(c.Writer, c.Request)
+        //wshandler(c.Writer, c.Request)
+        serveWs(c.Writer, c.Request)
     }
 
 }
