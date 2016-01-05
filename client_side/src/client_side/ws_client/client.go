@@ -43,7 +43,7 @@ func CreateConnection ( origin, url string ) ( ws *websocket.Conn, err error ) {
 func main() {
 
     origin    :=  "http://127.0.0.1"
-    url       :=  "ws://127.0.0.1:8090/ws"
+    url       :=  "ws://127.0.0.1:8090/entry"
 
     ws,err :=  websocket.Dial( url, "", origin )
 
