@@ -13,12 +13,12 @@ type Item struct {
 
 func GetNavigationMenu()( []Item ){
 
-    logsList    := SubItem{Name:"list",Url:"#logs/list"}
-    logsAdd     := SubItem{Name:"add",Url:"#logs/add"}
+    filesList    := SubItem{Name:"list",Url:"#files/list"}
+    filesAdd     := SubItem{Name:"add",Url:"#files/add"}
     actionsList := SubItem{Name:"list",Url:"#actions/list"}
     actionsAdd  := SubItem{Name:"add",Url:"#actions/add"}
 
-    return  []Item { Item { Name:"Logs"    ,Icon: "fa-stack-overflow" ,SubItems:[]SubItem {logsList,    logsAdd   }  },
-                     Item { Name:"Actions" ,Icon: "fa-gamepad",SubItems:[]SubItem {actionsList, actionsAdd}  }}
+    return  []Item { Item { Name:"Files"    ,Icon: "fa-stack-overflow" ,SubItems:[]SubItem {filesList,    filesAdd }  },
+                     Item { Name:"Actions" ,Icon: "fa-gamepad",         SubItems:[]SubItem {actionsList, actionsAdd}  }}
 
 }

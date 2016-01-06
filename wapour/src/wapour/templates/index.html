@@ -3,9 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Data Tables</title>
+  <title>Wapour</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- anular-js -->
+  <script src="{{ .static_url }}js/angular.min.js"></script>
+  <script src="{{ .static_url }}js/angular-ui-router.min.js"></script>
+  <script src="{{ .static_url }}js/wapour_app.js"></script>
   <!-- Bootstrap 3.3.5 -->
   <link rel="stylesheet" href="{{ .static_url }}css/bootstrap.min.css">
   <!-- Font Awesome -->
@@ -27,7 +31,7 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
-<body class="hold-transition skin-blue-light sidebar-mini">
+<body class="hold-transition skin-blue-light sidebar-mini" ng-app="wapourApp">
 <div class="wrapper">
 
   <header class="main-header">

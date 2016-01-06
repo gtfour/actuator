@@ -1,4 +1,5 @@
-/*package ws
+package ws
+/*
 type hub struct {
     connections map[*connection]bool
     broadcast   chan[]byte

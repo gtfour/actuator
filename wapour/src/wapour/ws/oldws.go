@@ -1,4 +1,5 @@
-/*package ws
+package ws
+/*
 import "github.com/gin-gonic/gin"
 import "github.com/gorilla/websocket"
 import "net/http"
