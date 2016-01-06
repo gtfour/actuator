@@ -1,4 +1,4 @@
-package ws
+/*package ws
 
 import  "github.com/gorilla/websocket"
 import  "log"
@@ -85,3 +85,4 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 }
 
 
+*/
