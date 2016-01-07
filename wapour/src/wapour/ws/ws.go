@@ -105,9 +105,9 @@ func (s *Server) Listen() {
 }
 
 
-func WS(data gin.H)( func(c *gin.Context) ) {
+func wsserver(data gin.H)( func(c *gin.Context) ) {
 
-    server := NewServer()
+    //server := NewServer()
 
     return func(c *gin.Context)  {
         //wshandler(c.Writer, c.Request)
