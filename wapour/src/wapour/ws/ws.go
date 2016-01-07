@@ -3,6 +3,7 @@ package ws
 import "log"
 import "net/http"
 import "golang.org/x/net/websocket"
+import "github.com/gin-gonic/gin"
 
 type Server struct {
 
@@ -102,3 +103,16 @@ func (s *Server) Listen() {
         }
     }
 }
+
+
+func WS(data gin.H)( func(c *gin.Context) ) {
+
+    server := NewServer()
+
+    return func(c *gin.Context)  {
+        //wshandler(c.Writer, c.Request)
+        //serveWs(c.Writer, c.Request)
+    }
+
+}
+
