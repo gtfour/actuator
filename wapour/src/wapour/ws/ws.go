@@ -1,7 +1,7 @@
 package ws
 
 import "log"
-import "net/http"
+//import "net/http"
 import "golang.org/x/net/websocket"
 import "github.com/gin-gonic/gin"
 
@@ -15,6 +15,7 @@ type Server struct {
     sendAllChannel chan *Message
     doneChannel    chan bool
     errChannel     chan error
+    WShandler      websocket.Handler
 
 }
 
@@ -28,14 +29,14 @@ func NewServer (pattern string) *Server {
     errChannel     := make(chan error)
 
     return &Server {
-        pattern,
-        messages,
-        clients,
-        addChannel,
-        delChannel,
-        sendAllChannel,
-        doneChannel,
-        errChannel,
+        pattern:pattern,
+        messages:messages,
+        clients:clients,
+        addChannel:addChannel,
+        delChannel:delChannel,
+        sendAllChannel:sendAllChannel,
+        doneChannel:doneChannel,
+        errChannel:errChannel,
     }
 }
 
@@ -80,7 +81,8 @@ func (s *Server) Listen() {
         s.Add(client)
         client.Listen()
     }
-    http.Handle(s.pattern, websocket.Handler(onConnected))
+    //http.Handle(s.pattern, websocket.Handler(onConnected))
+    s.WShandler = websocket.Handler(onConnected)
     log.Println("Created handler")
     for {
         select {
@@ -105,13 +107,15 @@ func (s *Server) Listen() {
 }
 
 
-func wsserver(data gin.H)( func(c *gin.Context) ) {
+func WSserver(data gin.H, wshandler websocket.Handler)( func(c *gin.Context) ) {
 
     //server := NewServer()
 
     return func(c *gin.Context)  {
         //wshandler(c.Writer, c.Request)
         //serveWs(c.Writer, c.Request)
+        handler := wshandler
+        handler.ServeHTTP(c.Writer, c.Request)
     }
 
 }
