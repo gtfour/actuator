@@ -27,8 +27,8 @@ func NewServer (pattern string) *Server {
     sendAllChannel := make(chan *Message)
     doneChannel    := make(chan bool)
     errChannel     := make(chan error)
-
-    return &Server {
+    // gen ws handler
+    s:=&Server {
         pattern:pattern,
         messages:messages,
         clients:clients,
@@ -37,7 +37,25 @@ func NewServer (pattern string) *Server {
         sendAllChannel:sendAllChannel,
         doneChannel:doneChannel,
         errChannel:errChannel,
+        //s.WShandler:handler,
     }
+
+    onConnected := func(ws *websocket.Conn) {
+        defer func() {
+            err := ws.Close()
+            if err != nil {
+                s.errChannel <- err
+            }
+        }()
+        client := NewClient(ws, s)
+        s.Add(client)
+        client.Listen()
+    }
+    //http.Handle(s.pattern, websocket.Handler(onConnected))
+    s.WShandler = websocket.Handler(onConnected)
+    //s.WShandler := handler
+
+    return s
 }
 
 func (s *Server) Add (c *Client) {
@@ -70,19 +88,19 @@ func (s *Server) SendToAllClients (msg *Message) {
 
 func (s *Server) Listen() {
     log.Println("Listening server...")
-    onConnected := func(ws *websocket.Conn) {
-        defer func() {
-            err := ws.Close()
-            if err != nil {
-                s.errChannel <- err
-            }
-        }()
-        client := NewClient(ws, s)
-        s.Add(client)
-        client.Listen()
-    }
+    //onConnected := func(ws *websocket.Conn) {
+    //    defer func() {
+    //        err := ws.Close()
+    //        if err != nil {
+    //            s.errChannel <- err
+    //        }
+    //    }()
+    //    client := NewClient(ws, s)
+    //    s.Add(client)
+    //    client.Listen()
+    //}
     //http.Handle(s.pattern, websocket.Handler(onConnected))
-    s.WShandler = websocket.Handler(onConnected)
+    //s.WShandler = websocket.Handler(onConnected)
     log.Println("Created handler")
     for {
         select {
