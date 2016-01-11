@@ -8,7 +8,7 @@ var MODALTYPE_CREATE int8 = 3
 var MODALTYPE_EDIT   int8 = 4
 
 
-type Action struct {
+type TableAction struct {
 
     Name        string
     Type        int8

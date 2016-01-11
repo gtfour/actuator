@@ -24,6 +24,7 @@ type Table struct {
 
 func CreateTable()(t Table) {
 
+    t = Table{TemplateName:"table"}
     return t
 
 }
@@ -33,8 +34,8 @@ func (t *Table) AddAction ( ) {
 
 }
 
-func (t *Table) Render (data interface {})  ( fullfilled string ) {
+func (table *Table) Render ()( fullfilled string ) {
 
-    return RenderTemplate(t.TemplateName , t)
+    return RenderTemplate(table.TemplateName , table)
 
 }
