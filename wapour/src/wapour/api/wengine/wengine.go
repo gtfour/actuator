@@ -1,14 +1,15 @@
 package wengine
 
-type Feature struct {
-
-
-}
-
 type Api struct {
 
 }
 
+func GetApi(username string, password string, auth_host string) ( a Api ) {
+
+    a = Api{}
+    return a
+
+}
 
 func (a *Api) Login ()(err error) {
     return err
@@ -24,9 +25,9 @@ func (a *Api) HostsUp()(err error) {
 
 func (a *Api) ActionsList()(err error, actions []Action) {
 
-    actions = []Action { Action{Name:"partitions_list",Command:"cat /proc/partitions"}}
+    actions = []Action {Action{Name:"partitions_list",Command:"cat /proc/partitions"}, Action{Name:"networking",Command:"ifconfig -a"}}
 
-    return
+    return nil, actions
 
 
 }

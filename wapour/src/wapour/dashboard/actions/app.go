@@ -1,10 +1,11 @@
 package actions
+import . "wapour/api/wengine"
 
-type Action struct {
-
-}
 
 func Actions() () {
+
+    api := GetApi("","","")
+    err,actions:=api.ActionsList()
 
 
 }

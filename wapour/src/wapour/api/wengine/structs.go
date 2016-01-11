@@ -1,15 +1,18 @@
 package wengine
 
 
+type Seed struct {
+
+    Name    string
+    Action  Action
+    Value   string
+
+}
 
 type Feature struct {
 
-    name string
-    
-
-
-
-
+    Name   string
+    Seeds  []Seed
 
 }
 
