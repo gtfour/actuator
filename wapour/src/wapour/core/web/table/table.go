@@ -1,4 +1,5 @@
 package table
+import . "wapour/core/web"
 
 type Row  struct {
 
@@ -9,11 +10,15 @@ type Row  struct {
 type Table struct {
 
     Name         string
-    HeaderFields []string
-    FooterFields []string
+    Id           string
+    Title        string
+    HeaderFields Row
+    FooterFields Row
     Rows         []Row
     Paginate     bool
     Search       bool
+    Ajaxed       bool
+    TemplateName string
 
 }
 
@@ -28,3 +33,8 @@ func (t *Table) AddAction ( ) {
 
 }
 
+func (t *Table) Render (data interface {})  ( fullfilled string ) {
+
+    return RenderTemplate(t.TemplateName , t)
+
+}
