@@ -21,7 +21,9 @@ func main() {
     //app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL, "navigation_items":[]string{"Events","Actions","Triggers"}}) )
     app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}))
     app.GET("/wspage", wspage.WsPage(gin.H{ "static_url":STATIC_URL} ))
+    // FilesView
     app.GET("/dashboard/actions",dashboard.ActionsView(gin.H{ "static_url":STATIC_URL}) )
+    app.GET("/dashboard/files",dashboard.FilesView(gin.H{ "static_url":STATIC_URL}) )
 
     server:=ws.NewServer("/entry")
     go server.Listen()

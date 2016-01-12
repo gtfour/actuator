@@ -2,7 +2,6 @@ package actions
 import . "wapour/api/wengine"
 import . "wapour/core/web/table"
 
-
 func Actions() (string) {
 
     api := GetApi("","","")
@@ -11,7 +10,8 @@ func Actions() (string) {
     table.Name  = "Actions Table"
     table.Id    = "actions_table"
     table.Title = "Actions Table"
-    for id := range  action_list {
+    table.HeaderFields = []string {"Name","Command"}
+    for id := range action_list {
 
 
         action:=action_list[id]
@@ -24,3 +24,4 @@ func Actions() (string) {
 
 
 }
+

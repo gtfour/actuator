@@ -32,11 +32,11 @@ func (a *Api) ActionsList()(err error, actions []Action) {
 
 }
 
-func (a *Api) FilesList()(err error, actions []Action) {
+func (a *Api) FilesList()(err error, files []File) {
 
-    actions = []Action {Action{Name:"partitions_list",Command:"cat /proc/partitions"}, Action{Name:"networking",Command:"ifconfig -a"}}
+    files = []File {File{Name:"mountpoint_list",Path:"/etc/fstab",IsDir:false}, File{Name:"logs",Path:"/var/log",IsDir:true}}
 
-    return nil, actions
+    return nil, files
 
 
 }

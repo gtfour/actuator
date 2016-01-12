@@ -30,6 +30,7 @@ type File struct {
     Path      string
     Pool      Pool
     Directory string
+    IsDir     bool
 
 
 }
