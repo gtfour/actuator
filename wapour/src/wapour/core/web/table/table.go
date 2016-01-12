@@ -12,8 +12,8 @@ type Table struct {
     Name         string
     Id           string
     Title        string
-    HeaderFields Row
-    FooterFields Row
+    HeaderFields []string
+    FooterFields []string
     Rows         []Row
     Paginate     bool
     Search       bool
@@ -24,7 +24,7 @@ type Table struct {
 
 func CreateTable()(t Table) {
 
-    t = Table{TemplateName:"table"}
+    t = Table{TemplateName:"table.html"}
     return t
 
 }

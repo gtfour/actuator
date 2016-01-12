@@ -3,21 +3,21 @@ import . "wapour/api/wengine"
 import . "wapour/core/web/table"
 
 
-func Actions() (table Table) {
+func Actions() (string) {
 
     api := GetApi("","","")
-    _,actions:=api.ActionsList()
-    table=CreateTable()
-    for id := range  actions {
+    _,action_list:=api.ActionsList()
+    table:=CreateTable()
+    for id := range  action_list {
 
 
-        action:=actions[id]
+        action:=action_list[id]
         row   :=Row{}
         row.Fields=[]string{ action.Name, action.Command}
         table.Rows= append( table.Rows, row )
 
     }
-    return table
+    return table.Render()
 
 
 }
