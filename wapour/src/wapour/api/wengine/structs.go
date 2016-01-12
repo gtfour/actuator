@@ -25,6 +25,21 @@ type Action struct {
 
 type File struct {
 
+    Name      string
+    Type      int8
+    Path      string
+    Pool      Pool
+    Directory string
+
+
+}
+
+type Pool struct {
+
+    Name     string
+    Actions  []Action
+    Files    []File
+    Feature  []Feature
 
 }
 

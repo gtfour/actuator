@@ -31,3 +31,12 @@ func (a *Api) ActionsList()(err error, actions []Action) {
 
 
 }
+
+func (a *Api) FilesList()(err error, actions []Action) {
+
+    actions = []Action {Action{Name:"partitions_list",Command:"cat /proc/partitions"}, Action{Name:"networking",Command:"ifconfig -a"}}
+
+    return nil, actions
+
+
+}

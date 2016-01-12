@@ -24,7 +24,7 @@ type Table struct {
 
 func CreateTable()(t Table) {
 
-    t = Table{TemplateName:"table.html"}
+    t = Table{TemplateName:"core_table"}
     return t
 
 }

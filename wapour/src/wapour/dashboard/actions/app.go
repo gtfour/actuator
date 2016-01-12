@@ -8,6 +8,9 @@ func Actions() (string) {
     api := GetApi("","","")
     _,action_list:=api.ActionsList()
     table:=CreateTable()
+    table.Name  = "Actions Table"
+    table.Id    = "actions_table"
+    table.Title = "Actions Table"
     for id := range  action_list {
 
 
