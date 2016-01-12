@@ -47,3 +47,11 @@ type Pool struct {
 type Trigger struct {
 
 }
+
+type Host struct {
+
+    Id       string
+    Name     string
+    Features []Feature
+
+}

@@ -1,5 +1,4 @@
 package main
-import "wapour/overview"
 import "wapour/index"
 import "wapour/ws"
 import "wapour/wspage"
@@ -17,13 +16,14 @@ func main() {
     //app.LoadHTMLGlob("/actuator/actuator/wapour/src/wapour/core/web/templates/*") // load core templates
 
     app.Static("/static","/actuator/wapour/static")
-    app.GET("/overview", overview.Overview( gin.H{"static_url":STATIC_URL}) )
     //app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL, "navigation_items":[]string{"Events","Actions","Triggers"}}) )
     app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}))
     app.GET("/wspage", wspage.WsPage(gin.H{ "static_url":STATIC_URL} ))
     // FilesView
-    app.GET("/dashboard/actions",dashboard.ActionsView(gin.H{ "static_url":STATIC_URL}) )
-    app.GET("/dashboard/files",dashboard.FilesView(gin.H{ "static_url":STATIC_URL}) )
+    app.GET("/dashboard/actions",  dashboard.ActionsView( gin.H{ "static_url":STATIC_URL}) )
+    app.GET("/dashboard/files",    dashboard.FilesView(   gin.H{ "static_url":STATIC_URL}) )
+    app.GET("/dashboard/hosts",    dashboard.HostsView(   gin.H{ "static_url":STATIC_URL}) )
+    app.GET("/dashboard/overview", dashboard.Overview(    gin.H{ "static_url":STATIC_URL}) )
 
     server:=ws.NewServer("/entry")
     go server.Listen()

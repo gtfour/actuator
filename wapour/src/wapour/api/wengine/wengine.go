@@ -40,3 +40,12 @@ func (a *Api) FilesList()(err error, files []File) {
 
 
 }
+
+func (a *Api) HostsList()(err error, hosts []Host) {
+
+
+    hosts =  []Host {Host{Id:"f977dcf2"}, Host{Id:"k7qzyxlq"}, Host{Id:"0vswd9io"}, Host{Id:"fzdqmim6"}}
+
+    return nil, hosts
+
+}
