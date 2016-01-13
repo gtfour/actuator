@@ -1,1 +1,1 @@
-export GOPATH=/usr/share/go:/actuator/wengine_parts:/actuator/client_side:/actuator/wapour
+export GOPATH=/usr/share/go:/actuator/wengine:/actuator/client:/actuator/wapour
