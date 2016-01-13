@@ -19,3 +19,4 @@ func ( d *Dashboard ) GetData ()(xdata interface {}) {
     return
 
 }
+

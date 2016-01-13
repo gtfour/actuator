@@ -1,6 +1,12 @@
 package wengine
 
 type Api struct {
+    username   string
+    password   string
+    token      string
+    auth_url   string
+    auth_port  string
+    auth_proto string
 
 }
 
