@@ -2,10 +2,6 @@ package dusk
 
 import "wengine/core/utah"
 
-//type DBConnection struct {}
-//func CreateDBConnection (dbtype string )( d DBConnection ) { return }
-
-
 
 type Database interface {
 
@@ -18,16 +14,12 @@ type Database interface {
     //GetUser(id string)(user utah.User)
 }
 
-func GetUsers ( d Database )() {
-
-
-}
 
 func OpenDatabase ( dbtype, username, password, host, dbname  string) ( d Database ) {
 
     switch {
         case dbtype == "mongo":
-            d=MongoDb{username:username,
+            d=&MongoDb{username:username,
                       password:password,
                       host:host,
                       dbname:dbname}
@@ -35,11 +27,7 @@ func OpenDatabase ( dbtype, username, password, host, dbname  string) ( d Databa
             if err == nil {
                 return d
             }
-
-
         case dbtype == "postgres":
-
-
     }
     return nil
 }
