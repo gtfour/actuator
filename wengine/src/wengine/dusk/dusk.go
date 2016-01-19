@@ -7,11 +7,11 @@ type Database interface {
 
     Connect()(error)
     Close()()
-    CreateUser(user *utah.User)(err error)
+    CreateUser(*utah.User)(error)
     //GetUsers( []utah.User,error)
     //GetGroups([]utah.Group,error)
     //CreateUser(username string, password string)(id string ,err error)
-    //GetUser(id string)(user utah.User)
+    GetUser(id string)(utah.User,error)
 }
 
 
