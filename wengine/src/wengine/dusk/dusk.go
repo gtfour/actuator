@@ -13,6 +13,8 @@ type Database interface {
     //CreateUser(username string, password string)(id string ,err error)
     GetUserById(id string)(utah.User,error)
     GetUser(map[string]interface{})(utah.User,error)
+    RemoveUsersById(id ...string)(err error)
+    //RemoveUsers(map[string]interface{})
 }
 
 

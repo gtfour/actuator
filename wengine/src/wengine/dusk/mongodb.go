@@ -58,6 +58,17 @@ func (d *MongoDb)GetUser(user_prop map[string]interface{})(user utah.User,err er
     return user,nil
 }
 
+func (d *MongoDb)RemoveUsersById(ids ...string)(err error){
+
+    c      := d.Session.DB(d.dbname).C(d.users_c_name)
+    for id := range ids {
+        user_id:=ids[id]
+        err    =  c.Remove(bson.M{"id": user_id})
+        if err != nil { continue }
+    }
+    return nil
+}
+
 func (d *MongoDb)Close()() {
     d.Session.Close()
 }
