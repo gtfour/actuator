@@ -9,6 +9,7 @@ func main() {
 
     app      := gin.Default()
     database := dusk.OpenDatabase("mongo","wengine","OpenStack123","127.0.0.1","wengine")
+    defer database.Close()
     app.POST("/auth/:authModuleName",  utah.AuthRoute( gin.H{} ) )
     app.GET("/auth/:authModuleName",  utah.AuthRoute( gin.H{} ) )
     app.POST("/dusk/:duskModuleName", rest.DuskRoute( gin.H{},  database ) )
