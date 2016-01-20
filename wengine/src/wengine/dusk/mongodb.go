@@ -13,7 +13,12 @@ type MongoDb struct {
     password string
     host     string
     dbname   string
-
+    CollectionsNames
+}
+type CollectionsNames struct {
+    users_c_name      string
+    actions_c_name    string
+    dashboards_c_name string
 }
 func (d *MongoDb)GetUsers()([]string) {
     return d.Users
@@ -24,7 +29,7 @@ func (d *MongoDb)GetGroups()([]string) {
 }
 
 func (d *MongoDb)CreateUser(user *utah.User)(err error) {
-    c           := d.Session.DB(d.dbname).C("dashboard_users")
+    c           := d.Session.DB(d.dbname).C(d.users_c_name)
     user.Id,err = common.GenId()
     if err!=nil {
         return err
@@ -32,9 +37,21 @@ func (d *MongoDb)CreateUser(user *utah.User)(err error) {
     err         = c.Insert(user)
     return err
 }
-func (d *MongoDb)GetUser(id string)(user utah.User,err error) {
-    c      := d.Session.DB(d.dbname).C("dashboard_users")
+
+
+
+func (d *MongoDb)GetUserById(id string)(user utah.User,err error) {
+    c      := d.Session.DB(d.dbname).C(d.users_c_name)
     err    =  c.Find(bson.M{"id": id}).One(&user)
+    if err!=nil {
+        return user,err
+    }
+    return user,nil
+}
+
+func (d *MongoDb)GetUser(user_prop map[string]interface{})(user utah.User,err error) {
+    c      := d.Session.DB(d.dbname).C(d.users_c_name)
+    err    =  c.Find(bson.M(user_prop)).One(&user)
     if err!=nil {
         return user,err
     }
@@ -48,5 +65,6 @@ func (d *MongoDb)Close()() {
 func (d *MongoDb)Connect() ( err error ) {
     d.Session,err = mgo.Dial("mongodb://"+d.username+":"+d.password+"@"+d.host+"/"+d.dbname)
     d.Session.SetMode(mgo.Monotonic, true)
+    d.users_c_name="dashboard_users"
     return err
 }

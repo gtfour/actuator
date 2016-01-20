@@ -11,7 +11,8 @@ type Database interface {
     //GetUsers( []utah.User,error)
     //GetGroups([]utah.Group,error)
     //CreateUser(username string, password string)(id string ,err error)
-    GetUser(id string)(utah.User,error)
+    GetUserById(id string)(utah.User,error)
+    GetUser(map[string]interface{})(utah.User,error)
 }
 
 
