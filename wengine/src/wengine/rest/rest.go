@@ -16,6 +16,7 @@ func GetUserById( data  gin.H, database dusk.Database ,c *gin.Context)(func(c *g
         id             := c.PostForm("userid")
         user,err_db    := database.GetUserById(id)
         b, err_marshal := json.Marshal(user)
+        GetTokenFromCookies(c)
         if err_db == nil && err_marshal == nil  {
             return func(c *gin.Context ){
                 c.String(200, string(b))
