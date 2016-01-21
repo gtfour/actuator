@@ -15,6 +15,7 @@ type Database interface {
     GetUser(map[string]interface{})(utah.User,error)
     RemoveUsersById(id ...string)(err error)
     CreateToken(userid string)(token string,err error)
+    TokenIsExist(userid string, token_id string)(bool)
     //GetUserToken(userid string)(token string,error)
     //RemoveUserToken(userid string)(token string,error)
     //RemoveUsers(map[string]interface{})

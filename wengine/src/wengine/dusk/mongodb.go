@@ -82,6 +82,13 @@ func (d *MongoDb)RemoveUsersById(ids ...string)(err error){
     return nil
 }
 
+func(d *MongoDb)TokenIsExist(user_id string,token_id string ) (bool) {
+    token  := utah.Token{}
+    c      := d.Session.DB(d.dbname).C(d.tokens_c_name)
+    err    :=  c.Find(bson.M{"userid": user_id, "id":token_id}).One(&token)
+    if err!=nil { return false } else { return true }
+}
+
 func (d *MongoDb)Close()() {
     d.Session.Close()
 }
