@@ -12,8 +12,11 @@ func main() {
     defer database.Close()
     app.POST("/auth/:authModuleName",  utah.AuthRoute( gin.H{} ) )
     app.GET("/auth/:authModuleName",  utah.AuthRoute( gin.H{} ) )
-    app.POST("/dusk/:duskModuleName", rest.DuskRoute( gin.H{},  database ) )
-    app.GET("/dusk/:duskModuleName",  rest.DuskRoute( gin.H{},  database ) )
+    restapp:=app.Group("/rest")
+    {
+        restapp.POST("/user/:duskModuleName", rest.DuskUserRoute( gin.H{},  database ) )
+        restapp.GET("/user/:duskModuleName",  rest.DuskUserRoute( gin.H{},  database ) )
+    }
     app.Run(":9000")
 
 

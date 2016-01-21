@@ -2,7 +2,7 @@ package main
 import "wengine/dusk"
 //import "gopkg.in/mgo.v2/bson"
 //import .  "wengine/core/utah"
-//import "fmt"
+import "fmt"
 
 func main() {
 
@@ -16,5 +16,7 @@ func main() {
     //query["secondname"] = "Livshieshch"
     //existing_user,err:=d.GetUser(query)
     //fmt.Printf("==\n%v\n==\n%v\n==bson==\n%v",existing_user,err,bson.M(query))
-    d.RemoveUsersById("a","b","159E2D96-0AFF-3EBC-D01C-C2E3F3AD16A9")
+    //d.RemoveUsersById("a","b","159E2D96-0AFF-3EBC-D01C-C2E3F3AD16A9")
+    token,err:=d.CreateToken("AF35CEFC-1AEA-A399-7448-C2EF4B80E77F")
+    fmt.Printf("token:%s\nerr:%v",token,err)
 }
