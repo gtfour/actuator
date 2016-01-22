@@ -1,57 +1,57 @@
 package wengine
 
 
-type Seed struct {
+type _Seed struct {
 
     Name    string
-    Action  Action
+    Action  _Action
     Value   string
 
 }
 
-type Feature struct {
+type _Feature struct {
 
     Name   string
-    Seeds  []Seed
+    Seeds  []_Seed
 
 }
 
-type Action struct {
+type _Action struct {
 
     Name    string
     Command string
 
 }
 
-type File struct {
+type _File struct {
 
     Name      string
     Type      int8
     Path      string
-    Pool      Pool
+    Pool      _Pool
     Directory string
     IsDir     bool
 
 
 }
 
-type Pool struct {
+type _Pool struct {
 
     Name     string
-    Actions  []Action
-    Files    []File
-    Feature  []Feature
+    Actions  []_Action
+    Files    []_File
+    Feature  []_Feature
 
 }
 
-type Trigger struct {
+type _Trigger struct {
 
 }
 
-type Host struct {
+type _Host struct {
 
     Id       string
     Name     string
-    Features []Feature
+    Features []_Feature
 
 }

@@ -20,10 +20,13 @@ func main() {
     app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}))
     app.GET("/wspage", wspage.WsPage(gin.H{ "static_url":STATIC_URL} ))
     // FilesView
-    app.GET("/dashboard/actions",  dashboard.ActionsView( gin.H{ "static_url":STATIC_URL}) )
-    app.GET("/dashboard/files",    dashboard.FilesView(   gin.H{ "static_url":STATIC_URL}) )
-    app.GET("/dashboard/hosts",    dashboard.HostsView(   gin.H{ "static_url":STATIC_URL}) )
-    app.GET("/dashboard/overview", dashboard.Overview(    gin.H{ "static_url":STATIC_URL}) )
+    dashboard_app:=app.Group("/dashboard")
+    {
+        dashboard_app.GET("/actions",  dashboard.ActionsView( gin.H{ "static_url":STATIC_URL}) )
+        dashboard_app.GET("/files",    dashboard.FilesView(   gin.H{ "static_url":STATIC_URL}) )
+        dashboard_app.GET("/hosts",    dashboard.HostsView(   gin.H{ "static_url":STATIC_URL}) )
+        dashboard_app.GET("/overview", dashboard.Overview(    gin.H{ "static_url":STATIC_URL}) )
+    }
 
     server:=ws.NewServer("/entry")
     go server.Listen()
