@@ -9,10 +9,12 @@ var UTAH_PORT string = "35357"
 func AuthRoute( data  gin.H, database dusk.Database) ( func (c *gin.Context) ) {
     return func (c *gin.Context) {
         param:=c.Param("authModuleName")
-        fmt.Printf("\n--param: %s --\n",param)
         switch {
             case param == "login":
-                fmt.Printf("\n--login--\n")
+                username       := c.PostForm("username")
+                password       := c.PostForm("password")
+                _, success := database.UserPasswordIsCorrect(username,password)
+                if ( success == false ) { LoginFailed(c) } else { LoginSuccess(c) }
             case param == "logout":
                 fmt.Printf("\n--logout--\n")
         }

@@ -91,7 +91,7 @@ func(d *MongoDb)TokenIsExist(user_id string,token_id string ) (bool) {
 
 func(d *MongoDb)UserPasswordIsCorrect(username,password string)(string,bool) {
     user   := utah.User{}
-    c      := d.Session.DB(d.dbname).C(d.tokens_c_name)
+    c      := d.Session.DB(d.dbname).C(d.users_c_name)
     err    :=  c.Find(bson.M{"name": username, "password":password}).One(&user)
     if err!=nil { return "",false } else { return user.Id,true }
 }
