@@ -1,14 +1,26 @@
 package dashboard
 
 type Dashboard struct {
+    Id         string
+    Name       string
+    Title      string
+    set        ComponentSet
+}
 
-    datasource DataSource
+type ComponentSet struct {
+
+
+}
+
+type Componet interface {
+    GetType(string)
+    GetData([][]string)
+
 
 }
 
 type Table struct {
-
-
+    datasource DataSource
 }
 
 type Action struct {
