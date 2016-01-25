@@ -17,6 +17,7 @@ type Database interface {
     RemoveUsersById(id ...string)                   (err error)
     CreateToken(userid string)                      (token string,err error)
     TokenIsExist(userid string, token_id string)    (bool)
+    RemoveToken(user_id,token_id string)(error)
     GetAnUserToken(string)(string,error)
     UserPasswordIsCorrect(username ,password string)( user_id string, token_id string,exists bool)
     //GetUserToken(userid string)(token string,error)

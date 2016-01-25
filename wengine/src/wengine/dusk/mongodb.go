@@ -99,6 +99,13 @@ func(d *MongoDb)TokenIsExist(user_id string,token_id string ) (bool) {
     err    :=  c.Find(bson.M{"userid": user_id, "id":token_id}).One(&token)
     if err!=nil { return false } else { return true }
 }
+func(d *MongoDb)RemoveToken(token_id string ,user_id string)(error) {
+
+    c      := d.Session.DB(d.dbname).C(d.tokens_c_name)
+    err    := c.Remove(bson.M{"id": token_id,"userid":user_id })
+    return err
+
+}
 
 func(d *MongoDb)GetAnUserToken(user_id string) (string,error) {
     token  := utah.Token{}
