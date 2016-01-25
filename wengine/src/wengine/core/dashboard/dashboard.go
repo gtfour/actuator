@@ -1,10 +1,10 @@
 package dashboard
 
 type Dashboard struct {
-    Id         string
-    Name       string
-    Title      string
-    set        ComponentSet
+    Id           string
+    Name         string
+    Title        string
+    Composition  []Component
 }
 
 type ComponentSet struct {
@@ -12,7 +12,7 @@ type ComponentSet struct {
 
 }
 
-type Componet interface {
+type Component interface {
     GetType(string)
     GetData([][]string)
 

@@ -8,7 +8,7 @@ type Database interface {
 
     Connect()(error)
     Close()()
-    CreateUser(*utah.User)(error)
+    CreateUser(*utah.User)(user_id string,err error)
     //GetUsers( []utah.User,error)
     //GetGroups([]utah.Group,error)
     //CreateUser(username string, password string)(id string ,err error)
@@ -17,14 +17,15 @@ type Database interface {
     RemoveUsersById(id ...string)                   (err error)
     CreateToken(userid string)                      (token string,err error)
     TokenIsExist(userid string, token_id string)    (bool)
-    UserPasswordIsCorrect(username ,password string)( string,bool )
+    GetAnUserToken(string)(string,error)
+    UserPasswordIsCorrect(username ,password string)( user_id string, token_id string,exists bool)
     //GetUserToken(userid string)(token string,error)
     //RemoveUserToken(userid string)(token string,error)
     //RemoveUsers( map[string]interface{} )
     //
     // dashboard
-    CreateDashboard(*dashboard.Dashboard)( error )
-    GetDashboardById(dashboard_id string)(dashboard.Dashboard)
+    CreateDashboard(*dashboard.Dashboard)(dashboard_id string,err error )
+    //GetDashboardById(dashboard_id string)(dashboard.Dashboard)
 
 }
 

@@ -1,6 +1,7 @@
 package rest
 import "github.com/gin-gonic/gin"
 import "wengine/dusk"
+import "net/http"
 
 import "fmt"
 
@@ -13,8 +14,14 @@ func AuthRoute( data  gin.H, database dusk.Database) ( func (c *gin.Context) ) {
             case param == "login":
                 username       := c.PostForm("username")
                 password       := c.PostForm("password")
-                _, success := database.UserPasswordIsCorrect(username,password)
-                if ( success == false ) { LoginFailed(c) } else { LoginSuccess(c) }
+                userid,token,success := database.UserPasswordIsCorrect(username,password)
+                if ( success == false ) { LoginFailed(c) } else {
+                    cookie_userid := &http.Cookie{Name:USERID_COOKIE_FIELD_NAME, Value:userid}
+                    cookie_token  := &http.Cookie{Name:TOKEN_COOKIE_FIELD_NAME,  Value:token}
+                    http.SetCookie(c.Writer, cookie_userid)
+                    http.SetCookie(c.Writer, cookie_token)
+                    LoginSuccess(c)
+                }
             case param == "logout":
                 fmt.Printf("\n--logout--\n")
         }

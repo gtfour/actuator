@@ -3,6 +3,7 @@ import "gopkg.in/mgo.v2"
 import "gopkg.in/mgo.v2/bson"
 import "wengine/core/utah"
 import "wengine/core/common"
+import "wengine/core/dashboard"
 
 type MongoDb struct {
 
@@ -29,14 +30,24 @@ func (d *MongoDb)GetGroups()([]string) {
     return d.Users
 }
 
-func (d *MongoDb)CreateUser(user *utah.User)(err error) {
+func (d *MongoDb)CreateUser(user *utah.User)(user_id string, err error) {
     c           := d.Session.DB(d.dbname).C(d.users_c_name)
     user.Id,err = common.GenId()
     if err!=nil {
-        return err
+        return "",err
     }
     err         = c.Insert(user)
-    return err
+    return user.Id,err
+}
+
+func (d *MongoDb)CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id string, err error) {
+    c           := d.Session.DB(d.dbname).C(d.dashboards_c_name)
+    dashboard.Id,err = common.GenId()
+    if err!=nil {
+        return "",err
+    }
+    err         = c.Insert(dashboard)
+    return dashboard.Id,err
 }
 
 func (d *MongoDb)CreateToken(userid string)(token_id string,err error){
@@ -89,11 +100,33 @@ func(d *MongoDb)TokenIsExist(user_id string,token_id string ) (bool) {
     if err!=nil { return false } else { return true }
 }
 
-func(d *MongoDb)UserPasswordIsCorrect(username,password string)(string,bool) {
+func(d *MongoDb)GetAnUserToken(user_id string) (string,error) {
+    token  := utah.Token{}
+    c      := d.Session.DB(d.dbname).C(d.tokens_c_name)
+    err    :=  c.Find(bson.M{"userid": user_id}).One(&token)
+    if err!=nil { return "",err } else { return token.Id,nil  }
+}
+
+func(d *MongoDb)UserPasswordIsCorrect(username,password string)(string,string,bool) {
     user   := utah.User{}
     c      := d.Session.DB(d.dbname).C(d.users_c_name)
     err    :=  c.Find(bson.M{"name": username, "password":password}).One(&user)
-    if err!=nil { return "",false } else { return user.Id,true }
+    if err!=nil { return "","",false } else {
+        token_id,err:= d.GetAnUserToken(user.Id)
+        if err!= nil {
+            new_token_id,err := d.CreateToken(user.Id)
+            if err!=nil {
+                return "","",false
+            } else {
+                return user.Id,new_token_id,true
+            }
+
+        } else {
+            return user.Id, token_id, true
+
+        }
+        return "","",false
+    }
 }
 
 func (d *MongoDb)Close()() {
@@ -103,7 +136,8 @@ func (d *MongoDb)Close()() {
 func (d *MongoDb)Connect() ( err error ) {
     d.Session,err = mgo.Dial("mongodb://"+d.username+":"+d.password+"@"+d.host+"/"+d.dbname)
     d.Session.SetMode(mgo.Monotonic, true)
-    d.users_c_name="dashboard_users"
-    d.tokens_c_name = "user_tokens"
+    d.users_c_name      ="dashboard_users"
+    d.tokens_c_name     = "user_tokens"
+    d.dashboards_c_name = "dashboards"
     return err
 }
