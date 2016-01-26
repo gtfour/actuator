@@ -16,16 +16,20 @@ func main() {
     //app.LoadHTMLGlob("/actuator/actuator/wapour/src/wapour/core/web/templates/*") // load core templates
 
     app.Static("/static","/actuator/wapour/static")
-    //app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL, "navigation_items":[]string{"Events","Actions","Triggers"}}) )
     app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}))
     app.GET("/wspage", wspage.WsPage(gin.H{ "static_url":STATIC_URL} ))
-    // FilesView
     dashboard_app:=app.Group("/dashboard")
     {
         dashboard_app.GET("/actions",  dashboard.ActionsView( gin.H{ "static_url":STATIC_URL}) )
         dashboard_app.GET("/files",    dashboard.FilesView(   gin.H{ "static_url":STATIC_URL}) )
         dashboard_app.GET("/hosts",    dashboard.HostsView(   gin.H{ "static_url":STATIC_URL}) )
         dashboard_app.GET("/overview", dashboard.Overview(    gin.H{ "static_url":STATIC_URL}) )
+    }
+    auth_app:=app.Group("/auth")
+    {
+        auth_app.GET( "/login" )
+        auth_app.POST("/login" )
+        auth_app.GET( "/logout" )
     }
 
     server:=ws.NewServer("/entry")
