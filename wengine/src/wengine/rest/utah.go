@@ -2,17 +2,28 @@ package rest
 import "github.com/gin-gonic/gin"
 import "wengine/dusk"
 import "net/http"
+import "fmt"
 
 
 var UTAH_PORT string = "35357"
+
+type Credentials struct {
+    Username string `json:"username"`
+    Password string `json:"password"`
+}
 
 func AuthRoute( data  gin.H, database dusk.Database) ( func (c *gin.Context) ) {
     return func (c *gin.Context) {
         param:=c.Param("authModuleName")
         switch {
             case param == "login":
-                username       := c.PostForm("username")
-                password       := c.PostForm("password")
+                //username       := c.PostForm("username")
+                //password       := c.PostForm("password")
+                cred:=&Credentials{}
+                c.Bind(cred)
+                username       := cred.Username
+                password       := cred.Password
+                fmt.Printf("\nusername %s password %s\n",username,password)
                 userid,token,success := database.UserPasswordIsCorrect(username,password)
                 if ( success == false ) { LoginFailed(c) } else {
                     cookie_userid := &http.Cookie{Name:USERID_COOKIE_FIELD_NAME, Value:userid}
