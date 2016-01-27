@@ -93,12 +93,22 @@ func (d *MongoDb)RemoveUsersById(ids ...string)(err error){
     return nil
 }
 
-func(d *MongoDb)TokenIsExist(user_id string,token_id string ) (bool) {
+func(d *MongoDb)TokenExists(user_id string,token_id string ) (bool) {
     token  := utah.Token{}
     c      := d.Session.DB(d.dbname).C(d.tokens_c_name)
     err    :=  c.Find(bson.M{"userid": user_id, "id":token_id}).One(&token)
     if err!=nil { return false } else { return true }
 }
+
+func (d *MongoDb)DashboardExists(dashboard_id string)(bool){
+    dashboard  := dashboard.Dashboard{}
+    c          := d.Session.DB(d.dbname).C(d.dashboards_c_name)
+    err        := c.Find(bson.M{"id": dashboard_id}).One(&dashboard)
+    if err!=nil { return false } else { return true }
+
+
+}
+
 func(d *MongoDb)RemoveToken(token_id string ,user_id string)(error) {
 
     c      := d.Session.DB(d.dbname).C(d.tokens_c_name)
@@ -138,12 +148,30 @@ func(d *MongoDb)UserPasswordIsCorrect(username,password string)(string,string,bo
 
 func(d *MongoDb) AttachDashboardToUser (user_id,dashboard_id string)(error) {
     //user   := utah.User{}
+    if d.DashboardExists(dashboard_id) == false { return DashboardDoesNotExist()  }
     c      := d.Session.DB(d.dbname).C(d.users_c_name)
     err    :=  c.Update(bson.M{"id": user_id},bson.M{"$push":bson.M{"dashboardids": dashboard_id}})
     if err != nil { return err }
     return nil
-
 }
+
+func(d *MongoDb) GetMyDashboardList (user_id,token_id string)(dashboard_list []dashboard.Dashboard,err error) {
+    //user   := utah.User{}
+    if d.TokenExists(user_id,token_id) == false { return dashboard_list,TokenDoesNotExist() }
+    user:=utah.User{}
+    cu      := d.Session.DB(d.dbname).C(d.users_c_name)
+    err     =  cu.Find(bson.M{"id": user_id}).One(&user)
+    if err!= nil { return dashboard_list,err }
+    cd      := d.Session.DB(d.dbname).C(d.dashboards_c_name)
+    for d := range user.DashboardsIDs {
+        d_id:=user.DashboardsIDs[d]
+        dashboard:=dashboard.Dashboard{}
+        err     =  cd.Find(bson.M{"id": d_id}).One(&dashboard)
+        if err == nil { dashboard_list = append(dashboard_list, dashboard)  }
+    }
+    return dashboard_list,nil
+}
+
 
 func (d *MongoDb)Close()() {
     d.Session.Close()

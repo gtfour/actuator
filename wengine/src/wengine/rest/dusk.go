@@ -11,7 +11,7 @@ func DuskUserRoute( data  gin.H, database dusk.Database ) ( func (c *gin.Context
             param:=c.Param("duskModuleName")
             username,token:=GetTokenFromCookies(c)
             fmt.Printf("\nname:%s token:%s\n",username,token)
-            authorized := database.TokenIsExist(username,token)
+            authorized := database.TokenExists(username,token)
             switch {
                 case authorized == false:
                     Unauthorized(c)
