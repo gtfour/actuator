@@ -14,17 +14,19 @@ func AuthRoute( data  gin.H, database dusk.Database) ( func (c *gin.Context) ) {
         param:=c.Param("authModuleName")
         switch {
             case param == "login":
-                cred           :=&Credentials{}
-                c.Bind(cred)
-                username       := cred.Username
-                password       := cred.Password
-                userid,token,success := database.UserPasswordIsCorrect(username,password)
-                if ( success == false ) { c.JSON(401, gin.H{"status": "login_failed"}) } else {
-                    cookie_userid := &http.Cookie{Name:USERID_COOKIE_FIELD_NAME, Value:userid}
-                    cookie_token  := &http.Cookie{Name:TOKEN_COOKIE_FIELD_NAME,  Value:token}
-                    http.SetCookie(c.Writer, cookie_userid)
-                    http.SetCookie(c.Writer, cookie_token)
-                    c.JSON(200, gin.H{"status": "login_success"})
+                cred           := &Credentials{}
+                err            := c.Bind(cred)
+                if err != nil { c.JSON(401, gin.H{"status": "login_failed"}) } else {
+                    username       := cred.Username
+                    password       := cred.Password
+                    userid,token,success := database.UserPasswordIsCorrect(username,password)
+                    if ( success == false ) { c.JSON(401, gin.H{"status": "login_failed"}) } else {
+                        cookie_userid := &http.Cookie{Name:USERID_COOKIE_FIELD_NAME, Value:userid}
+                        cookie_token  := &http.Cookie{Name:TOKEN_COOKIE_FIELD_NAME,  Value:token}
+                        http.SetCookie(c.Writer, cookie_userid)
+                        http.SetCookie(c.Writer, cookie_token)
+                        c.JSON(200, gin.H{"status": "login_success"})
+                    }
                 }
             case param == "logout":
                 user_id, token_id := GetTokenFromCookies(c)

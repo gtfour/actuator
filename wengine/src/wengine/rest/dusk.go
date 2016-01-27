@@ -15,8 +15,11 @@ func DuskUserRoute( data  gin.H, database dusk.Database ) ( func (c *gin.Context
             switch {
                 case authorized == false:
                     Unauthorized(c)
-                case param == "getuserbyid":
+                case param == "get-user-by-id":
                     handler:=GetUserById( data, database, c )
+                    handler(c)
+                case param == "get-my-dashboards":
+                    handler:=GetMyDashboards( data, database, c )
                     handler(c)
             }
             }
