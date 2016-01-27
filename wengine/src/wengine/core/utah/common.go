@@ -22,12 +22,13 @@ var DASHBOARD_PERM_DELETE int = 1032
 
 type User struct {
 
-    Id         string
-    Name       string
-    SecondName string
-    Password   string
-    Admin      bool
-    Perms      []int
+    Id           string
+    Name         string
+    SecondName   string
+    Password     string
+    Admin        bool
+    Perms        []int
+    DashboardsIDs []string
 
 }
 

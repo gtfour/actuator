@@ -1,7 +1,7 @@
 package dusk
 
 import "wengine/core/utah"
-import "wengine/core/dashboard"
+//import "wengine/core/dashboard"
 
 
 type Database interface {
@@ -9,12 +9,19 @@ type Database interface {
     Connect()(error)
     Close()()
     CreateUser(*utah.User)(user_id string,err error)
+    RemoveUsersById(id ...string)                   (err error)
     //GetUsers( []utah.User,error)
     //GetGroups([]utah.Group,error)
     //CreateUser(username string, password string)(id string ,err error)
     GetUserById(id string)(utah.User,error)
     GetUser(map[string]interface{})                 (utah.User,error)
-    RemoveUsersById(id ...string)                   (err error)
+    //GetUserDashboards(user_id string)([]dashboard.Dashboard,error)
+    AttachDashboardToUser(user_id,dash_id string)(error)
+
+    //CreateDashboard(*dashboard.Dashboard)(error)
+    //RemoveDashboardById(dash_id string)(error)
+
+
     CreateToken(userid string)                      (token string,err error)
     TokenIsExist(userid string, token_id string)    (bool)
     RemoveToken(user_id,token_id string)(error)
@@ -25,7 +32,7 @@ type Database interface {
     //RemoveUsers( map[string]interface{} )
     //
     // dashboard
-    CreateDashboard(*dashboard.Dashboard)(dashboard_id string,err error )
+    //CreateDashboard(*dashboard.Dashboard)(dashboard_id string,err error )
     //GetDashboardById(dashboard_id string)(dashboard.Dashboard)
 
 }

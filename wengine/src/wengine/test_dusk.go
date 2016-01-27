@@ -1,14 +1,15 @@
 package main
 import "wengine/dusk"
 //import "gopkg.in/mgo.v2/bson"
-import .  "wengine/core/utah"
+//import .  "wengine/core/utah"
 //import "fmt"
 
 func main() {
 
     d:=dusk.OpenDatabase("mongo","wengine","OpenStack123","127.0.0.1","wengine")
-    user:=&User{Name:"Anna", Password:"SecretPassword123"}
-    d.CreateUser(user)
+    d.AttachDashboardToUser("AF35CEFC-1AEA-A399-7448-C2EF4B80E77F","8835CEFC-1AEA-A399-2222-C2EF4B80E77F")
+    //user:=&User{Name:"Anna", Password:"SecretPassword123"}
+    //d.CreateUser(user)
     //existing_user,err:=d.GetUserById("60F8FEE2-A6B9-45CF-24CA-B2795002C779")
     //fmt.Printf("--\n%v\n%v\n--",existing_user,err)
     //query:=make(map[string]interface{})

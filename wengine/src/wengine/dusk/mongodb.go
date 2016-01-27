@@ -136,6 +136,15 @@ func(d *MongoDb)UserPasswordIsCorrect(username,password string)(string,string,bo
     }
 }
 
+func(d *MongoDb) AttachDashboardToUser (user_id,dashboard_id string)(error) {
+    //user   := utah.User{}
+    c      := d.Session.DB(d.dbname).C(d.users_c_name)
+    err    :=  c.Update(bson.M{"id": user_id},bson.M{"$push":bson.M{"dashboardids": dashboard_id}})
+    if err != nil { return err }
+    return nil
+
+}
+
 func (d *MongoDb)Close()() {
     d.Session.Close()
 }

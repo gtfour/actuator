@@ -16,7 +16,6 @@ type Component interface {
     GetType(string)
     GetData([][]string)
 
-
 }
 
 type Table struct {
@@ -43,17 +42,12 @@ type Data interface {
 }
 
 func NewDashboard(name string)(d Dashboard) {
-
-
     return d
-
 }
 
 func ( d *Dashboard ) GetData ()(xdata interface {}) {
 
-
     return
-
 }
 
 
