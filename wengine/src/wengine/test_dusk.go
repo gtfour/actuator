@@ -10,7 +10,7 @@ func main() {
     d:=dusk.OpenDatabase("mongo","wengine","OpenStack123","127.0.0.1","wengine")
     new_dashboard       :=&dashboard.Dashboard{Id:"network_dashboard",Title:"Networking"}
     dashboard_id,_    :=d.CreateDashboard(new_dashboard)
-    d.AttachDashboardToUser("123A45A4-D165-A0DB-8268-0C883DBEDE69",dashboard_id)
+    d.AttachDashboardToUser("444BB6B6-61F8-9464-01AC-C14429FB2A59", dashboard_id)
     //d.AttachDashboardToUser("AF35CEFC-1AEA-A399-7448-C2EF4B80E77F","8835CEFC-1AEA-A399-2222-C2EF4B80E77F")
      
     //user:=&User{Name:"Anna", Password:"SecretPassword123"}

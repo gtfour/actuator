@@ -29,8 +29,9 @@ func AuthRoute( data  gin.H, database dusk.Database) ( func (c *gin.Context) ) {
                     }
                 }
             case param == "logout":
-                user_id, token_id := GetTokenFromCookies(c)
-                err               := database.RemoveToken(token_id,user_id)
+                token_id,user_id,err := GetTokenFromCookies(c)
+                if err!=nil {c.JSON(500, gin.H{"status": "not_logged_in"})}
+                err                  = database.RemoveToken(token_id,user_id)
                 if err!=nil { c.JSON(500, gin.H{"status": "logout_failed"})  } else {c.JSON(200, gin.H{"status": "logout_success"}) }
         }
     }

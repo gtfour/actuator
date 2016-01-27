@@ -1,11 +1,12 @@
 package rest
+import "errors"
 import "github.com/gin-gonic/gin"
 
 var TOKEN_COOKIE_FIELD_NAME string = "USER_TOKEN"
 var USERID_COOKIE_FIELD_NAME string = "USER_ID"
 
 
-func GetTokenFromCookies(c *gin.Context)(token string,user string) {
+func GetTokenFromCookies(c *gin.Context)(token string,user string,err error) {
     cookies:=c.Request.Cookies()
     for c := range cookies {
         cookie:=cookies[c]
@@ -17,7 +18,8 @@ func GetTokenFromCookies(c *gin.Context)(token string,user string) {
         }
 
     }
-    return user, token
+    if (user == "" || token == "") {  return token,user,errors.New("token or user was not found in cookie")  }
+    return token,user,nil
 }
 
 
