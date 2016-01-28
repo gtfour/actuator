@@ -1,5 +1,11 @@
 package dashboard
 
+type DashboardList struct {
+
+    List []Dashboard
+
+}
+
 type Dashboard struct {
     Id           string
     Name         string

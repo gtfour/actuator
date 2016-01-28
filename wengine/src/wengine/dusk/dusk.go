@@ -19,7 +19,7 @@ type Database interface {
     CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id string, err error)
     DashboardExists(dashboard_id string)(bool)
     AttachDashboardToUser(user_id,dash_id string)(error)
-    GetMyDashboardList(user_id,token_id string)(dashboard_list []dashboard.Dashboard,err error)
+    GetMyDashboardList(user_id,token_id string)(dashboard_list dashboard.DashboardList, err error)
 
     //CreateDashboard(*dashboard.Dashboard)(error)
     //RemoveDashboardById(dash_id string)(error)

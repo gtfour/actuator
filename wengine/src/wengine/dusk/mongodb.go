@@ -4,6 +4,7 @@ import "gopkg.in/mgo.v2/bson"
 import "wengine/core/utah"
 import "wengine/core/common"
 import "wengine/core/dashboard"
+import "fmt"
 
 type MongoDb struct {
 
@@ -150,24 +151,26 @@ func(d *MongoDb) AttachDashboardToUser (user_id,dashboard_id string)(error) {
     //user   := utah.User{}
     if d.DashboardExists(dashboard_id) == false { return DashboardDoesNotExist()  }
     c      := d.Session.DB(d.dbname).C(d.users_c_name)
-    err    :=  c.Update(bson.M{"id": user_id},bson.M{"$push":bson.M{"dashboardids": dashboard_id}})
+    err    :=  c.Update(bson.M{"id": user_id},bson.M{"$push":bson.M{"dashboards": dashboard_id}})
     if err != nil { return err }
     return nil
 }
 
-func(d *MongoDb) GetMyDashboardList (user_id,token_id string)(dashboard_list []dashboard.Dashboard,err error) {
+func(d *MongoDb) GetMyDashboardList (user_id,token_id string)(dashboard_list dashboard.DashboardList,err error) {
     //user   := utah.User{}
     if d.TokenExists(user_id,token_id) == false { return dashboard_list,TokenDoesNotExist() }
     user:=utah.User{}
     cu      := d.Session.DB(d.dbname).C(d.users_c_name)
     err     =  cu.Find(bson.M{"id": user_id}).One(&user)
+    fmt.Printf("\n user: %v\n",user)
     if err!= nil { return dashboard_list,err }
     cd      := d.Session.DB(d.dbname).C(d.dashboards_c_name)
-    for d := range user.DashboardsIDs {
-        d_id:=user.DashboardsIDs[d]
+    for d := range user.Dashboards {
+        d_id:=user.Dashboards[d]
         dashboard:=dashboard.Dashboard{}
         err     =  cd.Find(bson.M{"id": d_id}).One(&dashboard)
-        if err == nil { dashboard_list = append(dashboard_list, dashboard)  }
+        fmt.Printf("\nd_id%s\n",d_id)
+        if err == nil { dashboard_list.List = append(dashboard_list.List, dashboard)  }
     }
     return dashboard_list,nil
 }

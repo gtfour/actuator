@@ -8,13 +8,14 @@ import "wengine/core/dashboard"
 func main() {
 
     d:=dusk.OpenDatabase("mongo","wengine","OpenStack123","127.0.0.1","wengine")
+    // user:=&User{Name:"Anna", Password:"SecretPassword123"}
+    // d.CreateUser(user)
     new_dashboard       :=&dashboard.Dashboard{Id:"network_dashboard",Title:"Networking"}
     dashboard_id,_    :=d.CreateDashboard(new_dashboard)
-    d.AttachDashboardToUser("444BB6B6-61F8-9464-01AC-C14429FB2A59", dashboard_id)
-    //d.AttachDashboardToUser("AF35CEFC-1AEA-A399-7448-C2EF4B80E77F","8835CEFC-1AEA-A399-2222-C2EF4B80E77F")
-     
-    //user:=&User{Name:"Anna", Password:"SecretPassword123"}
-    //d.CreateUser(user)
+    d.AttachDashboardToUser("0F9E5D81-DEA7-7915-3DC1-E3BD9EF99C6C", dashboard_id)
+    // d.AttachDashboardToUser("AF35CEFC-1AEA-A399-7448-C2EF4B80E77F","8835CEFC-1AEA-A399-2222-C2EF4B80E77F")
+    // user:=&User{Name:"Anna", Password:"SecretPassword123"}
+    // d.CreateUser(user)
     //existing_user,err:=d.GetUserById("60F8FEE2-A6B9-45CF-24CA-B2795002C779")
     //fmt.Printf("--\n%v\n%v\n--",existing_user,err)
     //query:=make(map[string]interface{})
