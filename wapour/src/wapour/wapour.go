@@ -3,6 +3,7 @@ import "wapour/index"
 import "wapour/ws"
 import "wapour/wspage"
 import "wapour/dashboard"
+import "wapour/api/webclient"
 import "github.com/gin-gonic/gin"
 
 var STATIC_DIR           = "/actuator/wapour/static"
@@ -10,6 +11,9 @@ var STATIC_URL           = "/static/main/"
 
 
 func main() {
+
+
+    users:=make([]*webclient.WengineWrapper,0)
 
     app:= gin.Default()
     app.LoadHTMLGlob("/actuator/wapour/src/wapour/templates/*")                   // load app  templates
@@ -28,7 +32,7 @@ func main() {
     auth_app:=app.Group("/auth")
     {
         auth_app.GET( "/login", index.Login(gin.H{ "static_url":STATIC_URL}) )
-        auth_app.POST("/login" )
+        auth_app.POST("/login", index.LoginPost(gin.H{ "static_url":STATIC_URL}, users) )
         auth_app.GET( "/logout" )
     }
 

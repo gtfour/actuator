@@ -3,6 +3,7 @@ package webclient
 import "net/http"
 import "encoding/json"
 import "bytes"
+import "errors"
 import "wapour/settings"
 
 //import "io/ioutil"
@@ -39,7 +40,7 @@ func (wp *WengineWrapper )Connect()(error) {
     if err!=nil {  return err }
     defer                       resp.Body.Close()
     wp.UserId,wp.TokenId    = GetResponseCookies(resp)
-
+    if (wp.UserId=="" || wp.TokenId == "")  { return errors.New("token_id or user_id was not found in cookie") }
     return nil
 
 }
