@@ -5,8 +5,8 @@ import "wapour/wspage"
 import "wapour/dashboard"
 import "github.com/gin-gonic/gin"
 
-var STATIC_DIR = "/actuator/wapour/static"
-var STATIC_URL = "/static/main/"
+var STATIC_DIR           = "/actuator/wapour/static"
+var STATIC_URL           = "/static/main/"
 
 
 func main() {
