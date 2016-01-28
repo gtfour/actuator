@@ -3,7 +3,7 @@ package webclient
 import "net/http"
 import "encoding/json"
 import "bytes"
-import "io/ioutil"
+//import "io/ioutil"
 import "fmt"
 
 type Proxy interface {
@@ -17,14 +17,21 @@ type Proxy interface {
 }
 
 type WengineProxy struct {
-
-
     username       string
     password       string
     url            string
-    proxyUserId    string
-    proxyUserToken string
+    user_id        string
+    token_id       string
+    //proxyUserId    string
+    //proxyUserToken string
     client         *http.Client
+}
+
+type WengineUser struct {
+
+    user_id  string
+    token_id string
+
 
 }
 
@@ -53,11 +60,12 @@ func (wp *WengineProxy )Connect()(error) {
     //
     if err!=nil { return err }
     defer resp.Body.Close()
+    wp.user_id,wp.token_id=GetResponseCookies(resp)
 
-    fmt.Println("response Status:", resp.Status)
-    fmt.Println("response Headers:", resp.Header)
-    body, _ := ioutil.ReadAll(resp.Body)
-    fmt.Println("response Body:", string(body))
+    //fmt.Println("response Status:", resp.Status)
+    //fmt.Println("response Headers:", resp.Header)
+    //body, _ := ioutil.ReadAll(resp.Body)
+    //fmt.Println("response Body:", string(body))
     return nil
 
 }
@@ -85,4 +93,18 @@ func SetAuthCookie( r *http.Request , user_id string, token_id string )(error) {
 
 }
 
-
+func GetResponseCookies(response *http.Response)(user_id string,token_id string) {
+    var TOKEN_COOKIE_FIELD_NAME  string = "USER_TOKEN"
+    var USERID_COOKIE_FIELD_NAME string = "USER_ID"
+    cookies:=response.Cookies()
+    for i := range cookies {
+        cookie:=cookies[i]
+        if cookie.Name == TOKEN_COOKIE_FIELD_NAME {
+            token_id = cookie.Value
+        }
+        if cookie.Name == USERID_COOKIE_FIELD_NAME  {
+            user_id = cookie.Value
+        }
+    }
+    return
+}

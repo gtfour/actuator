@@ -23,12 +23,7 @@ type SpiritProp struct {
 }
 
 type Difference struct {
-
     field string
-
-
-
-
 }
 
 
@@ -40,9 +35,7 @@ func Open()(s Storage) {
 }
 
 func (s *Storage) Close () {
-
     s.Db.Close()
-
 }
 
 func(s *Storage) CallSpirit (path string) (data []byte)  {
@@ -74,7 +67,6 @@ func CreateNewbie (path string)(sp SpiritProp)  {
 }
 
 func Compare( newbie, spirit *SpiritProp ) (difference []string)  {
-
 
     return
 

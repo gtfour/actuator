@@ -27,7 +27,7 @@ func main() {
     }
     auth_app:=app.Group("/auth")
     {
-        auth_app.GET( "/login" )
+        auth_app.GET( "/login", index.Login(gin.H{ "static_url":STATIC_URL}) )
         auth_app.POST("/login" )
         auth_app.GET( "/logout" )
     }

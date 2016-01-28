@@ -15,6 +15,7 @@ type Event struct {
 
     Date string
     Path string
+    Type string
 
 }
 

@@ -14,3 +14,12 @@ func Index( data  gin.H, params ...[]string )(func (c *gin.Context)) {
     }
 
 }
+
+func Login(data  gin.H, params ...[]string ) (func (c *gin.Context)) {
+
+    template_name:="login.html"
+    return  func(c *gin.Context ){
+        c.HTML(200, template_name,  data )
+    }
+
+}
