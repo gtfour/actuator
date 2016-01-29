@@ -20,7 +20,7 @@ func main() {
     //app.LoadHTMLGlob("/actuator/actuator/wapour/src/wapour/core/web/templates/*") // load core templates
 
     app.Static("/static","/actuator/wapour/static")
-    app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}))
+    app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}, users))
     app.GET("/wspage", wspage.WsPage(gin.H{ "static_url":STATIC_URL} ))
     dashboard_app:=app.Group("/dashboard")
     {
