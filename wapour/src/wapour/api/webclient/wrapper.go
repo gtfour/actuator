@@ -77,10 +77,10 @@ func GetResponseCookies(response *http.Response)(user_id string,token_id string)
     return
 }
 
-func FindWrapper(user_id string,token_id string ,wrappers []*WengineWrapper )(w *WengineWrapper) {
+func FindWrapper(user_id string,token_id string ,wrappers *[]*WengineWrapper )(w *WengineWrapper) {
 
-    for w := range wrappers {
-        wrapper:=wrappers[w]
+    for w := range (*wrappers) {
+        wrapper:=(*wrappers)[w]
         if wrapper.UserId == user_id && wrapper.TokenId == token_id {
             return wrapper
         }
@@ -88,6 +88,6 @@ func FindWrapper(user_id string,token_id string ,wrappers []*WengineWrapper )(w 
     return nil
 }
 
-func   AppendWrapper ( wrappers []*WengineWrapper,w *WengineWrapper ) {
-    wrappers=append(wrappers,w)
+func   AppendWrapper ( wrappers *[]*WengineWrapper,w *WengineWrapper ) {
+    (*wrappers)=append((*wrappers),w)
 }

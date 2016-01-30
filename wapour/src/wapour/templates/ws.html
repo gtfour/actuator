@@ -1,32 +1,74 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <script src="{{ .static_url }}js/jQuery-2.1.4.min.js"></script>
-  </head>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Sample of websocket with golang</title>
+    <link rel="stylesheet" href="{{ .static_url }}/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ .static_url }}/css/bootstrap-responsive.min.css">
+		<script src="{{ .static_url }}/js/jQuery-2.1.4.min.js">
+		<script src="{{ .static_url }}/js/bootstrap.min.js"></script>
+		</script>
+		<script src="{{ .static_url }}/js/knockout-3.4.0.js">
+		</script>
+		<script src="{{ .static_url }}/js/jquery.json-2.5.1.min.js">
+		</script>
+		<script data-main="{{ .static_url }}/js/wschat/main" src="{{ .static_url }}/js/require.js">
+		</script>
+	</head>
 
-  <body>
-    <h3>WebSocket Go</h3>
-    <pre id="output"></pre>
+	<body>
 
-    <script>
-      url = 'ws://127.0.0.1:8090/ws';
-      c = new WebSocket(url);
-      
-      send = function(data){
-        $("#output").append((new Date())+" "+ data+"::send>>\n")
-        c.send(data)
-      }
+	<div class="grid-row">
 
-      c.onmessage = function(msg){
-        $("#output").append((new Date())+" "+msg.data+"::receive>>\n")
-        console.log(msg)
-      }
+		<div class="span3">
+		</div>
 
-      c.onopen = function(){
-        //setInterval( 
-       //   function(){ send("ping") }
-       // , 1000 )
-      }
-    </script>
+		<div class="span6">
 
-  </body>
+			<h1>Input</h1>
+			<form class="well form-horizontal" data-bind="with: editingMessage">
+
+				<!-- Author -->
+				<div class="control-group">
+					<label class="control-label" for="inputAuthor">Author :</label>
+					<div class="controls">
+						<input id="inputAuthor" type="text" data-bind="value: author"/>
+					</div>
+				</div>
+
+				<!-- Body -->
+				<div class="control-group">
+					<label class="control-label" for="inputBody">Message :</label>
+					<div class="controls">
+						<textarea id="inputBody" data-bind="value: body">
+						</textarea>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<div class="controls">
+						<a href="#" class="btn pull-right" data-bind="click: $parent.send.bind($parent)">Send</a>
+					</div>
+				</div>
+			</form>
+
+			<h1>Messages</h1>
+			<div data-bind="foreach: messages">
+				<div>
+					<h3>
+						<!-- ko text: author --><!-- /ko -->
+						says :
+					</h3>
+					<pre data-bind="text:body">
+					</pre>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="span3">
+		</div>
+
+	</body>
 </html>
+

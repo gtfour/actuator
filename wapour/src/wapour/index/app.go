@@ -11,7 +11,7 @@ var TOKEN_COOKIE_FIELD_NAME string = "USER_TOKEN"
 var USERID_COOKIE_FIELD_NAME string = "USER_ID"
 
 
-func Index( data  gin.H, wrappers []*webclient.WengineWrapper,  params ...[]string )(func (c *gin.Context)) {
+func Index( data  gin.H, wrappers *[]*webclient.WengineWrapper,  params ...[]string )(func (c *gin.Context)) {
 
     template_name  := "index.html"
     navigaton_menu := GetNavigationMenu()
@@ -33,15 +33,17 @@ func Login(data  gin.H, params ...[]string ) (func (c *gin.Context)) {
     }
 }
 
-func LoginPost ( data  gin.H, wrappers []*webclient.WengineWrapper, params ...[]string ) (func (c *gin.Context)) {
+func LoginPost ( data  gin.H, wrappers *[]*webclient.WengineWrapper, params ...[]string ) (func (c *gin.Context)) {
     return func(c *gin.Context) {
         username := c.PostForm("username")
         password := c.PostForm("password")
         w, err :=  webclient.Init(username, password)
         if err != nil { c.Redirect(302,settings.SERVER_URL+"/auth/login") } else {
-            if user := webclient.FindWrapper(w.UserId, w.TokenId, wrappers); user == nil {
+            user := webclient.FindWrapper(w.UserId, w.TokenId, wrappers)
+            if user == nil {
                 webclient.AppendWrapper(wrappers, &w)
             }
+            fmt.Printf("---  user_wrapper: %v",user)
             cookie_userid := &http.Cookie{Name:USERID_COOKIE_FIELD_NAME, Value:w.UserId, Path:"/", Domain:settings.SERVER_ADDR }
             cookie_token  := &http.Cookie{Name:TOKEN_COOKIE_FIELD_NAME,  Value:w.TokenId, Path:"/", Domain:settings.SERVER_ADDR }
             /*if settings.SERVER_PROTO == "http" {
@@ -61,9 +63,9 @@ func LoginPost ( data  gin.H, wrappers []*webclient.WengineWrapper, params ...[]
 }
 
 
-func IsAuthorized( c *gin.Context , wrappers []*webclient.WengineWrapper)(bool) {
+func IsAuthorized( c *gin.Context , wrappers *[]*webclient.WengineWrapper)(bool) {
     token_id,user_id,err:=GetTokenFromCookies(c)
-    fmt.Printf("\nCheck is authorized %s %s %v\n",token_id,user_id,err)
+    fmt.Printf("\nCheck is authorized %s %s %v\n wrappers: %v \n",token_id,user_id,err,wrappers)
     if err!= nil {return false}
     w := webclient.FindWrapper(user_id,token_id,wrappers)
     if w == nil {return false} else { return true}

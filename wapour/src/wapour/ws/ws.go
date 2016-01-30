@@ -2,6 +2,7 @@ package ws
 
 import "log"
 //import "net/http"
+import "fmt"
 import "golang.org/x/net/websocket"
 import "github.com/gin-gonic/gin"
 
@@ -128,13 +129,11 @@ func (s *Server) Listen() {
 func WSserver(data gin.H, wshandler websocket.Handler)( func(c *gin.Context) ) {
 
     //server := NewServer()
-
     return func(c *gin.Context)  {
         //wshandler(c.Writer, c.Request)
         //serveWs(c.Writer, c.Request)
+        fmt.Printf("\n<ws handler is working>\n")
         handler := wshandler
         handler.ServeHTTP(c.Writer, c.Request)
     }
-
 }
-
