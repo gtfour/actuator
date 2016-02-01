@@ -31,6 +31,14 @@ wapourApp.config(function($stateProvider, $urlRouterProvider ) {
                  $templateCache.remove('dashboard/hosts')
              }
 
+        })
+        .state('websocket', {
+             url:'/wspage',
+             templateUrl: 'wspage',
+             controller: function($scope, $templateCache ) {
+                 $templateCache.remove('wspage')
+             }
+
         });
 
 
