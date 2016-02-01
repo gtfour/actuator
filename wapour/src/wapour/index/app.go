@@ -1,14 +1,10 @@
 package index
 
 import "net/http"
-import "errors"
-import "fmt"
 import "github.com/gin-gonic/gin"
 import "wapour/settings"
 import "wapour/api/webclient"
-
-var TOKEN_COOKIE_FIELD_NAME string = "USER_TOKEN"
-var USERID_COOKIE_FIELD_NAME string = "USER_ID"
+import "wapour/auth"
 
 
 func Index( data  gin.H, wrappers *[]*webclient.WengineWrapper,  params ...[]string )(func (c *gin.Context)) {
@@ -17,7 +13,7 @@ func Index( data  gin.H, wrappers *[]*webclient.WengineWrapper,  params ...[]str
     navigaton_menu := GetNavigationMenu()
     data["navigation_items"] = navigaton_menu
     return  func(c *gin.Context ){
-        if IsAuthorized(c,wrappers) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login") }
+        if auth.IsAuthorized(c,wrappers) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login") }
     }
 }
 
@@ -43,46 +39,12 @@ func LoginPost ( data  gin.H, wrappers *[]*webclient.WengineWrapper, params ...[
             if user == nil {
                 webclient.AppendWrapper(wrappers, &w)
             }
-            fmt.Printf("---  user_wrapper: %v",user)
-            cookie_userid := &http.Cookie{Name:USERID_COOKIE_FIELD_NAME, Value:w.UserId, Path:"/", Domain:settings.SERVER_ADDR }
-            cookie_token  := &http.Cookie{Name:TOKEN_COOKIE_FIELD_NAME,  Value:w.TokenId, Path:"/", Domain:settings.SERVER_ADDR }
-            /*if settings.SERVER_PROTO == "http" {
-                cookie_userid.HttpOnly = true
-                cookie_token.HttpOnly  = true
-            }
-            if settings.SERVER_PROTO == "https" {
-                cookie_userid.Secure = true
-                cookie_token.Secure  = true
-            }*/
+            cookie_userid := &http.Cookie{Name:settings.USERID_COOKIE_FIELD_NAME, Value:w.UserId, Path:"/", Domain:settings.SERVER_ADDR }
+            cookie_token  := &http.Cookie{Name:settings.TOKEN_COOKIE_FIELD_NAME,  Value:w.TokenId, Path:"/", Domain:settings.SERVER_ADDR }
             http.SetCookie(c.Writer, cookie_userid)
             http.SetCookie(c.Writer, cookie_token)
 
             c.Redirect(302,settings.SERVER_URL+"/index")
         }
     }
-}
-
-
-func IsAuthorized( c *gin.Context , wrappers *[]*webclient.WengineWrapper)(bool) {
-    token_id,user_id,err:=GetTokenFromCookies(c)
-    fmt.Printf("\nCheck is authorized %s %s %v\n wrappers: %v \n",token_id,user_id,err,wrappers)
-    if err!= nil {return false}
-    w := webclient.FindWrapper(user_id,token_id,wrappers)
-    if w == nil {return false} else { return true}
-}
-
-func GetTokenFromCookies(c *gin.Context)(token string,user string,err error) {
-    cookies:=c.Request.Cookies()
-    for c := range cookies {
-        cookie:=cookies[c]
-        if cookie.Name == TOKEN_COOKIE_FIELD_NAME {
-            token = cookie.Value
-        }
-        if cookie.Name == USERID_COOKIE_FIELD_NAME  {
-            user = cookie.Value
-        }
-
-    }
-    if (user == "" || token == "") {  return token,user,errors.New("token or user was not found in cookie")  }
-    return token,user,nil
 }

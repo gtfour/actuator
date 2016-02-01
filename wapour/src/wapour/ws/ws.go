@@ -2,9 +2,10 @@ package ws
 
 import "log"
 //import "net/http"
-import "fmt"
 import "golang.org/x/net/websocket"
 import "github.com/gin-gonic/gin"
+import "wapour/auth"
+import "wapour/api/webclient"
 
 type Server struct {
 
@@ -126,14 +127,12 @@ func (s *Server) Listen() {
 }
 
 
-func WSserver(data gin.H, wshandler websocket.Handler)( func(c *gin.Context) ) {
+func WSserver(data gin.H, wshandler websocket.Handler, wrappers *[]*webclient.WengineWrapper)( func(c *gin.Context) ) {
 
-    //server := NewServer()
     return func(c *gin.Context)  {
-        //wshandler(c.Writer, c.Request)
-        //serveWs(c.Writer, c.Request)
-        fmt.Printf("\n<ws handler is working>\n")
-        handler := wshandler
-        handler.ServeHTTP(c.Writer, c.Request)
+        if auth.IsAuthorized(c,wrappers) == false { c.JSON(401, gin.H{"status": "not_authorized"}) } else {
+            handler := wshandler
+            handler.ServeHTTP(c.Writer, c.Request)
+        }
     }
 }

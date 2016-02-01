@@ -38,7 +38,7 @@ func main() {
 
     server:=ws.NewServer("/entry")
     go server.Listen()
-    app.GET("/entry", ws.WSserver(gin.H{}, server.WShandler ))
+    app.GET("/entry", ws.WSserver(gin.H{}, server.WShandler, &users ))
     app.Run(":8090")
 
 }
