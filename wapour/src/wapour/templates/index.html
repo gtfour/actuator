@@ -10,6 +10,8 @@
   <script src="{{ .static_url }}js/angular.min.js"></script>
   <script src="{{ .static_url }}js/angular-ui-router.min.js"></script>
   <script src="{{ .static_url }}js/wapour_app.js"></script>
+  <script src="{{ .static_url }}js/wapour_main.js"></script>
+  <script src="{{ .static_url }}js/sockjs.min.js"></script>
   <!-- Bootstrap 3.3.5 -->
   <link rel="stylesheet" href="{{ .static_url }}css/bootstrap.min.css">
   <!-- Font Awesome -->
@@ -32,7 +34,7 @@
   <![endif]-->
 </head>
 <body class="hold-transition skin-blue-light sidebar-mini" ng-app="wapourApp">
-<div class="wrapper">
+<div class="wrapper" ng-controller="mainController">
 
   <header class="main-header">
     <!-- Logo -->

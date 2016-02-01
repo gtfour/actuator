@@ -40,6 +40,4 @@ wapourApp.config(function($stateProvider, $urlRouterProvider ) {
              }
 
         });
-
-
 });
