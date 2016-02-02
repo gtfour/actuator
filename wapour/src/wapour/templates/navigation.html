@@ -30,7 +30,7 @@
           </a>
           <ul class="treeview-menu">
             {{range $subkey := $key.SubItems }}
-                <li><a ui-sref="{{$subkey.Url}}"><i class="fa fa-circle-o"></i>{{$subkey.Name}}</a></li>
+                <li><a ui-sref="{{$subkey.Url}}" ng-click="dashboard_select('{{$subkey.Name}}')"><i class="fa fa-circle-o"></i>{{$subkey.Name}}</a></li>
             {{end}}
           </ul>
         </li>

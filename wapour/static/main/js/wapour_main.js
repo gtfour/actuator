@@ -44,17 +44,22 @@ wapourApp.factory('websocketService', ['$q','$rootScope', function($q, $rootScop
       return currentCallbackId;
     }
 
-    function waitForSocketConnection(callback){
+    function waitForSocketConnection(retries,callback){
+        var count = retries ; 
         setTimeout(
             function () {
                 if (ws.readyState === 1) {
                     console.log("Connection is made");
-                    callback();
-                    return;
+                    if(callback != null){
+                        data = callback();
+                        return JSON.parse(data)
+                    }
 
             } else {
+                if (count == 0) { return null }
+                count = count - 1;
                 console.log("wait for connection...");
-                waitForSocketConnection();
+                waitForSocketConnection(count,null);
             }
 
         }, 5); // wait 5 milisecond for the connection...
@@ -82,10 +87,21 @@ wapourApp.factory('websocketService', ['$q','$rootScope', function($q, $rootScop
     return Service;
 }]);
 wapourApp.controller('mainController', ['$scope','websocketService', function($scope, websocketService) {
-    var request = {};
-    request['author'] = "user1";
-    request['message'] = "Hello all!";
-    var send_test_message = function(){websocketService.sendRequest(request)};
-    websocketService.wsReady(send_test_message);
+    var ws_connect_retries = 10 ; 
+    var request            = {};
+    request['author']      = "user1";
+    request['message']     = "Hello all!";
+    var send_test_message  = function(){websocketService.sendRequest(request)};
+    var data               = websocketService.wsReady(ws_connect_retries, send_test_message);
+
+    $scope.dashboard_select = function(dashboard_name) {
+        alert("Selected dashboard:"+dashboard_name); 
+    }
+    $scope.dashboards_list = function() {
+
+
+    }
+
+
 }]);
 
