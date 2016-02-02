@@ -28,6 +28,11 @@ type Credentials struct {
 var WENGINE_AUTH_LOGIN_URL  string = "/auth/login"
 var WENGINE_AUTH_LOGOUT_URL string = "/auth/logout"
 
+func (wp *WengineWrapper )Request(url string)(interface{},error) {
+
+    return nil,nil
+}
+
 func (wp *WengineWrapper )Connect()(error) {
     client  :=  &http.Client{}
     credentials:=Credentials{Username:wp.username,Password:wp.password}

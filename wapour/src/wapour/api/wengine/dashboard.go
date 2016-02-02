@@ -9,7 +9,7 @@ var TABLE_DATA_DELETE_ACTION int = 2002
 var TABLE_DATA_LINK_ACTION   int = 2003
 
 
-type _Dashboard struct {
+type Dashboard struct {
 
     Id    string
     Name  string
@@ -36,16 +36,16 @@ type _RowAction struct {
 }
 
 
-func (a *Api) DashboardList()(err error, dashboards []_Dashboard) {
+func (a *Api) DashboardList()(err error, dashboards []Dashboard) {
 
-    dashboards = []_Dashboard {_Dashboard{Name:"mountpoints",Title:"Mountpoints",Id:"ux4bxa2nscr3bsmm"}, _Dashboard{Name:"network_settings",Title:"Network Settings",Id:"pdjku29gr9x2naq8"}}
+    dashboards = []Dashboard {Dashboard{Name:"mountpoints",Title:"Mountpoints",Id:"ux4bxa2nscr3bsmm"}, Dashboard{Name:"network_settings",Title:"Network Settings",Id:"pdjku29gr9x2naq8"}}
 
     return nil, dashboards
 
 
 }
 
-func (d *_Dashboard) GetData () {
+func (d *Dashboard) GetData () {
 
 
 
