@@ -1,4 +1,5 @@
 package rest
+import "fmt"
 import "github.com/gin-gonic/gin"
 import "wengine/dusk"
 
@@ -9,6 +10,7 @@ func DuskUserRoute( data  gin.H, database dusk.Database ) ( func (c *gin.Context
         return func (c *gin.Context)  {
             param:=c.Param("duskModuleName")
             token_id,user_id,_:=GetTokenFromCookies(c)
+            fmt.Printf("\ntoken_id :%s  user_id :%s\n",token_id,user_id)
             authorized := database.TokenExists(user_id,token_id)
             switch {
                 case authorized == false:

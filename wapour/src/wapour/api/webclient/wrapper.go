@@ -63,8 +63,10 @@ func Init( username, password string) ( w WengineWrapper,err error ) {
 
 func SetAuthCookie( request *http.Request , user_id string, token_id string )(error) {
 
-    request.Header.Set(TOKEN_COOKIE_FIELD_NAME, token_id)
-    request.Header.Set(USERID_COOKIE_FIELD_NAME, user_id)
+    cookie_userid := &http.Cookie{Name:settings.USERID_COOKIE_FIELD_NAME, Value:user_id,  Path:"/", Domain:settings.RESTAPI_SERVER_ADDR }
+    cookie_token  := &http.Cookie{Name:settings.TOKEN_COOKIE_FIELD_NAME,  Value:token_id, Path:"/", Domain:settings.RESTAPI_SERVER_ADDR }
+    request.AddCookie(cookie_token)
+    request.AddCookie(cookie_userid)
     // func (r *Request) AddCookie(c *Cookie) {
     return nil
 
