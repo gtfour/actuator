@@ -8,7 +8,13 @@ import "wapour/settings"
 
 var USER_DASHBOARD_LIST_URL string = "/rest/user/get-my-dashboards"
 
-func GetUserDashboards(token_id string,user_id string, wrappers *[]*WengineWrapper)(dashboards wengine.DashboardList){
+type DashboardListResult struct {
+    Status        string                `json:"status"`
+    DashboardList wengine.DashboardList `json:"dashboard_list"`
+}
+
+
+func GetUserDashboards(token_id string,user_id string, wrappers *[]*WengineWrapper)(dashboards DashboardListResult){
 
     url  := settings.RESTAPI_URL + USER_DASHBOARD_LIST_URL
     client := &http.Client{}
@@ -19,6 +25,6 @@ func GetUserDashboards(token_id string,user_id string, wrappers *[]*WengineWrapp
     defer resp.Body.Close()
     decoder := json.NewDecoder(resp.Body)
     _ = decoder.Decode(&dashboards)
-    return
+    return dashboards
 
 }
