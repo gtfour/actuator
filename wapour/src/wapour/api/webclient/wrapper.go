@@ -8,6 +8,9 @@ import "wapour/settings"
 
 //import "io/ioutil"
 
+var TOKEN_COOKIE_FIELD_NAME  string = "USER_TOKEN"
+var USERID_COOKIE_FIELD_NAME string = "USER_ID"
+
 
 type WengineWrapper struct {
     username       string
@@ -58,17 +61,16 @@ func Init( username, password string) ( w WengineWrapper,err error ) {
     return w,err
 }
 
-func SetAuthCookie( r *http.Request , user_id string, token_id string )(error) {
+func SetAuthCookie( request *http.Request , user_id string, token_id string )(error) {
 
-
+    request.Header.Set(TOKEN_COOKIE_FIELD_NAME, token_id)
+    request.Header.Set(USERID_COOKIE_FIELD_NAME, user_id)
     // func (r *Request) AddCookie(c *Cookie) {
     return nil
 
 }
 
 func GetResponseCookies(response *http.Response)(user_id string,token_id string) {
-    var TOKEN_COOKIE_FIELD_NAME  string = "USER_TOKEN"
-    var USERID_COOKIE_FIELD_NAME string = "USER_ID"
     cookies:=response.Cookies()
     for i := range cookies {
         cookie:=cookies[i]

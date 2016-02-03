@@ -2,6 +2,7 @@ package main
 import "wapour/index"
 import "wapour/ws"
 import "wapour/wspage"
+import "wapour/userspace"
 import "wapour/dashboard"
 import "wapour/api/webclient"
 import "github.com/gin-gonic/gin"
@@ -22,6 +23,7 @@ func main() {
     app.Static("/static","/actuator/wapour/static")
     app.GET("/index",          index.Index( gin.H{"static_url":STATIC_URL}, &users))
     app.GET("/wspage", wspage.WsPage(gin.H{ "static_url":STATIC_URL} ))
+    app.GET("/userspace", userspace.Index(gin.H{ "static_url":STATIC_URL}, &users ))
     dashboard_app:=app.Group("/dashboard")
     {
         dashboard_app.GET("/actions",  dashboard.ActionsView( gin.H{ "static_url":STATIC_URL}) )

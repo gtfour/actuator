@@ -8,12 +8,32 @@ var TABLE_DATA_EDIT_ACTION   int = 2001
 var TABLE_DATA_DELETE_ACTION int = 2002
 var TABLE_DATA_LINK_ACTION   int = 2003
 
+type DashboardList struct {
+
+    List []Dashboard
+
+}
+
+
 
 type Dashboard struct {
 
-    Id    string
-    Name  string
-    Title string
+    Id           string
+    Name         string
+    Title        string
+    Composition  []Component
+
+}
+
+type ComponentSet struct {
+
+
+}
+
+type Component interface {
+    GetType(string)
+    GetData([][]string)
+
 }
 
 
