@@ -1,10 +1,12 @@
 package dashboard
 
 type DashboardList struct {
-
     List []Dashboard
-
 }
+type DashboardGroupList struct{
+    List []DashboardGroup
+}
+
 
 type DashboardGroup struct{
     Id    string

@@ -8,10 +8,11 @@ var TABLE_DATA_EDIT_ACTION   int = 2001
 var TABLE_DATA_DELETE_ACTION int = 2002
 var TABLE_DATA_LINK_ACTION   int = 2003
 
-type DashboardList struct {
-
+type DashboardList      struct{
     List []Dashboard
-
+}
+type DashboardGroupList struct{
+    List []DashboardGroup
 }
 
 
@@ -24,6 +25,16 @@ type Dashboard struct {
     Composition  []Component
 
 }
+
+type DashboardGroup struct{
+    Id    string
+    Title string
+    Icon  string
+    List  []string
+}
+
+
+
 
 type ComponentSet struct {
 

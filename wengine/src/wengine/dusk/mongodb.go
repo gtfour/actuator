@@ -203,6 +203,7 @@ func(d *MongoDb) AttachDashboardToUser (user_id,dashboard_id string)(error) {
 
 func(d *MongoDb) GetMyDashboardList (user_id,token_id string)(dashboard_list dashboard.DashboardList,err error) {
     //user   := utah.User{}
+    dashboard_list.List = make([]dashboard.Dashboard, 0)
     if d.TokenExists(user_id,token_id) == false { return dashboard_list,TokenDoesNotExist() }
     user:=utah.User{}
     cu      := d.Session.DB(d.dbname).C(d.users_c_name)
@@ -218,14 +219,21 @@ func(d *MongoDb) GetMyDashboardList (user_id,token_id string)(dashboard_list das
     return dashboard_list,nil
 }
 
-func(d *MongoDb) GetMyDashboardGroupList (user_id,token_id string)(dgroup_list []string, err error) {
+func(d *MongoDb) GetMyDashboardGroupList (user_id,token_id string)(dgroup_list dashboard.DashboardGroupList, err error) {
     //user   := utah.User{}
+    dgroup_list.List = make([]dashboard.DashboardGroup, 0)
     if d.TokenExists(user_id,token_id) == false { return dgroup_list, TokenDoesNotExist() }
     user:=utah.User{}
     cu      := d.Session.DB(d.dbname).C(d.users_c_name)
     err     =  cu.Find(bson.M{"id": user_id}).One(&user)
     if err!= nil { return dgroup_list,err }
-    dgroup_list = user.DashboardGroups
+    cd      := d.Session.DB(d.dbname).C(d.dashboard_groups_c_name)
+    for d := range  user.DashboardGroups{
+        dg_id := user.DashboardGroups[d]
+        dgroup := dashboard.DashboardGroup{}
+        err     =  cd.Find(bson.M{"id": dg_id}).One(&dgroup)
+        if err == nil { dgroup_list.List = append(dgroup_list.List, dgroup) }
+    }
     return dgroup_list, nil
 }
 

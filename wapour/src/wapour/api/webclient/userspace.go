@@ -9,9 +9,9 @@ import "wapour/settings"
 var USER_DASHBOARD_LIST_URL string = "/rest/user/get-my-dashboards"
 
 type DashboardListResult struct {
-    Status             string                 `json:"status"`
-    DashboardList      wengine.DashboardList  `json:"dashboard_list"`
-    DashboardGroupList []string               `json:""dashboard_group_list""`
+    Status             string                     `json:"status"`
+    DashboardList      wengine.DashboardList      `json:"dashboard_list"`
+    DashboardGroupList wengine.DashboardGroupList `json:"dashboard_group_list"`
 }
 
 

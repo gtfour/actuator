@@ -66,7 +66,7 @@ type DashboardGroupMethods interface {
     RemoveDashboardGroup     (dashboardgroup_id string)                     (error)
     AddDashboardToGroup      (dashboardgroup_id string,dashboard_id string) (error)
     RemoveDashboardFromGroup (dashboardgroup_id string,dashboard_id string) (error)
-    GetMyDashboardGroupList  (user_id,token_id string)                      ([]string,error)
+    GetMyDashboardGroupList  (user_id,token_id string)                      (dashboard.DashboardGroupList,error)
 }
 
 type TokenMethods interface {

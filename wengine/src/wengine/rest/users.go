@@ -47,6 +47,7 @@ func GetMyDashboards(data  gin.H, database dusk.Database ,c *gin.Context) (func(
                 if err_dash == nil && err_dgroup == nil {
                     //dashboard_list_json,_:= json.Marshal(dashboard_list)
                     fmt.Printf("\ndashboard :%v\n",dashboard_list)
+                    fmt.Printf("\ndgroup    :%v\n",dgroup_list)
                     return func(c *gin.Context ){
                         c.JSON(200, gin.H{"status": "success","dashboard_list":dashboard_list,"dashboard_group_list":dgroup_list})
                         //c.JSON(200, dashboard_list_json)
