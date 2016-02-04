@@ -7,6 +7,7 @@ type DashboardList struct {
 }
 
 type DashboardGroup struct{
+    Id    string
     Title string
     Icon  string
     List  []string

@@ -7,7 +7,6 @@ import "wengine/core/dashboard"
 import "fmt"
 
 type MongoDb struct {
-
     Session  *mgo.Session
     Users    []string
     Groups   []string
@@ -50,6 +49,52 @@ func (d *MongoDb)CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id st
     }
     err         = c.Insert(dashboard)
     return dashboard.Id,err
+}
+
+func (d *MongoDb)CreateDashboardGroup(dgroup *dashboard.DashboardGroup)(dashboardgroup_id string, err error){
+    c           := d.Session.DB(d.dbname).C(d.dashboard_groups_c_name)
+    dgroup.Id,err = common.GenId()
+    if err!=nil {
+        return "",err
+    }
+    err         = c.Insert(dgroup)
+    return dgroup.Id,err
+}
+
+func(d *MongoDb)RemoveDashboardGroup(dashboardgroup_id string)(err error){
+
+    c      := d.Session.DB(d.dbname).C(d.dashboard_groups_c_name)
+    err    =  c.Remove(bson.M{"id": dashboardgroup_id})
+    return err
+
+
+
+}
+
+func (d *MongoDb)AddDashboardToGroup(dashboardgroup_id string,dashboard_id string) (err error) {
+    dboard      := dashboard.Dashboard{}
+    dgroup      := dashboard.DashboardGroup{}
+    cdashboards := d.Session.DB(d.dbname).C(d.dashboards_c_name)
+    cdgroups    := d.Session.DB(d.dbname).C(d.dashboard_groups_c_name)
+    err         =  cdashboards.Find(bson.M{"id": dashboard_id}).One(&dboard)
+    if err!=nil {return DashboardDoesNotExist()}
+    err         =  cdgroups.Find(bson.M{"id": dashboardgroup_id}).One(&dgroup)
+    if err!=nil {return DashboardGroupDoesNotExist()}
+    err         =  cdgroups.Update(bson.M{"id": dashboardgroup_id},bson.M{"$push":bson.M{"list": dashboard_id}})
+    return err
+}
+
+func (d *MongoDb)RemoveDashboardFromGroup(dashboardgroup_id string,dashboard_id string) (err error) {
+    dboard      := dashboard.Dashboard{}
+    dgroup      := dashboard.DashboardGroup{}
+    cdashboards := d.Session.DB(d.dbname).C(d.dashboards_c_name)
+    cdgroups    := d.Session.DB(d.dbname).C(d.dashboard_groups_c_name)
+    err         =  cdashboards.Find(bson.M{"id": dashboard_id}).One(&dboard)
+    if err!=nil {return DashboardDoesNotExist()}
+    err         =  cdgroups.Find(bson.M{"id": dashboardgroup_id}).One(&dgroup)
+    if err!=nil {return DashboardGroupDoesNotExist()}
+    err         =  cdgroups.Update(bson.M{"id": dashboardgroup_id},bson.M{"$pull":bson.M{"list": dashboard_id}})
+    return err
 }
 
 func (d *MongoDb)CreateToken(userid string)(token_id string,err error){

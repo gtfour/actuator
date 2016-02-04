@@ -8,3 +8,6 @@ func TokenDoesNotExist()(err error) {
 func DashboardDoesNotExist()(err error) {
     return errors.New("dashboard_id is invalid")
 }
+func DashboardGroupDoesNotExist()(err error) {
+    return errors.New("dashboardgroup_id is invalid")
+}

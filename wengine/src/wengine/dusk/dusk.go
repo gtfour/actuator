@@ -8,7 +8,6 @@ type Database interface {
 
     Connect()(error)
     Close()()
-    //CreateUser(*utah.User)(user_id string,err error)
     //RemoveUsersById(id ...string)                   (err error)
     //GetUsers( []utah.User,error)
     //GetGroups([]utah.Group,error)
@@ -25,6 +24,7 @@ type Database interface {
     //CreateDashboard(*dashboard.Dashboard)(error)
     //RemoveDashboardById(dash_id string)(error)
     DashboardMethods
+    DashboardGroupMethods
     TokenMethods
 
 
