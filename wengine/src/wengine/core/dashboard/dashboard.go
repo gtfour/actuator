@@ -6,6 +6,12 @@ type DashboardList struct {
 
 }
 
+type DashboardGroup struct{
+    Title string
+    Icon  string
+    List  []string
+}
+
 type Dashboard struct {
     Id           string
     Name         string

@@ -8,28 +8,26 @@ type Database interface {
 
     Connect()(error)
     Close()()
-    CreateUser(*utah.User)(user_id string,err error)
-    RemoveUsersById(id ...string)                   (err error)
+    //CreateUser(*utah.User)(user_id string,err error)
+    //RemoveUsersById(id ...string)                   (err error)
     //GetUsers( []utah.User,error)
     //GetGroups([]utah.Group,error)
     //CreateUser(username string, password string)(id string ,err error)
-    GetUserById(id string)(utah.User,error)
-    GetUser(map[string]interface{})                 (utah.User,error)
+    //GetUserById(id string)(utah.User,error)
+    //GetUser(map[string]interface{})                 (utah.User,error)
     //GetUserDashboards(user_id string)([]dashboard.Dashboard,error)
-    CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id string, err error)
-    DashboardExists(dashboard_id string)(bool)
-    AttachDashboardToUser(user_id,dash_id string)(error)
-    GetMyDashboardList(user_id,token_id string)(dashboard_list dashboard.DashboardList, err error)
-
+    //CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id string, err error)
+    // DashboardGroupMethods
+    //DashboardExists(dashboard_id string)(bool)
+    //AttachDashboardToUser(user_id,dash_id string)(error)
+    //GetMyDashboardList(user_id,token_id string)(dashboard_list dashboard.DashboardList, err error)
+    UserMethods
     //CreateDashboard(*dashboard.Dashboard)(error)
     //RemoveDashboardById(dash_id string)(error)
+    DashboardMethods
+    TokenMethods
 
 
-    CreateToken(userid string)                      (token string,err error)
-    TokenExists(userid string, token_id string)    (bool)
-    RemoveToken(user_id,token_id string)(error)
-    GetAnUserToken(string)(string,error)
-    UserPasswordIsCorrect(username ,password string)( user_id string, token_id string,exists bool)
     //GetUserToken(userid string)(token string,error)
     //RemoveUserToken(userid string)(token string,error)
     //RemoveUsers( map[string]interface{} )
@@ -38,6 +36,44 @@ type Database interface {
     //CreateDashboard(*dashboard.Dashboard)(dashboard_id string,err error )
     //GetDashboardById(dashboard_id string)(dashboard.Dashboard)
 
+}
+
+type UserMethods interface {
+
+    CreateUser(*utah.User)(user_id string,err error)
+    RemoveUsersById(id ...string)                   (err error)
+    //GetUsers( []utah.User,error)
+    //GetGroups([]utah.Group,error)
+    //CreateUser(username string, password string)(id string ,err error)
+    GetUserById(id string)(utah.User,error)
+    GetUser(map[string]interface{})                 (utah.User,error)
+    //GetUserDashboards(user_id string)([]dashboard.Dashboard,error)
+
+}
+
+type DashboardMethods interface {
+
+    CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id string, err error)
+    // DashboardGroupMethods
+    DashboardExists(dashboard_id string)(bool)
+    AttachDashboardToUser(user_id,dash_id string)(error)
+    GetMyDashboardList(user_id,token_id string)(dashboard_list dashboard.DashboardList, err error)
+
+}
+
+type DashboardGroupMethods interface {
+    CreateDashboardGroup     (dashboard *dashboard.DashboardGroup)          (dashboardgroup_id string, err error)
+    RemoveDashboardGroup     (dashboardgroup_id string)                     (error)
+    AddDashboardToGroup      (dashboardgroup_id string,dashboard_id string) (error)
+    RemoveDashboardFromGroup (dashboardgroup_id string,dashboard_id string) (error)
+}
+
+type TokenMethods interface {
+    CreateToken           (userid string)                   (token string,err error)
+    TokenExists           (userid string, token_id string)  (bool)
+    RemoveToken           (user_id,token_id string)         (error)
+    GetAnUserToken        (string)                          (string,error)
+    UserPasswordIsCorrect (username ,password string)       ( user_id string, token_id string,exists bool)
 }
 
 
