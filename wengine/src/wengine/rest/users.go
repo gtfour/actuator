@@ -43,11 +43,12 @@ func GetMyDashboards(data  gin.H, database dusk.Database ,c *gin.Context) (func(
             _, err_marshal := json.Marshal(user)
             if err_db == nil && err_marshal == nil  {
                 dashboard_list,err_dash := database.GetMyDashboardList(user_id,token_id)
-                if err_dash == nil {
+                dgroup_list,err_dgroup  := database.GetMyDashboardGroupList(user_id,token_id)
+                if err_dash == nil && err_dgroup == nil {
                     //dashboard_list_json,_:= json.Marshal(dashboard_list)
                     fmt.Printf("\ndashboard :%v\n",dashboard_list)
                     return func(c *gin.Context ){
-                        c.JSON(200, gin.H{"status": "success","dashboard_list":dashboard_list})
+                        c.JSON(200, gin.H{"status": "success","dashboard_list":dashboard_list,"dashboard_group_list":dgroup_list})
                         //c.JSON(200, dashboard_list_json)
                     }
                 } else { return func(c *gin.Context ){ c.JSON(401, gin.H{"status": "failed"}) } }

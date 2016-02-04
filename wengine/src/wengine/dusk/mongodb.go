@@ -4,7 +4,6 @@ import "gopkg.in/mgo.v2/bson"
 import "wengine/core/utah"
 import "wengine/core/common"
 import "wengine/core/dashboard"
-import "fmt"
 
 type MongoDb struct {
     Session  *mgo.Session
@@ -208,17 +207,26 @@ func(d *MongoDb) GetMyDashboardList (user_id,token_id string)(dashboard_list das
     user:=utah.User{}
     cu      := d.Session.DB(d.dbname).C(d.users_c_name)
     err     =  cu.Find(bson.M{"id": user_id}).One(&user)
-    fmt.Printf("\n user: %v\n",user)
     if err!= nil { return dashboard_list,err }
     cd      := d.Session.DB(d.dbname).C(d.dashboards_c_name)
     for d := range user.Dashboards {
         d_id:=user.Dashboards[d]
         dashboard:=dashboard.Dashboard{}
         err     =  cd.Find(bson.M{"id": d_id}).One(&dashboard)
-        fmt.Printf("\nd_id%s\n",d_id)
         if err == nil { dashboard_list.List = append(dashboard_list.List, dashboard)  }
     }
     return dashboard_list,nil
+}
+
+func(d *MongoDb) GetMyDashboardGroupList (user_id,token_id string)(dgroup_list []string, err error) {
+    //user   := utah.User{}
+    if d.TokenExists(user_id,token_id) == false { return dgroup_list, TokenDoesNotExist() }
+    user:=utah.User{}
+    cu      := d.Session.DB(d.dbname).C(d.users_c_name)
+    err     =  cu.Find(bson.M{"id": user_id}).One(&user)
+    if err!= nil { return dgroup_list,err }
+    dgroup_list = user.DashboardGroups
+    return dgroup_list, nil
 }
 
 
