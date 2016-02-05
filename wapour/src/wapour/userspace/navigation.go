@@ -1,4 +1,5 @@
 package userspace
+import "wapour/api/webclient"
 
 type SubItem struct {
     Name     string
@@ -7,21 +8,27 @@ type SubItem struct {
 
 type Item struct {
     Name     string
+    Id       string
     Icon     string
     SubItems []SubItem
 }
 
-func GetNavigationMenu()( []Item ){
+func CreateNavigationMenu(dinstance webclient.DashboardListResult)( []Item ){
 
-    hostsList    := SubItem{Name:"list",Url:"hosts"}
-    filesList    := SubItem{Name:"list",Url:"files"}
-    filesAdd     := SubItem{Name:"add",Url:"#files/add"}
-    actionsList := SubItem{Name:"list",Url:"actions"}
-    actionsAdd  := SubItem{Name:"add",Url:"#actions/add"}
-    wsMessages  := SubItem{Name:"messages",Url:"websocket"}
+    dgroup_list:= make([]Item,0)
 
-    return  []Item { Item { Name:"Hosts"   ,Icon: "fa-desktop",         SubItems:[]SubItem {hostsList}  },
-                     Item { Name:"Files"   ,Icon: "fa-stack-overflow",  SubItems:[]SubItem {filesList,    filesAdd }  },
-                     Item { Name:"Actions" ,Icon: "fa-gamepad",         SubItems:[]SubItem {actionsList, actionsAdd}  },
-                      Item { Name:"WebSocket" ,Icon: "fa-flash",         SubItems:[]SubItem {wsMessages} }}
+    for dgroup_id := range dinstance.DashboardGroupList.List {
+        dgroup    := dinstance.DashboardGroupList.List[dgroup_id]
+        //dgroup    := dinstance.DashboardGroupList[dgroup_id]
+        item      := Item{Name:dgroup.Title, Id:dgroup.Id, Icon:dgroup.Icon}
+        for dashboard_id := range dinstance.DashboardList.List {
+            dashboard := dinstance.DashboardList.List[dashboard_id]
+            subitem:= SubItem{Name:dashboard.Name}
+            item.SubItems = append(item.SubItems, subitem)
+        }
+        dgroup_list = append(dgroup_list, item)
+    }
+    return dgroup_list
 }
+
+
