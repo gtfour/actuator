@@ -65,6 +65,7 @@ type DashboardGroupMethods interface {
     CreateDashboardGroup     (dashboard *dashboard.DashboardGroup)          (dashboardgroup_id string, err error)
     RemoveDashboardGroup     (dashboardgroup_id string)                     (error)
     AddDashboardToGroup      (dashboardgroup_id string,dashboard_id string) (error)
+    AttachDashboardGroupToUser (user_id,dgroup_id string)(error)
     RemoveDashboardFromGroup (dashboardgroup_id string,dashboard_id string) (error)
     GetMyDashboardGroupList  (user_id,token_id string)                      (dashboard.DashboardGroupList,error)
 }

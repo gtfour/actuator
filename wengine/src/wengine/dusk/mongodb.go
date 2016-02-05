@@ -151,8 +151,13 @@ func (d *MongoDb)DashboardExists(dashboard_id string)(bool){
     c          := d.Session.DB(d.dbname).C(d.dashboards_c_name)
     err        := c.Find(bson.M{"id": dashboard_id}).One(&dashboard)
     if err!=nil { return false } else { return true }
+}
 
-
+func (d *MongoDb)DashboardGroupExists(dgroup_id string)(bool){
+    dgroup     := dashboard.DashboardGroup{}
+    c          := d.Session.DB(d.dbname).C(d.dashboard_groups_c_name)
+    err        := c.Find(bson.M{"id": dgroup_id}).One(&dgroup)
+    if err!=nil { return false } else { return true }
 }
 
 func(d *MongoDb)RemoveToken(token_id string ,user_id string)(error) {
@@ -200,6 +205,15 @@ func(d *MongoDb) AttachDashboardToUser (user_id,dashboard_id string)(error) {
     if err != nil { return err }
     return nil
 }
+func(d *MongoDb) AttachDashboardGroupToUser (user_id,dgroup_id string)(error) {
+    //user   := utah.User{}
+    if d.DashboardGroupExists(dgroup_id) == false { return DashboardGroupDoesNotExist()  }
+    c      := d.Session.DB(d.dbname).C(d.users_c_name)
+    err    :=  c.Update(bson.M{"id": user_id},bson.M{"$push":bson.M{"dashboard_groups":dgroup_id}})
+    if err != nil { return err }
+    return nil
+}
+
 
 func(d *MongoDb) GetMyDashboardList (user_id,token_id string)(dashboard_list dashboard.DashboardList,err error) {
     //user   := utah.User{}
