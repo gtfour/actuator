@@ -209,7 +209,7 @@ func(d *MongoDb) AttachDashboardGroupToUser (user_id,dgroup_id string)(error) {
     //user   := utah.User{}
     if d.DashboardGroupExists(dgroup_id) == false { return DashboardGroupDoesNotExist()  }
     c      := d.Session.DB(d.dbname).C(d.users_c_name)
-    err    :=  c.Update(bson.M{"id": user_id},bson.M{"$push":bson.M{"dashboard_groups":dgroup_id}})
+    err    :=  c.Update(bson.M{"id": user_id},bson.M{"$push":bson.M{"dashboardgroups":dgroup_id}})
     if err != nil { return err }
     return nil
 }
