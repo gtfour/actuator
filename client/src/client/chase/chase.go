@@ -189,7 +189,7 @@ func (tgt *Target) Chasing() (err error){
                     actual_prop  :=   actuator.GetProp(tgt.Path)
 
                     if actual_prop.Error == true {
-                        error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"} 
+                        error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"}
                         cnote      :=evebridge.CompNotes{Path:tgt.Path}
                         cnote.List = append(cnote.List, error_field)
                         tgt.MessageChannel <- cnote
