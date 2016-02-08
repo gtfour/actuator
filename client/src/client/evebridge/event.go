@@ -47,7 +47,7 @@ func Handle(messages chan CompNotes )(err error) {
 
             default:
                 time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
-                fmt.Println("No messages")
+                //fmt.Println("No messages")
 
         }
 

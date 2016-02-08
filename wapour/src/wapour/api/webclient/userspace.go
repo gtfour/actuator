@@ -16,7 +16,6 @@ type DashboardListResult struct {
 
 
 func GetUserDashboards(token_id string,user_id string, wrappers *[]*WengineWrapper)(dashboards DashboardListResult){
-
     url  := settings.RESTAPI_URL + USER_DASHBOARD_LIST_URL
     client := &http.Client{}
     req,_ := http.NewRequest("GET", url, nil)
@@ -27,5 +26,4 @@ func GetUserDashboards(token_id string,user_id string, wrappers *[]*WengineWrapp
     decoder := json.NewDecoder(resp.Body)
     _ = decoder.Decode(&dashboards)
     return dashboards
-
 }

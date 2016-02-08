@@ -4,7 +4,7 @@ package chase
 import "client/actuator"
 import "client/evebridge"
 //import "os"
-import "fmt" // for  debug
+//import "fmt" // for  debug
 //import "time"
 import "path/filepath"
 //import "reflect"
@@ -87,7 +87,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
             for file_id :=range dir_struct.Files {
 
                 file_struct            :=  dir_struct.Files[file_id]
-                fmt.Printf("\ntgt path :%s\n",file_struct.Path)
+                //fmt.Printf("\ntgt path :%s\n",file_struct.Path)
                 prop               :=  actuator.GetProp(file_struct.Path)
 
                 if prop.Error == true { continue }
@@ -108,7 +108,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
                     subdir.InfoOutArray =  append(subdir.InfoOutArray,target.InfoOut)
 
                 }
-                if (wp==nil) {fmt.Printf("wp is nill dir files ")}
+                if (wp==nil) {/*fmt.Printf("wp is nill dir files ")*/}
                 wp.AppendTarget(&target)
 
             }
@@ -123,7 +123,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
           target.WorkerPool      =   wp // new 02-11-2015 03:00
 
 	  target.MessageChannel  =   message_channel
-	  if (wp==nil) {fmt.Printf("wp is nill single files ")}
+	  if (wp==nil) {/*fmt.Printf("wp is nill single files ")*/}
           wp.AppendTarget(&target)
 
         }
@@ -158,7 +158,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
 
         target_subdir.Prop  = prop
         //go (*subdirs)[i].Chasing()
-        if (wp==nil) {fmt.Printf("wp is nill dir subdirs ")}
+        if (wp==nil) {/*fmt.Printf("wp is nill dir subdirs ")*/}
         wp.AppendTarget(target_subdir)
 
     }
@@ -244,9 +244,9 @@ func (tgt *TargetDir) Chasing () (err error){
 
         actual_prop  :=  actuator.GetProp(tgt.Path)
 
-        if actual_prop.Error == true { fmt.Printf("\nError during opening %s\n",tgt.Path) }
+        if actual_prop.Error == true { /*fmt.Printf("\nError during opening %s\n",tgt.Path)*/ }
 
-        if (tgt.WorkerPool==nil) {fmt.Printf("%s wp is nil",tgt.Path)}
+        if (tgt.WorkerPool==nil) {/*fmt.Printf("%s wp is nil",tgt.Path)*/}
 
         if err != nil { return err }
 

@@ -1,7 +1,7 @@
 package chase
 
 
-import "fmt"
+//import "fmt"
 import "time"
 import "math/rand"
 import "client/actuator"
@@ -9,7 +9,7 @@ import "client/evebridge"
 
 
 var TGT_PER_GR int64                       = 50 // if FILES_PER_GR is very big - TargetsCount type should be modified 
-var TIMEOUT_MS              time.Duration  = 200
+var TIMEOUT_MS              time.Duration  = 800
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
 
@@ -36,13 +36,14 @@ type Worker struct {
 }
 
 func ( w *Worker ) Start ()  {
-    for {
+    ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
+    for _ = range ticker.C {
         //fmt.Printf("\n<-- Worker is working %d-->\n",w.Id)
         select {
 
             case <-w.Stop:
 
-                return
+                ticker.Stop()
 
             default:
 
@@ -66,7 +67,7 @@ func ( w *Worker ) Start ()  {
                     }
                 }
         }
-        time.Sleep( TIMEOUT_MS * time.Millisecond )
+        //time.Sleep( TIMEOUT_MS * time.Millisecond )
     }
 }
 
@@ -103,7 +104,7 @@ func (wp *WorkerPool)  AddWorker()(){
 
 
 
-    fmt.Printf("\n -- Create new worker\n")
+    //fmt.Printf("\n -- Create new worker\n")
     w           :=   &Worker{}
     rand.Seed( time.Now().UTC().UnixNano())
     w.Id        =   rand.Int31()
@@ -116,7 +117,7 @@ func (wp *WorkerPool)  AddWorker()(){
 
 func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
-    fmt.Printf("\n Appending target %s \n",tgt.GetPath())
+    //fmt.Printf("\n Appending target %s \n",tgt.GetPath())
     //bug has been found : can't add targets more than 2 worker * TGT_PER_GR
     // lol, seems that linked to message channel size
 
