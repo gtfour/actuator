@@ -51,11 +51,9 @@ func ( w *Worker ) Start ()  {
                 targets_count:=len(w.Targets)
                 for tgt := range w.Targets {
 
-                    if w.Targets[tgt].Chasing!=nil  {
-
+                    if w.Targets[tgt].Chasing != nil {
                         err:=w.Targets[tgt].Chasing()
                         if err != nil { unused_tgt_numbers=append(unused_tgt_numbers,tgt) }
-
                     }
 
                 }
