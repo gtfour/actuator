@@ -1,7 +1,7 @@
 package chase
 
 
-//import "fmt"
+import "fmt"
 import "time"
 import "math/rand"
 import "client/actuator"
@@ -15,20 +15,23 @@ var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
 
 type AbstractTarget interface {
-    GetDir()  string
-    Chasing() error
-    GetPath() string
-    GetProp() *actuator.Prop
+    GetDir()            string
+    Chasing()           error
+    GetPath()           string
+    GetProp()           *actuator.Prop
     GetMessageChannel() chan evebridge.CompNotes
 }
 
 type WorkerPool struct {
     Workers         []*Worker
     WKillers        []chan bool
+    Targets         chan AbstractTarget
+    RunningTargets  chan AbstractTarget
 }
 
 
 type Worker struct {
+    WorkerPool    *WorkerPool
     Targets       []AbstractTarget
     Id            int32
     TargetsCount  int32
@@ -45,6 +48,8 @@ func ( w *Worker ) Start ()  {
             case <-w.Stop:
 
                 ticker.Stop()
+            case tgt :=<-w.WorkerPool.Targets:
+                fmt.Printf("--\n%v\n--",tgt)
 
             default:
 
@@ -104,7 +109,7 @@ func (wp *WorkerPool)  AddWorker()(){
 
 
     //fmt.Printf("\n -- Create new worker\n")
-    w           :=   &Worker{}
+    w           :=   &Worker{ WorkerPool:wp }
     rand.Seed( time.Now().UTC().UnixNano())
     w.Id        =   rand.Int31()
     w.Stop      =   make(chan bool)
