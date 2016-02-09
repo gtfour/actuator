@@ -6,6 +6,7 @@ import "time"
 import "math/rand"
 import "client/actuator"
 import "client/evebridge"
+// Have to implement carousel method
 
 
 var TGT_PER_GR int64                       = 50 // if FILES_PER_GR is very big - TargetsCount type should be modified 
