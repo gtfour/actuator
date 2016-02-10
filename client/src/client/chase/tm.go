@@ -26,7 +26,7 @@ type WorkerPool struct {
     Workers         []*Worker
     WKillers        []chan bool
     Targets         chan AbstractTarget
-    RunningTargets  chan AbstractTarget
+    CurrentTargets  chan AbstractTarget
 }
 
 
@@ -43,25 +43,25 @@ func ( w *Worker ) Start ()  {
     ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
     for _ = range ticker.C {
         //fmt.Printf("\n<-- Worker is working %d-->\n",w.Id)
-        select {
-
+        for {
+            select {
             case <-w.Stop:
-
                 ticker.Stop()
             case tgt :=<-w.WorkerPool.Targets:
-                fmt.Printf("--\n%v\n--",tgt)
-
+                go func() {
+                    w.WorkerPool.CurrentTargets <- tgt
+                    err                         := tgt.Chasing() //should be  light file opening
+                    fmt.Printf("--\n%v\n--",tgt)
+                }()
             default:
 
                 var unused_tgt_numbers []int // array for store tgt numbers whose should be removed from w.Targets
                 targets_count:=len(w.Targets)
                 for tgt := range w.Targets {
-
                     if w.Targets[tgt].Chasing != nil {
                         err:=w.Targets[tgt].Chasing()
                         if err != nil { unused_tgt_numbers=append(unused_tgt_numbers,tgt) }
                     }
-
                 }
                 // remove tgt's whose Chasing was returned with err!=nil  w.Targets
                 for i := range unused_tgt_numbers {
@@ -70,6 +70,7 @@ func ( w *Worker ) Start ()  {
                         w.Targets = append(w.Targets[:tgt_num], w.Targets[tgt_num+1:]...)
                     }
                 }
+            }
         }
         //time.Sleep( TIMEOUT_MS * time.Millisecond )
     }
@@ -106,8 +107,6 @@ func ( wp *WorkerPool ) Stop () {
 
 func (wp *WorkerPool)  AddWorker()(){
 
-
-
     //fmt.Printf("\n -- Create new worker\n")
     w           :=   &Worker{ WorkerPool:wp }
     rand.Seed( time.Now().UTC().UnixNano())
@@ -115,7 +114,6 @@ func (wp *WorkerPool)  AddWorker()(){
     w.Stop      =   make(chan bool)
     wp.Workers  =   append(wp.Workers, w)
     go w.Start()
-
 
 }
 
