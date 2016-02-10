@@ -34,7 +34,6 @@ var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit
 //}
 
 type Prop struct {
-
     Inode               uint64
     InoFound            bool
     IsDir               bool
@@ -57,8 +56,9 @@ type Prop struct {
     DirContent          []string `ignore`
     DirContentAvailable bool
     Error               bool
-
-
+    Fd                  *os.File
+    FdCheck             *os.File
+    Ready               bool
 }
 
 
@@ -107,7 +107,6 @@ func ( array strings ) IncludeValue ( value string ) (includes bool) {
 }
 
 func GetProp (path string) (p *Prop){
-
 
     p                    =  &Prop{}
     file, err            :=  os.Open(path)

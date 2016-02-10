@@ -20,6 +20,8 @@ type AbstractTarget interface {
     GetPath()           string
     GetProp()           *actuator.Prop
     GetMessageChannel() chan evebridge.CompNotes
+    IsReady()           bool
+    //CloseFd()           error
 }
 
 type WorkerPool struct {
@@ -93,16 +95,16 @@ func WPCreate () (wp WorkerPool) {
 }
 
 func ( wp *WorkerPool ) Stop () {
-
     killers := wp.WKillers
-
     for i:= range killers {
-
         killers[i] <- true
-
     }
-
 }
+func ( wp *WorkerPool ) Juggle () {
+    for {
+    }
+}
+
 
 
 func (wp *WorkerPool)  AddWorker()(){
