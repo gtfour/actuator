@@ -116,21 +116,9 @@ func GetProp (path string, mode int) (p *Prop){
     file_same, err_same := os.Open(path)
     defer file.Close()
     defer file_same.Close()
-    if mode == SAFE_OPENING_MODE {
-        if RegularFileIsReadable(file_same) == nil {
-            p.IsReadable       = true
-            p.HashSumAvailable = true
-        } else {
-            p.IsReadable       = false
-            p.HashSumAvailable = false
-        }
-    }
     if( err!=nil || err_same!=nil )  {  p.Error = true  ; return p  }
     file_stat, err  :=  os.Stat(path)
-    //defer           file_stat.Close()
     if( err!=nil )  {  p.Error = true  ; return p  }
-
-    //fmt.Printf("\n -- Getting prop --\n")
 
     stat_interface     :=  file_stat.Sys()
     stat_object,found  :=  stat_interface.(*syscall.Stat_t)
@@ -139,8 +127,6 @@ func GetProp (path string, mode int) (p *Prop){
     p.Gid  = stat_object.Gid
 
     file_info,err    :=  file.Stat()
-    //fmt.Printf("\n<< Printing error >>\n")
-    //if err != nil { fmt.Printf("\n error not null %v\n",err) } else { fmt.Printf("\n error is nil  \n")  }
     if err==nil {
         p.Size       =  file_info.Size()
         if p.Size==0 { p.IsEmpty=true  } else { p.IsEmpty = false }
@@ -151,6 +137,15 @@ func GetProp (path string, mode int) (p *Prop){
         } else {
             file_type := string(file_mode.String()[0])
             p.Type = file_type
+            if mode == SAFE_OPENING_MODE {
+                if RegularFileIsReadable(file_same) == nil {
+                    p.IsReadable       = true
+                    p.HashSumAvailable = true
+                } else {
+                    p.IsReadable       = false
+                    p.HashSumAvailable = false
+                }
+            }
             if ( file_type == "-" ) {  p.IsRegular = true } else { p.IsRegular = false  }
         }
         if p.IsDir == true  {

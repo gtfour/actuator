@@ -4,7 +4,7 @@ package chase
 import "fmt"
 import "time"
 import "math/rand"
-//import "client/actuator"
+import "client/actuator"
 import "client/evebridge"
 // Have to implement carousel method
 
@@ -18,13 +18,12 @@ var SAFE_OPENING_MODE int = 02
 
 type AbstractTarget interface {
     GetDir()            string
-    Chasing(string)     error
+    Chasing(int)        error
     GetPath()           string
-    //GetProp()           *actuator.Prop
     GetMessageChannel() chan evebridge.CompNotes
     SetReady            (bool)()
     IsReady()           bool
-    //CloseFd()           error
+    GetSelfProp         ()(*actuator.Prop)
 }
 
 type WorkerPool struct {
@@ -55,16 +54,9 @@ func ( w *Worker ) Start ()  {
                 break
             case tgt :=<-w.WorkerPool.ReadyTargets:
                 go func() {
-                    if tgt.IsReady() == true{
-                        tgt.SetReady(false)
                         w.WorkerPool.RunningTargets <- tgt
-                        _                         = tgt.Chasing(LAZY_OPENING_MODE) //should be  light file opening
+                        _                         = tgt.Chasing() //should be  light file opening
                         tgt.SetReady(true)
-                    } else {
-                        w.WorkerPool.RunningTargets <- tgt
-                        _                         = tgt.Chasing(SAFE_OPENING_MODE)
-                        tgt.SetReady(true)
-                    }
                     //w.WorkerPool.ReadyTargets   <- tgt
                 }()
             //
@@ -118,7 +110,7 @@ func ( wp *WorkerPool ) Stop () {
     }
 }
 func ( wp *WorkerPool ) Juggle () {
-    ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
+    //ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
     //for _ = range ticker.C {
         fmt.Printf("\n--Juggling--\n")
         SuspendedTargets := make(chan AbstractTarget,100)
@@ -142,7 +134,7 @@ func ( wp *WorkerPool ) Juggle () {
                     if tgt.IsReady() == true {
                             wp.ReadyTargets     <- tgt
                     } else {
-                            wp.SuspendedTargets <- tgt
+                            SuspendedTargets <- tgt
                     }
                 default:
                     //fmt.Printf("\nnone")
@@ -197,8 +189,6 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
         rand.Seed( time.Now().UTC().UnixNano())
         rand_digit = rand.Int31n(int32(len(wp.Workers)))
         wp.Workers[rand_digit].Append(tgt)
-
-        //tgt.GetMessageChannel() <- actuator.Initial(tgt.GetProp(), tgt.GetPath())
     }
 
     average_tgt_per_worker:=all_tgt_count/int64(len(wp.Workers))

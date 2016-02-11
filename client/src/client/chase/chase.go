@@ -26,15 +26,16 @@ type Target struct {
     WorkerPool                    *WorkerPool
     InformAboutExit               bool
     KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
+    OpeningMode                   int //safe or lazy
 
 }
 
 func ( tgt *Target ) GetDir()  string { return tgt.Dir }
 func ( tgt *Target ) GetPath() string { return tgt.Path }
-//func ( tgt *Target ) GetProp() *actuator.Prop { return tgt.Prop }
 func ( tgt *Target ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
 func ( tgt *Target ) IsReady() bool {return tgt.Prop.Ready }
 func ( tgt *Target ) SetReady(state bool)() {tgt.Prop.Ready = state }
+func ( tgt *Target ) GetSelfProp()(*actuator.Prop){ return tgt.Prop }
 
 type TargetDir struct {
 
@@ -47,10 +48,10 @@ type TargetDir struct {
 
 func ( tgt *TargetDir ) GetDir()  string { return tgt.Dir }
 func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
-//func ( tgt *TargetDir ) GetProp() *actuator.Prop { return tgt.Prop }
 func ( tgt *TargetDir ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
 func ( tgt *TargetDir ) IsReady() bool {return tgt.Prop.Ready }
 func ( tgt *TargetDir ) SetReady(state bool)() {tgt.Prop.Ready = state }
+func ( tgt *TargetDir ) GetSelfProp()(*actuator.Prop){ return tgt.Prop }
 
 
 func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
@@ -186,14 +187,10 @@ func (tgt *Target) Chasing(mode int) (err error){
             select {
 
                 case <-tgt.InfoIn:
-
                             return nil
-
-
                 default:
 
                     actual_prop  :=   actuator.GetProp(tgt.Path,mode)
-
                     if actual_prop.Error == true {
                         error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"}
                         cnote      :=evebridge.CompNotes{Path:tgt.Path}
@@ -201,19 +198,12 @@ func (tgt *Target) Chasing(mode int) (err error){
                         tgt.MessageChannel <- cnote
                         tgt.InformAboutExit=true
                         return err
-
                     }
-
-
                     //if ( reflect.DeepEqual(actual_prop, tgt.Prop) == false ) {
                     if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
-
                         //go  tgt.Reporting()
                         tgt.MessageChannel <- comparison_notes
-
                         tgt.Prop = actual_prop }
-
-
                     }
 
        } else {
