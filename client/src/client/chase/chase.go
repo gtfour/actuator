@@ -34,6 +34,7 @@ func ( tgt *Target ) GetPath() string { return tgt.Path }
 func ( tgt *Target ) GetProp() *actuator.Prop { return tgt.Prop }
 func ( tgt *Target ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
 func ( tgt *Target ) IsReady() bool {return tgt.Prop.Ready }
+func ( tgt *Target ) SetReady(state bool)() {tgt.Prop.Ready = state }
 
 type TargetDir struct {
 
@@ -49,6 +50,7 @@ func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
 func ( tgt *TargetDir ) GetProp() *actuator.Prop { return tgt.Prop }
 func ( tgt *TargetDir ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
 func ( tgt *TargetDir ) IsReady() bool {return tgt.Prop.Ready }
+func ( tgt *TargetDir ) SetReady(state bool)() {tgt.Prop.Ready = state }
 
 
 func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
@@ -173,7 +175,7 @@ func Stop()(err error) {
 }
 
 
-func (tgt *Target) Chasing() (err error){
+func (tgt *Target) Chasing(mode string) (err error){
 
     //for {
 
@@ -241,7 +243,7 @@ func (tgt *Target) Chasing() (err error){
     return nil
 }
 
-func (tgt *TargetDir) Chasing () (err error){
+func (tgt *TargetDir) Chasing (mode string) (err error){
 
 
         actual_prop  :=  actuator.GetProp(tgt.Path)

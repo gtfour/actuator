@@ -1,7 +1,7 @@
 package chase
 
 
-import "fmt"
+//import "fmt"
 import "time"
 import "math/rand"
 import "client/actuator"
@@ -16,10 +16,11 @@ var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
 type AbstractTarget interface {
     GetDir()            string
-    Chasing()           error
+    Chasing(string)     error
     GetPath()           string
     GetProp()           *actuator.Prop
     GetMessageChannel() chan evebridge.CompNotes
+    SetReady            (bool)()
     IsReady()           bool
     //CloseFd()           error
 }
@@ -27,8 +28,8 @@ type AbstractTarget interface {
 type WorkerPool struct {
     Workers         []*Worker
     WKillers        []chan bool
-    Targets         chan AbstractTarget
-    CurrentTargets  chan AbstractTarget
+    ReadyTargets    chan AbstractTarget
+    RunningTargets  chan AbstractTarget
 }
 
 
@@ -49,11 +50,13 @@ func ( w *Worker ) Start ()  {
             select {
             case <-w.Stop:
                 ticker.Stop()
-            case tgt :=<-w.WorkerPool.Targets:
+            case tgt :=<-w.WorkerPool.ReadyTargets:
                 go func() {
-                    w.WorkerPool.CurrentTargets <- tgt
-                    err                         := tgt.Chasing() //should be  light file opening
-                    fmt.Printf("--\n%v\n--",tgt)
+                    tgt.SetReady(false)
+                    w.WorkerPool.RunningTargets <- tgt
+                    _                         = tgt.Chasing("lazy") //should be  light file opening
+                    tgt.SetReady(true)
+                    w.WorkerPool.ReadyTargets   <- tgt
                 }()
             default:
 
@@ -61,7 +64,7 @@ func ( w *Worker ) Start ()  {
                 targets_count:=len(w.Targets)
                 for tgt := range w.Targets {
                     if w.Targets[tgt].Chasing != nil {
-                        err:=w.Targets[tgt].Chasing()
+                        err:=w.Targets[tgt].Chasing("lazy")
                         if err != nil { unused_tgt_numbers=append(unused_tgt_numbers,tgt) }
                     }
                 }
@@ -101,7 +104,9 @@ func ( wp *WorkerPool ) Stop () {
     }
 }
 func ( wp *WorkerPool ) Juggle () {
-    for {
+    ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
+    for _ = range ticker.C {
+
     }
 }
 

@@ -106,13 +106,23 @@ func ( array strings ) IncludeValue ( value string ) (includes bool) {
 
 }
 
-func GetProp (path string) (p *Prop){
+func GetProp (path string, mode string) (p *Prop){
 
     p                    =  &Prop{}
     file, err            :=  os.Open(path)
     file_same, err_same  :=  os.Open(path)
     defer           file.Close()
     defer           file_same.Close()
+    if mode == "safe" {
+        if RegularFileIsReadable(file_same) == nil {
+            p.IsReadable       = true
+            p.HashSumAvailable = true
+        } else {
+            p.IsReadable       = false
+            p.HashSumAvailable = false
+        }
+
+    }
     if( err!=nil || err_same!=nil )  {  p.Error = true  ; return p  }
     file_stat, err  :=  os.Stat(path)
     //defer           file_stat.Close()
@@ -125,14 +135,6 @@ func GetProp (path string) (p *Prop){
     if found==false { p.InoFound=false  } else { p.InoFound=true  ; p.Inode = stat_object.Ino }
     p.Uid  = stat_object.Uid
     p.Gid  = stat_object.Gid
-
-    if RegularFileIsReadable(file_same) == nil {
-        p.IsReadable       = true
-        p.HashSumAvailable = true
-    } else {
-        p.IsReadable       = false
-        p.HashSumAvailable = false
-    }
 
     file_info,err    :=  file.Stat()
     //fmt.Printf("\n<< Printing error >>\n")
@@ -260,11 +262,11 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 }
 
 
-func ( directory *Directory ) GetHashSumDir (path string) (err error){
+func ( directory *Directory ) GetHashSumDir (path string, mode string) (err error){
 
     //var dir_struct Directory
     //fmt.Println("\n == Starting  ==\n")
-    prop  := GetProp(path)
+    prop  := GetProp(path, mode)
     if prop.Error == true {
         //fmt.Println("\n Exiting  \n")
         return  err
@@ -308,7 +310,7 @@ func ( directory *Directory ) GetHashSumDir (path string) (err error){
         fstruct            :=  &File{}
         file_path          :=  path+"/"+directory.Prop.DirContent[file]
         fstruct.Path       =   file_path
-        fstruct.Prop   =   GetProp( file_path )
+        fstruct.Prop   =   GetProp( file_path,"" )
         if fstruct.Prop.Error == true  { continue }
 
         //fmt.Println("\n :Debug:  \n")
@@ -324,7 +326,7 @@ func ( directory *Directory ) GetHashSumDir (path string) (err error){
             another_dir                   :=  &Directory{}
             another_dir.DiscoveredInodes  =   directory.DiscoveredInodes
             subdir_path                   :=  path+"/"+directory.Prop.DirContent[file]
-            err                           =   another_dir.GetHashSumDir( subdir_path )
+            err                           =   another_dir.GetHashSumDir( subdir_path , mode)
 
             if (err!=nil) { continue }
 
