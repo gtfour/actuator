@@ -23,6 +23,9 @@ type inodes []uint64
 type strings []string
 
 var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
+var LAZY_OPENING_MODE int = 01
+var SAFE_OPENING_MODE int = 02
+
 
 //type CompNote struct {
 
@@ -106,14 +109,14 @@ func ( array strings ) IncludeValue ( value string ) (includes bool) {
 
 }
 
-func GetProp (path string, mode string) (p *Prop){
+func GetProp (path string, mode int) (p *Prop){
 
-    p                    =  &Prop{}
-    file, err            :=  os.Open(path)
-    file_same, err_same  :=  os.Open(path)
-    defer           file.Close()
-    defer           file_same.Close()
-    if mode == "safe" {
+    p                   =  &Prop{}
+    file, err           := os.Open(path)
+    file_same, err_same := os.Open(path)
+    defer file.Close()
+    defer file_same.Close()
+    if mode == SAFE_OPENING_MODE {
         if RegularFileIsReadable(file_same) == nil {
             p.IsReadable       = true
             p.HashSumAvailable = true
@@ -121,7 +124,6 @@ func GetProp (path string, mode string) (p *Prop){
             p.IsReadable       = false
             p.HashSumAvailable = false
         }
-
     }
     if( err!=nil || err_same!=nil )  {  p.Error = true  ; return p  }
     file_stat, err  :=  os.Stat(path)
@@ -262,7 +264,7 @@ func ReadFileWithTimeoutControll ( file *os.File, readable chan<- bool, content 
 }
 
 
-func ( directory *Directory ) GetHashSumDir (path string, mode string) (err error){
+func ( directory *Directory ) GetHashSumDir (path string, mode int) (err error){
 
     //var dir_struct Directory
     //fmt.Println("\n == Starting  ==\n")
@@ -310,7 +312,7 @@ func ( directory *Directory ) GetHashSumDir (path string, mode string) (err erro
         fstruct            :=  &File{}
         file_path          :=  path+"/"+directory.Prop.DirContent[file]
         fstruct.Path       =   file_path
-        fstruct.Prop   =   GetProp( file_path,"" )
+        fstruct.Prop   =   GetProp( file_path, mode )
         if fstruct.Prop.Error == true  { continue }
 
         //fmt.Println("\n :Debug:  \n")

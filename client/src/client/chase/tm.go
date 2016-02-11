@@ -1,7 +1,7 @@
 package chase
 
 
-//import "fmt"
+import "fmt"
 import "time"
 import "math/rand"
 //import "client/actuator"
@@ -12,6 +12,8 @@ import "client/evebridge"
 var TGT_PER_GR int64                       = 50 // if FILES_PER_GR is very big - TargetsCount type should be modified 
 var TIMEOUT_MS              time.Duration  = 800
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
+var LAZY_OPENING_MODE int = 01
+var SAFE_OPENING_MODE int = 02
 
 
 type AbstractTarget interface {
@@ -56,16 +58,17 @@ func ( w *Worker ) Start ()  {
                     if tgt.IsReady() == true{
                         tgt.SetReady(false)
                         w.WorkerPool.RunningTargets <- tgt
-                        _                         = tgt.Chasing("lazy") //should be  light file opening
+                        _                         = tgt.Chasing(LAZY_OPENING_MODE) //should be  light file opening
                         tgt.SetReady(true)
                     } else {
                         w.WorkerPool.RunningTargets <- tgt
-                        _                         = tgt.Chasing("safe")
+                        _                         = tgt.Chasing(SAFE_OPENING_MODE)
                         tgt.SetReady(true)
                     }
                     //w.WorkerPool.ReadyTargets   <- tgt
                 }()
-            default:
+            //
+            /*default:
                 var unused_tgt_numbers []int // array for store tgt numbers whose should be removed from w.Targets
                 targets_count:=len(w.Targets)
                 for tgt := range w.Targets {
@@ -81,6 +84,8 @@ func ( w *Worker ) Start ()  {
                         w.Targets = append(w.Targets[:tgt_num], w.Targets[tgt_num+1:]...)
                     }
                 }
+              */
+              //
             }
         }
         //time.Sleep( TIMEOUT_MS * time.Millisecond )
@@ -94,10 +99,10 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
 
 func WPCreate () (wp WorkerPool) {
 
-    wp.Workers  = make([]*Worker, 0)
-    wp.ReadyTargets = make(chan AbstractTarget,100 )
+    wp.Workers        = make([]*Worker, 0)
+    wp.ReadyTargets   = make(chan AbstractTarget,100 )
     wp.RunningTargets = make(chan AbstractTarget,100 )
-    wp.Juggle()
+    go wp.Juggle()
     // try to create two workers instead of one
     wp.AddWorker()
     wp.AddWorker()
@@ -114,17 +119,36 @@ func ( wp *WorkerPool ) Stop () {
 }
 func ( wp *WorkerPool ) Juggle () {
     ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
-    for _ = range ticker.C {
+    //for _ = range ticker.C {
+        fmt.Printf("\n--Juggling--\n")
+        SuspendedTargets := make(chan AbstractTarget,100)
+        go func(){
+            ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
+            for _ = range ticker.C {
+                select {
+                    case tgt :=<-SuspendedTargets:
+                        if tgt.IsReady() == true {
+                            wp.ReadyTargets <- tgt
+                        } else {
+
+                        }
+                    }
+
+             }
+        }()
         for {
             select {
                 case tgt := <-wp.RunningTargets:
-                    if tgt.IsReady() == true{
-                            wp.ReadyTargets <- tgt
+                    if tgt.IsReady() == true {
+                            wp.ReadyTargets     <- tgt
+                    } else {
+                            wp.SuspendedTargets <- tgt
                     }
-
+                default:
+                    //fmt.Printf("\nnone")
             }
         }
-    }
+    //}
 }
 
 

@@ -4,7 +4,7 @@ package chase
 import "client/actuator"
 import "client/evebridge"
 //import "os"
-//import "fmt" // for  debug
+import "fmt" // for  debug
 //import "time"
 import "path/filepath"
 //import "reflect"
@@ -64,11 +64,11 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
     for id :=range targets {
 
         fstruct       := &actuator.File{} // create File instance
-        fstruct.Prop  =  actuator.GetProp(targets[id],"safe") // calculate File md5 sum 
+        fstruct.Prop  =  actuator.GetProp(targets[id],SAFE_OPENING_MODE) // calculate File md5 sum 
 
         if fstruct.Prop.IsDir == true  { // if file is directory
             dir_struct := &actuator.Directory{}
-            err := dir_struct.GetHashSumDir(targets[id],"safe") // collect information about included files and directories 
+            err := dir_struct.GetHashSumDir(targets[id],SAFE_OPENING_MODE) // collect information about included files and directories 
             if err !=nil { continue } // was a return err
             if _, ok := (*subdirs)[targets[id]]; ok == false { // if global subdirs map does'not contain this item  targets[id] , create and add item to subdirs
                 tgt_dir                   := TargetDir{}
@@ -92,7 +92,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
 
                 file_struct            :=  dir_struct.Files[file_id]
                 //fmt.Printf("\ntgt path :%s\n",file_struct.Path)
-                prop               :=  actuator.GetProp(file_struct.Path, "safe")
+                prop               :=  actuator.GetProp(file_struct.Path, SAFE_OPENING_MODE)
 
                 if prop.Error == true { continue }
 
@@ -121,7 +121,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
 
           target                 :=  Target{}
           target.Path            =   targets[id]
-          prop               :=  actuator.GetProp(targets[id],"safe")
+          prop               :=  actuator.GetProp(targets[id], SAFE_OPENING_MODE)
           if prop.Error == true  { continue }
           target.Prop            =   prop
           target.WorkerPool      =   wp // new 02-11-2015 03:00
@@ -157,7 +157,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
     for i:=range (*subdirs) {
 
         target_subdir := (*subdirs)[i]
-        prop      :=  actuator.GetProp(target_subdir.Path,"safe")
+        prop      :=  actuator.GetProp(target_subdir.Path, SAFE_OPENING_MODE)
         if prop.Error == true { continue }
 
         target_subdir.Prop  = prop
@@ -175,7 +175,9 @@ func Stop()(err error) {
 }
 
 
-func (tgt *Target) Chasing(mode string) (err error){
+func (tgt *Target) Chasing(mode int) (err error){
+
+    fmt.Printf("\nChasing:file")
 
     //for {
 
@@ -243,7 +245,9 @@ func (tgt *Target) Chasing(mode string) (err error){
     return nil
 }
 
-func (tgt *TargetDir) Chasing (mode string) (err error){
+func (tgt *TargetDir) Chasing (mode int) (err error){
+
+        fmt.Printf("Chasing:dir")
 
 
         actual_prop  :=  actuator.GetProp(tgt.Path, mode)
