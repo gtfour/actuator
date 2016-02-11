@@ -4,7 +4,7 @@ package chase
 //import "fmt"
 import "time"
 import "math/rand"
-import "client/actuator"
+//import "client/actuator"
 import "client/evebridge"
 // Have to implement carousel method
 
@@ -18,7 +18,7 @@ type AbstractTarget interface {
     GetDir()            string
     Chasing(string)     error
     GetPath()           string
-    GetProp()           *actuator.Prop
+    //GetProp()           *actuator.Prop
     GetMessageChannel() chan evebridge.CompNotes
     SetReady            (bool)()
     IsReady()           bool
@@ -43,23 +43,29 @@ type Worker struct {
 }
 
 func ( w *Worker ) Start ()  {
-    ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
-    for _ = range ticker.C {
+    //ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
+    //for _ = range ticker.C {
         //fmt.Printf("\n<-- Worker is working %d-->\n",w.Id)
         for {
             select {
             case <-w.Stop:
-                ticker.Stop()
+                //ticker.Stop()
+                break
             case tgt :=<-w.WorkerPool.ReadyTargets:
                 go func() {
-                    tgt.SetReady(false)
-                    w.WorkerPool.RunningTargets <- tgt
-                    _                         = tgt.Chasing("lazy") //should be  light file opening
-                    tgt.SetReady(true)
-                    w.WorkerPool.ReadyTargets   <- tgt
+                    if tgt.IsReady() == true{
+                        tgt.SetReady(false)
+                        w.WorkerPool.RunningTargets <- tgt
+                        _                         = tgt.Chasing("lazy") //should be  light file opening
+                        tgt.SetReady(true)
+                    } else {
+                        w.WorkerPool.RunningTargets <- tgt
+                        _                         = tgt.Chasing("safe")
+                        tgt.SetReady(true)
+                    }
+                    //w.WorkerPool.ReadyTargets   <- tgt
                 }()
             default:
-
                 var unused_tgt_numbers []int // array for store tgt numbers whose should be removed from w.Targets
                 targets_count:=len(w.Targets)
                 for tgt := range w.Targets {
@@ -78,7 +84,7 @@ func ( w *Worker ) Start ()  {
             }
         }
         //time.Sleep( TIMEOUT_MS * time.Millisecond )
-    }
+    //}
 }
 
 func ( w *Worker ) Append ( tgt AbstractTarget ) {
@@ -89,6 +95,9 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
 func WPCreate () (wp WorkerPool) {
 
     wp.Workers  = make([]*Worker, 0)
+    wp.ReadyTargets = make(chan AbstractTarget,100 )
+    wp.RunningTargets = make(chan AbstractTarget,100 )
+    wp.Juggle()
     // try to create two workers instead of one
     wp.AddWorker()
     wp.AddWorker()
@@ -106,7 +115,15 @@ func ( wp *WorkerPool ) Stop () {
 func ( wp *WorkerPool ) Juggle () {
     ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
     for _ = range ticker.C {
+        for {
+            select {
+                case tgt := <-wp.RunningTargets:
+                    if tgt.IsReady() == true{
+                            wp.ReadyTargets <- tgt
+                    }
 
+            }
+        }
     }
 }
 
@@ -126,10 +143,13 @@ func (wp *WorkerPool)  AddWorker()(){
 
 func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
+     wp.ReadyTargets <- tgt
+
     //fmt.Printf("\n Appending target %s \n",tgt.GetPath())
     //bug has been found : can't add targets more than 2 worker * TGT_PER_GR
     // lol, seems that linked to message channel size
 
+    /*
     var tgt_replaced  bool
     var all_tgt_count int64
 
@@ -159,6 +179,6 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     average_tgt_per_worker:=all_tgt_count/int64(len(wp.Workers))
     if average_tgt_per_worker > TGT_PER_GR { wp.AddWorker() }
-
+    */
 
 }
