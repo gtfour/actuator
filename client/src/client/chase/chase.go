@@ -27,6 +27,7 @@ type Target struct {
     InformAboutExit               bool
     KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
     OpeningMode                   int //safe or lazy
+    Suspended                     bool
 
 }
 
