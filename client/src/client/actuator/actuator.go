@@ -22,7 +22,8 @@ import "fmt"
 type inodes []uint64
 type strings []string
 
-var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
+//var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
+var OPEN_FILE_TIMEOUT time.Duration = 500 // let play with this param
 
 //type CompNote struct {
 
@@ -127,13 +128,13 @@ func GetProp (path string) (p *Prop){
     p.Uid  = stat_object.Uid
     p.Gid  = stat_object.Gid
 
-    if RegularFileIsReadable(file_same) == nil {
+    /*if RegularFileIsReadable(file_same) == nil {
         p.IsReadable       = true
         p.HashSumAvailable = true
     } else {
         p.IsReadable       = false
         p.HashSumAvailable = false
-    }
+    }*/
 
     file_info,err    :=  file.Stat()
     //fmt.Printf("\n<< Printing error >>\n")
@@ -146,6 +147,13 @@ func GetProp (path string) (p *Prop){
         if file_mode.IsDir()==true {
             p.IsDir = true
         } else {
+            if RegularFileIsReadable(file_same) == nil {
+                p.IsReadable       = true
+                p.HashSumAvailable = true
+            } else {
+                p.IsReadable       = false
+                p.HashSumAvailable = false
+            }
             file_type := string(file_mode.String()[0])
             p.Type = file_type
             if ( file_type == "-" ) {  p.IsRegular = true } else { p.IsRegular = false  }
