@@ -14,7 +14,6 @@ var TIMEOUT_MS              time.Duration  = 800
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
 
-
 var LAZY_OPENING_MODE int = 01
 var SAFE_OPENING_MODE int = 02
 
@@ -135,8 +134,7 @@ func ( wp *WorkerPool ) Juggle () {
 
                         }
                     }
-
-             }
+                }
         }()
         for {
             select {
