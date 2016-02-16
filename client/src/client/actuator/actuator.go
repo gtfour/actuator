@@ -22,8 +22,8 @@ import "fmt"
 type inodes []uint64
 type strings []string
 
-//var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
-var OPEN_FILE_TIMEOUT time.Duration = 500 // let play with this param
+var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
+//var OPEN_FILE_TIMEOUT time.Duration = 500 // let play with this param
 
 //type CompNote struct {
 
@@ -168,7 +168,7 @@ func GetProp (path string) (p *Prop){
         mtime_struct     := file_stat.ModTime()
         p.Mtime          =  string(mtime_struct.Format("2006-01-02T15:04:05.999999999Z07:00"))
         p.MtimeAvailable =  true
-        if p.HashSumAvailable == false { p.HashSum = p.Mtime  }
+        //if p.HashSumAvailable == false { p.HashSum = p.Mtime  }
     }
 
     if p.HashSumAvailable == true && p.IsReadable==true && p.IsRegular == true && p.IsDir == false {
