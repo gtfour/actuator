@@ -36,6 +36,9 @@ func ( tgt *Target ) GetMessageChannel() chan evebridge.CompNotes {return tgt.Me
 func ( tgt *Target ) IsReady() bool {return tgt.Prop.Ready }
 func ( tgt *Target ) SetReady(state bool)() {tgt.Prop.Ready = state }
 func ( tgt *Target ) GetSelfProp()(*actuator.Prop){ return tgt.Prop }
+func ( tgt *Target ) CloseFd()(){ tgt.Prop.Fd.Close() ; tgt.Prop.FdCheck.Close() ;}
+func ( tgt  *Target) SetOpeningMode(mode int)() { tgt.OpeningMode = mode  }
+func ( tgt  *Target) GetOpeningMode()(mode int) { return tgt.OpeningMode }
 
 type TargetDir struct {
 
@@ -46,12 +49,15 @@ type TargetDir struct {
 
 }
 
-func ( tgt *TargetDir ) GetDir()  string { return tgt.Dir }
-func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
-func ( tgt *TargetDir ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
-func ( tgt *TargetDir ) IsReady() bool {return tgt.Prop.Ready }
-func ( tgt *TargetDir ) SetReady(state bool)() {tgt.Prop.Ready = state }
-func ( tgt *TargetDir ) GetSelfProp()(*actuator.Prop){ return tgt.Prop }
+func ( tgt *TargetDir )  GetDir()  string { return tgt.Dir }
+func ( tgt *TargetDir )  GetPath() string { return tgt.Path }
+func ( tgt *TargetDir )  GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
+func ( tgt *TargetDir )  IsReady() bool {return tgt.Prop.Ready }
+func ( tgt *TargetDir )  SetReady(state bool)() {tgt.Prop.Ready = state }
+func ( tgt *TargetDir )  GetSelfProp()(*actuator.Prop){ return tgt.Prop }
+func ( tgt *TargetDir )  CloseFd()(){ tgt.Prop.Fd.Close() ; tgt.Prop.FdCheck.Close() ;}
+func ( tgt  *TargetDir ) SetOpeningMode(mode int)() { tgt.OpeningMode = mode  }
+func ( tgt  *TargetDir ) GetOpeningMode()(mode int) { return tgt.OpeningMode }
 
 
 func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){

@@ -12,6 +12,9 @@ import "client/evebridge"
 var TGT_PER_GR int64                       = 50 // if FILES_PER_GR is very big - TargetsCount type should be modified 
 var TIMEOUT_MS              time.Duration  = 800
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
+
+
+
 var LAZY_OPENING_MODE int = 01
 var SAFE_OPENING_MODE int = 02
 
@@ -24,6 +27,9 @@ type AbstractTarget interface {
     SetReady            (bool)()
     IsReady()           bool
     GetSelfProp         ()(*actuator.Prop)
+    CloseFd()()
+    SetOpeningMode(int)()
+    GetOpeningMode()(int)
 }
 
 type WorkerPool struct {
@@ -55,7 +61,7 @@ func ( w *Worker ) Start ()  {
             case tgt :=<-w.WorkerPool.ReadyTargets:
                 go func() {
                         w.WorkerPool.RunningTargets <- tgt
-                        _                         = tgt.Chasing() //should be  light file opening
+                        _                         = tgt.Chasing(LAZY_OPENING_MODE) //should be  light file opening
                         tgt.SetReady(true)
                     //w.WorkerPool.ReadyTargets   <- tgt
                 }()
@@ -122,6 +128,10 @@ func ( wp *WorkerPool ) Juggle () {
                         if tgt.IsReady() == true {
                             wp.ReadyTargets <- tgt
                         } else {
+                            if tgt.GetOpeningMode() == LAZY_OPENING_MODE {
+                                tgt.CloseFd()
+                                tgt.SetOpeningMode(SAFE_OPENING_MODE)
+                            }
 
                         }
                     }

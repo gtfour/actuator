@@ -114,6 +114,8 @@ func GetProp (path string, mode int) (p *Prop){
     p                   =  &Prop{}
     file, err           := os.Open(path)
     file_same, err_same := os.Open(path)
+    p.Fd = file
+    p.FdCheck = file_same
     defer file.Close()
     defer file_same.Close()
     if( err!=nil || err_same!=nil )  {  p.Error = true  ; return p  }
