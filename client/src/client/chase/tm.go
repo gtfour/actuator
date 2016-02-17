@@ -11,6 +11,8 @@ import "client/evebridge"
 
 var TGT_PER_GR int64                       = 50 // if FILES_PER_GR is very big - TargetsCount type should be modified 
 var TIMEOUT_MS              time.Duration  = 800
+var INHIBITION_TIMEOUT      time.Duration  = 3000
+// time.Sleep( INHIBITION_TIMEOUT * time.Millisecond)
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
 
@@ -72,7 +74,7 @@ func ( w *Worker ) Start ()  {
                         } else {
                             _                         = tgt.Chasing(SAFE_OPENING_MODE)
                             tgt.SetReady(true)
-                            //w.WorkerPool.ReadyTargets <- tgt
+                            w.WorkerPool.ReadyTargets <- tgt // has been uncommented
                         }
                     //w.WorkerPool.ReadyTargets   <- tgt
                 }()
@@ -112,10 +114,10 @@ func WPCreate () (wp WorkerPool) {
     wp.ReadyTargets     = make(chan AbstractTarget,100 )
     wp.RunningTargets   = make(chan AbstractTarget,100 )
     wp.SuspendedTargets = make(chan AbstractTarget,100 )
-    go wp.Juggle()
     // try to create two workers instead of one
     wp.AddWorker()
     wp.AddWorker()
+    go wp.Juggle()
 
     return
 
@@ -157,14 +159,18 @@ func ( wp *WorkerPool ) Juggle () {
                 case tgt := <-wp.RunningTargets:
                     /// fmt.Printf("\ngetting targets from wp.RunningTargets %s IsReady: %v \n",tgt.GetPath(), tgt.IsReady())
                     // uncommented
-                    if tgt.IsReady() == true {
+                    // sleeper and gorutine
+                    //go func() { has been commented
+                        //time.Sleep( INHIBITION_TIMEOUT * time.Millisecond )
+                        if tgt.IsReady() == true {
                             wp.ReadyTargets     <- tgt
                     //
-                    } else {
+                        } else {
                             wp.SuspendedTargets <- tgt
-                    }
+                        }
+                    // }()
                 default:
-                    //fmt.Printf("\nnone")
+                    time.Sleep( INHIBITION_TIMEOUT * time.Millisecond )
             }
         }
     //}

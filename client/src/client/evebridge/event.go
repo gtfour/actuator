@@ -43,7 +43,7 @@ func Handle(messages chan CompNotes )() {
                 case message:=<-messages:
                     fmt.Println(message)
                 default:
-                    //time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
+                    time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
                     //fmt.Println("No messages")
             }
         }

@@ -61,7 +61,7 @@ type Prop struct {
     Error               bool
     Fd                  *os.File `ignore`
     FdCheck             *os.File `ignore`
-    Ready               bool
+    Ready               bool     `ignore`
 }
 
 
