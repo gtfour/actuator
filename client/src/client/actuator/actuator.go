@@ -59,8 +59,8 @@ type Prop struct {
     DirContent          []string `ignore`
     DirContentAvailable bool
     Error               bool
-    Fd                  *os.File
-    FdCheck             *os.File
+    Fd                  *os.File `ignore`
+    FdCheck             *os.File `ignore`
     Ready               bool
 }
 

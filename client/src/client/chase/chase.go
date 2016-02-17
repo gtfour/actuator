@@ -4,7 +4,7 @@ package chase
 import "client/actuator"
 import "client/evebridge"
 //import "os"
-import "fmt" // for  debug
+//import "fmt" // for  debug
 //import "time"
 import "path/filepath"
 //import "reflect"
@@ -185,7 +185,7 @@ func Stop()(err error) {
 
 func (tgt *Target) Chasing(mode int) (err error){
 
-    fmt.Printf("\nChasing:file")
+    //fmt.Printf("\nChasing:file")
 
     //for {
 
@@ -244,7 +244,7 @@ func (tgt *Target) Chasing(mode int) (err error){
 
 func (tgt *TargetDir) Chasing (mode int) (err error){
 
-        fmt.Printf("Chasing:dir")
+        //fmt.Printf("Chasing:dir")
 
 
         actual_prop  :=  actuator.GetProp(tgt.Path, mode)

@@ -14,8 +14,9 @@ var TIMEOUT_MS              time.Duration  = 800
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
 
-var LAZY_OPENING_MODE int = 01
-var SAFE_OPENING_MODE int = 02
+var EMPTY_OPENING_MODE int = 0
+var LAZY_OPENING_MODE  int = 01
+var SAFE_OPENING_MODE  int = 02
 
 
 type AbstractTarget interface {
@@ -32,10 +33,11 @@ type AbstractTarget interface {
 }
 
 type WorkerPool struct {
-    Workers         []*Worker
-    WKillers        []chan bool
-    ReadyTargets    chan AbstractTarget
-    RunningTargets  chan AbstractTarget
+    Workers          []*Worker
+    WKillers         []chan bool
+    ReadyTargets     chan AbstractTarget
+    RunningTargets   chan AbstractTarget
+    SuspendedTargets chan AbstractTarget
 }
 
 
@@ -59,9 +61,16 @@ func ( w *Worker ) Start ()  {
                 break
             case tgt :=<-w.WorkerPool.ReadyTargets:
                 go func() {
-                        w.WorkerPool.RunningTargets <- tgt
-                        _                         = tgt.Chasing(LAZY_OPENING_MODE) //should be  light file opening
-                        tgt.SetReady(true)
+                        opening_mode := tgt.GetOpeningMode()
+                        if opening_mode == LAZY_OPENING_MODE || opening_mode == EMPTY_OPENING_MODE  {
+                            w.WorkerPool.RunningTargets <- tgt
+                            _                         = tgt.Chasing(LAZY_OPENING_MODE) //should be  light file opening
+                            tgt.SetReady(true)
+                        } else {
+                            _                         = tgt.Chasing(SAFE_OPENING_MODE)
+                            tgt.SetReady(true)
+                            //w.WorkerPool.ReadyTargets <- tgt
+                        }
                     //w.WorkerPool.ReadyTargets   <- tgt
                 }()
             //
@@ -96,9 +105,10 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
 
 func WPCreate () (wp WorkerPool) {
 
-    wp.Workers        = make([]*Worker, 0)
-    wp.ReadyTargets   = make(chan AbstractTarget,100 )
-    wp.RunningTargets = make(chan AbstractTarget,100 )
+    wp.Workers          = make([]*Worker, 0)
+    wp.ReadyTargets     = make(chan AbstractTarget,100 )
+    wp.RunningTargets   = make(chan AbstractTarget,100 )
+    wp.SuspendedTargets = make(chan AbstractTarget,100 )
     go wp.Juggle()
     // try to create two workers instead of one
     wp.AddWorker()
@@ -118,18 +128,20 @@ func ( wp *WorkerPool ) Juggle () {
     //ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
     //for _ = range ticker.C {
         fmt.Printf("\n--Juggling--\n")
-        SuspendedTargets := make(chan AbstractTarget,100)
+       // SuspendedTargets := make(chan AbstractTarget,100)
         go func(){
-            ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
-            for _ = range ticker.C {
+            //ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
+            //for _ = range ticker.C {
+            for {
                 select {
-                    case tgt :=<-SuspendedTargets:
+                    case tgt :=<-wp.SuspendedTargets:
                         if tgt.IsReady() == true {
                             wp.ReadyTargets <- tgt
                         } else {
                             if tgt.GetOpeningMode() == LAZY_OPENING_MODE {
                                 tgt.CloseFd()
                                 tgt.SetOpeningMode(SAFE_OPENING_MODE)
+                                wp.ReadyTargets <- tgt
                             }
 
                         }
@@ -139,10 +151,11 @@ func ( wp *WorkerPool ) Juggle () {
         for {
             select {
                 case tgt := <-wp.RunningTargets:
-                    if tgt.IsReady() == true {
-                            wp.ReadyTargets     <- tgt
-                    } else {
-                            SuspendedTargets <- tgt
+                    //if tgt.IsReady() == true {
+                    //        wp.ReadyTargets     <- tgt
+                    //} else {
+                    if tgt.IsReady() == false {
+                            wp.SuspendedTargets <- tgt
                     }
                 default:
                     //fmt.Printf("\nnone")
