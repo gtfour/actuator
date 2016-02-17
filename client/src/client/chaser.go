@@ -10,15 +10,14 @@ import "client/evebridge"
 
 func main() {
 
-    path     := "/tmp/test"
+    path     := "/proc/net"
     messages :=   make(chan evebridge.CompNotes,100)
     wp       :=  chase.WPCreate()
     _ = chase.Listen(path, messages, wp)
+    evebridge.Handle(messages)
 
     go func() {
         fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
     }()
-    evebridge.Handle(messages)
-
 
 }

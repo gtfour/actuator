@@ -38,6 +38,7 @@ type WorkerPool struct {
     ReadyTargets     chan AbstractTarget
     RunningTargets   chan AbstractTarget
     SuspendedTargets chan AbstractTarget
+    Targets          []string
 }
 
 
@@ -60,9 +61,11 @@ func ( w *Worker ) Start ()  {
                 //ticker.Stop()
                 break
             case tgt :=<-w.WorkerPool.ReadyTargets:
+                //  fmt.Printf("\ngetting targets from w.WorkerPool.ReadyTargets %s\n",tgt.GetPath())
                 go func() {
                         opening_mode := tgt.GetOpeningMode()
                         if opening_mode == LAZY_OPENING_MODE || opening_mode == EMPTY_OPENING_MODE  {
+                            /// fmt.Printf("\nwriting targets to w.WorkerPool.RunningTargets  %s\n",tgt.GetPath())
                             w.WorkerPool.RunningTargets <- tgt
                             _                         = tgt.Chasing(LAZY_OPENING_MODE) //should be  light file opening
                             tgt.SetReady(true)
@@ -135,8 +138,9 @@ func ( wp *WorkerPool ) Juggle () {
             for {
                 select {
                     case tgt :=<-wp.SuspendedTargets:
+                        /// fmt.Printf("\ngetting targets from wp.SuspendedTargets %s\n",tgt.GetPath())
                         if tgt.IsReady() == true {
-                            wp.ReadyTargets <- tgt
+                            //wp.ReadyTargets <- tgt
                         } else {
                             if tgt.GetOpeningMode() == LAZY_OPENING_MODE {
                                 tgt.CloseFd()
@@ -151,10 +155,12 @@ func ( wp *WorkerPool ) Juggle () {
         for {
             select {
                 case tgt := <-wp.RunningTargets:
-                    //if tgt.IsReady() == true {
-                    //        wp.ReadyTargets     <- tgt
-                    //} else {
-                    if tgt.IsReady() == false {
+                    /// fmt.Printf("\ngetting targets from wp.RunningTargets %s IsReady: %v \n",tgt.GetPath(), tgt.IsReady())
+                    // uncommented
+                    if tgt.IsReady() == true {
+                            wp.ReadyTargets     <- tgt
+                    //
+                    } else {
                             wp.SuspendedTargets <- tgt
                     }
                 default:
@@ -180,7 +186,17 @@ func (wp *WorkerPool)  AddWorker()(){
 
 func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
-     wp.ReadyTargets <- tgt
+    var tgt_exists bool
+
+    for existing_tgt_path_id := range wp.Targets {
+        existing_tgt_path := wp.Targets[existing_tgt_path_id]
+        if tgt.GetPath() == existing_tgt_path  { tgt_exists=true ; break }
+    }
+
+    if tgt_exists == false {
+         wp.Targets = append(wp.Targets, tgt.GetPath())
+         wp.ReadyTargets <- tgt
+    }
 
     //fmt.Printf("\n Appending target %s \n",tgt.GetPath())
     //bug has been found : can't add targets more than 2 worker * TGT_PER_GR
