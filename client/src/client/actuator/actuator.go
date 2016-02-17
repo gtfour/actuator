@@ -22,7 +22,7 @@ import "fmt"
 type inodes []uint64
 type strings []string
 
-var OPEN_FILE_TIMEOUT time.Duration = 5 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
+var OPEN_FILE_TIMEOUT time.Duration = 10 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
 //var OPEN_FILE_TIMEOUT time.Duration = 500 // let play with this param
 
 //type CompNote struct {
