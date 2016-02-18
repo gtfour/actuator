@@ -136,13 +136,6 @@ func GetProp (path string, mode int) (p *Prop){
         if file_mode.IsDir()==true {
             p.IsDir = true
         } else {
-            if RegularFileIsReadable(file_same) == nil {
-                p.IsReadable       = true
-                p.HashSumAvailable = true
-            } else {
-                p.IsReadable       = false
-                p.HashSumAvailable = false
-            }
             file_type := string(file_mode.String()[0])
             p.Type = file_type
             if mode == SAFE_OPENING_MODE {
