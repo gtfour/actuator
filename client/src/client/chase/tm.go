@@ -41,6 +41,7 @@ type WorkerPool struct {
     ReadyTargets     chan AbstractTarget
     RunningTargets   chan AbstractTarget
     SuspendedTargets chan AbstractTarget
+    PendingTargets   chan AbstractTarget
     Targets          []string
 }
 
@@ -112,9 +113,10 @@ func ( w *Worker ) Append ( tgt AbstractTarget ) {
 func WPCreate () (wp WorkerPool) {
 
     wp.Workers          = make([]*Worker, 0)
-    wp.ReadyTargets     = make(chan AbstractTarget,100 )
-    wp.RunningTargets   = make(chan AbstractTarget,100 )
-    wp.SuspendedTargets = make(chan AbstractTarget,100 )
+    wp.ReadyTargets     = make(chan AbstractTarget,100)
+    wp.RunningTargets   = make(chan AbstractTarget,100)
+    wp.SuspendedTargets = make(chan AbstractTarget,100)
+    wp.PendingTargets   = make(chan AbstractTarget,100)
     // try to create two workers instead of one
     wp.AddWorker()
     wp.AddWorker()
@@ -122,6 +124,27 @@ func WPCreate () (wp WorkerPool) {
 
     return
 
+}
+
+func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
+
+    go func() {
+        if wp == nil { fmt.Printf("\n<<< wp is nil >>> \n")}
+        FakeReadyTargets     := make(chan AbstractTarget,100 )
+        OriginalReadyTargets := wp.ReadyTargets
+        wp.ReadyTargets      = FakeReadyTargets
+        for {
+            select {
+                case tgt:=<-OriginalReadyTargets:
+                    if tgt.GetPath() != tgt_path {
+                        OriginalReadyTargets <- tgt
+                    } else {
+                        wp.ReadyTargets = OriginalReadyTargets
+                        break
+                    }
+            }
+        }
+    }()
 }
 
 func ( wp *WorkerPool ) Stop () {
