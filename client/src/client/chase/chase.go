@@ -210,7 +210,15 @@ func (tgt *Target) Chasing(mode int) (err error){
                         return err
                     }
                     //if ( reflect.DeepEqual(actual_prop, tgt.Prop) == false ) {
-                    if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
+                    if tgt.InitialCheck == true {
+                        empty_prop:=&actuator.Prop{}
+                        if comparison_notes:=actuator.CompareProp(empty_prop, actual_prop ,tgt.Path ); len(comparison_notes.List)>0 {
+                            tgt.MessageChannel <- comparison_notes
+                        }
+                        tgt.InitialCheck = false
+                    }
+
+                    if comparison_notes:=actuator.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
                         //go  tgt.Reporting()
                         tgt.MessageChannel <- comparison_notes
                         tgt.Prop = actual_prop }
@@ -230,7 +238,7 @@ func (tgt *Target) Chasing(mode int) (err error){
            }
            if tgt.InitialCheck == true {
                empty_prop:=&actuator.Prop{}
-               if comparison_notes:=actuator.CompareProp(actual_prop,empty_prop ,tgt.Path ); len(comparison_notes.List)>0 {
+               if comparison_notes:=actuator.CompareProp(empty_prop, actual_prop ,tgt.Path ); len(comparison_notes.List)>0 {
                    tgt.MessageChannel <- comparison_notes
                }
                tgt.InitialCheck = false
@@ -238,11 +246,9 @@ func (tgt *Target) Chasing(mode int) (err error){
 
 
            //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
-           if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
-
+           if comparison_notes:=actuator.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
                //go  tgt.Reporting()
                tgt.MessageChannel <- comparison_notes
-
                tgt.Prop = actual_prop
 
            }
@@ -324,14 +330,14 @@ func (tgt *TargetDir) Chasing (mode int) (err error){
         }
         if tgt.InitialCheck == true {
             empty_prop:=&actuator.Prop{}
-            if comparison_notes:=actuator.CompareProp(actual_prop,empty_prop ,tgt.Path ); len(comparison_notes.List)>0 {
+            if comparison_notes:=actuator.CompareProp(empty_prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
                 tgt.MessageChannel <- comparison_notes
             }
             tgt.InitialCheck = false
         }
 
         //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
-        if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
+        if comparison_notes:=actuator.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
            tgt.MessageChannel <- comparison_notes
            tgt.Prop = actual_prop
 
