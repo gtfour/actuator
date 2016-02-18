@@ -13,7 +13,7 @@ func main() {
     go func() {
         fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
     }()
-    path     := "/proc/net"
+    path     := "/tmp/test"
     messages :=   make(chan evebridge.CompNotes,100)
     wp       :=  chase.WPCreate()
     _ = chase.Listen(path, messages, wp)

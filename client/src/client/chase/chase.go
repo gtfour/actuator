@@ -28,6 +28,7 @@ type Target struct {
     KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
     OpeningMode                   int //safe or lazy
     Suspended                     bool
+    InitialCheck                  bool
 
 }
 
@@ -40,6 +41,7 @@ func ( tgt *Target ) GetSelfProp()(*actuator.Prop){ return tgt.Prop }
 func ( tgt *Target ) CloseFd()(){ tgt.Prop.Fd.Close() ; tgt.Prop.FdCheck.Close() ;}
 func ( tgt  *Target) SetOpeningMode(mode int)() { tgt.OpeningMode = mode  }
 func ( tgt  *Target) GetOpeningMode()(mode int) { return tgt.OpeningMode }
+func ( tgt  *Target) AskInitialCheck()() { tgt.InitialCheck = true }
 
 type TargetDir struct {
 
@@ -50,15 +52,16 @@ type TargetDir struct {
 
 }
 
-func ( tgt *TargetDir )  GetDir()  string { return tgt.Dir }
-func ( tgt *TargetDir )  GetPath() string { return tgt.Path }
-func ( tgt *TargetDir )  GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
-func ( tgt *TargetDir )  IsReady() bool {return tgt.Prop.Ready }
-func ( tgt *TargetDir )  SetReady(state bool)() {tgt.Prop.Ready = state }
-func ( tgt *TargetDir )  GetSelfProp()(*actuator.Prop){ return tgt.Prop }
-func ( tgt *TargetDir )  CloseFd()(){ tgt.Prop.Fd.Close() ; tgt.Prop.FdCheck.Close() ;}
+func ( tgt *TargetDir  )  GetDir()  string { return tgt.Dir }
+func ( tgt *TargetDir  )  GetPath() string { return tgt.Path }
+func ( tgt *TargetDir  )  GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
+func ( tgt *TargetDir  )  IsReady() bool {return tgt.Prop.Ready }
+func ( tgt *TargetDir  )  SetReady(state bool)() {tgt.Prop.Ready = state }
+func ( tgt *TargetDir  )  GetSelfProp()(*actuator.Prop){ return tgt.Prop }
+func ( tgt *TargetDir  )  CloseFd()(){ tgt.Prop.Fd.Close() ; tgt.Prop.FdCheck.Close() ;}
 func ( tgt  *TargetDir ) SetOpeningMode(mode int)() { tgt.OpeningMode = mode  }
 func ( tgt  *TargetDir ) GetOpeningMode()(mode int) { return tgt.OpeningMode }
+func ( tgt  *TargetDir ) AskInitialCheck()() { tgt.InitialCheck = true }
 
 
 func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
@@ -225,6 +228,13 @@ func (tgt *Target) Chasing(mode int) (err error){
                return err
 
            }
+           if tgt.InitialCheck == true {
+               empty_prop:=&actuator.Prop{}
+               if comparison_notes:=actuator.CompareProp(actual_prop,empty_prop ,tgt.Path ); len(comparison_notes.List)>0 {
+                   tgt.MessageChannel <- comparison_notes
+               }
+               tgt.InitialCheck = false
+           }
 
 
            //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
@@ -311,6 +321,13 @@ func (tgt *TargetDir) Chasing (mode int) (err error){
 
             return nil
 
+        }
+        if tgt.InitialCheck == true {
+            empty_prop:=&actuator.Prop{}
+            if comparison_notes:=actuator.CompareProp(actual_prop,empty_prop ,tgt.Path ); len(comparison_notes.List)>0 {
+                tgt.MessageChannel <- comparison_notes
+            }
+            tgt.InitialCheck = false
         }
 
         //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {

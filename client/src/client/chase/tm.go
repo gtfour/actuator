@@ -32,6 +32,7 @@ type AbstractTarget interface {
     CloseFd()()
     SetOpeningMode(int)()
     GetOpeningMode()(int)
+    AskInitialCheck()()
 }
 
 type WorkerPool struct {
@@ -142,11 +143,15 @@ func ( wp *WorkerPool ) Juggle () {
                     case tgt :=<-wp.SuspendedTargets:
                         /// fmt.Printf("\ngetting targets from wp.SuspendedTargets %s\n",tgt.GetPath())
                         if tgt.IsReady() == true {
+                            tgt.SetOpeningMode(LAZY_OPENING_MODE)
                             //wp.ReadyTargets <- tgt
+                            tgt.SetReady(false)
+                            wp.ReadyTargets <- tgt
                         } else {
                             if tgt.GetOpeningMode() == LAZY_OPENING_MODE {
                                 tgt.CloseFd()
                                 tgt.SetOpeningMode(SAFE_OPENING_MODE)
+                                tgt.SetReady(false)
                                 wp.ReadyTargets <- tgt
                             }
 
@@ -201,6 +206,8 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     if tgt_exists == false {
          wp.Targets = append(wp.Targets, tgt.GetPath())
+         //tgt.ShouldRunInitialCheck = true
+         tgt.AskInitialCheck()
          wp.ReadyTargets <- tgt
     }
 
