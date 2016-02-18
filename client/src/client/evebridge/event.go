@@ -41,10 +41,22 @@ func Handle(messages chan CompNotes )() {
         for {
             select{
                 case message:=<-messages:
-                    fmt.Println(message)
+                    fmt.Printf("Message: %v HaveToParse: %v\n",message,message.FieldExists("HashSum"))
                 default:
                     time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
                     //fmt.Println("No messages")
             }
         }
+}
+
+
+
+
+func (cn *CompNotes) FieldExists ( field string )(exists bool) {
+
+    for cnote_id := range cn.List {
+        cnote:=cn.List[cnote_id]
+        if cnote.Field == field { exists = true ; break  }
+    }
+    return exists
 }

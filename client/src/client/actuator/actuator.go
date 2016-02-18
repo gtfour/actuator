@@ -146,7 +146,12 @@ func GetProp (path string, mode int) (p *Prop){
                     p.IsReadable       = false
                     p.HashSumAvailable = false
                 }
+            // new code
+            } else {
+                p.IsReadable       = true
+                p.HashSumAvailable = true
             }
+            // new code
             if ( file_type == "-" ) {  p.IsRegular = true } else { p.IsRegular = false  }
         }
         if p.IsDir == true  {
