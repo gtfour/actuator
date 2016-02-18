@@ -37,21 +37,14 @@ type CompNote struct {
 
 }
 
-func Handle(messages chan CompNotes )(err error) {
-
-    for {
-
-        select{
-            case message:=<-messages:
-                fmt.Println(message)
-
-            default:
-                time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
-                //fmt.Println("No messages")
-
+func Handle(messages chan CompNotes )() {
+        for {
+            select{
+                case message:=<-messages:
+                    fmt.Println(message)
+                default:
+                    time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
+                    //fmt.Println("No messages")
+            }
         }
-
-    }
-
 }
-

@@ -26,13 +26,20 @@ type Target struct {
     WorkerPool                    *WorkerPool
     InformAboutExit               bool
     KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
+    OpeningMode                   int //safe or lazy
+    Suspended                     bool
 
 }
 
 func ( tgt *Target ) GetDir()  string { return tgt.Dir }
 func ( tgt *Target ) GetPath() string { return tgt.Path }
-func ( tgt *Target ) GetProp() *actuator.Prop { return tgt.Prop }
 func ( tgt *Target ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
+func ( tgt *Target ) IsReady() bool {return tgt.Prop.Ready }
+func ( tgt *Target ) SetReady(state bool)() {tgt.Prop.Ready = state }
+func ( tgt *Target ) GetSelfProp()(*actuator.Prop){ return tgt.Prop }
+func ( tgt *Target ) CloseFd()(){ tgt.Prop.Fd.Close() ; tgt.Prop.FdCheck.Close() ;}
+func ( tgt  *Target) SetOpeningMode(mode int)() { tgt.OpeningMode = mode  }
+func ( tgt  *Target) GetOpeningMode()(mode int) { return tgt.OpeningMode }
 
 type TargetDir struct {
 
@@ -43,10 +50,15 @@ type TargetDir struct {
 
 }
 
-func ( tgt *TargetDir ) GetDir()  string { return tgt.Dir }
-func ( tgt *TargetDir ) GetPath() string { return tgt.Path }
-func ( tgt *TargetDir ) GetProp() *actuator.Prop { return tgt.Prop }
-func ( tgt *TargetDir ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
+func ( tgt *TargetDir )  GetDir()  string { return tgt.Dir }
+func ( tgt *TargetDir )  GetPath() string { return tgt.Path }
+func ( tgt *TargetDir )  GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
+func ( tgt *TargetDir )  IsReady() bool {return tgt.Prop.Ready }
+func ( tgt *TargetDir )  SetReady(state bool)() {tgt.Prop.Ready = state }
+func ( tgt *TargetDir )  GetSelfProp()(*actuator.Prop){ return tgt.Prop }
+func ( tgt *TargetDir )  CloseFd()(){ tgt.Prop.Fd.Close() ; tgt.Prop.FdCheck.Close() ;}
+func ( tgt  *TargetDir ) SetOpeningMode(mode int)() { tgt.OpeningMode = mode  }
+func ( tgt  *TargetDir ) GetOpeningMode()(mode int) { return tgt.OpeningMode }
 
 
 func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
@@ -60,11 +72,11 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
     for id :=range targets {
 
         fstruct       := &actuator.File{} // create File instance
-        fstruct.Prop  =  actuator.GetProp(targets[id]) // calculate File md5 sum 
+        fstruct.Prop  =  actuator.GetProp(targets[id],SAFE_OPENING_MODE) // calculate File md5 sum 
 
         if fstruct.Prop.IsDir == true  { // if file is directory
             dir_struct := &actuator.Directory{}
-            err := dir_struct.GetHashSumDir(targets[id]) // collect information about included files and directories 
+            err := dir_struct.GetHashSumDir(targets[id],SAFE_OPENING_MODE) // collect information about included files and directories 
             if err !=nil { continue } // was a return err
             if _, ok := (*subdirs)[targets[id]]; ok == false { // if global subdirs map does'not contain this item  targets[id] , create and add item to subdirs
                 tgt_dir                   := TargetDir{}
@@ -88,7 +100,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
 
                 file_struct            :=  dir_struct.Files[file_id]
                 //fmt.Printf("\ntgt path :%s\n",file_struct.Path)
-                prop               :=  actuator.GetProp(file_struct.Path)
+                prop               :=  actuator.GetProp(file_struct.Path, SAFE_OPENING_MODE)
 
                 if prop.Error == true { continue }
 
@@ -117,7 +129,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
 
           target                 :=  Target{}
           target.Path            =   targets[id]
-          prop               :=  actuator.GetProp(targets[id])
+          prop               :=  actuator.GetProp(targets[id], SAFE_OPENING_MODE)
           if prop.Error == true  { continue }
           target.Prop            =   prop
           target.WorkerPool      =   wp // new 02-11-2015 03:00
@@ -153,7 +165,7 @@ func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *Work
     for i:=range (*subdirs) {
 
         target_subdir := (*subdirs)[i]
-        prop      :=  actuator.GetProp(target_subdir.Path)
+        prop      :=  actuator.GetProp(target_subdir.Path, SAFE_OPENING_MODE)
         if prop.Error == true { continue }
 
         target_subdir.Prop  = prop
@@ -171,7 +183,9 @@ func Stop()(err error) {
 }
 
 
-func (tgt *Target) Chasing() (err error){
+func (tgt *Target) Chasing(mode int) (err error){
+
+    //fmt.Printf("\nChasing:file")
 
     //for {
 
@@ -180,14 +194,10 @@ func (tgt *Target) Chasing() (err error){
             select {
 
                 case <-tgt.InfoIn:
-
                             return nil
-
-
                 default:
 
-                    actual_prop  :=   actuator.GetProp(tgt.Path)
-
+                    actual_prop  :=   actuator.GetProp(tgt.Path,mode)
                     if actual_prop.Error == true {
                         error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"}
                         cnote      :=evebridge.CompNotes{Path:tgt.Path}
@@ -195,23 +205,16 @@ func (tgt *Target) Chasing() (err error){
                         tgt.MessageChannel <- cnote
                         tgt.InformAboutExit=true
                         return err
-
                     }
-
-
                     //if ( reflect.DeepEqual(actual_prop, tgt.Prop) == false ) {
                     if comparison_notes:=actuator.CompareProp(actual_prop, tgt.Prop, tgt.Path ); len(comparison_notes.List)>0 {
-
                         //go  tgt.Reporting()
                         tgt.MessageChannel <- comparison_notes
-
                         tgt.Prop = actual_prop }
-
-
                     }
 
        } else {
-           actual_prop  :=   actuator.GetProp(tgt.Path)
+           actual_prop  :=   actuator.GetProp(tgt.Path,mode)
 
            if actual_prop.Error == true {
                error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"}
@@ -239,10 +242,12 @@ func (tgt *Target) Chasing() (err error){
     return nil
 }
 
-func (tgt *TargetDir) Chasing () (err error){
+func (tgt *TargetDir) Chasing (mode int) (err error){
+
+        //fmt.Printf("Chasing:dir")
 
 
-        actual_prop  :=  actuator.GetProp(tgt.Path)
+        actual_prop  :=  actuator.GetProp(tgt.Path, mode)
 
         if actual_prop.Error == true { /*fmt.Printf("\nError during opening %s\n",tgt.Path)*/ }
 
