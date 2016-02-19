@@ -130,9 +130,12 @@ func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
 
     go func() {
         if wp == nil { fmt.Printf("\n<<< wp is nil >>> \n")}
+        fmt.Printf("\n==Remove func==\n")
+        fmt.Printf("\n wp.ReadyTargets:Before:%v",wp.ReadyTargets)
         FakeReadyTargets     := make(chan AbstractTarget,100 )
         OriginalReadyTargets := wp.ReadyTargets
         wp.ReadyTargets      = FakeReadyTargets
+        fmt.Printf("\n FakeReadyTargets:%v\n OriginalReadyTargets:%v\n wp.ReadyTargets:%v \n",FakeReadyTargets,OriginalReadyTargets,wp.ReadyTargets)
         for {
             select {
                 case tgt:=<-OriginalReadyTargets:
