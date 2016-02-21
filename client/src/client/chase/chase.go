@@ -29,6 +29,7 @@ type Target struct {
     OpeningMode                   int //safe or lazy
     Suspended                     bool
     InitialCheck                  bool
+    Remove                        bool
 
 }
 

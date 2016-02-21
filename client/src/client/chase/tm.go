@@ -36,13 +36,13 @@ type AbstractTarget interface {
 }
 
 type WorkerPool struct {
-    Workers          []*Worker
-    WKillers         []chan bool
-    ReadyTargets     chan AbstractTarget
-    RunningTargets   chan AbstractTarget
-    SuspendedTargets chan AbstractTarget
-    PendingTargets   chan AbstractTarget
-    Targets          []string
+    Workers           []*Worker
+    WKillers          []chan bool
+    ReadyTargets      chan AbstractTarget
+    RunningTargets    chan AbstractTarget
+    SuspendedTargets  chan AbstractTarget
+    //PendingTargets    chan AbstractTarget
+    Targets           []AbstractTarget
 }
 
 
@@ -116,7 +116,7 @@ func WPCreate () (wp WorkerPool) {
     wp.ReadyTargets     = make(chan AbstractTarget,100)
     wp.RunningTargets   = make(chan AbstractTarget,100)
     wp.SuspendedTargets = make(chan AbstractTarget,100)
-    wp.PendingTargets   = make(chan AbstractTarget,100)
+    //wp.PendingTargets   = make(chan AbstractTarget,100)
     // try to create two workers instead of one
     wp.AddWorker()
     wp.AddWorker()
@@ -126,6 +126,8 @@ func WPCreate () (wp WorkerPool) {
 
 }
 
+/*
+Not working because there are lot of listeners of channel wp.ReadyTargets and this gorutine does not recieve any message
 func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
 
     go func() {
@@ -148,6 +150,12 @@ func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
             }
         }
     }()
+}*/
+
+func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
+
+
+
 }
 
 func ( wp *WorkerPool ) Stop () {
@@ -156,6 +164,10 @@ func ( wp *WorkerPool ) Stop () {
         killers[i] <- true
     }
 }
+
+
+
+
 func ( wp *WorkerPool ) Juggle () {
     //ticker := time.NewTicker(TIMEOUT_MS * time.Millisecond)
     //for _ = range ticker.C {
@@ -225,13 +237,13 @@ func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
     var tgt_exists bool
 
-    for existing_tgt_path_id := range wp.Targets {
-        existing_tgt_path := wp.Targets[existing_tgt_path_id]
-        if tgt.GetPath() == existing_tgt_path  { tgt_exists=true ; break }
+    for existing_tgt := range wp.Targets {
+        existing_tgt := wp.Targets[existing_tgt]
+        if tgt.GetPath() == existing_tgt.GetPath()  { tgt_exists=true ; break }
     }
 
     if tgt_exists == false {
-         wp.Targets = append(wp.Targets, tgt.GetPath())
+         wp.Targets = append(wp.Targets, tgt)
          //tgt.ShouldRunInitialCheck = true
          tgt.AskInitialCheck()
          wp.ReadyTargets <- tgt

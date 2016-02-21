@@ -20,21 +20,19 @@ type Event struct {
 }
 
 type CompNotes struct {
-
     Path  string
     State int8
     List  []CompNote
-
-
 }
 
 type CompNote struct {
-
     Field    string
     Before   string
     After    string
-
-
+}
+type MngMessage struct {
+    action string
+    path   string
 }
 
 func Handle(messages chan CompNotes )() {
