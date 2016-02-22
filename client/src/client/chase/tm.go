@@ -126,8 +126,7 @@ func WPCreate () (wp WorkerPool) {
 
 }
 
-/*
-Not working because there are lot of listeners of channel wp.ReadyTargets and this gorutine does not recieve any message
+//Not working because there are lot of listeners of channel wp.ReadyTargets and this gorutine does not recieve any message
 func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
 
     go func() {
@@ -150,7 +149,7 @@ func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
             }
         }
     }()
-}*/
+}
 
 func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
 
