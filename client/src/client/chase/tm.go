@@ -32,6 +32,8 @@ type AbstractTarget interface {
     SetOpeningMode(int)()
     GetOpeningMode()(int)
     AskInitialCheck()()
+    GetRemove()(bool)
+    ToRemove()()
 }
 
 type WorkerPool struct {
@@ -40,6 +42,7 @@ type WorkerPool struct {
     ReadyTargets      chan AbstractTarget
     RunningTargets    chan AbstractTarget
     SuspendedTargets  chan AbstractTarget
+    ManageChannel     chan *ManMessage
     Targets           []AbstractTarget
 }
 
@@ -50,6 +53,15 @@ type Worker struct {
     Id            int32
     TargetsCount  int32
     Stop          chan bool
+}
+
+type ManMessage struct {
+
+    operation string
+    tgt       AbstractTarget
+    path      string
+
+
 }
 
 func ( w *Worker ) Start ()  {
@@ -85,20 +97,18 @@ func WPCreate () (wp WorkerPool) {
     wp.ReadyTargets     = make(chan AbstractTarget,100)
     wp.RunningTargets   = make(chan AbstractTarget,100)
     wp.SuspendedTargets = make(chan AbstractTarget,100)
+    wp.ManageChannel    = make(chan *ManMessage,   100)
     wp.AddWorker()
     wp.AddWorker()
     go wp.Juggle()
+    go wp.Management()
 
     return
 
 }
 
 
-func ( wp *WorkerPool ) RemoveTarget ( tgt_path string ) {
 
-
-
-}
 
 func ( wp *WorkerPool ) Stop () {
     killers := wp.WKillers
@@ -134,10 +144,12 @@ func ( wp *WorkerPool ) Juggle () {
         for {
             select {
                 case tgt := <-wp.RunningTargets:
-                        if tgt.IsReady() == true {
-                            wp.ReadyTargets     <- tgt
-                        } else {
-                            wp.SuspendedTargets <- tgt
+                        if tgt.GetRemove() == false {
+                            if tgt.IsReady() == true {
+                                wp.ReadyTargets     <- tgt
+                            } else {
+                                wp.SuspendedTargets <- tgt
+                            }
                         }
                 default:
                     time.Sleep( INHIBITION_TIMEOUT * time.Millisecond )
@@ -160,16 +172,45 @@ func (wp *WorkerPool)  AddWorker()(){
 
 func ( wp *WorkerPool ) AppendTarget ( tgt AbstractTarget ) () {
 
-    var tgt_exists bool
+    wp.ManageChannel<-&ManMessage{operation:"add",tgt:tgt}
+}
 
-    for existing_tgt := range wp.Targets {
-        existing_tgt := wp.Targets[existing_tgt]
-        if tgt.GetPath() == existing_tgt.GetPath()  { tgt_exists=true ; break }
-    }
+func ( wp *WorkerPool ) RemoveTarget ( path string ) () {
 
-    if tgt_exists == false {
-         wp.Targets = append(wp.Targets, tgt)
-         tgt.AskInitialCheck()
-         wp.ReadyTargets <- tgt
+    wp.ManageChannel<-&ManMessage{operation:"remove",path:path}
+
+}
+
+func ( wp *WorkerPool ) Management () {
+
+    for {
+        select {
+
+            case task := <-wp.ManageChannel:
+                switch task.operation {
+                    case "add":
+                        var tgt_exists bool
+                        for existing_tgt := range wp.Targets {
+                            existing_tgt    := wp.Targets[existing_tgt]
+                            if task.tgt.GetPath() == existing_tgt.GetPath()  { tgt_exists=true ; break }
+                        }
+                        if tgt_exists == false {
+                            wp.Targets = append(wp.Targets, task.tgt)
+                            task.tgt.AskInitialCheck()
+                            wp.ReadyTargets <- task.tgt
+                        }
+                    case "remove":
+                        var tgt_id int
+                        for i := range wp.Targets {
+                            existing_target:= wp.Targets[i]
+                            if  (existing_target.GetPath()==task.path) {
+                                existing_target.ToRemove()
+                                tgt_id = i
+                                break
+                            }
+                        }
+                        wp.Targets = append(wp.Targets[:tgt_id], wp.Targets[tgt_id+1:]...)
+                }
+        }
     }
 }
