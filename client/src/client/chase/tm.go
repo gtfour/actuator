@@ -97,7 +97,7 @@ func WPCreate () (wp WorkerPool) {
     wp.ReadyTargets     = make(chan AbstractTarget,100)
     wp.RunningTargets   = make(chan AbstractTarget,100)
     wp.SuspendedTargets = make(chan AbstractTarget,100)
-    wp.ManageChannel    = make(chan *ManMessage,   100)
+    wp.ManageChannel    = make(chan *ManMessage,   300)
     wp.AddWorker()
     wp.AddWorker()
     go wp.Juggle()
