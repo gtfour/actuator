@@ -289,20 +289,13 @@ func PopArrray( double [][]int) (single []int) {
 
 func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
 
-    // have to add check when two 
-
-    //var cleanData = [][]int {}
-    //var words     = [][]int {}
     var delimPair = []int   {-1,-1}
     var dataPair  = []int   {-1,-1}
-
     var offset int
     for i:= range lineAsArray {
         offset = i
-        // have to add offset
         char:=lineAsArray[i]
         if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
-            //fmt.Printf("\n next symbol is word: %v >>\n", IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM))
             if dataPair[0]  != -1 {
                 dataPair[1] = i - 1 // make pair with previous element as second member of pair 
                 data      = append(data, dataPair)
@@ -312,7 +305,6 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
                 delimPair[0]= i
             }
             delimPair[1] = i
-            // seems error caused because i forgot abot space symbol
             if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true)) ) {
 
                     // +1 because see /actuator/tests/test_0038_arr.go
@@ -323,7 +315,7 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
                         delimPair=[]int{-1, -1}
                     } else if len(delim_split_space) == 0   {
                        // it  seems that there are just a lot of spaces in delimAsArray  and nothing else  
-                        delimPair[1] = delimPair[0]
+                        // delimPair[1] = delimPair[0] i am going change it to collect all space indexes instead of first 
                         delims=append(delims, delimPair)
                         delimPair=[]int{-1, -1}
                     } else {
@@ -350,12 +342,6 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
 }
 
 func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected []string) {
-
-    /*fmt.Printf("\n|||| Debug ||||\n")
-    DebugPrintCharCounter(strings.Join(lineAsArray,""))
-    fmt.Printf("== selected_indexes: %v\n",selected_indexes)
-    fmt.Printf("\n||||       ||||\n")*/
-
     for i := range  lineAsArray {
         char:= lineAsArray[i]
         if len(selected_indexes) == 2 {
@@ -368,8 +354,7 @@ func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected [
 }
 
 func GetSignPair( sign string )( another_sign string) {
-
-    var DOUBLE_SIGNS_PAIRS = [][2]string { {"[", "]"}, { "<" , ">"} , {"</" , ">"}  ,  {"(" , ")"}, {"{", "}"}, {"'", "'" }, {`"`,`"`}, {"`","`"} }
+    var DOUBLE_SIGNS_PAIRS = [][2]string { {"[", "]"}, { "<" , ">"}, {"</" , ">"},  {"(" , ")"}, {"{", "}"}, {"'", "'" }, {`"`,`"`}, {"`","`"} }
     var REPLACE01    = [2]int {1,0}
     for pairs := range DOUBLE_SIGNS_PAIRS {
         pair:=DOUBLE_SIGNS_PAIRS[pairs]
@@ -382,12 +367,9 @@ func GetSignPair( sign string )( another_sign string) {
         }
     }
     return another_sign
-
 }
 
 func PrepareData(lineAsArray []string, delims_indexes [][]int ) (data [][][]int) {
-
-    // will be loop func 
     for d := range  delims_indexes {
         delim_pair:=delims_indexes[d]
         delimAsArray:=GetFixedArrayChars(lineAsArray, delim_pair)
@@ -397,5 +379,4 @@ func PrepareData(lineAsArray []string, delims_indexes [][]int ) (data [][][]int)
         data=append(data,subdata)
     }
     return data
-
 }

@@ -8,15 +8,17 @@ import "strings"
 func main() {
 
     //line:="  2  2 2 2   2 22    32 32 3 23 2 32                               333"
-    line2:=`Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"`
+    //line2:=`Default settings        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"`
+    line3:= `1353032691c5        ubuntu:12.04        "/bin/bash"         7 weeks ago         Up 7 weeks                              prickly_leakey`
     //line3:="                                     "
     //line3:="}}  }}"
-    lineAsArray2:=strings.Split(line2, "")
+    //lineAsArray2:=strings.Split(line2, "")
+    lineAsArray3:=strings.Split(line3, "")
     //lineAsArray3:=strings.Split(line3, "")
-    cuda.DebugPrintCharCounter(line2)
+    cuda.DebugPrintCharCounter(line3)
     //parser:=cuda.MakeParser("[")
 
-    delims,data:=cuda.GetIndexes(lineAsArray2)
+    delims,data:=cuda.GetIndexes(lineAsArray3)
     fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
 
     /*for i := range delims_indexes{
