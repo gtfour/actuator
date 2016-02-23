@@ -6,7 +6,7 @@ import "fmt"
 //
 import "client/chase"
 import "client/evebridge"
-//import "time"
+import "time"
 
 func main() {
 
@@ -17,9 +17,9 @@ func main() {
     messages :=   make(chan evebridge.CompNotes,100)
     wp       :=  chase.WPCreate()
     _ = chase.Listen(path, messages, wp)
-    //go func(){
-    //    time.Sleep( 4000 * time.Millisecond)
+    go func(){
+        time.Sleep( 10000 * time.Millisecond)
         wp.RemoveTarget("/tmp/test/test2/toremove.txt")
-    //}()
+    }()
     evebridge.Handle(messages)
 }
