@@ -1,4 +1,9 @@
 package cuda
+
+type Cyclone struct {
+    // line prop
+}
+
 func DataHeaderSelector(first_table_string []string)(data [][]int, isTableHeader bool ) {
     return
 }
