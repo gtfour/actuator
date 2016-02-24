@@ -3,7 +3,6 @@ package rest
 import "github.com/gin-gonic/gin"
 import "encoding/json"
 import "wengine/dusk"
-import "fmt"
 import .  "wengine/core/common"
 
 
@@ -45,9 +44,6 @@ func GetMyDashboards(data  gin.H, database dusk.Database ,c *gin.Context) (func(
                 dashboard_list,err_dash := database.GetMyDashboardList(user_id,token_id)
                 dgroup_list,err_dgroup  := database.GetMyDashboardGroupList(user_id,token_id)
                 if err_dash == nil && err_dgroup == nil {
-                    //dashboard_list_json,_:= json.Marshal(dashboard_list)
-                    fmt.Printf("\ndashboard :%v\n",dashboard_list)
-                    fmt.Printf("\ndgroup    :%v\n",dgroup_list)
                     return func(c *gin.Context ){
                         c.JSON(200, gin.H{"status": "success","dashboard_list":dashboard_list,"dashboard_group_list":dgroup_list})
                         //c.JSON(200, dashboard_list_json)
@@ -61,6 +57,22 @@ func GetMyDashboards(data  gin.H, database dusk.Database ,c *gin.Context) (func(
                 }
             }
         }
+    }
+    return handler(c)
+}
+
+func GetAllUsers(data  gin.H, database dusk.Database ,c *gin.Context) (func(c *gin.Context)) {
+    handler := func(c *gin.Context)( func(c *gin.Context) ) {
+            users,err_db    := database.GetAllUsers()
+            if err_db == nil {
+                    return func(c *gin.Context ){
+                        c.JSON(200, gin.H{"status": "success","users":users})
+                    }
+            } else {
+                return func(c *gin.Context ){
+                    c.JSON(200, gin.H{"status": "error","users":users})
+                }
+            }
     }
     return handler(c)
 }

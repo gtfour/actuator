@@ -119,6 +119,16 @@ func (d *MongoDb)GetUserById(id string)(user utah.User,err error) {
     return user,nil
 }
 
+func (d *MongoDb)GetAllUsers()(users []utah.User,err error) {
+    c      := d.Session.DB(d.dbname).C(d.users_c_name)
+    err    =  c.Find(nil).All(&users)
+    if err!=nil {
+        return users,err
+    }
+    return users,nil
+}
+
+
 func (d *MongoDb)GetUser(user_prop map[string]interface{})(user utah.User,err error) {
     c      := d.Session.DB(d.dbname).C(d.users_c_name)
     err    =  c.Find(bson.M(user_prop)).One(&user)

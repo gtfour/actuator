@@ -48,6 +48,7 @@ type UserMethods interface {
     GetUserById(id string)(utah.User,error)
     GetUser(map[string]interface{})                 (utah.User,error)
     //GetUserDashboards(user_id string)([]dashboard.Dashboard,error)
+    GetAllUsers()([]utah.User,error)
 
 }
 

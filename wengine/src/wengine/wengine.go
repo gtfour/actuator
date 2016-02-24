@@ -1,13 +1,14 @@
 package main
 
-import "github.com/gin-gonic/gin"
-import "wengine/dusk"
-import "wengine/rest"
+import   "github.com/gin-gonic/gin"
+import   "wengine/dusk"
+import   "wengine/rest"
+import . "wengine/settings"
 
 func main() {
 
     app      := gin.Default()
-    database := dusk.OpenDatabase("mongo","wengine","OpenStack123","127.0.0.1","wengine")
+    database := dusk.OpenDatabase( PrimaryDatabase, DBusername , DBpassword , DBhost, DBdbname )
     defer database.Close()
     app.POST("/auth/:authModuleName",  rest.AuthRoute( gin.H{}, database ))
     app.GET("/auth/:authModuleName",   rest.AuthRoute( gin.H{}, database ))
