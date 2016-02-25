@@ -9,7 +9,8 @@ func main() {
 
     //line:="  2  2 2 2   2 22    32 32 3 23 2 32                               333"
     //line2:=`Default settings        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"`
-    //line3:= `1353032691c5        ubuntuюペä:12.04        "/bin/bashробот"         7 weeks ago         Up 7 weeks                              prickly_leakey`
+    //line3:= `    1353032691c5        ubuntuюペä:12.04        "/bin/bashробот"         7 weeks ago         Up 7 weeksペä                             prickly_leakeyペä    `
+    //line3:="имя: Ваня item: Vodka"
     line3:= `1353032691c5        ubuntu:12.04        "/bin/bash"         7 weeks ago         Up 7 weeks                              prickly_leakey`
    // line3:="a: 122"
     //line3:=`a: 122`
