@@ -137,25 +137,15 @@ func GetKeyByValue(signs map[int]string, string_value string) (key int) {
     return -1
 }
 func IsUnicodeLetter(char string)(yes bool) {
-    if len(char) == 1 {
-        for _,r := range char  { // knows about russian letters
-            yes = unicode.IsLetter(r)
-            break
-        }
-    } else {
-        yes = false
+    for _,r := range char  { // knows about russian letters
+        yes = unicode.IsLetter(r)
     }
     return yes
 }
 
 func IsUnicodeDigit(char string)(yes bool) {
-    if len(char) == 1 {
-        for _,r := range char  {
-            yes = unicode.IsDigit(r)
-            break
-        }
-    } else {
-        yes = false
+    for _,r := range char  {
+        yes = unicode.IsDigit(r)
     }
     return yes
 }
@@ -320,7 +310,8 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
     for i:= range lineAsArray {
         offset = i
         char:=lineAsArray[i]
-        if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
+        //if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
+        if IsSymbolIn(char,WORD_DELIM) == false && IsUnicodeLetter(char) == false  && IsUnicodeDigit(char) == false {
             if dataPair[0]  != -1 {
                 dataPair[1] = i - 1 // make pair with previous element as second member of pair 
                 data      = append(data, dataPair)
@@ -330,7 +321,8 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
                 delimPair[0]= i
             }
             delimPair[1] = i
-            if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true)) ) {
+            //if ((i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && (IsSymbolIn(lineAsArray[i+1],ABC,NUMBERS,WORD_DELIM) == true)) ) {
+            if (i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && ( IsSymbolIn(lineAsArray[i+1],WORD_DELIM) == true || IsUnicodeLetter(lineAsArray[i+1]) == true  || IsUnicodeDigit(lineAsArray[i+1]) == true)) {
 
                     // +1 because see /actuator/tests/test_0038_arr.go
                     delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset+1], []int { 0, (delimPair[1]-delimPair[0]) }) // have to add +1 .but   why !??!? 
