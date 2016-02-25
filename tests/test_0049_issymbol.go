@@ -4,7 +4,7 @@ import "fmt"
 
 func main() {
 
-    mystring     := "a"
+    /*mystring     := "a"
     myunderscore := "_"
     mydigit      := "1"
     var mybyte1,mybyte2,mybyte3 byte
@@ -19,7 +19,8 @@ func main() {
     }
 
     fmt.Printf("%v   %v   %v\n",IsLetter(rune(mybyte1)),IsLetter(rune(mybyte2)),IsLetter(rune(mybyte3)))
-    for _,r := range "a"  { // knows about russian letters
-        fmt.Printf("%v\n",IsLetter(r))
+    */
+    for _,r := range "1"  { // knows about russian letters
+        fmt.Printf("IsLetter:%v IsDigit:%v IsNumber:%v\n",IsLetter(r),IsDigit(r),IsNumber(r))
     }
 }

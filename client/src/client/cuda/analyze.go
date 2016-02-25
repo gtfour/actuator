@@ -1,6 +1,7 @@
 package cuda
 import "strings"
 import "fmt"
+import "unicode"
 
 /*
 var splitted_by_space  int = 0
@@ -135,6 +136,30 @@ func GetKeyByValue(signs map[int]string, string_value string) (key int) {
     }
     return -1
 }
+func IsUnicodeLetter(char string)(yes bool) {
+    if len(char) == 1 {
+        for _,r := range char  { // knows about russian letters
+            yes = unicode.IsLetter(r)
+            break
+        }
+    } else {
+        yes = false
+    }
+    return yes
+}
+
+func IsUnicodeDigit(char string)(yes bool) {
+    if len(char) == 1 {
+        for _,r := range char  {
+            yes = unicode.IsDigit(r)
+            break
+        }
+    } else {
+        yes = false
+    }
+    return yes
+}
+
 
 func IsSymbolIn(char string, symbols_sets ...[]string) (yes bool) {
 

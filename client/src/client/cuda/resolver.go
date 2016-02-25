@@ -12,7 +12,7 @@ func UrlSelector(str []string)(data [][]int, isUrl bool ) {
     return
 }
 
-func AnalyzeDelims()
+//func AnalyzeDelims()
 
 
 
