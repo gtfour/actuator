@@ -1,6 +1,8 @@
 package cuda
 import "fmt"
 
+var URL_SPEC_CHARS = []string {"%","=",":","/","@","?","#"}
+
 type Cyclone struct {
     // line prop
 }
@@ -24,10 +26,23 @@ func UrlMatcher(str []string, delim []int ) {
 
 func StringArrayIsEqual (abc , def []string) (bool) {
 
-
+    return true
 
 
 }
+
+func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+
+
+
+
+    return ndelims,ndata
+
+}
+
+
+
+
 
 //func AnalyzeDelims()
 

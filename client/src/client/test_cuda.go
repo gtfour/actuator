@@ -1,7 +1,7 @@
 package main
 import "client/cuda"
-//import "fmt"
-//import "strings"
+import "fmt"
+import "strings"
 // split each file and each line in file by space and save into slice of byte()  slices
 
 
@@ -12,20 +12,20 @@ func main() {
     //line3:= `    1353032691c5        ubuntuюペä:12.04        "/bin/bashробот"         7 weeks ago         Up 7 weeksペä                             prickly_leakeyペä    `
     //line3:="имя: Ваня item: Vodka"
     //line3:= `1353032691c5        ubuntu:12.04        "/bin/bash"         7 weeks ago         Up 7 weeks                              prickly_leakey`
-    ////    line3:=`deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse`
+    line3:=`deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse`
    // line3:="a: 122"
     //line3:=`a: 122`
     //line3:="                                     "
     //line3:="}}  }}"
     //lineAsArray2:=strings.Split(line2, "")
     //// lineAsArray3:=strings.Split(line3, "")
-    //lineAsArray3:=strings.Split(line3, "")
-    //// cuda.DebugPrintCharCounter(line3)
+    lineAsArray3:=strings.Split(line3, "")
+    cuda.DebugPrintCharCounter(line3)
     //parser:=cuda.MakeParser("[")
 
-    //// delims,data:=cuda.GetIndexes(lineAsArray3)
-    //// fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
-    cuda.UrlMatcher([]string {":","/","/"}, []int{0,1,2})
+    delims,data:=cuda.GetIndexes(lineAsArray3)
+    fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
+    //cuda.UrlMatcher([]string {":","/","/"}, []int{0,1,2})
 
     /*for i := range delims_indexes{
 
