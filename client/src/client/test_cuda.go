@@ -1,6 +1,6 @@
 package main
 import "client/cuda"
-import "fmt"
+//import "fmt"
 import "strings"
 // split each file and each line in file by space and save into slice of byte()  slices
 
@@ -24,7 +24,8 @@ func main() {
     //parser:=cuda.MakeParser("[")
 
     delims,data:=cuda.GetIndexes(lineAsArray3)
-    fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
+    //fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
+    cuda.UrlFilter(lineAsArray3,delims,data)
     //cuda.UrlMatcher([]string {":","/","/"}, []int{0,1,2})
 
     /*for i := range delims_indexes{
