@@ -406,9 +406,13 @@ func RemoveDupSpaces ( lineAsArray []string ) (new_entry string) {
 
     newlineAsArray:=ReplaceTabsToSpaces(lineAsArray)
 
-    for i := range newlineAsArray {
-        char:=lineAsArray[i]
-        if (char==" ") && (len(lineAsArray)-1>i) && (lineAsArray[i+1]==" ") {} else { new_entry+=char }
+    //for i := range newlineAsArray {
+    //    char:=lineAsArray[i]
+    //    if (char==" ") && (len(lineAsArray)-1>i) && (lineAsArray[i+1]==" ") {} else { new_entry+=char }
+    //}
+    //return new_entry
+    for i,c := range lineAsArray  {
+	    if (newlineAsArray[i]==" ") && (len(newlineAsArray)-1>i) && (newlineAsArray[i+1]==" ") {} else { new_entry+=string(c) }
     }
     return new_entry
 }
