@@ -4,6 +4,7 @@ import "fmt"
 var left_direction   int = 1100
 var right_direction  int = 1001
 var both_directions  int = 2002
+var FOUND_IS_EMPTY   int = -4004
 
 type Symbol struct {
     Value           string
@@ -51,45 +52,56 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
 }
 
 func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
-    // In case when phrases have same prefix result is filling by longest phrase 
-    // freaks attack
 
     if (len(abc) < 1 )||(len(phrases) < 1){return}
-    //  first_match := -1
-    //  last_match  := -1
     for i := 0; i < len(abc); i++  {
         symbol:=abc[i]
-        //var found [][]int
+        var found [][]int
         for p := range phrases {
             local_found:=make( []int, 2 )
             phrase:=phrases[p]
             if len(phrase) > 1 {
-                //for z:= range phrase {
                     zsymbol := phrase[0]
                     if symbol == zsymbol {
-                        //xi:=i
                         local_found[0] =  i
                         counter        := 1
                         xi             := i+1
                         for  ; counter < len(phrase) ;  {
-                            //xi         :=  i
                             xsymbol    := abc[xi]
-                            if xsymbol != phrase[counter] { break /*; z=z+counter-1*/ }
-                            if counter >= len(phrase)-1 { local_found[1] = xi ; indexes = append(indexes, local_found) ; break }
+                            if xsymbol != phrase[counter] { break }
+                            if counter >= len(phrase)-1 { local_found[1] = xi ; found = append(found, local_found) ; break }
                             xi         += 1
                             counter    += 1
                         }
-                        //break
                     } else {
-                        //if z == (len(phrase)-1) {
-
-                        //}
                     }
-                //}
             }
+        }
+        arrayWithMaxLenIndex:=CompareArrayLen(found)
+        if arrayWithMaxLenIndex != FOUND_IS_EMPTY {
+            indexes = append(indexes, found[arrayWithMaxLenIndex])
         }
     }
     return
 }
 
-//func AnalyzeDelims()
+func CompareArrayLen (indexes [][]int)(int) {
+
+    var max_len       int
+    var max_len_index int
+    for i := range indexes {
+        array:=indexes[i]
+        if len(array) ==2 {
+            first:=array[0]
+            last :=array[1]
+            diff := last-first
+            if diff >= max_len{
+                max_len       = diff
+                max_len_index = i
+            }
+        } else { continue }
+    }
+    if max_len == 0 { return FOUND_IS_EMPTY }
+    return max_len_index
+}
+
