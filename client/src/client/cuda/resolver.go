@@ -57,31 +57,35 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
     if (len(abc) < 1 )||(len(phrases) < 1){return}
     //  first_match := -1
     //  last_match  := -1
-    for i := range abc {
+    for i := 0; i < len(abc); i++  {
         symbol:=abc[i]
-        var found [][]string
-
+        //var found [][]int
         for p := range phrases {
-            var local_found []string
+            local_found:=make( []int, 2 )
             phrase:=phrases[p]
             if len(phrase) > 1 {
-                for z:= range phrase {
-                    zsymbol:=phrase[z]
+                //for z:= range phrase {
+                    zsymbol := phrase[0]
                     if symbol == zsymbol {
                         //xi:=i
-                        for xi := range abc {
-                            xi      = i
-                            xsymbol := abc[xi]
-
-
+                        local_found[0] =  i
+                        counter        := 1
+                        xi             := i+1
+                        for  ; counter < len(phrase) ;  {
+                            //xi         :=  i
+                            xsymbol    := abc[xi]
+                            if xsymbol != phrase[counter] { break /*; z=z+counter-1*/ }
+                            if counter >= len(phrase)-1 { local_found[1] = xi ; indexes = append(indexes, local_found) ; break }
+                            xi         += 1
+                            counter    += 1
                         }
-                        local_found = append(local_found, symbol)
+                        //break
                     } else {
-                        if z == (len(phrase)-1) {
+                        //if z == (len(phrase)-1) {
 
-                        }
+                        //}
                     }
-                }
+                //}
             }
         }
     }
