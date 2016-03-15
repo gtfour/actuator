@@ -1,6 +1,6 @@
 package main
 import "client/cuda"
-import "fmt"
+//import "fmt"
 import "strings"
 // split each file and each line in file by space and save into slice of byte()  slices
 
@@ -13,10 +13,10 @@ func main() {
     //line3:="имя: Ваня item: Vodka"
     //line3:= `1353032691c5        ubuntu:12.04        "/bin/bash"         7 weeks ago         Up 7 weeks                              prickly_leakey`
     line3:=`deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse  file:///etc/fstab`
-    phrase_short := "://"
-    phrase_long  := ":///"
-    phs:=strings.Split(phrase_short, "")
-    phl:=strings.Split(phrase_long,  "")
+    //phrase_short := "://"
+    //phrase_long  := ":///"
+    //phs:=strings.Split(phrase_short, "")
+    //phl:=strings.Split(phrase_long,  "")
    // line3:="a: 122"
     //line3:=`a: 122`
     //line3:="                                     "
@@ -30,8 +30,6 @@ func main() {
     delims,data:=cuda.GetIndexes(lineAsArray3)
     //fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
     cuda.UrlFilter(lineAsArray3,delims,data)
-    result:=cuda.ArrayInArrayIndexes(lineAsArray3,phs,phl)
-    fmt.Printf("cuda.ArrayInArrayIndexes::   %v",result)
 
     //cuda.UrlMatcher([]string {":","/","/"}, []int{0,1,2})
 

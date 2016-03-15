@@ -5,7 +5,7 @@ var LEFT_DIRECTION   int = 1100
 var RIGHT_DIRECTION  int = 1001
 //var BOTH_DIRECTIONS  int = 2002
 var FOUND_IS_EMPTY   int = -4004
-var URL_SPEC_CHARS   = []string {"%","=",":","/","@","?","#"}
+var URL_SPEC_CHARS   = []string {"%","=",":","/","@","?","#","-",".","_"}
 
 type SpecialWord struct {
     stype int // could be an email or url address or ip or  path
@@ -13,10 +13,10 @@ type SpecialWord struct {
     value string
 }
 
-type SymbolSearcher struct {
+type Searcher struct {
     value               string
     since               int
-    searchDirection     int
+    direction           int
     maxCount            int
     // should satisfy to Accepter and Breaker . if  Accepter returns true and Breaker return false searching will remain
     accepter            func(string)(bool)
@@ -24,8 +24,9 @@ type SymbolSearcher struct {
     resultPosition      int // calculating field
 }
 
+
 type LineAnalyzer struct {
-    searchers     []SymbolSearcher
+    searchers     []Searcher
     specials      []SpecialWord
 }
 
@@ -59,7 +60,34 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
-    fmt.Printf("\n line: %v \n  delims: %v \n  data: %v \n",lineAsArray,delims,data)
+    url_marker_short :=[]string{":","/","/"}
+    url_marker_long  :=[]string{":","/","/","/"}
+    url_marker_indexes:=ArrayInArrayIndexes(lineAsArray,url_marker_short,url_marker_long)
+    fmt.Printf("\nurl_marker_indexes: %v\n", url_marker_indexes)
+    if len(url_marker_indexes)>0 {
+        for i := range url_marker_indexes {
+            url_index:=url_marker_indexes[i]
+            if len(url_index)!=2 { continue }
+            leftSearcher          := Searcher{direction:LEFT_DIRECTION}
+            leftSearcher.since    =  url_index[0]
+            leftSearcher.accepter =  func (char string)(bool) {
+                                         return IsUnicodeLetter(char) || IsUnicodeDigit(char)
+                                     }
+
+            rightSearcher          := Searcher{direction:RIGHT_DIRECTION}
+            rightSearcher.since    =  url_index[1]
+            rightSearcher.accepter = func (char string)(bool) {
+                                         return IsUnicodeLetter(char) || IsUnicodeDigit(char) || IsSymbolIn(char, URL_SPEC_CHARS )
+                                     }
+            searchers:=[]Searcher {rightSearcher, leftSearcher}
+            new_indexes:=RunSearchers(lineAsArray, searchers)
+            fmt.Printf("\nnew_indexes: %v\n", new_indexes)
+        }
+    } else {
+        ndelims = delims
+        ndata   = data
+    }
+
     return ndelims,ndata
 
 }
@@ -116,5 +144,37 @@ func CompareArrayLen (indexes [][]int)(int) {
     }
     if max_len == 0 { return FOUND_IS_EMPTY }
     return max_len_index
+}
+
+func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [2]int  ) {
+
+    for sindex := range searchers {
+        searcher:=searchers[sindex]
+        if searcher.direction == RIGHT_DIRECTION && searcher.accepter!=nil {
+            for i := searcher.since+1 ; i < len(lineAsArray); i++  {
+                char:=lineAsArray[i]
+                if searcher.accepter(char) == false {
+                    extended_indexes[1] = i-1
+                    break
+
+                }
+
+            }
+
+        } else if searcher.direction == LEFT_DIRECTION && searcher.accepter!=nil  {
+            for i := searcher.since-1 ; i >=0  ; i--  {
+                char:=lineAsArray[i]
+                if searcher.accepter(char) == false {
+                    extended_indexes[0] = i+1
+                    break
+                }
+            }
+
+
+        }
+
+    }
+    return
+
 }
 
