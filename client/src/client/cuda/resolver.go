@@ -1,20 +1,34 @@
 package cuda
 import "fmt"
 
-var left_direction   int = 1100
-var right_direction  int = 1001
-var both_directions  int = 2002
+var LEFT_DIRECTION   int = 1100
+var RIGHT_DIRECTION  int = 1001
+//var BOTH_DIRECTIONS  int = 2002
 var FOUND_IS_EMPTY   int = -4004
+var URL_SPEC_CHARS   = []string {"%","=",":","/","@","?","#"}
 
-type Symbol struct {
-    Value           string
-    SearchDirection int
-    MaxCount        int
-    Accepter        func(string)(bool)
-    Breaker         func(string)(bool)
+type SpecialWord struct {
+    stype int // could be an email or url address or ip or  path
+    pos   []int
+    value string
 }
 
-var URL_SPEC_CHARS = []string {"%","=",":","/","@","?","#"}
+type SymbolSearcher struct {
+    value               string
+    since               int
+    searchDirection     int
+    maxCount            int
+    // should satisfy to Accepter and Breaker . if  Accepter returns true and Breaker return false searching will remain
+    accepter            func(string)(bool)
+    breaker             func(string)(bool)
+    resultPosition      int // calculating field
+}
+
+type LineAnalyzer struct {
+    searchers     []SymbolSearcher
+    specials      []SpecialWord
+}
+
 
 type Cyclone struct {
     // line prop
@@ -40,7 +54,6 @@ func UrlMatcher(str []string, delim []int ) {
 func StringArrayIsEqual (abc , def []string) (bool) {
 
     return true
-
 
 }
 
@@ -86,7 +99,7 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
 }
 
 func CompareArrayLen (indexes [][]int)(int) {
-
+    // return []int array index with max lenght 
     var max_len       int
     var max_len_index int
     for i := range indexes {
