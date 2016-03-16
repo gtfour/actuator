@@ -153,10 +153,15 @@ func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [
         if searcher.direction == RIGHT_DIRECTION && searcher.accepter!=nil {
             for i := searcher.since+1 ; i < len(lineAsArray); i++  {
                 char:=lineAsArray[i]
+                fmt.Printf(" %s %d",char,i)
                 if searcher.accepter(char) == false {
                     extended_indexes[1] = i-1
                     break
 
+                }
+                if i == len(lineAsArray)-1 {
+                    extended_indexes[1] = i
+                    break
                 }
 
             }

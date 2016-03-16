@@ -335,6 +335,7 @@ func DebugCharCounter (line  string) (heads, foots []string) {
 
     head:=""
     foot:=""
+    //counter :=
     for i:=0 ; i<len(lineAsArray) ; i++ {
 
         delim:=""
