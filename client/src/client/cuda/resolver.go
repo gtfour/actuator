@@ -63,8 +63,9 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
     url_marker_short :=[]string{":","/","/"}
     url_marker_long  :=[]string{":","/","/","/"}
     url_marker_indexes:=ArrayInArrayIndexes(lineAsArray,url_marker_short,url_marker_long)
-    fmt.Printf("\nurl_marker_indexes: %v\n", url_marker_indexes)
+    //fmt.Printf("\nurl_marker_indexes: %v\n", url_marker_indexes)
     if len(url_marker_indexes)>0 {
+        var url_complete_indexes [][]int
         for i := range url_marker_indexes {
             url_index:=url_marker_indexes[i]
             if len(url_index)!=2 { continue }
@@ -81,7 +82,7 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
                                      }
             searchers:=[]Searcher {rightSearcher, leftSearcher}
             new_indexes:=RunSearchers(lineAsArray, searchers)
-            fmt.Printf("\nnew_indexes: %v\n", new_indexes)
+            url_complete_indexes = append(url_complete_indexes, new_indexes)
         }
     } else {
         ndelims = delims
@@ -147,25 +148,20 @@ func CompareArrayLen (indexes [][]int)(int) {
 }
 
 func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [2]int  ) {
-
     for sindex := range searchers {
         searcher:=searchers[sindex]
         if searcher.direction == RIGHT_DIRECTION && searcher.accepter!=nil {
             for i := searcher.since+1 ; i < len(lineAsArray); i++  {
                 char:=lineAsArray[i]
-                fmt.Printf(" %s %d",char,i)
                 if searcher.accepter(char) == false {
                     extended_indexes[1] = i-1
                     break
-
                 }
                 if i == len(lineAsArray)-1 {
                     extended_indexes[1] = i
                     break
                 }
-
             }
-
         } else if searcher.direction == LEFT_DIRECTION && searcher.accepter!=nil  {
             for i := searcher.since-1 ; i >=0  ; i--  {
                 char:=lineAsArray[i]
@@ -174,12 +170,19 @@ func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [
                     break
                 }
             }
-
-
         }
-
     }
     return
-
 }
 
+func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (delims [][]int, data [][]int) {
+    for i := range strada {
+        indexes:=strada[i]
+        if len(indexes)!=2 { continue }
+        first := indexes[0]
+        last  := indexes[1]
+        //for  
+
+
+    }
+}
