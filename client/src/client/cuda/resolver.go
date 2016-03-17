@@ -1,11 +1,15 @@
 package cuda
 import "fmt"
 
-var LEFT_DIRECTION   int = 1100
-var RIGHT_DIRECTION  int = 1001
+var LEFT_DIRECTION         int = 1100
+var RIGHT_DIRECTION        int = 1001
+var DIGIT_LESS_INTERVAL    int = 3579
+var DIGIT_GREATER_INTERVAL int = 9753
+var DIGIT_IN_INTERVAL      int = 9779
+
 //var BOTH_DIRECTIONS  int = 2002
 var FOUND_IS_EMPTY   int = -4004
-var URL_SPEC_CHARS   = []string {"%","=",":","/","@","?","#","-",".","_"}
+var URL_SPEC_CHARS   = []string {"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
 
 type SpecialWord struct {
     stype int // could be an email or url address or ip or  path
@@ -84,6 +88,7 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
             new_indexes:=RunSearchers(lineAsArray, searchers)
             url_complete_indexes = append(url_complete_indexes, new_indexes)
         }
+        ndelims,ndata = AlumaPaster(delims , data , url_complete_indexes)
     } else {
         ndelims = delims
         ndata   = data
@@ -147,7 +152,8 @@ func CompareArrayLen (indexes [][]int)(int) {
     return max_len_index
 }
 
-func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [2]int  ) {
+func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes []int  ) {
+    extended_indexes = make([]int, 2)
     for sindex := range searchers {
         searcher:=searchers[sindex]
         if searcher.direction == RIGHT_DIRECTION && searcher.accepter!=nil {
@@ -175,14 +181,84 @@ func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [
     return
 }
 
-func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (delims [][]int, data [][]int) {
+func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int, ndata [][]int) {
+    // strada should be inserted in data array
     for i := range strada {
         indexes:=strada[i]
-        if len(indexes)!=2 { continue }
         first := indexes[0]
         last  := indexes[1]
-        //for  
-
-
+        if len(indexes)!=2 { break ; return delims, data }
+        for de := range  delims {
+            delim        := delims[de]
+            first_delim  := delim[0]
+            last_delim   := delim[1]
+            // new_delim    := make([]int,2)
+            // new_delim[0] = -1
+            // new_delim[1] = -1
+            first_state       := DigitInInterval(first, delim)
+            last_state        := DigitInInterval(last, delim)
+            first_delim_state := DigitInInterval(first_delim, indexes)
+            last_delim_state  := DigitInInterval(last_delim,  indexes)
+            fmt.Printf("\nfirst %v state %v strada %v delim %v\n",first,first_state,strada,delim)
+            if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL {
+               // split current delim to two new delims without strada indexes
+               new_delim_first := make([]int,2)
+               new_delim_last  := make([]int,2)
+               diff_first := first - first_delim
+               diff_last  := last_delim  - last
+               if diff_first>0 { new_delim_first[0] = first_delim ; new_delim_first[1] = first - 1 ; ndelims=append(ndelims, new_delim_first) }
+               if diff_last >0 { new_delim_last[0]  = last +1     ; new_delim_last[1]  = last_delim; ndelims=append(ndelims, new_delim_last)  }
+               //if diff_first == 0 && diff_last == 0
+            } else if first_state == DIGIT_IN_INTERVAL {
+                new_delim    := make([]int,2)
+                diff_first   := first - first_delim
+                if diff_first > 0{
+                    new_delim[0]= first_delim
+                    new_delim[1]= first-1
+                    ndelims=append(ndelims, new_delim)
+                }
+            } else if last_state == DIGIT_IN_INTERVAL {
+                new_delim    := make([]int,2)
+                diff_last    := last_delim - last
+                if diff_last > 0 {
+                    new_delim[0]= last +1
+                    new_delim[1]= last_delim
+                    ndelims=append(ndelims, new_delim)
+                }
+            } else {
+                ndelims=append(ndelims, delim)
+            }
+        }
+        for da := range  data {
+            data_part:=data[da]
+            state:=DigitInInterval(first, data_part)
+            fmt.Printf("\nfirst %v state %v strada %v data %v\n",first,state,strada,data_part)
+            if state==DIGIT_IN_INTERVAL {
+                data_part[0] = first
+            }
+            ndata=append(ndata, data_part)
+        }
+        //first := indexes[0]
+        //last  := indexes[1]
     }
+    return
+}
+
+func DigitInInterval(digit int, interval []int) (int) {
+    if digit <= interval[1] && digit >= interval[0] {
+        return DIGIT_IN_INTERVAL
+    }
+    if digit < interval[0] {
+        return DIGIT_LESS_INTERVAL
+    }
+    if digit > interval[1] {
+        return DIGIT_GREATER_INTERVAL
+    }
+    return 0
+}
+
+
+func Shifter(digit int, interval [2]int)(ninterval [2]int) {
+    return
+
 }
