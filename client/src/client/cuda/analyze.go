@@ -306,9 +306,9 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
 
     var delimPair = []int   {-1,-1}
     var dataPair  = []int   {-1,-1}
-    var offset int
+    //var offset int
     for i:= range lineAsArray {
-        offset = i
+        //offset = i
         char:=lineAsArray[i]
         //if IsSymbolIn(char,ABC,NUMBERS,WORD_DELIM) == false {
         if IsSymbolIn(char,WORD_DELIM) == false && IsUnicodeLetter(char) == false  && IsUnicodeDigit(char) == false {
@@ -325,8 +325,12 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
             if (i==(len(lineAsArray)-1)) || ((i<=len(lineAsArray)-2) && ( IsSymbolIn(lineAsArray[i+1],WORD_DELIM) == true || IsUnicodeLetter(lineAsArray[i+1]) == true  || IsUnicodeDigit(lineAsArray[i+1]) == true)) {
 
                     // +1 because see /actuator/tests/test_0038_arr.go
-                    delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset+1], []int { 0, (delimPair[1]-delimPair[0]) }) // have to add +1 .but   why !??!? 
-                    delim_split_space:=Escape_Spaces(delimAsArray)
+                    // delimAsArray:=GetFixedArrayChars(lineAsArray[delimPair[0]:offset+1], []int { 0, (delimPair[1]-delimPair[0]) }) // have to add +1 .but   why !??!? 
+                    //delim_split_space:=Escape_Spaces(delimAsArray)
+                    delims=append(delims, delimPair)
+                    delimPair=[]int{-1, -1}
+                    // simplifyig
+                    /*
                     if len(delim_split_space) == 1 {
                         delims=append(delims, delimPair)
                         delimPair=[]int{-1, -1}
@@ -342,7 +346,7 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
                            delims = append(delims, delim_ss_pair)
                         }
                         delimPair=[]int{-1, -1}
-                    }
+                    }*/
 
             }
         } else {

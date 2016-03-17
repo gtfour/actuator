@@ -88,6 +88,7 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
             new_indexes:=RunSearchers(lineAsArray, searchers)
             url_complete_indexes = append(url_complete_indexes, new_indexes)
         }
+        fmt.Printf("\nStrada: %v\n",url_complete_indexes)
         ndelims,ndata = AlumaPaster(delims , data , url_complete_indexes)
     } else {
         ndelims = delims
@@ -192,14 +193,11 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
             delim        := delims[de]
             first_delim  := delim[0]
             last_delim   := delim[1]
-            // new_delim    := make([]int,2)
-            // new_delim[0] = -1
-            // new_delim[1] = -1
             first_state       := DigitInInterval(first, delim)
             last_state        := DigitInInterval(last, delim)
             first_delim_state := DigitInInterval(first_delim, indexes)
             last_delim_state  := DigitInInterval(last_delim,  indexes)
-            fmt.Printf("\nfirst %v state %v strada %v delim %v\n",first,first_state,strada,delim)
+            //fmt.Printf("\nfirst %v state %v strada %v delim %v\n",first,first_state,strada,delim)
             if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL {
                // split current delim to two new delims without strada indexes
                new_delim_first := make([]int,2)
@@ -208,7 +206,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                diff_last  := last_delim  - last
                if diff_first>0 { new_delim_first[0] = first_delim ; new_delim_first[1] = first - 1 ; ndelims=append(ndelims, new_delim_first) }
                if diff_last >0 { new_delim_last[0]  = last +1     ; new_delim_last[1]  = last_delim; ndelims=append(ndelims, new_delim_last)  }
-               //if diff_first == 0 && diff_last == 0
+               //if diff_first == 0 && diff_last == 0 {   }
             } else if first_state == DIGIT_IN_INTERVAL {
                 new_delim    := make([]int,2)
                 diff_first   := first - first_delim
@@ -225,6 +223,9 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                     new_delim[1]= last_delim
                     ndelims=append(ndelims, new_delim)
                 }
+            // ??? Pay attention
+            } else if first_delim_state == DIGIT_IN_INTERVAL && last_delim_state == DIGIT_IN_INTERVAL {
+
             } else {
                 ndelims=append(ndelims, delim)
             }
@@ -232,7 +233,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         for da := range  data {
             data_part:=data[da]
             state:=DigitInInterval(first, data_part)
-            fmt.Printf("\nfirst %v state %v strada %v data %v\n",first,state,strada,data_part)
+            //fmt.Printf("\nfirst %v state %v strada %v data %v\n",first,state,strada,data_part)
             if state==DIGIT_IN_INTERVAL {
                 data_part[0] = first
             }
@@ -240,6 +241,9 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         }
         //first := indexes[0]
         //last  := indexes[1]
+        //
+        // trick
+        delims = ndelims
     }
     return
 }

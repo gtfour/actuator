@@ -44,7 +44,7 @@ func Parser(entry string) ( interface{} ) {
 
 func Escape_Spaces (oldlineAsArray []string) (indexes [][]int) {
     // 
-    // Duplicate spaces will be present as one
+    // Duplicate spaces will be present as one : wrong specification !!!
     //
     lineAsArray      := ReplaceTabsToSpaces(oldlineAsArray)
     var pair         =  []int { -1, -1 }
