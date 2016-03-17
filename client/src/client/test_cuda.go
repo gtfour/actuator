@@ -29,7 +29,7 @@ func main() {
     //parser:=cuda.MakeParser("[")
 
     delims,data:=cuda.GetIndexes(lineAsArray3)
-    fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
+    //fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
     delims,data=cuda.UrlFilter(lineAsArray3,delims,data)
     fmt.Printf("\n === \ndelims: %v\n data: %v \n" , delims , data)
 

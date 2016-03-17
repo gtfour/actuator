@@ -1,5 +1,5 @@
 package cuda
-import "fmt"
+//import "fmt"
 
 var LEFT_DIRECTION         int = 1100
 var RIGHT_DIRECTION        int = 1001
@@ -88,7 +88,6 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
             new_indexes:=RunSearchers(lineAsArray, searchers)
             url_complete_indexes = append(url_complete_indexes, new_indexes)
         }
-        fmt.Printf("\nStrada: %v\n",url_complete_indexes)
         ndelims,ndata = AlumaPaster(delims , data , url_complete_indexes)
     } else {
         ndelims = delims
@@ -185,10 +184,11 @@ func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [
 func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int, ndata [][]int) {
     // strada should be inserted in data array
     for i := range strada {
+        ndelims := [][]int {}
         indexes:=strada[i]
+        if len(indexes)!=2 { break ; return delims, data }
         first := indexes[0]
         last  := indexes[1]
-        if len(indexes)!=2 { break ; return delims, data }
         for de := range  delims {
             delim        := delims[de]
             first_delim  := delim[0]
@@ -197,7 +197,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
             last_state        := DigitInInterval(last, delim)
             first_delim_state := DigitInInterval(first_delim, indexes)
             last_delim_state  := DigitInInterval(last_delim,  indexes)
-            //fmt.Printf("\nfirst %v state %v strada %v delim %v\n",first,first_state,strada,delim)
+            //fmt.Printf("\nfirst %v | firststate %v | laststate %v | strada %v | delim %v | firstdelimstate %v | lastdelimstate %v \n ",first,first_state,last_state, strada,delim,first_delim_state, last_delim_state)
             if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL {
                // split current delim to two new delims without strada indexes
                new_delim_first := make([]int,2)
@@ -230,22 +230,39 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                 ndelims=append(ndelims, delim)
             }
         }
-        for da := range  data {
-            data_part:=data[da]
-            state:=DigitInInterval(first, data_part)
-            //fmt.Printf("\nfirst %v state %v strada %v data %v\n",first,state,strada,data_part)
-            if state==DIGIT_IN_INTERVAL {
-                data_part[0] = first
-            }
-            ndata=append(ndata, data_part)
-        }
-        //first := indexes[0]
-        //last  := indexes[1]
-        //
-        // trick
         delims = ndelims
     }
-    return
+    ndelims = delims
+
+    last_matched_strada_id:=-1
+    for da := range  data {
+        data_part:=data[da]
+        if len(data_part)!=2 { continue }
+        first := data_part[0]
+        last  := data_part[1]
+        var includes      bool
+        var insert_strada bool
+        for i := range strada {
+            indexes:=strada[i]
+            if len(indexes)!=2 { continue }
+            first_state := DigitInInterval(first, indexes)
+            last_state  := DigitInInterval(last, indexes)
+            if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL{
+                includes               = true
+                if i != last_matched_strada_id {
+                    insert_strada          = true
+                    last_matched_strada_id = i
+                }
+            }
+        }
+        if includes == false {
+            ndata=append(ndata, data_part)
+        }
+        if insert_strada == true {
+            ndata=append(ndata, strada[last_matched_strada_id])
+        }
+    }
+    return //ndelims,ndata
 }
 
 func DigitInInterval(digit int, interval []int) (int) {
