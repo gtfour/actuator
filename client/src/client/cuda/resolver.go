@@ -1,5 +1,5 @@
 package cuda
-//import "fmt"
+import "fmt"
 
 var LEFT_DIRECTION         int = 1100
 var RIGHT_DIRECTION        int = 1001
@@ -8,8 +8,7 @@ var DIGIT_GREATER_INTERVAL int = 9753
 var DIGIT_IN_INTERVAL      int = 9779
 
 //var BOTH_DIRECTIONS  int = 2002
-var FOUND_IS_EMPTY   int = -4004
-var URL_SPEC_CHARS   = []string {"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
+var FOUND_IS_EMPTY         int = -4004
 
 type SpecialWord struct {
     stype int // could be an email or url address or ip or  path
@@ -62,10 +61,20 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 }
 
+func PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+    //PATH_SPEC_CHARS     :=[]string {"/"}
+    path_marker         := []string {"/"}
+    path_marker_indexes := ArrayInArrayIndexes(lineAsArray,path_marker)
+    fmt.Printf("PathFilter %v lineAsArray %v ", path_marker_indexes , lineAsArray)
+    return
+}
+
 func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
-    url_marker_short :=[]string{":","/","/"}
-    url_marker_long  :=[]string{":","/","/","/"}
+
+    URL_SPEC_CHARS     :=[]string {"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
+    url_marker_short   :=[]string{":","/","/"}
+    url_marker_long    :=[]string{":","/","/","/"}
     url_marker_indexes:=ArrayInArrayIndexes(lineAsArray,url_marker_short,url_marker_long)
     //fmt.Printf("\nurl_marker_indexes: %v\n", url_marker_indexes)
     if len(url_marker_indexes)>0 {
@@ -98,6 +107,7 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
 
 }
 
+
 func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
 
     if (len(abc) < 1 )||(len(phrases) < 1){return}
@@ -122,6 +132,13 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
                         }
                     } else {
                     }
+            } else if len(phrase) == 1  {
+                zsymbol := phrase[0]
+                if symbol == zsymbol {
+                    local_found[0] = i
+                    local_found[1] = i
+                    found = append(found, local_found)
+                }
             }
         }
         arrayWithMaxLenIndex:=CompareArrayLen(found)
@@ -134,7 +151,7 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
 
 func CompareArrayLen (indexes [][]int)(int) {
     // return []int array index with max lenght 
-    var max_len       int
+    max_len := -1
     var max_len_index int
     for i := range indexes {
         array:=indexes[i]
@@ -148,7 +165,7 @@ func CompareArrayLen (indexes [][]int)(int) {
             }
         } else { continue }
     }
-    if max_len == 0 { return FOUND_IS_EMPTY }
+    if max_len == -1 { return FOUND_IS_EMPTY }
     return max_len_index
 }
 
@@ -183,6 +200,8 @@ func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [
 
 func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int, ndata [][]int) {
     // strada should be inserted in data array
+    // delims with indexes included in strada will be ignored
+    // data  with indexes included  in strada will be ignored
     for i := range strada {
         ndelims := [][]int {}
         indexes:=strada[i]
@@ -279,7 +298,6 @@ func DigitInInterval(digit int, interval []int) (int) {
 }
 
 
-func Shifter(digit int, interval [2]int)(ninterval [2]int) {
-    return
-
-}
+//func Shifter(digit int, interval [2]int)(ninterval [2]int) {
+//    return
+//}
