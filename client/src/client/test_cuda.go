@@ -12,7 +12,7 @@ func main() {
     //line3:= `    1353032691c5        ubuntuюペä:12.04        "/bin/bashробот"         7 weeks ago         Up 7 weeksペä                             prickly_leakeyペä    `
     //line3:="имя: Ваня item: Vodka"
     //line3:= `1353032691c5        ubuntu:12.04        "/bin/bash"         7 weeks ago         Up 7 weeks                              prickly_leakey`
-    line3:=`deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse  file:///etc/петрушкины_хуюшки/fstab   2222 `
+    line3:=`deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse  file:///etc/петрушкины_хуюшки/fstab   2222    http://рог-жопо-фрогI-ペä.рф`
     //line3:=`baseurl = "http://vault.centos.org/7.0.1406/updates/$basearch/"`
     //phrase_short := "://"
     //phrase_long  := ":///"

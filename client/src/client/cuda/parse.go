@@ -333,17 +333,18 @@ func DebugCharCounter (line  string) (heads, foots []string) {
 
     lineAsArray:=strings.Split(line,"")
 
-    head:=""
-    foot:=""
-    //counter :=
-    for i:=0 ; i<len(lineAsArray) ; i++ {
-
+    head    := ""
+    foot    := ""
+    counter := 0
+    //for i:=0 ; i<len(lineAsArray) ; i++ {
+    for _,c := range lineAsArray {
         delim:=""
         delim_template:=" %s%s "
-        for z:=2;z<=len(fmt.Sprint(i));z++ {delim+=" "}
-        head+=fmt.Sprintf(delim_template, lineAsArray[i], delim)
-        foot+=fmt.Sprintf("|%d|",i)
-        if (i%10==0)&&(i!=0) || (i+1==len(line))  { heads=append(heads,head) ; foots=append(foots,foot) ; head="" ; foot="" }
+        for z:=2;z<=len(fmt.Sprint(counter));z++ {delim+=" "}
+        head+=fmt.Sprintf(delim_template, string(c), delim)
+        foot+=fmt.Sprintf("|%d|",counter)
+        if (counter%10==0)&&(counter!=0) || (counter+1==len(lineAsArray))  { heads=append(heads,head) ; foots=append(foots,foot) ; head="" ; foot="" }
+        counter+=1
 
     }
     return heads, foots
