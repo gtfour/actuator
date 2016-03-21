@@ -14,7 +14,7 @@ func main() {
     //line3:= `1353032691c5        ubuntu:12.04        "/bin/bash"         7 weeks ago         Up 7 weeks                              prickly_leakey`
     //line3:=`deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse  file:///etc/петрушкины_хуюшки/fstab   2222    http://рог-жопо-фрогI-ペä.рф`
     //line3:=`baseurl = "http://vault.centos.org/7.0.1406/updates/$basearch/"`
-    line3:=`/dev/mapper/ROOTVG-root /               ext4    errors=remount-ro 0       1`
+    line3:=`/    /dev/mapper/ROOTVG-root /               ext4    errors=remount-ro 0       1`
     //phrase_short := "://"
     //phrase_long  := ":///"
     //phs:=strings.Split(phrase_short, "")
@@ -29,8 +29,9 @@ func main() {
     cuda.DebugPrintCharCounter(line3)
     //parser:=cuda.MakeParser("[")
     delims,data:=cuda.GetIndexes(lineAsArray3)
+    fmt.Printf("\nBefore delims: %v\n data: %v \n" , delims , data)
     delims,data=cuda.PathFilter(lineAsArray3,delims,data)
-    fmt.Printf("\ndelims: %v\n data: %v \n" , delims , data)
+    fmt.Printf("\nAfter delims: %v\n data: %v \n" , delims , data)
     //delims,data=cuda.UrlFilter(lineAsArray3,delims,data)
     //fmt.Printf("\n === \ndelims: %v\n data: %v \n" , delims , data)
     
