@@ -63,16 +63,42 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 func PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
     //PATH_SPEC_CHARS     :=[]string {"/"}
+    PATH_SPEC_CHARS     :=[]string{"%",":","/","@","?","#","-",".","_","+","="}
     path_marker         := []string {"/"}
     path_marker_indexes := ArrayInArrayIndexes(lineAsArray,path_marker)
-    fmt.Printf("PathFilter %v lineAsArray %v ", path_marker_indexes , lineAsArray)
-    return
+    //fmt.Printf("PathFilter %v lineAsArray %v ", path_marker_indexes , lineAsArray)
+    if len(path_marker_indexes)>0 {
+        var path_complete_indexes [][]int
+        for i := range path_marker_indexes {
+            path_index         :=  path_marker_indexes[i]
+            if len(path_index) !=2 { continue }
+                leftSearcher          := Searcher{direction:LEFT_DIRECTION}
+                leftSearcher.since    =  path_index[0]
+                leftSearcher.accepter =  func (char string)(bool) {
+                                         return false
+                                     }
+                rightSearcher          := Searcher{direction:RIGHT_DIRECTION}
+                rightSearcher.since    =  path_index[1]
+                rightSearcher.accepter = func (char string)(bool) {
+                                         return IsUnicodeLetter(char) || IsUnicodeDigit(char) || IsSymbolIn(char, PATH_SPEC_CHARS )
+                                     }
+                searchers:=[]Searcher {rightSearcher, leftSearcher}
+                new_indexes:=RunSearchers(lineAsArray, searchers)
+                path_complete_indexes = append(path_complete_indexes, new_indexes)
+
+        }
+        ndelims,ndata = AlumaPaster(delims , data , path_complete_indexes)
+    } else {
+        ndelims = delims
+        ndata   = data
+    }
+    return ndelims,ndata
 }
 
 func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
 
-    URL_SPEC_CHARS     :=[]string {"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
+    URL_SPEC_CHARS     :=[]string{"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
     url_marker_short   :=[]string{":","/","/"}
     url_marker_long    :=[]string{":","/","/","/"}
     url_marker_indexes:=ArrayInArrayIndexes(lineAsArray,url_marker_short,url_marker_long)
@@ -202,6 +228,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
     // strada should be inserted in data array
     // delims with indexes included in strada will be ignored
     // data  with indexes included  in strada will be ignored
+    fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
     for i := range strada {
         ndelims := [][]int {}
         indexes:=strada[i]
@@ -298,6 +325,6 @@ func DigitInInterval(digit int, interval []int) (int) {
 }
 
 
-//func Shifter(digit int, interval [2]int)(ninterval [2]int) {
-//    return
-//}
+func Shifter(interval [][]int)(ninterval [][]int) {
+    return
+}
