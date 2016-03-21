@@ -1,5 +1,5 @@
 package cuda
-import "fmt"
+//import "fmt"
 
 var LEFT_DIRECTION         int = 1100
 var RIGHT_DIRECTION        int = 1001
@@ -87,6 +87,7 @@ func PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims 
                 path_complete_indexes = append(path_complete_indexes, new_indexes)
 
         }
+        path_complete_indexes = Shifter(path_complete_indexes)
         ndelims,ndata = AlumaPaster(delims , data , path_complete_indexes)
     } else {
         ndelims = delims
@@ -228,15 +229,16 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
     // strada should be inserted in data array
     // delims with indexes included in strada will be ignored
     // data  with indexes included  in strada will be ignored
-    fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
+    //fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
     for i := range strada {
         ndelims := [][]int {}
         indexes:=strada[i]
-        if len(indexes)!=2 { break ; return delims, data }
+        if len(indexes)!=2 { continue }  //{ break ; return delims, data }
         first := indexes[0]
         last  := indexes[1]
         for de := range  delims {
             delim        := delims[de]
+            if len(delim)!=2 { continue }
             first_delim  := delim[0]
             last_delim   := delim[1]
             first_state       := DigitInInterval(first, delim)
@@ -291,14 +293,44 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         for i := range strada {
             indexes:=strada[i]
             if len(indexes)!=2 { continue }
-            first_state := DigitInInterval(first, indexes)
-            last_state  := DigitInInterval(last, indexes)
+            first_state          := DigitInInterval(first, indexes)
+            last_state           := DigitInInterval(last, indexes)
             if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL{
-                includes               = true
+                includes = true
                 if i != last_matched_strada_id {
                     insert_strada          = true
                     last_matched_strada_id = i
                 }
+            } else {
+                interval_between_data:=make([]int,2)
+                first_strada         := indexes[0]
+                last_strada          := indexes[1]
+                if da == 0 {
+                    interval_between_data[0] = 0
+                    interval_between_data[1] = last
+                } else if da == len(data)-1 {
+                    last_delim_index := delims[(len(delims)-1)][1]
+                    last_data_index  := data[(len(data)-1)][1]
+
+                    interval_between_data[0] = first
+                    if last_delim_index >= last_data_index {
+                        interval_between_data[1]  = last_delim_index
+                    } else {
+                         interval_between_data[1] = last_data_index
+                    }
+
+                } else {
+                    interval_between_data[0] = data_part[1]
+                    interval_between_data[1] = data[da+1][0]
+                }
+                if  DigitInInterval(first_strada, interval_between_data)  == DIGIT_IN_INTERVAL && DigitInInterval(last_strada, interval_between_data)  == DIGIT_IN_INTERVAL {
+                    ndata=append( ndata, indexes )
+
+                }
+                //var interval_between_data []int
+                //interval_between_data[0] 
+
+
             }
         }
         if includes == false {
@@ -326,5 +358,30 @@ func DigitInInterval(digit int, interval []int) (int) {
 
 
 func Shifter(interval [][]int)(ninterval [][]int) {
+    var skipped []int
+    for i:= range interval {
+        if IsDigitIn(i,skipped) == false {
+            parent_int_part:=interval[i]
+            for z:= range interval {
+                if z == i {continue} //do not compare interval with self
+                int_part:=interval[z]
+                if len(int_part)!=2{continue}
+
+                first:=int_part[0]
+                last :=int_part[1]
+
+                if DigitInInterval(first,parent_int_part) == DIGIT_IN_INTERVAL && DigitInInterval(last,parent_int_part) == DIGIT_IN_INTERVAL {
+                    skipped=append(skipped, z)
+                }
+
+            }
+
+        }
+    }
+    for x:= range interval {
+        if IsDigitIn(x,skipped) == false {
+            ninterval=append(ninterval, interval[x])
+        }
+    }
     return
 }

@@ -149,6 +149,21 @@ func IsUnicodeDigit(char string)(yes bool) {
     }
     return yes
 }
+func IsDigitIn(digit int, digits_sets ...[]int) (yes bool) {
+
+    for i := range digits_sets {
+        set := digits_sets[i]
+        for s := range set {
+            ndigit:=set[s]
+            if ndigit == digit {
+                yes = true
+                break
+            }
+        }
+        if yes == true { break }
+    }
+    return
+}
 
 
 func IsSymbolIn(char string, symbols_sets ...[]string) (yes bool) {
