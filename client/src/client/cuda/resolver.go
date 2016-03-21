@@ -61,6 +61,13 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 }
 
+func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+
+
+
+    return
+}
+
 func PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
     //PATH_SPEC_CHARS     :=[]string {"/"}
     PATH_SPEC_CHARS     :=[]string{"%",":","/","@","?","#","-",".","_","+","="}
