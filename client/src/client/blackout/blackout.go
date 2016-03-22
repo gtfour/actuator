@@ -10,7 +10,7 @@ import "client/cuda"
 
 
 func Blackout() {
-        cmd := exec.Command("pvs")
+        cmd := exec.Command("ifconfig","eth0")
         cmd.Stdin = strings.NewReader("some input")
         var out bytes.Buffer
         cmd.Stdout = &out

@@ -1,5 +1,5 @@
 package cuda
-import "fmt"
+//import "fmt"
 
 var LEFT_DIRECTION         int = 1100
 var RIGHT_DIRECTION        int = 1001
@@ -72,11 +72,29 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
     double_quote_indexes := ArrayInArrayIndexes(lineAsArray, double_quote)
     grave_quote_indexes  := ArrayInArrayIndexes(lineAsArray, grave_quote)
 
-    //var quotes_complete_indexes [][]int
+    var quotes_complete_indexes [][]int
     single_quote_complete_indexes := CombineDoubleSymbols(single_quote_indexes)
     double_quote_complete_indexes := CombineDoubleSymbols(double_quote_indexes)
     grave_quote_complete_indexes  := CombineDoubleSymbols(grave_quote_indexes)
-    fmt.Printf("s: %v d: %v g: %v", single_quote_complete_indexes, double_quote_complete_indexes, grave_quote_complete_indexes )
+    for s:= range single_quote_complete_indexes {
+        single:=single_quote_complete_indexes[s]
+        quotes_complete_indexes=append(quotes_complete_indexes, single)
+    }
+    for d:= range double_quote_complete_indexes {
+        double:=double_quote_complete_indexes[d]
+        quotes_complete_indexes=append(quotes_complete_indexes, double)
+    }
+    for g:= range grave_quote_complete_indexes {
+        grave:=single_quote_complete_indexes[g]
+        quotes_complete_indexes=append(quotes_complete_indexes, grave)
+    }
+    if len(quotes_complete_indexes)>=1 {
+        ndelims,ndata = AlumaPaster(delims , data , quotes_complete_indexes)
+    } else {
+        ndelims = delims
+        ndata   = data
+    }
+    //fmt.Printf("s: %v d: %v g: %v", single_quote_complete_indexes, double_quote_complete_indexes, grave_quote_complete_indexes )
     return
 }
 

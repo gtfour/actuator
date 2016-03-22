@@ -32,8 +32,8 @@ func main() {
     delims,data:=cuda.GetIndexes(lineAsArray3)
     fmt.Printf("\n  delims: %v\n  data: %v \n" , delims , data)
     delims,data=cuda.PathFilter(lineAsArray3,delims,data)
-    cuda.QuotesFilter(lineAsArray3,delims,data)
-    //fmt.Printf("\nAfter delims: %v\n data: %v \n" , delims , data)
+    delims,data=cuda.QuotesFilter(lineAsArray3,delims,data)
+    fmt.Printf("\nAfter delims: %v\n data: %v \n" , delims , data)
     //delims,data=cuda.UrlFilter(lineAsArray3,delims,data)
     //fmt.Printf("\n === \ndelims: %v\n data: %v \n" , delims , data)
 
