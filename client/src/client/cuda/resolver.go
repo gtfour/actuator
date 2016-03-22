@@ -1,5 +1,5 @@
 package cuda
-//import "fmt"
+import "fmt"
 
 var LEFT_DIRECTION         int = 1100
 var RIGHT_DIRECTION        int = 1001
@@ -63,8 +63,20 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
+    single_quote :=[]string{"'"}
+    double_quote :=[]string{`"`}
+    grave_quote  :=[]string{"`"}
 
 
+    single_quote_indexes := ArrayInArrayIndexes(lineAsArray, single_quote)
+    double_quote_indexes := ArrayInArrayIndexes(lineAsArray, double_quote)
+    grave_quote_indexes  := ArrayInArrayIndexes(lineAsArray, grave_quote)
+
+    //var quotes_complete_indexes [][]int
+    single_quote_complete_indexes := CombineDoubleSymbols(single_quote_indexes)
+    double_quote_complete_indexes := CombineDoubleSymbols(double_quote_indexes)
+    grave_quote_complete_indexes  := CombineDoubleSymbols(grave_quote_indexes)
+    fmt.Printf("s: %v d: %v g: %v", single_quote_complete_indexes, double_quote_complete_indexes, grave_quote_complete_indexes )
     return
 }
 
@@ -389,6 +401,30 @@ func Shifter(interval [][]int)(ninterval [][]int) {
         if IsDigitIn(x,skipped) == false {
             ninterval=append(ninterval, interval[x])
         }
+    }
+    return
+}
+
+func CombineDoubleSymbols ( quotes_indexes [][]int  )(combined_quotes [][]int) {
+
+    if len(quotes_indexes) >=2 && len(quotes_indexes)%2 == 0 {
+        pair:=make([]int,2)
+        pair[0] = -1
+        pair[1] = -1
+        for i:=0 ; i<len(quotes_indexes) ; i++ {
+            index:=quotes_indexes[i]
+            if pair[0] == -1 && len(index) == 2 && index[0] == index[1] {
+                pair[0] = index[0]
+            } else if pair[0] != -1 && pair[1] == -1 &&  len(index) == 2 && index[0] == index[1] {
+                pair[1] = index[0]
+                combined_quotes = append(combined_quotes, pair)
+                pair = make([]int,2)
+                pair[0] = -1
+                pair[1] = -1
+            }
+        }
+    } else {
+        return combined_quotes
     }
     return
 }
