@@ -1,5 +1,5 @@
 package cuda
-//import "fmt"
+import "fmt"
 
 var LEFT_DIRECTION         int = 1100
 var RIGHT_DIRECTION        int = 1001
@@ -72,7 +72,8 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
     double_quote_indexes := ArrayInArrayIndexes(lineAsArray, double_quote)
     grave_quote_indexes  := ArrayInArrayIndexes(lineAsArray, grave_quote)
 
-    var quotes_complete_indexes [][]int
+    var quotes_complete_indexes   [][]int
+    var data_inside_quote_indexes [][]int
     single_quote_complete_indexes := CombineDoubleSymbols(single_quote_indexes)
     double_quote_complete_indexes := CombineDoubleSymbols(double_quote_indexes)
     grave_quote_complete_indexes  := CombineDoubleSymbols(grave_quote_indexes)
@@ -89,7 +90,21 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
         quotes_complete_indexes=append(quotes_complete_indexes, grave)
     }
     if len(quotes_complete_indexes)>=1 {
-        ndelims,ndata = AlumaPaster(delims , data , quotes_complete_indexes)
+        for q:= range quotes_complete_indexes {
+            quote_range:=quotes_complete_indexes[q]
+            if len(quote_range) == 2 {
+                first_data := quote_range[0]+1
+                last_data  := quote_range[1]-1
+                new_quote_range:=[]int{first_data,last_data}
+                if first_data < last_data {
+                    data_inside_quote_indexes=append(data_inside_quote_indexes, new_quote_range)
+                } else if last_data < first_data  { // example: line3:=`cache_file_prefix = ""`
+                    data_inside_quote_indexes=append(data_inside_quote_indexes, new_quote_range)
+                }
+            }
+        }
+        fmt.Printf("\nstrada to Aluma %v\n",data_inside_quote_indexes)
+        ndelims,ndata = AlumaPaster(delims , data , data_inside_quote_indexes)
     } else {
         ndelims = delims
         ndata   = data
@@ -273,6 +288,12 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         if len(indexes)!=2 { continue }  //{ break ; return delims, data }
         first := indexes[0]
         last  := indexes[1]
+        //
+        if first > last {
+            first = indexes[1]
+            last  = indexes[0]
+        }
+        //
         for de := range  delims {
             delim        := delims[de]
             if len(delim)!=2 { continue }
@@ -285,6 +306,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
             //fmt.Printf("\nfirst %v | firststate %v | laststate %v | strada %v | delim %v | firstdelimstate %v | lastdelimstate %v \n ",first,first_state,last_state, strada,delim,first_delim_state, last_delim_state)
             if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL {
                // split current delim to two new delims without strada indexes
+               fmt.Printf("\nStrada on delim interval\n")
                new_delim_first := make([]int,2)
                new_delim_last  := make([]int,2)
                diff_first := first - first_delim
@@ -323,15 +345,15 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
     for da := range  data {
         data_part:=data[da]
         if len(data_part)!=2 { continue }
-        first := data_part[0]
-        last  := data_part[1]
+        first_data := data_part[0]
+        last_data  := data_part[1]
         var includes      bool
         var insert_strada bool
         for i := range strada {
             indexes:=strada[i]
             if len(indexes)!=2 { continue }
-            first_state          := DigitInInterval(first, indexes)
-            last_state           := DigitInInterval(last, indexes)
+            first_state          := DigitInInterval(first_data, indexes)
+            last_state           := DigitInInterval(last_data, indexes)
             if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL{
                 includes = true
                 if i != last_matched_strada_id {
@@ -342,14 +364,20 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                 interval_between_data:=make([]int,2)
                 first_strada         := indexes[0]
                 last_strada          := indexes[1]
+                var replace_on_insert bool
+                if first_strada > last_strada {
+                    first_strada = indexes[1]
+                    last_strada  = indexes[0]
+                    replace_on_insert = true
+                }
                 if da == 0 {
                     interval_between_data[0] = 0
-                    interval_between_data[1] = last
+                    interval_between_data[1] = last_data
                 } else if da == len(data)-1 {
                     last_delim_index := delims[(len(delims)-1)][1]
                     last_data_index  := data[(len(data)-1)][1]
 
-                    interval_between_data[0] = first
+                    interval_between_data[0] = first_data
                     if last_delim_index >= last_data_index {
                         interval_between_data[1]  = last_delim_index
                     } else {
@@ -361,8 +389,14 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                     interval_between_data[1] = data[da+1][0]
                 }
                 if  DigitInInterval(first_strada, interval_between_data)  == DIGIT_IN_INTERVAL && DigitInInterval(last_strada, interval_between_data)  == DIGIT_IN_INTERVAL {
-                    ndata=append( ndata, indexes )
-
+                    if replace_on_insert == false {
+                        ndata=append( ndata, indexes )
+                    } else {
+                         nindexes:=make([]int,2)
+                         nindexes[0] = last_strada
+                         nindexes[1] = first_strada
+                         ndata=append(ndata,  nindexes)
+                    }
                 }
                 //var interval_between_data []int
                 //interval_between_data[0] 
