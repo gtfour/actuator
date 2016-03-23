@@ -26,7 +26,8 @@ func main() {
     //lineAsArray2:=strings.Split(line2, "")
     //// lineAsArray3:=strings.Split(line3, "")
     //line3:=`PRETTY_NAME='CentOS Linux 7 (Core)'`
-    line3:=`cache_file_prefix = ""`
+    //line3:=`cache_file_prefix = ""`
+    line3:=`"hello":"Jessie::'Proper'"`
     cuda.DebugPrintCharCounter(line3)
     lineAsArray3:=strings.Split(line3, "")
     delims,data:=cuda.GetIndexes(lineAsArray3)

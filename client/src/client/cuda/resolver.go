@@ -104,7 +104,7 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
             }
         }
         fmt.Printf("\nstrada to Aluma %v\n",data_inside_quote_indexes)
-        ndelims,ndata = AlumaPaster(delims , data , data_inside_quote_indexes)
+        ndelims,ndata = AlumaPaster(delims , data , Shifter(data_inside_quote_indexes))
     } else {
         ndelims = delims
         ndata   = data
@@ -282,6 +282,14 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
     // delims with indexes included in strada will be ignored
     // data  with indexes included  in strada will be ignored
     //fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
+    var last_delim_index int
+    var last_data_index  int
+    delims_last_elem := delims[(len(delims)-1)]
+    data_last_elem   := data[(len(data)-1)]
+    if len(delims_last_elem)==2 && len(data_last_elem)==2 {
+        last_delim_index = delims_last_elem[1]
+        last_data_index  = data_last_elem[1]
+    }
     for i := range strada {
         ndelims := [][]int {}
         indexes:=strada[i]
@@ -371,13 +379,21 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                     last_strada  = indexes[0]
                     replace_on_insert = true
                 }
+                //last_delim_index := delims[(len(delims)-1)][1]
+                //last_data_index  := data[(len(data)-1)][1]
                 if da == 0 {
                     interval_between_data[0] = 0
-                    // ????
-                    interval_between_data[1] = last_data
+                    if len(data) == 1 {
+                        if last_delim_index >= last_data_index {
+                            interval_between_data[1] = last_delim_index
+                        } else {
+                            interval_between_data[1] = last_data_index
+                        }
+                    } else {
+                        interval_between_data[1] = last_data
+
+                    }
                 } else if da == len(data)-1 {
-                    last_delim_index := delims[(len(delims)-1)][1]
-                    last_data_index  := data[(len(data)-1)][1]
 
                     interval_between_data[0] = first_data
                     if last_delim_index >= last_data_index {
@@ -390,14 +406,18 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                     interval_between_data[0] = data_part[1]
                     interval_between_data[1] = data[da+1][0]
                 }
+                fmt.Printf("\nstrada on data  interval first_strada: %v last_strada: %v interval_between_data: %v \n",first_strada,last_strada,interval_between_data)
                 if  DigitInInterval(first_strada, interval_between_data)  == DIGIT_IN_INTERVAL && DigitInInterval(last_strada, interval_between_data)  == DIGIT_IN_INTERVAL {
+                    last_matched_strada_id = i
                     if replace_on_insert == false {
                         //ndata=append( ndata, indexes )
+                        insert_strada = true
                     } else {
                          nindexes:=make([]int,2)
                          nindexes[0] = last_strada
                          nindexes[1] = first_strada
                          //ndata=append(ndata,  nindexes)
+                         insert_strada = true
                     }
                 }
                 //var interval_between_data []int
