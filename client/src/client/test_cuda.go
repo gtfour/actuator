@@ -30,10 +30,10 @@ func main() {
     cuda.DebugPrintCharCounter(line3)
     lineAsArray3:=strings.Split(line3, "")
     delims,data:=cuda.GetIndexes(lineAsArray3)
-    fmt.Printf("\n  delims: %v\n  data: %v \n" , delims , data)
+    fmt.Printf("\nBefore: delims: %v\n  data: %v \n" , delims , data)
     delims,data=cuda.PathFilter(lineAsArray3,delims,data)
     delims,data=cuda.QuotesFilter(lineAsArray3,delims,data)
-    fmt.Printf("\nAfter delims: %v\n data: %v \n" , delims , data)
+    fmt.Printf("\nAfter:  delims: %v\n data: %v \n" , delims , data)
     //delims,data=cuda.UrlFilter(lineAsArray3,delims,data)
     //fmt.Printf("\n === \ndelims: %v\n data: %v \n" , delims , data)
 
