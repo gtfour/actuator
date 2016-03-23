@@ -361,6 +361,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                     last_matched_strada_id = i
                 }
             } else {
+                fmt.Printf("\n::else::\n")
                 interval_between_data:=make([]int,2)
                 first_strada         := indexes[0]
                 last_strada          := indexes[1]
@@ -372,6 +373,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                 }
                 if da == 0 {
                     interval_between_data[0] = 0
+                    // ????
                     interval_between_data[1] = last_data
                 } else if da == len(data)-1 {
                     last_delim_index := delims[(len(delims)-1)][1]
@@ -390,12 +392,12 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                 }
                 if  DigitInInterval(first_strada, interval_between_data)  == DIGIT_IN_INTERVAL && DigitInInterval(last_strada, interval_between_data)  == DIGIT_IN_INTERVAL {
                     if replace_on_insert == false {
-                        ndata=append( ndata, indexes )
+                        //ndata=append( ndata, indexes )
                     } else {
                          nindexes:=make([]int,2)
                          nindexes[0] = last_strada
                          nindexes[1] = first_strada
-                         ndata=append(ndata,  nindexes)
+                         //ndata=append(ndata,  nindexes)
                     }
                 }
                 //var interval_between_data []int
