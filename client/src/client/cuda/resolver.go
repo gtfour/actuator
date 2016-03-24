@@ -61,6 +61,15 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 }
 
+func BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+
+    var section_brackets_square   =  [2]string {"[","]"}
+    var section_brackets_triangle =  [3]string {"<",">","</"}
+    var section_brackets_curly    =  [2]string {"{","}"}
+
+}
+
+
 func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
     single_quote :=[]string{"'"}
@@ -177,6 +186,10 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
             url_complete_indexes = append(url_complete_indexes, new_indexes)
         }
         ndelims,ndata = AlumaPaster(delims , data , url_complete_indexes)
+        // ex
+        ndelims=Shifter(ndelims)
+        ndata  = Shifter(ndata)
+        //
     } else {
         ndelims = delims
         ndata   = data
@@ -406,17 +419,14 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                     interval_between_data[0] = data_part[1]
                     interval_between_data[1] = data[da+1][0]
                 }
-                fmt.Printf("\nstrada on data  interval first_strada: %v last_strada: %v interval_between_data: %v \n",first_strada,last_strada,interval_between_data)
                 if  DigitInInterval(first_strada, interval_between_data)  == DIGIT_IN_INTERVAL && DigitInInterval(last_strada, interval_between_data)  == DIGIT_IN_INTERVAL {
                     last_matched_strada_id = i
                     if replace_on_insert == false {
-                        //ndata=append( ndata, indexes )
                         insert_strada = true
                     } else {
                          nindexes:=make([]int,2)
                          nindexes[0] = last_strada
                          nindexes[1] = first_strada
-                         //ndata=append(ndata,  nindexes)
                          insert_strada = true
                     }
                 }
