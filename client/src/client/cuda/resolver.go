@@ -63,9 +63,10 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 func BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
-    var section_brackets_square   =  [2]string {"[","]"}
-    var section_brackets_triangle =  [3]string {"<",">","</"}
-    var section_brackets_curly    =  [2]string {"{","}"}
+    //var section_brackets_square   =  [2]string {"[","]"}
+    //var section_brackets_triangle =  [3]string {"<",">","</"}
+    //var section_brackets_curly    =  [2]string {"{","}"}
+    return
 
 }
 
