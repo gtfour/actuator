@@ -1,0 +1,15 @@
+<html>
+<head>
+    <script src="../angular.min.js"></script>
+    <script src="app.js"></script>
+</head>
+<body ng-app="testApp">
+    <button ng-click="message='234'">Hello</button>
+    <div ng-controller="ResponseController">
+    <p ng-repeat="a in answers">{{a}}</p>
+    <input ng-model="word">
+    <span habra-habr="word" habra="Nehabra"></span>
+    </div>
+    
+</body>
+</html>
