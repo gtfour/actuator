@@ -4,6 +4,7 @@ import "wapour/api/webclient"
 type SubItem struct {
     Name     string
     Url      string
+    Id       string
 }
 
 type Item struct {
@@ -22,11 +23,11 @@ func CreateNavigationMenu(dinstance webclient.DashboardListResult)( []Item ){
     for dgroup_id := range dinstance.DashboardGroupList.List {
         dgroup    := dinstance.DashboardGroupList.List[dgroup_id]
         //dgroup    := dinstance.DashboardGroupList[dgroup_id]
-        item      := Item{ Name:dgroup.Title, Id:dgroup.Id, Icon:dgroup.Icon }
+        item      := Item{ Name:dgroup.Title, Id:dgroup.Id, Icon:dgroup.Icon}
         for dashboard_id := range dinstance.DashboardList.List {
             dashboard := dinstance.DashboardList.List[dashboard_id]
             if IsIn(dashboard.Id, dgroup.List){
-                subitem:= SubItem{Name:dashboard.Title}
+                subitem:= SubItem{ Name:dashboard.Title, Url:"#"+dgroup.Id+"/"+dashboard.Url, Id:dashboard.Id}
                 item.SubItems = append(item.SubItems, subitem)
             }
         }

@@ -15,12 +15,12 @@ func main() {
     user_riah_id,_        := d.CreateUser(user_riah)
     user_kelly_id,_        := d.CreateUser(user_kelly)
 
-    new_dashboard1       :=&dashboard.Dashboard{Id:"groups_dashboard",              Title:"Groups"}
-    new_dashboard2       :=&dashboard.Dashboard{Id:"networking_hosts_dashboard",    Title:"Hosts"}
-    new_dashboard3       :=&dashboard.Dashboard{Id:"networking_nsswitch_dashboard", Title:"Nsswitch"}
-    new_dashboard4       :=&dashboard.Dashboard{Id:"hardware_partitions_dashboard", Title:"Partitions"}
-    new_dashboard5       :=&dashboard.Dashboard{Id:"hardware_dmidecode_dashboard",  Title:"Dmidecode"}
-    new_dashboard6       :=&dashboard.Dashboard{Id:"users_dashboard",               Title:"Users"}
+    new_dashboard1       :=&dashboard.Dashboard{Id:"groups_dashboard",              Title:"Groups",     Url:"groups-dashboard"}
+    new_dashboard2       :=&dashboard.Dashboard{Id:"networking_hosts_dashboard",    Title:"Hosts",      Url:"networking-hosts-dashboard"}
+    new_dashboard3       :=&dashboard.Dashboard{Id:"networking_nsswitch_dashboard", Title:"Nsswitch",   Url:"networking-nsswitch-dashboard"}
+    new_dashboard4       :=&dashboard.Dashboard{Id:"hardware_partitions_dashboard", Title:"Partitions", Url:"hardware-partitions-dashboard"}
+    new_dashboard5       :=&dashboard.Dashboard{Id:"hardware_dmidecode_dashboard",  Title:"Dmidecode",  Url:"hardware-dmidecode-dashboard"}
+    new_dashboard6       :=&dashboard.Dashboard{Id:"users_dashboard",               Title:"Users",      Url:"users-dashboard"}
 
     d1_id,_    :=d.CreateDashboard(new_dashboard1)
     d2_id,_    :=d.CreateDashboard(new_dashboard2)

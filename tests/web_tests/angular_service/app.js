@@ -21,6 +21,16 @@ testApp.directive('habraHabr', function () {
             alert(value);
         });
         }
-    });
+});
+
+testApp.directive('helloWorld', function () {
+    return {
+        restrict: 'AE',
+        replace:  'true',
+        template: '<h3>Hello world!</h3>'
+    };
+});
+
+
 
 

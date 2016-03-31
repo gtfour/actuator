@@ -22,6 +22,7 @@ type Dashboard struct {
     Id           string
     Name         string
     Title        string
+    Url          string
     Composition  []Component
 
 }

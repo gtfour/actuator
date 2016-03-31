@@ -3,12 +3,14 @@ package index
 type SubItem struct {
     Name     string
     Url      string
+    Id       string
 }
 
 type Item struct {
     Name     string
     Icon     string
     SubItems []SubItem
+    Id       string
 }
 
 func GetNavigationMenu()( []Item ){
