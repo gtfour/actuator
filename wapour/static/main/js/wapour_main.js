@@ -3,7 +3,7 @@ wapourApp.factory('websocketService', ['$q','$rootScope', function($q, $rootScop
     var Service           = {};
     var callbacks         = {};
     var currentCallbackId = 0;
-    var ws = new WebSocket("ws://127.0.0.1:8090/entry");
+    var ws = new WebSocket("ws://10.10.111.143:8090/entry");
     ws.onopen = function (){
         console.log("Socket has been opened!");
         //var test = {}; 
@@ -88,10 +88,14 @@ wapourApp.factory('websocketService', ['$q','$rootScope', function($q, $rootScop
 }]);
 wapourApp.controller('mainController', ['$scope','websocketService', function($scope, websocketService) {
     var ws_connect_retries = 10 ; 
-    var request            = {};
-    request['author']      = "user1";
-    request['message']     = "Hello all!";
-    var send_test_message  = function(){websocketService.sendRequest(request)};
+    var data            = {};
+    var message         = {"datatype":"message_chat"};
+    
+    data['author']      = "user1";
+    data['message']     = "Hello all!";
+    message["data"]     = data
+    
+    var send_test_message  = function(){websocketService.sendRequest(message)};
     var data               = websocketService.wsReady(ws_connect_retries, send_test_message);
 
     $scope.dashboard_select = function(dashboard_name) {

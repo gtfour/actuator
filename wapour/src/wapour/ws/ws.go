@@ -10,11 +10,11 @@ import "wapour/api/webclient"
 type Server struct {
 
     pattern        string
-    messages       []*Message
+    messages       []*MessageChat
     clients        map[int]*Client
     addChannel     chan *Client
     delChannel     chan *Client
-    sendAllChannel chan *Message
+    sendAllChannel chan *MessageChat
     doneChannel    chan bool
     errChannel     chan error
     WShandler      websocket.Handler
@@ -22,11 +22,11 @@ type Server struct {
 }
 
 func NewServer (pattern string) *Server {
-    messages       := []*Message{}
+    messages       := []*MessageChat{}
     clients        := make(map[int]*Client)
     addChannel     := make(chan *Client)
     delChannel     := make(chan *Client)
-    sendAllChannel := make(chan *Message)
+    sendAllChannel := make(chan *MessageChat)
     doneChannel    := make(chan bool)
     errChannel     := make(chan error)
     // gen ws handler
@@ -67,7 +67,7 @@ func (s *Server) Add (c *Client) {
 func (s *Server) Del (c *Client) {
     s.delChannel <- c
 }
-func (s *Server) SendAll(msg *Message) {
+func (s *Server) SendAll(msg *MessageChat) {
     s.sendAllChannel <- msg
 }
 func (s *Server) Done () {
@@ -82,7 +82,7 @@ func (s *Server) sendPastMessages (c *Client) {
     }
 }
 
-func (s *Server) SendToAllClients (msg *Message) {
+func (s *Server) SendToAllClients (msg *MessageChat) {
     for _, c := range s.clients {
         c.Write(msg)
     }

@@ -1,4 +1,20 @@
 var wapourApp = angular.module('wapourApp', ['ui.router']);
+
+
+
+
+
+
+
+
+
+wapourApp.config([function() {
+    console.log("::use::config");
+}])
+wapourApp.run([function(){
+    console.log("::use::run");
+}])
+
 wapourApp.config(function($stateProvider, $urlRouterProvider ) {
     $urlRouterProvider.otherwise('/index');
     $stateProvider
