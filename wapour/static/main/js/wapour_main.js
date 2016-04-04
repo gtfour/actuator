@@ -3,7 +3,7 @@ wapourApp.factory('websocketService', ['$q','$rootScope', function($q, $rootScop
     var Service           = {};
     var callbacks         = {};
     var currentCallbackId = 0;
-    var ws = new WebSocket("ws://127.0.0.1:8090/entry");
+    var ws = new WebSocket("ws://10.10.111.143:8090/entry");
     ws.onopen = function (){
         console.log("Socket has been opened!");
         //var test = {}; 
