@@ -34,7 +34,7 @@ wapourApp.directive('wapourDataTable', ['websocketService',function (websocketSe
     }
 }]);
 
-wapourApp.directive('wapourInfoBox', ['websocketService',function (websocketService) {
+wapourApp.directive('wapourInfoBoxArray', ['websocketService',function (websocketService) {
     return {
         restrict: 'A',
         link:     function(scope, elem, attrs) {
