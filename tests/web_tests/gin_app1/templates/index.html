@@ -7,11 +7,13 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- anular-js -->
+  <script src="{{ .local_static_url }}app.js"></script>
   <script src="{{ .static_url }}js/angular.min.js"></script>
   <script src="{{ .static_url }}js/angular-ui-router.min.js"></script>
   <script src="{{ .static_url }}js/wapour_app.js"></script>
   <script src="{{ .static_url }}js/wapour_main.js"></script>
   <script src="{{ .static_url }}js/wapour_navigation.js"></script>
+  <script src="{{ .static_url }}js/wapour_table_data.js"></script>
   <!-- Bootstrap 3.3.5 -->
   <link rel="stylesheet" href="{{ .static_url }}css/bootstrap.min.css">
   <!-- Font Awesome -->
@@ -334,6 +336,7 @@
 
     <!-- Main content -->
     <section class="content" ui-view>
+    <wapour-data-table self-id="4E4BFE80-6FCC-B5E9-1AE6-DA906A88BD3B"></wapour-data-table>
     <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box">

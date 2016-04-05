@@ -4,6 +4,7 @@ import "github.com/gin-gonic/gin"
 
 var STATIC_DIR           = "/actuator/wapour/static"
 var STATIC_URL           = "/static/main/"
+var LOCAL_STATIC_URL     = "/local-static/"
 
 
 func main() {
@@ -14,7 +15,8 @@ func main() {
     app.LoadHTMLGlob("/actuator/tests/web_tests/gin_app1/templates/*")
 
     app.Static("/static","/actuator/wapour/static")
-    app.GET("/index",         Index( gin.H{"static_url":STATIC_URL}))
+    app.Static("/local-static","/actuator/tests/web_tests/gin_app1/local_static")
+    app.GET("/index",         Index( gin.H{"static_url":STATIC_URL,"local_static_url":LOCAL_STATIC_URL}))
     app.Run(":9010")
 
 }

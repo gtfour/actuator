@@ -1,6 +1,8 @@
 wapourApp.factory('websocketService', ['$q','$rootScope', function($q, $rootScope) {
     // 2 200 000
     var Service           = {};
+    var SubscribersDashboards = [] ;
+    var SubscribersDataboxes  = [] ; 
     var callbacks         = {};
     var currentCallbackId = 0;
     var ws = new WebSocket("ws://10.10.111.143:8090/entry");

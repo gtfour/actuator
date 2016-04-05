@@ -1,5 +1,5 @@
 wapourApp.directive('wapourDataBox', ['websocketService',function (websocketService) {
-    return {
+    /*return {
         restrict: 'A',
         link:     function(scope, elem, attrs) {
             elem.bind('click', function() {
@@ -13,11 +13,18 @@ wapourApp.directive('wapourDataBox', ['websocketService',function (websocketServ
             websocketService.sendRequest(message)
         });
         }
+    } */
+    var directive = {};
+    directive.restrict = 'AE';
+    directive.link = function( scope, elements, attrs ) {
+        dashboard_group_id = attrs.dashboardGroupId;
+        dashboard_id       = attrs.dashboardId ;
     }
+
 }]);
 
 wapourApp.directive('wapourDataTable', ['websocketService',function (websocketService) {
-    return {
+    /*return {
         restrict: 'A',
         link:     function(scope, elem, attrs) {
             elem.bind('click', function() {
@@ -26,12 +33,26 @@ wapourApp.directive('wapourDataTable', ['websocketService',function (websocketSe
             var data               = {};
             var message            = {"datatype":"message_switch_dashboard"};
             var selected_dashboard = {"dashboardgroupid":dashboard_group_id, "dashboardid":dashboard_id};
-            message["data"]        = selected_dashboard
+            mes
+sage["data"]        = selected_dashboard
             //alert("DGID:"+dashboard_group_id+" DID:"+dashboard_id);
             websocketService.sendRequest(message)
         });
         }
+    }*/
+    var directive = {};
+    directive.restrict = 'AE';
+    directive.link = function( scope, elements, attrs ) {
+        alert(attrs.selfId);
     }
+    return directive;
+}]);
+
+wapourApp.directive('wapourTableRow', ['websocketService',function (websocketService) {
+
+    var directive = {}; 
+    directive.restrict = 'E';
+    directive.template = "<tr></tr>"
 }]);
 
 wapourApp.directive('wapourInfoBoxArray', ['websocketService',function (websocketService) {
@@ -51,6 +72,18 @@ wapourApp.directive('wapourInfoBoxArray', ['websocketService',function (websocke
         }
     }
 }]);
+
+wapourApp.factory('InfoBox', function(){
+    var Service = {} ; 
+
+    function get_data(url){
+
+
+    };
+
+    return {messages:["Hello all!","Buy!","Nice to see you!"],
+            data:function get_table_data(table_id){} ,};
+});
 
 /*
         <div class="col-md-3 col-sm-6 col-xs-12">
