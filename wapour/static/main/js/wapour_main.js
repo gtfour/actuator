@@ -1,11 +1,61 @@
-wapourApp.factory('websocketService', ['$q','$rootScope', function($q, $rootScope) {
+wapourApp.factory('settingsService', ['$q','$rootScope', function($q, $rootScope) {
+    var Service              = {};
+    var Settings             = {};
+    Settings["ws_url"]       = "" ;
+    Settings["get_data_url"] = "" ;
+    function setSettings( settings ) {
+        for ( var key in settings ){
+            if key == "ws_url" {
+                Settings["ws_url"]       = settings["ws_url"]
+            }
+            if key == "get_data_url" {
+                Settings["get_data_url"] = settings["get_data_url"]
+
+            }
+        }
+    }
+    function getSettings() {
+        return Settings;
+    }
+    Service.setSettings = setSettings;
+    Service.getSettings = getSettings;
+    return Service;
+}]);
+
+wapourApp.directive('wapourAppSettings', ['settingsService',function (websocketService) {
+    var directive = {};
+    directive.restrict = 'AE';
+    directive.link = function( scope, elements, attrs ) {
+        var ws_url               = attrs.wsUrl ;
+        var get_data_url         = attrs.getDataUrl ;
+        var settings             = {};
+        settings["ws_url"]       = ws_url;
+        settings["get_data_url"] = get_data_url;
+        settingsService.setSettings(settings)
+    }
+    return directive ; 
+}]);
+
+wapourApp.factory('getDataService', ['$q','$rootScope', function($q, $rootScope) {
+
+    var Service = {} ;
+    function getDashboardData( dashboard_group_id, dashboard_id, session_id ) {
+
+    }
+}]);
+
+
+wapourApp.factory('websocketService', ['$q','$rootScope','wapourAppSettings', function($q, $rootScope) {
     // 2 200 000
     var Service           = {};
     var SubscribersDashboards = [] ;
     var SubscribersDataboxes  = [] ; 
     var callbacks         = {};
     var currentCallbackId = 0;
-    var ws = new WebSocket("ws://10.10.111.143:8090/entry");
+
+    settings = wapourAppSettings.getSettings()
+
+    var ws = new WebSocket(settings["ws_url"]);
     ws.onopen = function (){
         console.log("Socket has been opened!");
         //var test = {}; 

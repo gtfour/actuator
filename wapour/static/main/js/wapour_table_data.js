@@ -23,6 +23,15 @@ wapourApp.directive('wapourDataBox', ['websocketService',function (websocketServ
 
 }]);
 
+wapourApp.directive('wapourDashboard', ['websocketService',function (websocketService) {
+    var directive = {};
+    directive.restrict = 'AE';
+    directive.link = function( scope, elements, attrs ) {
+        dashboard_group_id = attrs.dashboardGroupId;
+        dashboard_id       = attrs.dashboardId ;
+    }
+}]);
+
 wapourApp.directive('wapourDataTable', ['websocketService',function (websocketService) {
     /*return {
         restrict: 'A',
