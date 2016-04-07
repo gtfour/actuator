@@ -5,10 +5,10 @@ wapourApp.factory('settingsService', ['$q','$rootScope', function($q, $rootScope
     Settings["get_data_url"] = "" ;
     function setSettings( settings ) {
         for ( var key in settings ){
-            if key == "ws_url" {
+            if (key == "ws_url") {
                 Settings["ws_url"]       = settings["ws_url"]
             }
-            if key == "get_data_url" {
+            if (key == "get_data_url") {
                 Settings["get_data_url"] = settings["get_data_url"]
 
             }
