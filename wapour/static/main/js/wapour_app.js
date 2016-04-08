@@ -1,13 +1,5 @@
 var wapourApp = angular.module('wapourApp', ['ui.router']);
 
-
-
-
-
-
-
-
-
 wapourApp.config([function() {
     console.log("::use::config");
 }])

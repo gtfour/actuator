@@ -1,4 +1,4 @@
-wapourApp.factory('settingsService', ['$q','$rootScope', function($q, $rootScope) {
+wapourApp.service('settingsService', ['$q','$rootScope', function($q, $rootScope) {
     var Service              = {};
     var Settings             = {};
     Settings["ws_url"]       = "" ;
@@ -13,6 +13,7 @@ wapourApp.factory('settingsService', ['$q','$rootScope', function($q, $rootScope
 
             }
         }
+        console.log("settingsService:"+JSON.stringify(Settings))
     }
     function getSettings() {
         return Settings;
@@ -22,7 +23,7 @@ wapourApp.factory('settingsService', ['$q','$rootScope', function($q, $rootScope
     return Service;
 }]);
 
-wapourApp.directive('wapourAppSettings', ['settingsService',function (websocketService) {
+wapourApp.directive('wapourAppSettings', ['settingsService',function (settingsService) {
     var directive = {};
     directive.restrict = 'AE';
     directive.link = function( scope, elements, attrs ) {
@@ -31,6 +32,7 @@ wapourApp.directive('wapourAppSettings', ['settingsService',function (websocketS
         var settings             = {};
         settings["ws_url"]       = ws_url;
         settings["get_data_url"] = get_data_url;
+        console.log("wapourAppSettings:"+JSON.stringify(settings));
         settingsService.setSettings(settings)
     }
     return directive ; 
@@ -45,26 +47,29 @@ wapourApp.factory('getDataService', ['$q','$rootScope', function($q, $rootScope)
 }]);
 
 
-wapourApp.factory('websocketService', ['$q','$rootScope','wapourAppSettings', function($q, $rootScope) {
+wapourApp.service('websocketService', ['$q','$rootScope','settingsService', function($q, $rootScope, settingsService) {
     // 2 200 000
     var Service           = {};
     var SubscribersDashboards = [] ;
     var SubscribersDataboxes  = [] ; 
     var callbacks         = {};
     var currentCallbackId = 0;
+    console.log("<<websocketService>>");
 
-    settings = wapourAppSettings.getSettings()
 
-    var ws = new WebSocket(settings["ws_url"]);
-    ws.onopen = function (){
-        console.log("Socket has been opened!");
-        //var test = {}; 
-        //test['author']="user";
-        //test['body']  ="logged_in";
-        //ws.send(JSON.stringify(test));
-    };
-    ws.onmessage = function(message){
-        listener(JSON.parse(message.data));
+    //var settings = settingsService.getSettings();
+    //console.log("websocketService settings "+ JSON.stringify(settings));
+
+    var ws = (function () { return; })(); // setting ws variable as undefined
+
+    function createWsConnection(ws_url) {
+        ws = new WebSocket(ws_url);
+        ws.onopen = function (){
+            console.log("Socket has been opened!");
+        };
+        ws.onmessage = function(message){
+            listener(JSON.parse(message.data));
+        };
     };
     function sendRequest(request){
         var defer = $q.defer();
@@ -134,10 +139,19 @@ wapourApp.factory('websocketService', ['$q','$rootScope','wapourAppSettings', fu
       var promise = waitForSocketConnection(callback);
       return promise;
     }
+    Service.createWsConnection = createWsConnection ; 
 
 
     return Service;
 }]);
+
+wapourApp.controller('initController',['settingsService','websocketService','$scope', function initController(settingsService,websocketService, $scope) {
+    $scope.initApp = function(settings) {
+        settingsService.setSettings(settings);
+        websocketService.createWsConnection(settings["ws_url"]);
+    };
+}]);
+
 wapourApp.controller('mainController', ['$scope','websocketService', function($scope, websocketService) {
     var ws_connect_retries = 10 ; 
     var data            = {};
