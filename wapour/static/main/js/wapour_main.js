@@ -23,7 +23,7 @@ wapourApp.service('settingsService', ['$q','$rootScope', function($q, $rootScope
     return Service;
 }]);
 
-wapourApp.directive('wapourAppSettings', ['settingsService',function (settingsService) {
+/*wapourApp.directive('wapourAppSettings', ['settingsService',function (settingsService) {
     var directive = {};
     directive.restrict = 'AE';
     directive.link = function( scope, elements, attrs ) {
@@ -36,12 +36,12 @@ wapourApp.directive('wapourAppSettings', ['settingsService',function (settingsSe
         settingsService.setSettings(settings)
     }
     return directive ; 
-}]);
+}]);*/
 
-wapourApp.factory('getDataService', ['$q','$rootScope', function($q, $rootScope) {
+wapourApp.factory('getDataService', ['$q','$rootScope','settingsService', function(settingsService, $q, $rootScope) {
 
-    var Service = {} ;
-    function getDashboardData( dashboard_group_id, dashboard_id, session_id ) {
+    var Service = {};
+    function getDashboardData( dashboard_group_id, dashboard_id, session_id ){
 
     }
 }]);
