@@ -19,8 +19,7 @@ var TOKEN_COOKIE_FIELD_NAME  string = "USER_TOKEN"
 var USERID_COOKIE_FIELD_NAME string = "USER_ID"
 //
 //
-var STATIC_DIR           = "/actuator/wapour/static"
-var STATIC_URL           = "/static/main/"
-
-
-
+var STATIC_DIR                = "/actuator/wapour/static"
+var STATIC_URL                = "/static/main/"
+var ONLINE_USERS_DB_FILE      = "/tmp/users.db"
+var ONLINE_USERS_STORAGE_TYPE = "db" // "ram"

@@ -27,4 +27,3 @@ func GetTokenFromCookies(c *gin.Context)(token string,user string,err error) {
     if (user == "" || token == "") {  return token,user,errors.New("token or user was not found in cookie")  }
     return token,user,nil
 }
-

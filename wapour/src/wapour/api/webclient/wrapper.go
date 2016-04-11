@@ -18,6 +18,13 @@ type WengineWrapper struct {
     url            string
     UserId         string
     TokenId        string
+    SessionId      string
+}
+
+type WengineWrapperStorage struct {
+    StorageType      string
+    StorageFileName  string
+    Wrappers         *[]*WengineWrapper
 }
 
 
