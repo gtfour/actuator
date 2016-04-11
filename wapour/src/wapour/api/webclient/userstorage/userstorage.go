@@ -6,6 +6,16 @@ import "github.com/boltdb/bolt"
 
 var UsersStorage webclient.WengineWrapperStorage
 
+type UserStorage interface {
+
+    FindWrapper(err error)
+    AddWrapper()
+
+
+
+}
+
+
 type FileUserStorage struct {
     StorageType      string
     Wrappers         *[]*webclient.WengineWrapper
