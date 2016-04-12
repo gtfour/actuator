@@ -6,18 +6,20 @@ import "wapour/settings"
 import "wapour/api/webclient"
 import "github.com/boltdb/bolt"
 
+// dont forget to use SessionId
+
 //var UsersStorage webclient.WengineWrapperStorage
 //var UserStorageInstance UserStorage
 var not_exist      =  errors.New("users_doesnot_exist")
 var wrapper_exists =  errors.New("wrapper_exists")
 
 type UserStorage interface {
-    FindWrapper(user_id string, token_id string, session_id string)(err error)
+    FindWrapper(user_id string, token_id string)(err error)
     AddWrapper(w *webclient.WengineWrapper)(err error)
 }
 
 
-type FileUserStorage struct {
+type RamUserStorage struct {
     StorageType     string
     Wrappers        *[]*webclient.WengineWrapper
 }
@@ -61,7 +63,9 @@ func CreateUserStorage()(UserStorage) {
             return user_storage
         }
     } else if settings.ONLINE_USERS_STORAGE_TYPE == "ram" || db_open_failed == true {
-        user_storage:=FileUserStorage{StorageType:"ram"}
+        user_storage:=RamUserStorage{StorageType:"ram"}
+        user_storage_wrappers := make([]*webclient.WengineWrapper,0)
+        user_storage.Wrappers = &user_storage_wrappers
         //UserStorageInstance=user_storage
         return user_storage
     }
@@ -69,15 +73,14 @@ func CreateUserStorage()(UserStorage) {
 }
 
 
-func (boltdb BoltdbUserStorage) FindWrapper (user_id string, token_id string, session_id string) (err error) {
+func (boltdb BoltdbUserStorage) FindWrapper (user_id string, token_id string) (err error) {
     err = boltdb.db.View(func(tx *bolt.Tx) error {
         b:=tx.Bucket([]byte(boltdb.tableName))
         if b==nil{ return nil }
         user:=b.Bucket([]byte(user_id))
         if user==nil{ return nil }
         ex_token_id   := user.Get([]byte("token_id"))
-        ex_session_id := user.Get([]byte("session_id"))
-        if string(ex_token_id) == token_id && string(ex_session_id) == session_id {
+        if string(ex_token_id) == token_id {
             return wrapper_exists
         }
         //fmt.Printf("token_id:%v  session_id:%v",string(ex_token_id),string(ex_session_id))
@@ -104,13 +107,19 @@ func (boltdb BoltdbUserStorage)AddWrapper(w *webclient.WengineWrapper)(err error
     return err
 }
 
-func (boltdb FileUserStorage) FindWrapper (user_id string, token_id string, session_id string) (err error) {
+func ( ram RamUserStorage) FindWrapper (user_id string, token_id string) (err error) {
 
-
-    return err
+   for w := range (*ram.Wrappers) {
+       wrapper:=(*ram.Wrappers)[w]
+       if wrapper.UserId == user_id && wrapper.TokenId == token_id {
+            return wrapper_exists
+       }
+    }
+    return nil
 }
 
-func (boltdb FileUserStorage)AddWrapper(w *webclient.WengineWrapper)(err error) {
+func ( ram RamUserStorage )AddWrapper(w *webclient.WengineWrapper)(err error) {
+    (*ram.Wrappers)=append((*ram.Wrappers),w)
     return nil
 }
 
