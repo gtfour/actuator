@@ -1,6 +1,6 @@
 package userstorage
 
-import "fmt"
+//import "fmt"
 import "errors"
 import "wapour/settings"
 import "wapour/api/webclient"
@@ -77,17 +77,20 @@ func (boltdb BoltdbUserStorage) FindWrapper (user_id string, token_id string, se
         if user==nil{ return nil }
         ex_token_id   := user.Get([]byte("token_id"))
         ex_session_id := user.Get([]byte("session_id"))
-        fmt.Printf("token_id:%v  session_id:%v",ex_token_id,ex_session_id)
-        return wrapper_exists
+        if string(ex_token_id) == token_id && string(ex_session_id) == session_id {
+            return wrapper_exists
+        }
+        //fmt.Printf("token_id:%v  session_id:%v",string(ex_token_id),string(ex_session_id))
+        return nil
         });
 
-    return nil
+    return err
 }
 
 func (boltdb BoltdbUserStorage)AddWrapper(w *webclient.WengineWrapper)(err error) {
     err=boltdb.db.Update(func(tx *bolt.Tx) error {
         b:=tx.Bucket([]byte(boltdb.tableName))
-        fmt.Printf("\nwrapper token_id: %v session_id: %v\n",w.TokenId,w.SessionId)
+        //fmt.Printf("\nwrapper token_id: %v session_id: %v\n",w.TokenId,w.SessionId)
         if b==nil{ return nil }
         user,err:=b.CreateBucket([]byte(w.UserId))
         if err==nil{
