@@ -2,11 +2,10 @@ package ws
 import "encoding/json"
 
 type Message struct {
-
-    DataType   string `json:"datatype"`
+    DataType   string          `json:"datatype"`
     Data       json.RawMessage `json:"data"`
-    CallbackId int `json:"callback_id"`
-
+    CallbackId int             `json:"callback_id"`
+    SessionId  string          `json:"session_id"`
 }
 
 type MessageSwitchDashboard struct {

@@ -15,6 +15,7 @@ type Client struct {
     server       *Server
     ch           chan             *MessageChat
     doneChannel  chan             bool
+    session_id   string
 }
 
 func NewClient (ws *websocket.Conn, server *Server) *Client {
@@ -94,7 +95,6 @@ func (c *Client) listenRead(){
                     if err_unmarshal!= nil {
                         c.server.SendAll(&msg_chat)
                     }
-
                 } else if data_type == "message_switch_dashboard" {
                     var msg_swd MessageSwitchDashboard
                     data:=msg.Data

@@ -3,13 +3,18 @@ wapourApp.service('settingsService', ['$q','$rootScope', function($q, $rootScope
     var Settings             = {};
     Settings["ws_url"]       = "" ;
     Settings["get_data_url"] = "" ;
+    Settings["session_id"]   = "" ;
     function setSettings( settings ) {
         for ( var key in settings ){
             if (key == "ws_url") {
-                Settings["ws_url"]       = settings["ws_url"]
+                Settings["ws_url"]       = settings["ws_url"];
             }
             if (key == "get_data_url") {
-                Settings["get_data_url"] = settings["get_data_url"]
+                Settings["get_data_url"] = settings["get_data_url"];
+
+            }
+            if (key == "session_id") {
+                Settings["session_id"] = settings["session_id"];
 
             }
         }
@@ -150,6 +155,7 @@ wapourApp.controller('initController',['settingsService','websocketService','$sc
         settingsService.setSettings(settings);
         websocketService.createWsConnection(settings["ws_url"]);
     };
+    
 }]);
 
 wapourApp.controller('mainController', ['$scope','websocketService', function($scope, websocketService) {

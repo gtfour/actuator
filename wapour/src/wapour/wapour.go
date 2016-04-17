@@ -20,26 +20,24 @@ func main() {
     //app.LoadHTMLGlob("/actuator/actuator/wapour/src/wapour/core/web/templates/*") // load core templates
 
     app.Static("/static", settings.STATIC_DIR)
-    app.GET("/index",     index.Index(     gin.H{ "static_url":settings.STATIC_URL, "ws_url":settings.WS_URL, "get_data_url":settings.GET_DATA_URL}, &users))
-    app.GET("/userspace", userspace.Index( gin.H{ "static_url":settings.STATIC_URL, "ws_url":settings.WS_URL, "get_data_url":settings.GET_DATA_URL}, &users ))
-    app.GET("/wspage", wspage.WsPage(gin.H{ "static_url":settings.STATIC_URL} ))
+    app.GET("/index",     index.Index(     settings.APP_SETTINGS , &users ))
+    app.GET("/userspace", userspace.Index( settings.APP_SETTINGS , &users ))
+    app.GET("/wspage", wspage.WsPage(settings.APP_SETTINGS ))
     dashboard_app:=app.Group("/dashboard")
     {
-        dashboard_app.GET("/actions",  dashboard.ActionsView( gin.H{ "static_url":settings.STATIC_URL}) )
-        dashboard_app.GET("/files",    dashboard.FilesView(   gin.H{ "static_url":settings.STATIC_URL}) )
-        dashboard_app.GET("/hosts",    dashboard.HostsView(   gin.H{ "static_url":settings.STATIC_URL}) )
-        dashboard_app.GET("/overview", dashboard.Overview(    gin.H{ "static_url":settings.STATIC_URL}) )
+        dashboard_app.GET("/actions",  dashboard.ActionsView( settings.APP_SETTINGS) )
+        dashboard_app.GET("/files",    dashboard.FilesView(   settings.APP_SETTINGS) )
+        dashboard_app.GET("/hosts",    dashboard.HostsView(   settings.APP_SETTINGS) )
+        dashboard_app.GET("/overview", dashboard.Overview(    settings.APP_SETTINGS) )
     }
     auth_app:=app.Group("/auth")
     {
-        auth_app.GET( "/login", index.Login(gin.H{ "static_url":settings.STATIC_URL}) )
-        auth_app.POST("/login", index.LoginPost(gin.H{ "static_url":settings.STATIC_URL}, &users) )
+        auth_app.GET( "/login", index.Login(settings.APP_SETTINGS) )
+        auth_app.POST("/login", index.LoginPost(settings.APP_SETTINGS, &users) )
         auth_app.GET( "/logout" )
     }
-
     server:=ws.NewServer("/entry")
     go server.Listen()
     app.GET("/entry", ws.WSserver(gin.H{}, server.WShandler, &users ))
     app.Run(":8090")
-
 }
