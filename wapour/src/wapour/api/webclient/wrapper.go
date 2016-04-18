@@ -12,19 +12,32 @@ var TOKEN_COOKIE_FIELD_NAME  string = "USER_TOKEN"
 var USERID_COOKIE_FIELD_NAME string = "USER_ID"
 
 
+type Session struct {
+    SessionId    string
+    DashboardId  string
+    UserId       string
+    TokenId      string
+}
+
 type WengineWrapper struct {
     username       string
     password       string
     url            string
     UserId         string
     TokenId        string
-    SessionId      string
+    //SessionId      []string
 }
 
 type WengineWrapperStorage struct {
     StorageType      string
     StorageFileName  string
     Wrappers         *[]*WengineWrapper
+}
+
+type SessionStorage struct {
+    StorageType      string
+    StorageFileName  string
+    Sessions         *[]*Session
 }
 
 

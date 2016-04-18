@@ -112,7 +112,7 @@ func (s *Server) Listen() {
                 log.Println("Now", len(s.clients), "clients connected")
                 s.sendPastMessages(c)
             case c:= <-s.delChannel:
-                log.Println("Delete client")
+                log.Printf("Delete client %s",c.id)
                 delete(s.clients, c.id)
             case msg := <-s.sendAllChannel:
                 log.Println("Send all:", msg)
