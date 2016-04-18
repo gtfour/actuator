@@ -14,6 +14,15 @@ type MessageSwitchDashboard struct {
     DashboardId      string `json:"dashboardid"`
 }
 
+//"datatype":"message_ws_open","session_id":session_id
+
+type MessageWsState struct {
+    // "dashboard_group_id":dashboard_group_id, "dashboard_id":dashboard_id
+//    DashboardGroupId string `json:"dashboardgroupid"`
+    State string `json:"state"`
+}
+
+
 type MessageChat struct {
     Author string `json:"author"`
     Body   string `json:"body"`

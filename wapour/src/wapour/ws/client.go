@@ -28,12 +28,22 @@ func NewClient (ws *websocket.Conn, server *Server) *Client {
     maxId++
     ch := make(chan *MessageChat, channelBufSize)
     doneChannel := make(chan bool)
-    return &Client{ maxId, ws, server, ch, doneChannel }
+    return &Client{ maxId, ws, server, ch, doneChannel,""} // session_id is empty yet . Will be filled when recieve first "ws_state":"open" message
 }
 
 func ( c *Client ) Conn() *websocket.Conn {
     return c.ws
 }
+
+func ( c *Client ) AddSessionId ( session_id string )() {
+    c.session_id = session_id ;
+}
+
+func ( c *Client ) RemoveSessionId ()() {
+    fmt.Printf("\n>>Removing session_id<<\n")
+
+}
+
 
 func (c *Client) Write(msg *MessageChat) {
     select {
@@ -108,6 +118,18 @@ func (c *Client) listenRead(){
                         fmt.Printf("\nMessage Switch Dashboard: %v\n",msg_swd)
                     }
 
+                } else if data_type == "message_ws_state" {
+                    var msg_wsst MessageWsState
+                    data:=msg.Data
+                    err_unmarshal:=json.Unmarshal(data, &msg_wsst)
+                    if err_unmarshal == nil {
+                        //c.server.SendAll(&msg_chat)
+                        fmt.Printf("\nMessage Ws State: %v\n", msg_wsst)
+                        if  msg_wsst.State == "open" {
+                            c.AddSessionId(msg.SessionId)
+                            fmt.Printf("\n>>Adding session_id to client<<\n")
+                        }
+                    }
                 }
                 //c.server.SendAll(&msg)
             }

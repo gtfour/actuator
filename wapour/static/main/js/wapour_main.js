@@ -70,11 +70,34 @@ wapourApp.service('websocketService', ['$q','$rootScope','settingsService', func
     function createWsConnection(ws_url) {
         ws = new WebSocket(ws_url);
         ws.onopen = function (){
+            var settings    = settingsService.getSettings();
+            var session_id  = settings["session_id"];
+            var state       = {"state":"open"}; 
+            var message  = { "datatype":"message_ws_state","session_id":session_id, "data":state };
+            ws.send(JSON.stringify(message));
             console.log("Socket has been opened!");
         };
+        /*ws.onclose = function (){
+            var settings    = settingsService.getSettings();
+            var session_id  = settings["session_id"];
+            var state       = {"state":"close"};
+            var message  = { "datatype":"message_ws_state","session_id":session_id, "data":state };
+            ws.send(JSON.stringify(message));
+            console.log("Socket has been closed!");
+        };*/
+
         ws.onmessage = function(message){
             listener(JSON.parse(message.data));
         };
+    };
+    function closeWsConnection() {
+        ws.onclose = function () {}; // disable onclose handler first
+        var settings    = settingsService.getSettings();
+        var session_id  = settings["session_id"];
+        var state       = {"state":"close"};
+        var message  = { "datatype":"message_ws_state","session_id":session_id, "data":state };
+        ws.send(JSON.stringify(message));
+        ws.close();
     };
     function sendRequest(request){
         var defer = $q.defer();
@@ -145,6 +168,7 @@ wapourApp.service('websocketService', ['$q','$rootScope','settingsService', func
       return promise;
     }
     Service.createWsConnection = createWsConnection ; 
+    Service.closeWsConnection  = closeWsConnection  ; 
 
 
     return Service;
@@ -155,6 +179,15 @@ wapourApp.controller('initController',['settingsService','websocketService','$sc
         settingsService.setSettings(settings);
         websocketService.createWsConnection(settings["ws_url"]);
     };
+    $scope.$on("$destroy", function(){
+        websocketService.closeWsConnection();
+        console.log("Exit from initController . Closing ws-connetion");
+    });
+    /*$scope.$on('$routeChangeStart', function(){
+        websocketService.closeWsConnection();
+        alert("Catching routeChangeStart");
+        console.log("Exit from initController  via routeChangeStart . Closing ws-connetion");
+    });*/
     
 }]);
 
