@@ -16,20 +16,28 @@ var wrapper_exists =  errors.New("wrapper_exists")
 type UserStorage interface {
     FindWrapper(user_id string, token_id string)(err error)
     AddWrapper(w *webclient.WengineWrapper)(err error)
+    //
+    //
+    AddSession(s *webclient.Session)(err error)
+    SetDashboard( session_id string, dashboard_id string )(err error)
+    RemoveSession(session_id string)(err error)
+    GetSession( session_id string )(s *webclient.Session, err error)
 }
 
 
 type RamUserStorage struct {
-    StorageType     string
-    Wrappers        *[]*webclient.WengineWrapper
+    StorageType   string
+    UserWrappers  *[]*webclient.WengineWrapper
+    Sessions      *[]*webclient.Session
 }
 
 type BoltdbUserStorage   struct {
-   StorageType      string
-   StorageFileName  string
-   DbName           string
-   db               *bolt.DB
-   tableName        string
+    StorageType        string
+    StorageFileName    string
+    DbName             string
+    db                 *bolt.DB
+    usersTableName     string
+    sessionsTableName  string
 }
 
 func CreateUserStorage()(UserStorage) {
@@ -42,18 +50,20 @@ func CreateUserStorage()(UserStorage) {
             defer db.Close()
             db_open_failed = true
         } else {
-            user_storage:=BoltdbUserStorage{StorageType:"db", StorageFileName:db_path, tableName:"users"}
+            user_storage:=BoltdbUserStorage{StorageType:"db", StorageFileName:db_path, usersTableName:"users", sessionsTableName:"sessions"}
             user_storage.db = db
             //UserStorageInstance=user_storage
             // Remove old bucket
             db.Update(func(tx *bolt.Tx) error {
-                _=tx.DeleteBucket([]byte(user_storage.tableName))
+                _=tx.DeleteBucket([]byte(user_storage.usersTableName))
+                _=tx.DeleteBucket([]byte(user_storage.sessionsTableName))
                 return nil
             });
             // Create bucket
             db.Update(func(tx *bolt.Tx) error {
-                _,err:=tx.CreateBucket([]byte(user_storage.tableName))
-                if err != nil {
+                _,err_users    := tx.CreateBucket([]byte(user_storage.usersTableName))
+                _,err_sessions := tx.CreateBucket([]byte(user_storage.sessionsTableName))
+                if err_users != nil || err_sessions != nil {
                     db_open_failed = true
                     defer db.Close()
                     return err
@@ -65,7 +75,9 @@ func CreateUserStorage()(UserStorage) {
     } else if settings.ONLINE_USERS_STORAGE_TYPE == "ram" || db_open_failed == true {
         user_storage:=RamUserStorage{StorageType:"ram"}
         user_storage_wrappers := make([]*webclient.WengineWrapper,0)
-        user_storage.Wrappers = &user_storage_wrappers
+        sessions              := make([]*webclient.Session,0)
+        user_storage.UserWrappers = &user_storage_wrappers
+        user_storage.Sessions     = &sessions
         //UserStorageInstance=user_storage
         return user_storage
     }
@@ -90,23 +102,6 @@ func (boltdb BoltdbUserStorage) FindWrapper (user_id string, token_id string) (e
     return err
 }
 
-func (boltdb BoltdbUserStorage)AddWrapper(w *webclient.WengineWrapper)(err error) {
-    err=boltdb.db.Update(func(tx *bolt.Tx) error {
-        b:=tx.Bucket([]byte(boltdb.tableName))
-        //fmt.Printf("\nwrapper token_id: %v session_id: %v\n",w.TokenId,w.SessionId)
-        if b==nil{ return nil }
-        user,err:=b.CreateBucket([]byte(w.UserId))
-        if err==nil{
-            err=user.Put([]byte("token_id"),[]byte(w.TokenId))
-            if err!=nil{return err}
-            err=user.Put([]byte("session_id"),[]byte(w.SessionId))
-            if err!=nil{return err}
-        } else {return err}
-        return nil
-    });
-    return err
-}
-
 func ( ram RamUserStorage) FindWrapper (user_id string, token_id string) (err error) {
 
    for w := range (*ram.Wrappers) {
@@ -117,6 +112,25 @@ func ( ram RamUserStorage) FindWrapper (user_id string, token_id string) (err er
     }
     return nil
 }
+
+
+func ( boltdb BoltdbUserStorage )AddWrapper( w *webclient.WengineWrapper )( err error ){
+    err=boltdb.db.Update(func(tx *bolt.Tx) error {
+        b:=tx.Bucket([]byte(boltdb.tableName))
+        //fmt.Printf("\nwrapper token_id: %v session_id: %v\n",w.TokenId,w.SessionId)
+        if b==nil{ return nil }
+        user,err:=b.CreateBucket([]byte(w.UserId))
+        if err==nil{
+            err=user.Put([]byte("token_id"),[]byte(w.TokenId))
+            if err!=nil{return err}
+            err=user.Put([]byte("session_id"),[]byte(w.SessionId))
+            if err!=nil{ return err }
+        } else { return err }
+        return nil
+    });
+    return err
+}
+
 
 func ( ram RamUserStorage )AddWrapper(w *webclient.WengineWrapper)(err error) {
     (*ram.Wrappers)=append((*ram.Wrappers),w)
