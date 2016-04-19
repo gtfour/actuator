@@ -10,8 +10,9 @@ import "github.com/boltdb/bolt"
 
 //var UsersStorage webclient.WengineWrapperStorage
 //var UserStorageInstance UserStorage
-var not_exist      =  errors.New("users_doesnot_exist")
-var wrapper_exists =  errors.New("wrapper_exists")
+var not_exist          =  errors.New("users_doesnot_exist")
+var wrapper_exists     =  errors.New("wrapper_exists")
+var session_dsnt_exist =  errors.New("session_dsnt_exist")
 
 type UserStorage interface {
     FindWrapper(user_id string, token_id string)(err error)
@@ -104,11 +105,13 @@ func (boltdb BoltdbUserStorage) FindWrapper (user_id string, token_id string) (e
 
 func ( ram RamUserStorage) FindWrapper (user_id string, token_id string) (err error) {
 
-   for w := range (*ram.Wrappers) {
-       wrapper:=(*ram.Wrappers)[w]
-       if wrapper.UserId == user_id && wrapper.TokenId == token_id {
+    // have to fix panic: runtime error: index out of range
+
+    for w := range (*ram.Wrappers) {
+        wrapper:=(*ram.Wrappers)[w]
+        if wrapper.UserId == user_id && wrapper.TokenId == token_id {
             return wrapper_exists
-       }
+        }
     }
     return nil
 }
@@ -133,7 +136,46 @@ func ( boltdb BoltdbUserStorage )AddWrapper( w *webclient.WengineWrapper )( err 
 
 
 func ( ram RamUserStorage )AddWrapper(w *webclient.WengineWrapper)(err error) {
+    // have to fix panic: runtime error: index out of range
     (*ram.Wrappers)=append((*ram.Wrappers),w)
     return nil
 }
 
+func (boltdb BoltdbUserStorage)AddSession(s *webclient.Session)(err error) {
+    err=boltdb.db.Update(func(tx *bolt.Tx) error {
+        b:=tx.Bucket([]byte(boltdb.sessionsTableName))
+        if b==nil{ return nil }
+        session,err:=b.CreateBucket([]byte(s.SessionId))
+        if err==nil || err==bolt.ErrBucketExists { // If the key exist then its previous value will be overwritten
+            err=session.Put([]byte("dashboard_id"),[]byte(s.DashboardId))
+            if err!=nil{ return err }
+            err=session.Put([]byte("user_id"),[]byte(s.UserId))
+            if err!=nil{ return err }
+            err=session.Put([]byte("token_id"),[]byte(s.TokenId))
+            if err!=nil{ return err }
+        } else { return err }
+        return nil
+    });
+    return err
+}
+
+func  GetSession( session_id string )(s *webclient.Session, err error) {
+
+    var session webclient.Session
+    err = boltdb.db.View(func(tx *bolt.Tx) error {
+        b:=tx.Bucket([]byte(boltdb.sessionsTableName))
+        if b==nil{ return nil }
+        session:=b.Bucket([]byte(session_id))
+        if session==nil{ return nil }
+        dashboard_id := session.Get([]byte("dashboard_id"))
+        if dashboard_id == nil { dashboard_id=""  }
+        user_id      := session.Get([]byte("user_id"))
+        if user_id == nil { user_id=""  }
+        token_id     := session.Get([]byte("token_id"))
+        if token_id == nil { token_id=""  }
+        //fmt.Printf("token_id:%v  session_id:%v",string(ex_token_id),string(ex_session_id))
+        return nil
+        });
+
+    return err
+}
