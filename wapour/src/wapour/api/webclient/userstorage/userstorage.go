@@ -10,9 +10,10 @@ import "github.com/boltdb/bolt"
 
 //var UsersStorage webclient.WengineWrapperStorage
 //var UserStorageInstance UserStorage
-var not_exist          =  errors.New("users_doesnot_exist")
-var wrapper_exists     =  errors.New("wrapper_exists")
-var session_dsnt_exist =  errors.New("session_dsnt_exist")
+var not_exist             =  errors.New("users_doesnot_exist")
+var wrapper_exists        =  errors.New("wrapper_exists")
+var session_dsnt_exist    =  errors.New("session_dsnt_exist")
+var user_storage_instance UserStorage
 
 type UserStorage interface {
     FindWrapper(user_id string, token_id string)(err error)
@@ -41,7 +42,11 @@ type BoltdbUserStorage   struct {
     sessionsTableName  string
 }
 
-func CreateUserStorage()(UserStorage) {
+func GetUserStorage()(UserStorage) {
+    return user_storage_instance
+}
+
+func main() {
     var db_open_failed bool
     if settings.ONLINE_USERS_STORAGE_TYPE        == "db" {
         //UsersStorage.StorageType = "db"
@@ -71,7 +76,7 @@ func CreateUserStorage()(UserStorage) {
                 }
                 return nil
             });
-            return user_storage
+            user_storage_instance = user_storage
         }
     } else if settings.ONLINE_USERS_STORAGE_TYPE == "ram" || db_open_failed == true {
         user_storage:=RamUserStorage{StorageType:"ram"}
@@ -80,7 +85,7 @@ func CreateUserStorage()(UserStorage) {
         user_storage.UserWrappers = &user_storage_wrappers
         user_storage.Sessions     = &sessions
         //UserStorageInstance=user_storage
-        return user_storage
+        user_storage_instance = user_storage
     }
     return nil
 }

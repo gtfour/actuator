@@ -5,11 +5,24 @@ import "encoding/json"
 import "bytes"
 import "errors"
 import "wapour/settings"
+import "sync"
 
 //import "io/ioutil"
 
 var TOKEN_COOKIE_FIELD_NAME  string = "USER_TOKEN"
 var USERID_COOKIE_FIELD_NAME string = "USER_ID"
+
+type MutexSessions struct {
+    sync.Mutex
+    Sessions         []Session
+}
+
+type MutexUsers struct {
+    sync.Mutex
+    Wrappers         []WengineWrapper
+}
+
+
 
 
 type Session struct {
@@ -28,7 +41,7 @@ type WengineWrapper struct {
     //SessionId      []string
 }
 
-type WengineWrapperStorage struct {
+/*type WengineWrapperStorage struct {
     StorageType      string
     StorageFileName  string
     Wrappers         *[]*WengineWrapper
@@ -39,7 +52,7 @@ type SessionStorage struct {
     StorageFileName  string
     Sessions         *[]*Session
 }
-
+*/
 
 type Credentials struct {
 
