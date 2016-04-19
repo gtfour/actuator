@@ -77,6 +77,20 @@ func (s *MutexSessions) GetItem(session_id string)(value *webclient.Session) {
     return nil
 }
 
+func (s *MutexSessions) SetDashboard(session_id string, dashboard_id string)(error) {
+    s.Lock()
+    defer s.Unlock()
+    for i := range s.sessions {
+        session := s.sessions[i]
+        if session.SessionId == session_id  {
+            session.DashboardId = dashboard_id
+            return nil
+        }
+    }
+    return session_dsnt_exist 
+}
+
+
 func (s *MutexSessions) AddItem(value webclient.Session) {
     s.Lock()
     defer s.Unlock()
