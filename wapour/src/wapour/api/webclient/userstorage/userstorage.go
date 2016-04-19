@@ -8,12 +8,14 @@ import "github.com/boltdb/bolt"
 
 // dont forget to use SessionId
 
+var UserStorageInstance   =  GetUserStorage()
+
 //var UsersStorage webclient.WengineWrapperStorage
 //var UserStorageInstance UserStorage
 var not_exist             =  errors.New("users_doesnot_exist")
+
 var wrapper_exists        =  errors.New("wrapper_exists")
 var session_dsnt_exist    =  errors.New("session_dsnt_exist")
-var UserStorageInstance   =  GetUserStorage()
 
 type UserStorage interface {
     FindWrapper(user_id string, token_id string)(err error)
@@ -29,8 +31,8 @@ type UserStorage interface {
 
 type RamUserStorage struct {
     StorageType   string
-    UserWrappers  *[]*webclient.WengineWrapper
-    Sessions      *[]*webclient.Session
+    UserWrappers  MutexUsers
+    Sessions      MutexSessions
 }
 
 type BoltdbUserStorage   struct {
@@ -77,10 +79,10 @@ func GetUserStorage()(UserStorage) {
         }
     } else if settings.ONLINE_USERS_STORAGE_TYPE == "ram" || db_open_failed == true {
         user_storage:=RamUserStorage{StorageType:"ram"}
-        user_storage_wrappers := make([]*webclient.WengineWrapper,0)
-        sessions              := make([]*webclient.Session,0)
-        user_storage.UserWrappers = &user_storage_wrappers
-        user_storage.Sessions     = &sessions
+        user_storage_wrappers := make([]webclient.WengineWrapper,0)
+        sessions              := make([]webclient.Session,0)
+        user_storage.UserWrappers.Set(user_storage_wrappers)
+        user_storage.Sessions.Set(sessions)
         //UserStorageInstance=user_storage
         return user_storage
     }
@@ -90,7 +92,7 @@ func GetUserStorage()(UserStorage) {
 
 func (boltdb BoltdbUserStorage) FindWrapper (user_id string, token_id string) (err error) {
     err = boltdb.db.View(func(tx *bolt.Tx) error {
-        b:=tx.Bucket([]byte(boltdb.tableName))
+        b:=tx.Bucket([]byte(boltdb.usersTableName))
         if b==nil{ return nil }
         user:=b.Bucket([]byte(user_id))
         if user==nil{ return nil }
@@ -161,23 +163,28 @@ func (boltdb BoltdbUserStorage)AddSession(s *webclient.Session)(err error) {
     return err
 }
 
-func  GetSession( session_id string )(s *webclient.Session, err error) {
-
-    var session webclient.Session
+func  (boltdb BoltdbUserStorage)GetSession( session_id string )(session *webclient.Session, err error) {
     err = boltdb.db.View(func(tx *bolt.Tx) error {
         b:=tx.Bucket([]byte(boltdb.sessionsTableName))
-        if b==nil{ return nil }
+        if b==nil{ return session_dsnt_exist }
         session:=b.Bucket([]byte(session_id))
-        if session==nil{ return nil }
+        if session==nil{ return session_dsnt_exist }
         dashboard_id := session.Get([]byte("dashboard_id"))
         if dashboard_id == nil { dashboard_id=""  }
         user_id      := session.Get([]byte("user_id"))
         if user_id == nil { user_id=""  }
         token_id     := session.Get([]byte("token_id"))
         if token_id == nil { token_id=""  }
-        //fmt.Printf("token_id:%v  session_id:%v",string(ex_token_id),string(ex_session_id))
+        session.SessionId   = session_id
+        session.DashboardId = dashboard_id
+        session.UserId      = user_id
+        session.TokenId     = token_id
         return nil
         });
+    if err == nil { return session,nil } else { return nil,err }
+}
 
-    return err
+func ( ram RamUserStorage )GetSession( session_id string )(*webclient.Session) {
+    session:=ram.Sessions.GetItem(session_id)
+    return session
 }
