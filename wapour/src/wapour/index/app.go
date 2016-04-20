@@ -1,5 +1,6 @@
 package index
 
+import "fmt"
 import "net/http"
 import "github.com/gin-gonic/gin"
 import "wapour/settings"
@@ -37,8 +38,10 @@ func LoginPost ( data  gin.H,  params ...[]string ) (func (c *gin.Context)) {
         username := c.PostForm("username")
         password := c.PostForm("password")
         w, err :=  webclient.Init(username, password)
+        fmt.Printf("\nwrapper: %v err: %v\n",w,err)
         if err != nil { c.Redirect(302,settings.SERVER_URL+"/auth/login") } else {
             user := userstorage.FindWrapper(w.UserId, w.TokenId)
+            fmt.Printf("\n::LoginPost user %v\n",user)
             if user == nil {
                 userstorage.AddWrapper(w)
             }

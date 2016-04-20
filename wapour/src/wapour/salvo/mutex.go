@@ -87,7 +87,7 @@ func (s *MutexSessions) SetDashboard(session_id string, dashboard_id string)(err
             return nil
         }
     }
-    return session_dsnt_exist 
+    return session_dsnt_exist
 }
 
 

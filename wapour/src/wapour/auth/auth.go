@@ -1,4 +1,5 @@
 package auth
+//import "fmt"
 import "errors"
 import "github.com/gin-gonic/gin"
 import "wapour/settings"
