@@ -1,6 +1,5 @@
 package index
 
-import "fmt"
 import "net/http"
 import "github.com/gin-gonic/gin"
 import "wapour/settings"
@@ -33,15 +32,27 @@ func Login(data  gin.H, params ...[]string ) (func (c *gin.Context)) {
     }
 }
 
+func Logout(data  gin.H) (func (c *gin.Context)) {
+    return  func(c *gin.Context ){
+        user_id,token_id,err:=auth.GetTokenFromCookies(c)
+        userstorage.RemoveWrapper(user_id,token_id)
+        if err == nil {
+           c.Redirect(302,settings.SERVER_URL+"/auth/login")
+        } else {
+            c.Redirect(302,settings.SERVER_URL+"/index")
+        }
+        //c.HTML(200, template_name,  data )
+    }
+}
+
+
 func LoginPost ( data  gin.H,  params ...[]string ) (func (c *gin.Context)) {
     return func(c *gin.Context) {
         username := c.PostForm("username")
         password := c.PostForm("password")
         w, err :=  webclient.Init(username, password)
-        fmt.Printf("\nwrapper: %v err: %v\n",w,err)
         if err != nil { c.Redirect(302,settings.SERVER_URL+"/auth/login") } else {
             user := userstorage.FindWrapper(w.UserId, w.TokenId)
-            fmt.Printf("\n::LoginPost user %v\n",user)
             if user == nil {
                 userstorage.AddWrapper(w)
             }

@@ -35,6 +35,7 @@ type WengineWrapper struct {
 type UserStorage interface {
     FindWrapper(user_id string, token_id string)(err error)
     AddWrapper(w WengineWrapper)(err error)
+    RemoveWrapper(user_id string, token_id string)
     //
     //
     AddSession(s Session)(err error)
@@ -251,4 +252,21 @@ func ( boltdb *BoltdbUserStorage ) SetDashboard( session_id string, dashboard_id
 func ( ram *RamUserStorage ) SetDashboard ( session_id string, dashboard_id string )(err error) {
     err=ram.Sessions.SetDashboard(session_id,dashboard_id)
     return err
+}
+
+func ( boltdb *BoltdbUserStorage )RemoveWrapper(user_id string, token_id string) {
+
+    /*err = boltdb.db.Update(func(tx *bolt.Tx) error {
+        b:=tx.Bucket([]byte(boltdb.usersTableName))
+        if b==nil{ return session_dsnt_exist }
+        err=b.Delete([]byte(session_id))
+        return err
+    });
+    return err
+    */
+
+}
+
+func ( ram *RamUserStorage )RemoveWrapper(user_id string, token_id string) {
+     ram.UserWrappers.RemoveItem(user_id, token_id)
 }

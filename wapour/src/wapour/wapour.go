@@ -34,7 +34,7 @@ func main() {
     {
         auth_app.GET( "/login", index.Login(settings.APP_SETTINGS) )
         auth_app.POST("/login", index.LoginPost(settings.APP_SETTINGS) )
-        auth_app.GET( "/logout" )
+        auth_app.GET( "/logout" , index.Logout(settings.APP_SETTINGS)  )
     }
     server:=ws.NewServer("/entry")
     go server.Listen()

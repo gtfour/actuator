@@ -9,13 +9,13 @@ var userstorage = salvo.UserStorageInstance
 
 
 func IsAuthorized( c *gin.Context)(bool) {
-    token_id,user_id,err:=GetTokenFromCookies(c)
+    user_id,token_id,err:=GetTokenFromCookies(c)
     if err!= nil {return false}
     w := userstorage.FindWrapper(user_id,token_id)
     if w == nil {return false} else { return true}
 }
 
-func GetTokenFromCookies(c *gin.Context)(token string,user string,err error) {
+func GetTokenFromCookies(c *gin.Context)(user string,token string,err error) {
     cookies:=c.Request.Cookies()
     for c := range cookies {
         cookie:=cookies[c]
@@ -27,6 +27,6 @@ func GetTokenFromCookies(c *gin.Context)(token string,user string,err error) {
         }
 
     }
-    if (user == "" || token == "") {  return token,user,errors.New("token or user was not found in cookie")  }
-    return token,user,nil
+    if (user == "" || token == "") {  return user,token,errors.New("token or user was not found in cookie")  }
+    return user,token,nil
 }

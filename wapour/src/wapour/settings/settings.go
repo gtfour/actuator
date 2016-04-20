@@ -25,8 +25,8 @@ var USERID_COOKIE_FIELD_NAME string = "USER_ID"
 var STATIC_DIR                = "/actuator/wapour/static"
 var STATIC_URL                = "/static/main/"
 var ONLINE_USERS_DB_FILE      = "/tmp/users.db"
-var ONLINE_USERS_STORAGE_TYPE = "db" // "ram"
-//var ONLINE_USERS_STORAGE_TYPE = "ram"
+//var ONLINE_USERS_STORAGE_TYPE = "db" // "ram"
+var ONLINE_USERS_STORAGE_TYPE = "ram"
 ////var GET_APP_SETTINGS = func ()( context gin.H  ){
 ////    return gin.H{"static_url":STATIC_URL,"ws_url":WS_URL,"get_data_url":GET_DATA_URL}
 ////}

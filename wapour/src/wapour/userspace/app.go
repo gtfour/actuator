@@ -9,9 +9,9 @@ func Index( data  gin.H, params ...[]string )(func (c *gin.Context)) {
 
     template_name  := "index.html"
     return  func(c *gin.Context ){
-        //if (auth.IsAuthorized(c,wrappers) && (token_id,user_id,err:=auth.GetTokenFromCookies(c); err==nil) )  {
+        //if (auth.IsAuthorized(c,wrappers) && (user_id,token_id,err:=auth.GetTokenFromCookies(c); err==nil) )  {
         // thanks for postman from golang@cjr
-        if token_id,user_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c) && err==nil {
+        if user_id,token_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c) && err==nil {
             session_id,_:=common.GenId()
             dashboards:=webclient.GetUserDashboards(token_id,user_id)
             navigaton_menu := CreateNavigationMenu(dashboards)
