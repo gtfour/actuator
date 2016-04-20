@@ -1,5 +1,6 @@
 package webclient
 
+//import "fmt"
 import "net/http"
 import "encoding/json"
 import "bytes"
@@ -58,12 +59,12 @@ var WENGINE_AUTH_LOGOUT_URL string = "/auth/logout"
     return nil,nil
 }*/
 
-func Connect(wp *salvo.WengineWrapper )(error) {
+func Connect(wp *salvo.WengineWrapper, username string, password string)(error) {
     client  :=  &http.Client{}
-    credentials:=Credentials{Username:wp.Username,Password:wp.Password}
+    credentials:=Credentials{Username:username,Password:password}
     credentials_json,err:=json.Marshal(credentials)
     if err!=nil { return err }
-    auth_url  :=wp.Url + WENGINE_AUTH_LOGIN_URL
+    auth_url  := settings.RESTAPI_URL + WENGINE_AUTH_LOGIN_URL
     req, err := http.NewRequest("POST", auth_url, bytes.NewReader(credentials_json))
     req.Header.Set("Content-Type", "application/json")
     resp,err                  :=  client.Do(req)
@@ -78,8 +79,9 @@ func Connect(wp *salvo.WengineWrapper )(error) {
 func Init( username, password string) ( w salvo.WengineWrapper,err error ) {
 
 
-    w=salvo.WengineWrapper{Username:username, Password:password, Url:settings.RESTAPI_URL}
-    err=Connect(&w)
+    //w=salvo.WengineWrapper{Username:username, Password:password, Url:settings.RESTAPI_URL}
+    w = salvo.CreateWengineWrapper(username, password)
+    err=Connect(&w, username, password)
     return w,err
 }
 

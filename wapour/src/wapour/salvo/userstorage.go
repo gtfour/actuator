@@ -24,9 +24,9 @@ type Session struct {
 }
 
 type WengineWrapper struct {
-    Username       string
-    Password       string
-    Url            string
+    username       string
+    password       string
+    //Url            string
     UserId         string
     TokenId        string
 }
@@ -58,6 +58,12 @@ type BoltdbUserStorage   struct {
     db                 *bolt.DB
     usersTableName     string
     sessionsTableName  string
+}
+
+func CreateWengineWrapper(username string, password string )( w WengineWrapper ) {
+    w.username = username
+    w.password = password
+    return w
 }
 
 
