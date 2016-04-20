@@ -1,29 +1,29 @@
-package userstorage
+package salvo
 import "sync"
-import "wapour/api/webclient"
+//import "wapour/api/webclient"
 
 
 type MutexUsers struct {
     sync.RWMutex
-    wrappers         []webclient.WengineWrapper
+    wrappers         []WengineWrapper
 }
 
 type MutexSessions struct {
     sync.RWMutex
-    sessions         []webclient.Session
+    sessions         []Session
 }
 
-func (u *MutexUsers) Set(value []webclient.WengineWrapper) {
+func (u *MutexUsers) Set(value []WengineWrapper) {
     u.Lock()
     defer u.Unlock()
     u.wrappers = value
 }
 
-func (u *MutexUsers) Get()([]webclient.WengineWrapper) {
+func (u *MutexUsers) Get()([]WengineWrapper) {
     return u.wrappers
 }
 
-func (u *MutexUsers) GetItem(user_id string, token_id string)(value *webclient.WengineWrapper) {
+func (u *MutexUsers) GetItem(user_id string, token_id string)(value *WengineWrapper) {
     u.Lock()
     defer u.Unlock()
     for i := range u.wrappers {
@@ -35,7 +35,7 @@ func (u *MutexUsers) GetItem(user_id string, token_id string)(value *webclient.W
     return nil
 }
 
-func (u *MutexUsers) AddItem(value webclient.WengineWrapper) {
+func (u *MutexUsers) AddItem(value WengineWrapper) {
     u.Lock()
     defer u.Unlock()
     u.wrappers = append(u.wrappers, value)
@@ -57,15 +57,15 @@ func (u *MutexUsers) RemoveItem(user_id string, token_id string) {
 //
 //
 
-func (s *MutexSessions) Set(value []webclient.Session) {
+func (s *MutexSessions) Set(value []Session) {
     s.sessions = value
 }
 
-func (s *MutexSessions) Get()([]webclient.Session) {
+func (s *MutexSessions) Get()([]Session) {
     return s.sessions
 }
 
-func (s *MutexSessions) GetItem(session_id string)(value *webclient.Session) {
+func (s *MutexSessions) GetItem(session_id string)(value *Session) {
     s.Lock()
     defer s.Unlock()
     for i := range s.sessions {
@@ -91,7 +91,7 @@ func (s *MutexSessions) SetDashboard(session_id string, dashboard_id string)(err
 }
 
 
-func (s *MutexSessions) AddItem(value webclient.Session) {
+func (s *MutexSessions) AddItem(value Session) {
     s.Lock()
     defer s.Unlock()
     s.sessions = append(s.sessions, value)

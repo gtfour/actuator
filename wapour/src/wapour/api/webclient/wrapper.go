@@ -5,6 +5,7 @@ import "encoding/json"
 import "bytes"
 import "errors"
 import "wapour/settings"
+import "wapour/salvo"
 
 //import "io/ioutil"
 
@@ -12,7 +13,7 @@ var TOKEN_COOKIE_FIELD_NAME  string = "USER_TOKEN"
 var USERID_COOKIE_FIELD_NAME string = "USER_ID"
 
 
-
+/*
 type Session struct {
     SessionId    string
     DashboardId  string
@@ -28,7 +29,7 @@ type WengineWrapper struct {
     TokenId        string
     //SessionId      []string
 }
-
+*/
 /*type WengineWrapperStorage struct {
     StorageType      string
     StorageFileName  string
@@ -52,17 +53,17 @@ type Credentials struct {
 var WENGINE_AUTH_LOGIN_URL  string = "/auth/login"
 var WENGINE_AUTH_LOGOUT_URL string = "/auth/logout"
 
-func (wp *WengineWrapper )Request(url string)(interface{},error) {
+/*func (wp *salvo.WengineWrapper )Request(url string)(interface{},error) {
 
     return nil,nil
-}
+}*/
 
-func (wp *WengineWrapper )Connect()(error) {
+func Connect(wp *salvo.WengineWrapper )(error) {
     client  :=  &http.Client{}
-    credentials:=Credentials{Username:wp.username,Password:wp.password}
+    credentials:=Credentials{Username:wp.Username,Password:wp.Password}
     credentials_json,err:=json.Marshal(credentials)
     if err!=nil { return err }
-    auth_url  :=wp.url + WENGINE_AUTH_LOGIN_URL
+    auth_url  :=wp.Url + WENGINE_AUTH_LOGIN_URL
     req, err := http.NewRequest("POST", auth_url, bytes.NewReader(credentials_json))
     req.Header.Set("Content-Type", "application/json")
     resp,err                  :=  client.Do(req)
@@ -74,11 +75,11 @@ func (wp *WengineWrapper )Connect()(error) {
 
 }
 
-func Init( username, password string) ( w WengineWrapper,err error ) {
+func Init( username, password string) ( w salvo.WengineWrapper,err error ) {
 
 
-    w=WengineWrapper{username:username, password:password, url:settings.RESTAPI_URL}
-    err=w.Connect()
+    w=salvo.WengineWrapper{Username:username, Password:password, Url:settings.RESTAPI_URL}
+    err=Connect(&w)
     return w,err
 }
 
@@ -107,7 +108,7 @@ func GetResponseCookies(response *http.Response)(user_id string,token_id string)
     return
 }
 
-func FindWrapper(user_id string,token_id string ,wrappers *[]*WengineWrapper )(w *WengineWrapper) {
+func FindWrapper(user_id string,token_id string ,wrappers *[]*salvo.WengineWrapper )(w *salvo.WengineWrapper) {
 
     for w := range (*wrappers) {
         wrapper:=(*wrappers)[w]
@@ -118,6 +119,6 @@ func FindWrapper(user_id string,token_id string ,wrappers *[]*WengineWrapper )(w
     return nil
 }
 
-func   AppendWrapper ( wrappers *[]*WengineWrapper,w *WengineWrapper ) {
+func   AppendWrapper ( wrappers *[]*salvo.WengineWrapper,w *salvo.WengineWrapper ) {
     (*wrappers)=append((*wrappers),w)
 }

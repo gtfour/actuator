@@ -2,13 +2,15 @@ package auth
 import "errors"
 import "github.com/gin-gonic/gin"
 import "wapour/settings"
-import "wapour/api/webclient"
+import "wapour/salvo"
+
+var userstorage = salvo.UserStorageInstance
 
 
-func IsAuthorized( c *gin.Context , wrappers *[]*webclient.WengineWrapper)(bool) {
+func IsAuthorized( c *gin.Context)(bool) {
     token_id,user_id,err:=GetTokenFromCookies(c)
     if err!= nil {return false}
-    w := webclient.FindWrapper(user_id,token_id,wrappers)
+    w := userstorage.FindWrapper(user_id,token_id)
     if w == nil {return false} else { return true}
 }
 

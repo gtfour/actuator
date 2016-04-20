@@ -2,8 +2,9 @@ package webclient
 import "fmt"
 import "net/http"
 import "encoding/json"
-import "wapour/api/wengine"
 import "wapour/settings"
+//import "wapour/salvo"
+import "wapour/api/wengine"
 
 
 var USER_DASHBOARD_LIST_URL string = "/rest/user/get-my-dashboards"
@@ -15,7 +16,7 @@ type DashboardListResult struct {
 }
 
 
-func GetUserDashboards(token_id string,user_id string, wrappers *[]*WengineWrapper)(dashboards DashboardListResult){
+func GetUserDashboards( token_id string,user_id string )(dashboards DashboardListResult){
     url  := settings.RESTAPI_URL + USER_DASHBOARD_LIST_URL
     client := &http.Client{}
     req,_ := http.NewRequest("GET", url, nil)

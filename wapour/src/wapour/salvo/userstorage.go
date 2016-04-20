@@ -1,9 +1,9 @@
-package userstorage
+package salvo
 
 //import "fmt"
 import "errors"
 import "wapour/settings"
-import "wapour/api/webclient"
+//import "wapour/api/webclient"
 import "github.com/boltdb/bolt"
 
 // dont forget to use SessionId
@@ -12,20 +12,36 @@ var UserStorageInstance   =  GetUserStorage()
 
 //var UsersStorage webclient.WengineWrapperStorage
 //var UserStorageInstance UserStorage
-var not_exist             =  errors.New("users_doesnot_exist")
+//var not_exist             =  errors.New("users_doesnot_exist")
 
 var wrapper_exists        =  errors.New("wrapper_exists")
 var session_dsnt_exist    =  errors.New("session_dsnt_exist")
 
+type Session struct {
+    SessionId    string
+    DashboardId  string
+    UserId       string
+    TokenId      string
+}
+
+type WengineWrapper struct {
+    Username       string
+    Password       string
+    Url            string
+    UserId         string
+    TokenId        string
+}
+
+
 type UserStorage interface {
     FindWrapper(user_id string, token_id string)(err error)
-    AddWrapper(w webclient.WengineWrapper)(err error)
+    AddWrapper(w WengineWrapper)(err error)
     //
     //
-    AddSession(s webclient.Session)(err error)
+    AddSession(s Session)(err error)
     SetDashboard( session_id string, dashboard_id string )(err error)
     RemoveSession(session_id string)(err error)
-    GetSession( session_id string )(s *webclient.Session, err error)
+    GetSession( session_id string )(s *Session, err error)
 }
 
 
@@ -79,8 +95,8 @@ func GetUserStorage()(UserStorage) {
         }
     } else if settings.ONLINE_USERS_STORAGE_TYPE == "ram" || db_open_failed == true {
         user_storage:=RamUserStorage{StorageType:"ram"}
-        user_storage_wrappers := make([]webclient.WengineWrapper,0)
-        sessions              := make([]webclient.Session,0)
+        user_storage_wrappers := make([]WengineWrapper,0)
+        sessions              := make([]Session,0)
         user_storage.UserWrappers.Set(user_storage_wrappers)
         user_storage.Sessions.Set(sessions)
         //UserStorageInstance=user_storage
@@ -122,7 +138,7 @@ func ( ram RamUserStorage) FindWrapper (user_id string, token_id string) (err er
 }
 
 
-func ( boltdb BoltdbUserStorage )AddWrapper( w webclient.WengineWrapper )( err error ){
+func ( boltdb BoltdbUserStorage )AddWrapper( w WengineWrapper )( err error ){
     err=boltdb.db.Update(func(tx *bolt.Tx) error {
         b:=tx.Bucket([]byte(boltdb.usersTableName))
         //fmt.Printf("\nwrapper token_id: %v session_id: %v\n",w.TokenId,w.SessionId)
@@ -138,14 +154,14 @@ func ( boltdb BoltdbUserStorage )AddWrapper( w webclient.WengineWrapper )( err e
 }
 
 
-func ( ram RamUserStorage )AddWrapper(w webclient.WengineWrapper)(err error) {
+func ( ram RamUserStorage )AddWrapper(w WengineWrapper)(err error) {
     // have to fix panic: runtime error: index out of range
     //(*ram.UserWrappers)=append((*ram.Wrappers),w)
     ram.UserWrappers.AddItem(w)
     return nil
 }
 
-func (boltdb BoltdbUserStorage)AddSession(s webclient.Session)(err error) {
+func (boltdb BoltdbUserStorage)AddSession(s Session)(err error) {
     err=boltdb.db.Update(func(tx *bolt.Tx) error {
         b:=tx.Bucket([]byte(boltdb.sessionsTableName))
         if b==nil{ return nil }
@@ -163,7 +179,7 @@ func (boltdb BoltdbUserStorage)AddSession(s webclient.Session)(err error) {
     return err
 }
 
-func ( ram RamUserStorage )AddSession(s webclient.Session)(err error) {
+func ( ram RamUserStorage )AddSession(s Session)(err error) {
 
     ram.Sessions.AddItem(s)
     return nil
@@ -171,7 +187,7 @@ func ( ram RamUserStorage )AddSession(s webclient.Session)(err error) {
 
 }
 
-func  (boltdb BoltdbUserStorage)GetSession( session_id string )(session *webclient.Session, err error) {
+func  (boltdb BoltdbUserStorage)GetSession( session_id string )(session *Session, err error) {
     err = boltdb.db.View(func(tx *bolt.Tx) error {
         b:=tx.Bucket([]byte(boltdb.sessionsTableName))
         if b==nil{ return session_dsnt_exist }
@@ -192,7 +208,7 @@ func  (boltdb BoltdbUserStorage)GetSession( session_id string )(session *webclie
     if err == nil { return session,nil } else { return nil,err }
 }
 
-func ( ram RamUserStorage )GetSession( session_id string )(*webclient.Session,error) {
+func ( ram RamUserStorage )GetSession( session_id string )(*Session,error) {
     session:=ram.Sessions.GetItem(session_id)
     if session == nil { return nil,session_dsnt_exist } else { return session,nil }
 }

@@ -5,15 +5,15 @@ import "wapour/auth"
 import "wapour/core/common"
 
 
-func Index( data  gin.H, wrappers *[]*webclient.WengineWrapper,  params ...[]string )(func (c *gin.Context)) {
+func Index( data  gin.H, params ...[]string )(func (c *gin.Context)) {
 
     template_name  := "index.html"
     return  func(c *gin.Context ){
         //if (auth.IsAuthorized(c,wrappers) && (token_id,user_id,err:=auth.GetTokenFromCookies(c); err==nil) )  {
         // thanks for postman from golang@cjr
-        if token_id,user_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c,wrappers) && err==nil {
+        if token_id,user_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c) && err==nil {
             session_id,_:=common.GenId()
-            dashboards:=webclient.GetUserDashboards(token_id,user_id,wrappers)
+            dashboards:=webclient.GetUserDashboards(token_id,user_id)
             navigaton_menu := CreateNavigationMenu(dashboards)
             data["navigation_items"] = navigaton_menu
             data["session_id"]       = session_id

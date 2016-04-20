@@ -4,7 +4,7 @@ import "wapour/ws"
 import "wapour/wspage"
 import "wapour/userspace"
 import "wapour/dashboard"
-import "wapour/api/webclient"
+//import "wapour/api/webclient"
 import "wapour/settings"
 import "github.com/gin-gonic/gin"
 
@@ -12,7 +12,7 @@ import "github.com/gin-gonic/gin"
 func main() {
 
 
-    users:=make([]*webclient.WengineWrapper,0)
+    //users:=make([]*webclient.WengineWrapper,0)
 
 
     app:= gin.Default()
@@ -20,8 +20,8 @@ func main() {
     //app.LoadHTMLGlob("/actuator/actuator/wapour/src/wapour/core/web/templates/*") // load core templates
 
     app.Static("/static", settings.STATIC_DIR)
-    app.GET("/index",     index.Index(     settings.APP_SETTINGS , &users ))
-    app.GET("/userspace", userspace.Index( settings.APP_SETTINGS , &users ))
+    app.GET("/index",     index.Index(     settings.APP_SETTINGS ))
+    app.GET("/userspace", userspace.Index( settings.APP_SETTINGS ))
     app.GET("/wspage", wspage.WsPage(settings.APP_SETTINGS ))
     dashboard_app:=app.Group("/dashboard")
     {
@@ -33,11 +33,11 @@ func main() {
     auth_app:=app.Group("/auth")
     {
         auth_app.GET( "/login", index.Login(settings.APP_SETTINGS) )
-        auth_app.POST("/login", index.LoginPost(settings.APP_SETTINGS, &users) )
+        auth_app.POST("/login", index.LoginPost(settings.APP_SETTINGS) )
         auth_app.GET( "/logout" )
     }
     server:=ws.NewServer("/entry")
     go server.Listen()
-    app.GET("/entry", ws.WSserver(gin.H{}, server.WShandler, &users ))
+    app.GET("/entry", ws.WSserver(gin.H{}, server.WShandler))
     app.Run(":8090")
 }

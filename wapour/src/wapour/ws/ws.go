@@ -5,7 +5,7 @@ import "log"
 import "golang.org/x/net/websocket"
 import "github.com/gin-gonic/gin"
 import "wapour/auth"
-import "wapour/api/webclient"
+//import "wapour/api/webclient"
 
 type Server struct {
 
@@ -127,10 +127,10 @@ func (s *Server) Listen() {
 }
 
 
-func WSserver(data gin.H, wshandler websocket.Handler, wrappers *[]*webclient.WengineWrapper)( func(c *gin.Context) ) {
+func WSserver(data gin.H, wshandler websocket.Handler)( func(c *gin.Context) ) {
 
     return func(c *gin.Context)  {
-        if auth.IsAuthorized(c,wrappers) == false { c.JSON(401, gin.H{"status": "not_authorized"}) } else {
+        if auth.IsAuthorized(c) == false { c.JSON(401, gin.H{"status": "not_authorized"}) } else {
             handler := wshandler
             handler.ServeHTTP(c.Writer, c.Request)
         }
