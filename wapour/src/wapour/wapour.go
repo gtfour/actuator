@@ -10,15 +10,10 @@ import "github.com/gin-gonic/gin"
 
 
 func main() {
-
-
     //users:=make([]*webclient.WengineWrapper,0)
-
-
     app:= gin.Default()
     app.LoadHTMLGlob("/actuator/wapour/src/wapour/templates/*")                   // load app  templates
     //app.LoadHTMLGlob("/actuator/actuator/wapour/src/wapour/core/web/templates/*") // load core templates
-
     app.Static("/static", settings.STATIC_DIR)
     app.GET("/index",     index.Index(     settings.APP_SETTINGS ))
     app.GET("/userspace", userspace.Index( settings.APP_SETTINGS ))
