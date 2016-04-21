@@ -79,6 +79,11 @@ type TokenMethods interface {
     UserPasswordIsCorrect (username ,password string)       ( user_id string, token_id string,exists bool)
 }
 
+type AristaMethods interface {
+
+
+}
+
 
 func OpenDatabase ( dbtype, username, password, host, dbname  string) ( d Database ) {
 
