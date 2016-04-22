@@ -9,7 +9,8 @@ import (
 )
 
 func main() {
-	cmd := exec.Command("rpm", "-qa","--queryformat='%{NAME}\n'")
+	//cmd := exec.Command("rpm", "-qa","--queryformat='%{NAME}\n'")
+        cmd := exec.Command("ps","aux")
 	cmd.Stdin = strings.NewReader("some input")
 	var out bytes.Buffer
 	cmd.Stdout = &out

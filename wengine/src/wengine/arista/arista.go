@@ -49,6 +49,12 @@ type resource interface {
     CheckPermissionForGroup(string)(error)
 }
 
+type Action interface {
+    Stance
+    SetResource(string)(error)
+    GetResource()(string,error)
+}
+
 
 type Resource interface {
     Stance

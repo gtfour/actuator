@@ -8,7 +8,7 @@ import "syscall"
 func main() {
 
 
-    fi, err:=os.Stat("/tmp/test1111.txt")
+    fi, err:=os.Stat("/tmp")
 
     if err!=nil {return}
 
