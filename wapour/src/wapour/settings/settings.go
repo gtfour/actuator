@@ -1,7 +1,9 @@
 package settings
 import "html/template"
 import "github.com/gin-gonic/gin"
-//
+//##################################
+//##################################
+//##################################
 //var SERVER_ADDR          = "127.0.0.1"
 var SERVER_ADDR          = "10.10.111.143"
 var SERVER_PROTO         = "http"
@@ -16,19 +18,24 @@ var WS_URL               = template.URL("ws://10.10.111.143:8090/entry")
 //var WS_URL               = template.URL("ws://127.0.0.1:8090/entry")
 var GET_DATA_URL         = "http://10.10.111.143:8090/userspace/get-data"
 //var GET_DATA_URL         = "http://127.0.0.1:8090/userspace/get-data"
-//
-//
+//##################################
+//##################################
+//##################################
 var TOKEN_COOKIE_FIELD_NAME  string = "USER_TOKEN"
 var USERID_COOKIE_FIELD_NAME string = "USER_ID"
-//
-//
+//##################################
+//##################################
+//##################################
 var STATIC_DIR                = "/actuator/wapour/static"
 var STATIC_URL                = "/static/main/"
+//##################################
+//##################################
+//##################################
 var ONLINE_USERS_DB_FILE      = "/tmp/users.db"
 //var ONLINE_USERS_STORAGE_TYPE = "db" // "ram"
 var ONLINE_USERS_STORAGE_TYPE = "ram"
-////var GET_APP_SETTINGS = func ()( context gin.H  ){
-////    return gin.H{"static_url":STATIC_URL,"ws_url":WS_URL,"get_data_url":GET_DATA_URL}
-////}
+//##################################
+//##################################
+//##################################
 var APP_SETTINGS = gin.H{ "static_url":STATIC_URL, "ws_url":WS_URL, "get_data_url":GET_DATA_URL }
 

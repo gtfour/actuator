@@ -47,8 +47,12 @@ wapourApp.factory('getDataService', ['$q','$rootScope','settingsService', functi
 
     var Service = {};
     function getDashboardData( dashboard_group_id, dashboard_id, session_id ){
+        var settings     = settingsService.getSettings();
+        var get_data_url = settings["get_data_url"];
 
     }
+    Service.getDashboardData = getDashboardData ;
+    return Service ; 
 }]);
 
 

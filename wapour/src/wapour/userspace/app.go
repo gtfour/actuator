@@ -13,7 +13,7 @@ func Index( data  gin.H, params ...[]string )(func (c *gin.Context)) {
         // thanks for postman from golang@cjr
         if user_id,token_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c) && err==nil {
             session_id,_:=common.GenId()
-            dashboards  :=webclient.GetUserDashboards(token_id,user_id)
+            dashboards  :=webclient.GetUserDashboards(user_id, token_id)
             navigaton_menu := CreateNavigationMenu(dashboards)
             data["navigation_items"] = navigaton_menu
             data["session_id"]       = session_id
@@ -23,3 +23,5 @@ func Index( data  gin.H, params ...[]string )(func (c *gin.Context)) {
         }
     }
 }
+
+
