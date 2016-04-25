@@ -24,16 +24,18 @@ type Session struct {
 }
 
 type WengineWrapper struct {
-    username       string
-    password       string
-    //Url            string
-    UserId         string
-    TokenId        string
+    username         string
+    password         string
+    UserId           string
+    TokenId          string
+    Disabled         bool
+    FailedLoginCount int
 }
 
 
 type UserStorage interface {
     FindWrapper(user_id string, token_id string)(err error)
+    GetWrapper(user_id string, token_id string)(w *WengineWrapper)
     AddWrapper(w WengineWrapper)(err error)
     RemoveWrapper(user_id string, token_id string)
     //
@@ -275,4 +277,26 @@ func ( boltdb *BoltdbUserStorage )RemoveWrapper(user_id string, token_id string)
 
 func ( ram *RamUserStorage )RemoveWrapper(user_id string, token_id string) {
      ram.UserWrappers.RemoveItem(user_id, token_id)
+}
+
+func (ram *RamUserStorage)GetWrapper( user_id string, token_id string)(w *WengineWrapper) {
+    return w
+}
+
+
+func (boltdb *BoltdbUserStorage)GetWrapper( user_id string, token_id string )(w *WengineWrapper) {
+    return w
+}
+
+func (ram *RamUserStorage)ReplaceWrapper( wold *WengineWrapper, wnew *WengineWrapper ) ( error ) {
+    wnew.username = wold.username
+    wnew.password = wold.password
+    return nil
+}
+
+
+func (boltdb *BoltdbUserStorage)ReplaceWrapper( wold *WengineWrapper, wnew *WengineWrapper )( error ) {
+    wnew.username = wold.username
+    wnew.password = wold.password
+    return nil
 }
