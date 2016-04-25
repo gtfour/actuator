@@ -14,9 +14,10 @@ var RESTAPI_SERVER_ADDR  = "10.10.111.143"
 var RESTAPI_SERVER_PROTO = "http"
 var RESTAPI_SERVER_PORT  = "9000"
 var RESTAPI_URL          = RESTAPI_SERVER_PROTO+"://"+RESTAPI_SERVER_ADDR+":"+RESTAPI_SERVER_PORT
-var WS_URL               = template.URL("ws://10.10.111.143:8090/entry")
+var WS_URL               = template.URL("ws://"+SERVER_ADDR+":8090/entry")
 //var WS_URL               = template.URL("ws://127.0.0.1:8090/entry")
-var GET_DATA_URL         = "http://10.10.111.143:8090/userspace/get-data"
+var GET_DATA_URI         = "/dashboard/get-dashboard-data/"
+var GET_DATA_URL         = SERVER_URL+GET_DATA_URI
 //var GET_DATA_URL         = "http://127.0.0.1:8090/userspace/get-data"
 //##################################
 //##################################

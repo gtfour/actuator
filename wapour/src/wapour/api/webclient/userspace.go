@@ -2,6 +2,7 @@ package webclient
 import "fmt"
 import "net/http"
 import "encoding/json"
+import "io/ioutil"
 import "wapour/settings"
 //import "wapour/salvo"
 import "wapour/api/wengine"
@@ -30,7 +31,7 @@ func GetUserDashboards( user_id string, token_id string )(dashboards DashboardLi
     return dashboards
 }
 
-func GetDashboardData(user_id string , token_id string , dashboard_id string )([]byte){
+func GetDashboardData(user_id string , token_id string , dashboard_id string )([]byte,error){
     url  := settings.RESTAPI_URL + USER_GET_DASHBOARD_DATA+"/"+dashboard_id
     client := &http.Client{}
     req,_ := http.NewRequest("GET", url, nil)
@@ -40,6 +41,7 @@ func GetDashboardData(user_id string , token_id string , dashboard_id string )([
     //decoder := json.NewDecoder(resp.Body)
     //_ = decoder.Decode(&dashboards)
     //return dashboards
-    return []byte("Hello")
+    data,err:=ioutil.ReadAll(resp.Body)
+    return data,err
 }
 

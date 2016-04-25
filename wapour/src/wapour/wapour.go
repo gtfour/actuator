@@ -24,6 +24,7 @@ func main() {
         dashboard_app.GET("/files",    dashboard.FilesView(   settings.APP_SETTINGS) )
         dashboard_app.GET("/hosts",    dashboard.HostsView(   settings.APP_SETTINGS) )
         dashboard_app.GET("/overview", dashboard.Overview(    settings.APP_SETTINGS) )
+        dashboard_app.GET("/get-dashboard-data/:dashboardId", userspace.GetDashboardData( settings.APP_SETTINGS ))
     }
     auth_app:=app.Group("/auth")
     {
