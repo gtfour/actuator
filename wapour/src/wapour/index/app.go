@@ -1,6 +1,7 @@
 package index
 
 import "net/http"
+import "fmt"
 import "github.com/gin-gonic/gin"
 import "wapour/settings"
 import "wapour/api/webclient"
@@ -28,14 +29,23 @@ func Login( ) (func (c *gin.Context)) {
     post_url      := server_proto+"://"+server_addr+":"+server_port+"/auth/login"
     data          :=gin.H{"post_url":post_url, "static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
-        c.HTML(200, template_name,  data )
+        if auth.IsAuthorized(c) == true {
+            c.Redirect(302,"/index")
+        } else {
+            c.HTML(200, template_name,  data )
+        }
     }
 }
 
 func Logout() (func (c *gin.Context)) {
     return  func(c *gin.Context ){
         user_id,token_id,err:=auth.GetTokenFromCookies(c)
-        userstorage.RemoveWrapper(user_id,token_id)
+        wrapper:=userstorage.GetWrapper(user_id,token_id)
+        if wrapper != nil {
+            webclient.Disconnect(wrapper)
+            userstorage.RemoveWrapper(user_id,token_id)
+            fmt.Printf("Logout:: FindWrapper:: %v", userstorage.FindWrapper(user_id,token_id))
+        }
         if err == nil {
            c.Redirect(302,settings.SERVER_URL+"/auth/login")
         } else {

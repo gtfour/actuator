@@ -54,6 +54,7 @@ type Credentials struct {
 var WENGINE_AUTH_LOGIN_URL  string = "/auth/login"
 var WENGINE_AUTH_LOGOUT_URL string = "/auth/logout"
 
+
 /*func (wp *salvo.WengineWrapper )Request(url string)(interface{},error) {
 
     return nil,nil
@@ -75,6 +76,16 @@ func Connect(wp *salvo.WengineWrapper, username string, password string)(error) 
     return nil
 
 }
+
+func Disconnect(wp *salvo.WengineWrapper)(error) {
+    client  :=  &http.Client{}
+    logout_url  := settings.RESTAPI_URL + WENGINE_AUTH_LOGOUT_URL
+    req, err := http.NewRequest("GET", logout_url , nil)
+    SetAuthCookie(req,wp.UserId,wp.TokenId)
+    _,err                  =  client.Do(req)
+    return err
+}
+
 
 func Init( username, password string) ( w salvo.WengineWrapper,err error ) {
 

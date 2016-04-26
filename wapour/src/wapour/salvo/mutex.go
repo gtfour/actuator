@@ -1,5 +1,6 @@
 package salvo
 import "sync"
+import "fmt"
 //import "wapour/api/webclient"
 
 
@@ -26,6 +27,7 @@ func (u *MutexUsers) Get()([]WengineWrapper) {
 func (u *MutexUsers) GetItem(user_id string, token_id string)(value *WengineWrapper) {
     u.Lock()
     defer u.Unlock()
+    fmt.Printf("\nGetItem::u.wrappers %v\n", u.wrappers)
     for i := range u.wrappers {
         wrapper := &u.wrappers[i]
         if wrapper.UserId == user_id && wrapper.TokenId == token_id {
@@ -41,13 +43,27 @@ func (u *MutexUsers) AddItem(value WengineWrapper) {
     u.wrappers = append(u.wrappers, value)
 }
 
+func (u *MutexUsers) UpdateItem(item WengineWrapper)() {
+    u.Lock()
+    defer u.Unlock()
+    for i:= range u.wrappers {
+        wrapper:=u.wrappers[i]
+        if wrapper.UserId == item.UserId && wrapper.TokenId == item.TokenId {
+            u.wrappers[i] = item
+            break
+        }
+    }
+}
+
+
 func (u *MutexUsers) RemoveItem(user_id string, token_id string) {
     u.Lock()
     defer u.Unlock()
     for i:= range u.wrappers {
         wrapper := &u.wrappers[i]
         if wrapper.UserId == user_id && wrapper.TokenId == token_id {
-            u.wrappers = append(u.wrappers[:0], u.wrappers[0+i:]...)
+            u.wrappers = append(u.wrappers[:i], u.wrappers[1+i:]...)
+            fmt.Printf("\nRemoveItem user_id %v token_id %v  i %v   :: u.wrappers  %v\n",user_id ,token_id ,i,u.wrappers)
             break
         }
     }
@@ -103,8 +119,10 @@ func (s *MutexSessions) RemoveItem(session_id string) {
     for i := range s.sessions {
         session := &s.sessions[i]
         if session.SessionId == session_id  {
-            s.sessions = append(s.sessions[:0], s.sessions[0+i:]...)
+            s.sessions = append(s.sessions[:i], s.sessions[i+1:]...)
             break
         }
     }
 }
+
+

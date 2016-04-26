@@ -23,13 +23,14 @@ type Session struct {
     TokenId      string
 }
 
-type WengineWrapper struct {
+type WengineWrapper struct{
     username         string
     password         string
     UserId           string
     TokenId          string
     Disabled         bool
     FailedLoginCount int
+    DisabledAt       int
 }
 
 
@@ -280,7 +281,7 @@ func ( ram *RamUserStorage )RemoveWrapper(user_id string, token_id string) {
 }
 
 func (ram *RamUserStorage)GetWrapper( user_id string, token_id string)(w *WengineWrapper) {
-    return w
+    return ram.UserWrappers.GetItem(user_id, token_id)
 }
 
 
@@ -288,14 +289,14 @@ func (boltdb *BoltdbUserStorage)GetWrapper( user_id string, token_id string )(w 
     return w
 }
 
-func (ram *RamUserStorage)ReplaceWrapper( wold *WengineWrapper, wnew *WengineWrapper ) ( error ) {
+func (ram *RamUserStorage)ReplaceWrapper(wold *WengineWrapper, wnew *WengineWrapper) ( error ) {
     wnew.username = wold.username
     wnew.password = wold.password
     return nil
 }
 
 
-func (boltdb *BoltdbUserStorage)ReplaceWrapper( wold *WengineWrapper, wnew *WengineWrapper )( error ) {
+func (boltdb *BoltdbUserStorage)ReplaceWrapper(wold *WengineWrapper, wnew *WengineWrapper)( error ) {
     wnew.username = wold.username
     wnew.password = wold.password
     return nil

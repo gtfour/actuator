@@ -10,4 +10,7 @@ func main() {
     b.Increase()
     fmt.Printf("\n%d\n",a.A)
     fmt.Printf("\nGetA: %d\n",a.GetA())
+    test := a.CreateTest()
+    test.a = 32
+    fmt.Printf("\ntest: %v\n",test)
 }
