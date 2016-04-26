@@ -20,6 +20,7 @@ func Index()(func (c *gin.Context)) {
             data["session_id"]       = session_id
             c.HTML(200, template_name,  data )
         } else {
+            c.Header("Referer","/userspace")
             c.Redirect(302,"/auth/login")
         }
     }

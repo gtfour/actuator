@@ -17,6 +17,7 @@ func Index()(func (c *gin.Context)) {
     navigaton_menu := GetNavigationMenu()
     data:=gin.H{"navigation_items":navigaton_menu,"static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
+        fmt.Printf("\n>>>>Referer:%v\n", c.Request.Header.Get("Referer"))
         if auth.IsAuthorized(c) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login") }
     }
 }
@@ -29,6 +30,7 @@ func Login( ) (func (c *gin.Context)) {
     post_url      := server_proto+"://"+server_addr+":"+server_port+"/auth/login"
     data          :=gin.H{"post_url":post_url, "static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
+        fmt.Printf("\n>>>>RefererLogin:%v\n", c.Request.Header.Get("Referer"))
         if auth.IsAuthorized(c) == true {
             c.Redirect(302,"/index")
         } else {
