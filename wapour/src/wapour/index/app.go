@@ -10,29 +10,29 @@ import "wapour/salvo"
 var userstorage = salvo.UserStorageInstance
 
 
-func Index( data  gin.H,  params ...[]string )(func (c *gin.Context)) {
+func Index()(func (c *gin.Context)) {
 
     template_name  := "index.html"
     navigaton_menu := GetNavigationMenu()
-    data["navigation_items"] = navigaton_menu
+    data:=gin.H{"navigation_items":navigaton_menu,"static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
         if auth.IsAuthorized(c) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login") }
     }
 }
 
-func Login(data  gin.H, params ...[]string ) (func (c *gin.Context)) {
-    template_name    := "login.html"
-    server_addr      := settings.SERVER_ADDR
-    server_proto     := settings.SERVER_PROTO
-    server_port      := settings.SERVER_PORT
-    post_url         := server_proto+"://"+server_addr+":"+server_port+"/auth/login"
-    data["post_url"] = post_url
+func Login( ) (func (c *gin.Context)) {
+    template_name := "login.html"
+    server_addr   := settings.SERVER_ADDR
+    server_proto  := settings.SERVER_PROTO
+    server_port   := settings.SERVER_PORT
+    post_url      := server_proto+"://"+server_addr+":"+server_port+"/auth/login"
+    data          :=gin.H{"post_url":post_url, "static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
         c.HTML(200, template_name,  data )
     }
 }
 
-func Logout(data  gin.H) (func (c *gin.Context)) {
+func Logout() (func (c *gin.Context)) {
     return  func(c *gin.Context ){
         user_id,token_id,err:=auth.GetTokenFromCookies(c)
         userstorage.RemoveWrapper(user_id,token_id)
@@ -46,7 +46,7 @@ func Logout(data  gin.H) (func (c *gin.Context)) {
 }
 
 
-func LoginPost ( data  gin.H,  params ...[]string ) (func (c *gin.Context)) {
+func LoginPost () (func (c *gin.Context)) {
     return func(c *gin.Context) {
         username := c.PostForm("username")
         password := c.PostForm("password")

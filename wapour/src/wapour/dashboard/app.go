@@ -6,7 +6,7 @@ import . "wapour/dashboard/hosts"
 import "github.com/gin-gonic/gin"
 //import "html/template"
 
-func ActionsView( data  gin.H, params ...[]string )(func (c *gin.Context)) {
+func ActionsView()(func (c *gin.Context)) {
 
     //template_name := "index.html"
     //data["content"] = template.HTML(Actions())
@@ -16,7 +16,7 @@ func ActionsView( data  gin.H, params ...[]string )(func (c *gin.Context)) {
     }
 }
 
-func FilesView( data  gin.H, params ...[]string )(func (c *gin.Context)) {
+func FilesView()(func (c *gin.Context)) {
     //template_name := "index.html"
     //var content string
     //content =  Files()
@@ -28,13 +28,13 @@ func FilesView( data  gin.H, params ...[]string )(func (c *gin.Context)) {
     }
 }
 
-func HostsView( data  gin.H, params ...[]string )(func (c *gin.Context)) {
+func HostsView()(func (c *gin.Context)) {
     return  func(c *gin.Context ){
         c.String(200, Hosts())
     }
 }
 
-func Overview( data  gin.H, params ...[]string )(func (c *gin.Context)) {
+func Overview()(func (c *gin.Context)) {
 
     template_name:="table.html"
     return  func(c *gin.Context ){
