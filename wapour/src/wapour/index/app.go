@@ -17,7 +17,6 @@ func Index()(func (c *gin.Context)) {
     navigaton_menu := GetNavigationMenu()
     data:=gin.H{"navigation_items":navigaton_menu,"static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
-        fmt.Printf("\n>>>>Referer:%v\n", c.Request.Header.Get("Referer"))
         if auth.IsAuthorized(c) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login") }
     }
 }
@@ -30,10 +29,11 @@ func Login( ) (func (c *gin.Context)) {
     post_url      := server_proto+"://"+server_addr+":"+server_port+"/auth/login"
     data          :=gin.H{"post_url":post_url, "static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
-        fmt.Printf("\n>>>>RefererLogin:%v\n", c.Request.Header.Get("Referer"))
+        redirect_to := c.DefaultQuery("redirect_to", "/index")
         if auth.IsAuthorized(c) == true {
-            c.Redirect(302,"/index")
+            c.Redirect(302,redirect_to)
         } else {
+            data["post_url"] =post_url+"?redirect_to="+redirect_to
             c.HTML(200, template_name,  data )
         }
     }
@@ -60,8 +60,9 @@ func Logout() (func (c *gin.Context)) {
 
 func LoginPost () (func (c *gin.Context)) {
     return func(c *gin.Context) {
-        username := c.PostForm("username")
-        password := c.PostForm("password")
+        username    := c.PostForm("username")
+        password    := c.PostForm("password")
+        redirect_to := c.DefaultQuery("redirect_to", "/index")
         w, err :=  webclient.Init(username, password)
         if err != nil { c.Redirect(302,settings.SERVER_URL+"/auth/login") } else {
             user := userstorage.FindWrapper(w.UserId, w.TokenId)
@@ -73,7 +74,7 @@ func LoginPost () (func (c *gin.Context)) {
             http.SetCookie(c.Writer, cookie_userid)
             http.SetCookie(c.Writer, cookie_token)
 
-            c.Redirect(302,settings.SERVER_URL+"/index")
+            c.Redirect(302,settings.SERVER_URL+redirect_to)
         }
     }
 }

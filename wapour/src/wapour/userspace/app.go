@@ -8,6 +8,7 @@ import "wapour/core/common"
 
 func Index()(func (c *gin.Context)) {
     template_name  := "index.html"
+    self_link      := "/userspace"
     return  func(c *gin.Context ){
         //if (auth.IsAuthorized(c,wrappers) && (user_id,token_id,err:=auth.GetTokenFromCookies(c); err==nil) )  {
         // thanks for postman from golang@cjr
@@ -20,8 +21,7 @@ func Index()(func (c *gin.Context)) {
             data["session_id"]       = session_id
             c.HTML(200, template_name,  data )
         } else {
-            c.Header("Referer",settings.SERVER_URL+"/userspace")
-            c.Redirect(302,"/auth/login")
+            c.Redirect(302,"/auth/login?redirect_to="+self_link)
         }
     }
 }
