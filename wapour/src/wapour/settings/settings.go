@@ -39,4 +39,7 @@ var ONLINE_USERS_STORAGE_TYPE = "ram"
 //##################################
 //##################################
 var APP_SETTINGS = gin.H{ "static_url":STATIC_URL, "ws_url":WS_URL, "get_data_url":GET_DATA_URL }
-
+//##################################
+//##################################
+//##################################
+var ALLOWED_REDIRECTS = []string { "/userspace","/index" }

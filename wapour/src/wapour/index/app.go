@@ -4,9 +4,10 @@ import "net/http"
 import "fmt"
 import "github.com/gin-gonic/gin"
 import "wapour/settings"
-import "wapour/api/webclient"
 import "wapour/auth"
 import "wapour/salvo"
+import "wapour/api/webclient"
+import "wapour/core/common"
 
 var userstorage = salvo.UserStorageInstance
 
@@ -17,7 +18,7 @@ func Index()(func (c *gin.Context)) {
     navigaton_menu := GetNavigationMenu()
     data:=gin.H{"navigation_items":navigaton_menu,"static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
-        if auth.IsAuthorized(c) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login") }
+        if auth.IsAuthorized(c) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login"+"?redirect_to="+"/index") }
     }
 }
 
@@ -30,6 +31,9 @@ func Login( ) (func (c *gin.Context)) {
     data          :=gin.H{"post_url":post_url, "static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
         redirect_to := c.DefaultQuery("redirect_to", "/index")
+        if common.IsIn(redirect_to, settings.ALLOWED_REDIRECTS)==false {
+            redirect_to = "/index"
+        }
         if auth.IsAuthorized(c) == true {
             c.Redirect(302,redirect_to)
         } else {
@@ -63,8 +67,11 @@ func LoginPost () (func (c *gin.Context)) {
         username    := c.PostForm("username")
         password    := c.PostForm("password")
         redirect_to := c.DefaultQuery("redirect_to", "/index")
+        if common.IsIn(redirect_to, settings.ALLOWED_REDIRECTS)==false {
+            redirect_to = "/index"
+        }
         w, err :=  webclient.Init(username, password)
-        if err != nil { c.Redirect(302,settings.SERVER_URL+"/auth/login") } else {
+        if err != nil { c.Redirect(302,settings.SERVER_URL+"/auth/login"+"?redirect_to="+redirect_to) } else {
             user := userstorage.FindWrapper(w.UserId, w.TokenId)
             if user == nil {
                 userstorage.AddWrapper(w)
