@@ -30,7 +30,7 @@
           </a>
           <ul class="treeview-menu">
             {{range $subkey := $key.SubItems }}
-                <li nav-item-left dashboard-group-id='{{ $key.Id }}' dashboard-id='{{$subkey.Id}}'><a ui-sref="{{$subkey.Url}}"><i class="fa fa-circle-o"></i>{{$subkey.Name}}</a></li>
+                <li navigation-item  dashboard-group-id='{{ $key.Id }}' dashboard-id='{{$subkey.Id}}'><a ui-sref="{{$subkey.Url}}"><i class="fa fa-circle-o"></i>{{$subkey.Name}}</a></li>
             {{end}}
           </ul>
         </li>
