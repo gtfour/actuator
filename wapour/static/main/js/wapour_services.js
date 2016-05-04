@@ -28,9 +28,10 @@ wapourApp.service('settingsService', ['$q','$rootScope', function($q, $rootScope
     return Service;
 }]);
 
-wapourApp.factory('dashboardDataService',['websocketService','settingsService', function(websocketService, settingsService, $http) {
+wapourApp.factory('dashboardDataService',['websocketService','settingsService','$http', function(websocketService, settingsService, $http) {
     var service    = {};
     var dashboards = [];
+    var callbacks  = [];
     function SelectDashboard(dashboard_id, dashboard_group_id) {
         settings               = settingsService.getSettings();
         session_id             = settings["session_id"];
@@ -40,10 +41,11 @@ wapourApp.factory('dashboardDataService',['websocketService','settingsService', 
         message["data"]        = selected_dashboard ;
         message["session_id"]  = session_id ;
         websocketService.sendRequest(message)
+        Notify(dashboard_id, dashboard_group_id);
     }
 
-    function getHttp(url){
-        $http({method:"GET", url:url}).then(function(result){
+    function GetHttp(url){
+        return $http({method:"GET", url:url}).then(function(result){
             return result.data ;
         });
     }
@@ -51,8 +53,24 @@ wapourApp.factory('dashboardDataService',['websocketService','settingsService', 
     function GetDashboardData(dashboard_id, dashboard_group_id) {
         var settings     = settingsService.getSettings();
         var get_data_url = settings["get_data_url"];
+        var dashboard_url = get_data_url+dashboard_group_id+"/"+dashboard_id
+        var data_promise = GetHttp(dashboard_url);
+        data_promise.then(function(result) {  
+           console.log(result);
+        });
+    }
+    function AddCallback(callback) {
+        callbacks.push(callback);
+    }
+    function Notify(dashboard_id, dashboard_group_id){
+        for (var key in callbacks){
+            var callback = callbacks[key];
+            callback(dashboard_id, dashboard_group_id);
+        }
     }
 
-    service.SelectDashboard = SelectDashboard ; 
+    service.SelectDashboard  = SelectDashboard ; 
+    service.GetDashboardData = GetDashboardData ;  
+    service.AddCallback      = AddCallback;
     return service ; 
 }]);

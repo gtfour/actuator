@@ -32,7 +32,21 @@ wapourApp.controller('mainController', ['$scope','websocketService', function($s
     }
     $scope.dashboards_list = function() {
 
-
     }
+}]);
+
+wapourApp.controller('dashboardController', ['$scope','dashboardDataService', function($scope, dashboardDataService) {
+
+    $scope.dashboard_data = {} ;
+
+    var notifier = function(dashboard_id, dashboard_group_id) {
+        $scope.dashboard_data = dashboardDataService.GetDashboardData(dashboard_id, dashboard_group_id); 
+        console.log("-- dashboard_data --")
+        console.log($scope.dashboard_data);
+    }
+    dashboardDataService.AddCallback(notifier);
+
+
+
 }]);
 
