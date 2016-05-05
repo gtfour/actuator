@@ -25,6 +25,7 @@ func main() {
     dashboard_app:=app.Group("/dashboard")
     {
         dashboard_app.GET("/actions",  dashboard.ActionsView())
+        dashboard_app.GET("/actions-json",  dashboard.ActionsJson())
         dashboard_app.GET("/files",    dashboard.FilesView())
         dashboard_app.GET("/hosts",    dashboard.HostsView())
         dashboard_app.GET("/overview", dashboard.Overview())

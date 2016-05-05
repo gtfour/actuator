@@ -5,7 +5,7 @@ wapourApp.directive('navigationItem', ['dashboardDataService',function (dashboar
             elem.bind('click', function() {
                 dashboard_group_id = attrs.dashboardGroupId;
                 dashboard_id       = attrs.dashboardId ;
-                dashboardDataService.SelectDashboard(dashboard_id, dashboard_group_id);
+                dashboardDataService.SelectDashboardById(dashboard_id, dashboard_group_id);
         });
         }
     }
@@ -19,7 +19,7 @@ wapourApp.directive('navigationSubitem', ['dashboardDataService',function (dashb
             elem.bind('click', function() {
                 dashboard_group_id = attrs.dashboardGroupId;
                 dashboard_id       = attrs.dashboardId ; 
-                dashboardDataService.SelectDashboard(dashboard_id, dashboard_group_id);
+                dashboardDataService.SelectDashboardById(dashboard_id, dashboard_group_id);
         });
         }
     }
@@ -32,7 +32,7 @@ wapourApp.directive('navigationMenu', ['dashboardDataService',function (dashboar
             elem.bind('click', function() {
                 dashboard_group_id = attrs.dashboardGroupId;
                 dashboard_id       = attrs.dashboardId ;
-                dashboardDataService.SelectDashboard(dashboard_id, dashboard_group_id);
+                dashboardDataService.SelectDashboardById(dashboard_id, dashboard_group_id);
         });
         }
     }

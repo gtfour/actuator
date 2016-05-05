@@ -44,6 +44,10 @@ wapourApp.controller('dashboardController', ['$scope','dashboardDataService', fu
         console.log("-- dashboard_data --")
         console.log($scope.dashboard_data);
     }
+    var notifier_url = function(dashboard_url) {
+        $scope.dashboard_data = dashboardDataService.GetDashboardDataByUrl(dashboard_url);
+        console.log($scope.dashboard_data);
+    }
     dashboardDataService.AddCallback(notifier);
 
 
