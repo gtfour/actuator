@@ -14,6 +14,7 @@
   <script src="{{ .static_url }}js/wapour_navigation.js"></script>
   <script src="{{ .static_url }}js/wapour_services.js"></script>
   <script src="{{ .static_url }}js/wapour_services_ws.js"></script>
+  <script src="{{ .static_url }}js/wapour_directives.js"></script>
   <!-- Bootstrap 3.3.5 -->
   <link rel="stylesheet" href="{{ .static_url }}css/bootstrap.min.css">
   <!-- Font Awesome -->
@@ -35,8 +36,15 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
+
 <body class="hold-transition skin-blue-light sidebar-mini" ng-app="wapourApp" ng-controller="appController" ng-init="initApp({'ws_url':'{{.ws_url}}','get_data_url':'{{ .get_data_url }}', 'session_id':'{{ .session_id }}'})">
 <div class="wrapper" ng-controller="mainController">
+
+  <!-- Tests -->
+  <wapour-data-box class="wapour-chart"></wapour-data-box>
+  <wapour-data-box class="wapour-table"></wapour-data-box>
+
+  <!-- /Tests -->
 
   <header class="main-header">
     <!-- Logo -->

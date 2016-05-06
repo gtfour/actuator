@@ -14,12 +14,26 @@ wapourApp.directive('wapourDataBox', ['websocketService',function (websocketServ
         });
         }
     } */
-    var directive = {};
-    directive.restrict = 'AE';
-    directive.link = function( scope, elements, attrs ) {
-        dashboard_group_id = attrs.dashboardGroupId;
-        dashboard_id       = attrs.dashboardId ;
-    }
+    var directive = {
+        restrict: 'E',
+        //scope: { 
+        //    boxdata:'='
+        //},
+        //scope:{},
+        //link: function( scope, element, attrs ) {
+            //console.log("wapourDataBox data="+scope.boxdata);
+            //scope.$watch("boxdata", function(value) {
+            //    console.log("wapourDataBox data="+scope.boxdata);
+            //}, true);
+            //scope.elemtype = attrs.boxdata ;  
+            
+        //}
+        //template: '<div><div {{elemtype}}>'+
+        //          '</div></div>',
+
+
+    };
+    return directive ; 
 
 }]);
 
@@ -30,9 +44,10 @@ wapourApp.directive('wapourDashboard', ['websocketService',function (websocketSe
         dashboard_group_id = attrs.dashboardGroupId;
         dashboard_id       = attrs.dashboardId ;
     }
+    return directive ; 
 }]);
 
-wapourApp.directive('wapourDataTable', ['websocketService',function (websocketService) {
+wapourApp.directive('wapourTable', ['websocketService',function (websocketService) {
     /*return {
         restrict: 'A',
         link:     function(scope, elem, attrs) {
@@ -50,11 +65,23 @@ sage["data"]        = selected_dashboard
         }
     }*/
     var directive = {};
-    directive.restrict = 'AE';
+    directive.restrict = 'C';
+    directive.template = '<my-table></my-table>';
     directive.link = function( scope, elements, attrs ) {
-        alert(attrs.selfId);
+        console.log("my-table");
     }
     return directive;
+}]);
+
+wapourApp.directive('wapourChart', ['websocketService',function (websocketService) {
+    var directive = {};
+    directive.restrict = 'C';
+    directive.link = function( scope, elements, attrs ) {
+        console.log("my-chart");
+    };
+    directive.template = '<my-chart></my-chart>';
+    return directive;
+
 }]);
 
 wapourApp.directive('wapourTableRow', ['websocketService',function (websocketService) {
@@ -62,6 +89,7 @@ wapourApp.directive('wapourTableRow', ['websocketService',function (websocketSer
     var directive = {}; 
     directive.restrict = 'E';
     directive.template = "<tr></tr>"
+    return directive ; 
 }]);
 
 wapourApp.directive('wapourInfoBoxArray', ['websocketService',function (websocketService) {
@@ -81,18 +109,6 @@ wapourApp.directive('wapourInfoBoxArray', ['websocketService',function (websocke
         }
     }
 }]);
-
-wapourApp.factory('InfoBox', function(){
-    var Service = {} ; 
-
-    function get_data(url){
-
-
-    };
-
-    return {messages:["Hello all!","Buy!","Nice to see you!"],
-            data:function get_table_data(table_id){} ,};
-});
 
 /*
         <div class="col-md-3 col-sm-6 col-xs-12">
