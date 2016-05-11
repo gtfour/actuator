@@ -29,6 +29,7 @@ func main() {
         dashboard_app.GET("/files",    dashboard.FilesView())
         dashboard_app.GET("/files-json",    dashboard.FilesJson())
         dashboard_app.GET("/hosts",    dashboard.HostsView())
+        dashboard_app.GET("/hosts-json",    dashboard.HostsJson())
         dashboard_app.GET("/overview", dashboard.Overview())
         dashboard_app.GET("/get-dashboard-data/:dashboardGroupId/:dashboardId/", userspace.GetDashboardData())
     }

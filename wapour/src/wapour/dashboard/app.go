@@ -86,6 +86,29 @@ func HostsView()(func (c *gin.Context)) {
     }
 }
 
+func HostsJson()(func (c *gin.Context)) {
+    return  func(c *gin.Context ){
+        if auth.IsAuthorized(c) == true  {
+            rows := [][]string{ }
+            api := wengine.GetApi("","","")
+            _,hosts:=api.HostsList()
+            //
+            header := []string {"ID"}
+            for id := range hosts {
+                host:=hosts[id]
+                row  :=[]string{ host.Id }
+                rows = append( rows, row )
+            }
+            data_items:=[]gin.H{ gin.H{"data_type":"wapour-table","name":"Files Table","id":"files_table","title":"Files Table","rows":rows, "header":header}}
+            var data = gin.H{"data_items":data_items}
+            c.JSON(200, gin.H{"status": "ok","data":data})
+        } else {
+            c.JSON(401, gin.H{"status": "Unauthorized","data":gin.H{}})
+        }
+    }
+}
+
+
 func Overview()(func (c *gin.Context)) {
 
     template_name:="table.html"
