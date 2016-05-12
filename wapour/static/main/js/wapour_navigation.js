@@ -39,19 +39,19 @@ wapourApp.directive('subitemMenu', function () {
     }
 });
 
-wapourApp.directive('navigationMenu',function () {
+wapourApp.directive('wapourNavigationMenu',function () {
     return {
         restrict: 'AE',
-        scope: {
-            navigation_items:'=navigationItems'
-        },
-        link:     function(scope, elem, attrs) {
-        },
-        template: '<li class="header">MAIN NAVIGATION</li>'+
-                  '<li class="treeview" ng-repeat="item in navigation_items">'+
+        //scope: {
+        //    navigation_items:'=navigationItems'
+        //},
+        //link:     function(scope, elem, attrs) {
+        //},
+        template: '<li class="header">{{navigation_menu.menu_name}}</li>'+
+                  '<li class="treeview" ng-repeat="item in navigation_menu.menu_items">'+
                   '<a href="#"><i class="fa {{ item.icon }}"></i> <span>{{ item.name }}</span> <i class="fa fa-angle-left pull-right"></i>'+
                   '</a>'+
-                  '<ul class="treeview-menu" subitem-menu subitems=item.subitems parentid="{{ item.id }}"></ul>'+
+                  '<ul class="treeview-menu" subitem-menu subitems=item.subitems parentid="item.id"></ul>'+
                   '</li>'
     }
 });

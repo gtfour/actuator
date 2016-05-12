@@ -38,6 +38,10 @@ func IndexData()(func (c *gin.Context)) {
 }
 }
 
+func Redirect(url string)(func (c *gin.Context)) {
+    return  func(c *gin.Context ){ c.Redirect(302,url) }
+}
+
 
 
 func Login( ) (func (c *gin.Context)) {

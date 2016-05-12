@@ -17,6 +17,7 @@ func main() {
     //app.LoadHTMLGlob("/actuator/actuator/wapour/src/wapour/core/web/templates/*") // load core templates
     //
     //
+    app.GET("/",          index.Redirect("/userspace"))
     app.GET("/index",     index.Index())
     app.GET("/index-data",index.IndexData())
     app.GET("/userspace", userspace.Index())

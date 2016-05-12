@@ -120,6 +120,7 @@ wapourApp.factory('dashboardDataService',['websocketService','settingsService','
     service.GetDashboardDataByUrl = GetDashboardDataByUrl; 
     service.AddCallback           = AddCallback;
     service.AddUrlCallback        = AddUrlCallback;
+    service.GetHttp               = GetHttp ;
     
     return service ; 
 }]);

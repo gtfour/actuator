@@ -1,10 +1,27 @@
-wapourApp.controller('appController',['settingsService','websocketService','$scope', function initController(settingsService,websocketService, $scope) {
+wapourApp.controller('appController',['settingsService','dashboardDataService','websocketService','$scope', function initController(settingsService,dashboardDataService,websocketService, $scope) {
+
+    $scope.navigation_menu = {} ;
     $scope.initApp = function(settings) {
         settingsService.setSettings(settings);
         app_settings = settingsService.getSettings();
         if (app_settings.websocket == true){
             websocketService.createWsConnection(settings["ws_url"]);
         }
+        app_data_url = app_settings.app_data_url ; 
+
+
+        var data_promise = dashboardDataService.GetHttp(app_data_url);
+        data_promise.then(function(result) {
+            if (result.status == "ok") {
+                $scope.navigation_menu = result.data.navigation_menu; 
+            }
+        });
+
+
+        //console.log(app_data);
+        //if (app_data.status == "ok") {
+        //    $scope.navigation_menu = app_data.navigation_menu ; 
+        //}
     };
     $scope.$on("$destroy", function(){
         
