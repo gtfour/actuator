@@ -19,7 +19,9 @@ wapourApp.directive('navigationSubitem', ['dashboardDataService',function (dashb
             elem.bind('click', function() {
                 dashboard_group_id = attrs.dashboardGroupId;
                 dashboard_id       = attrs.dashboardId ; 
+                dashboard_url      = attrs.dashboardUrl ; 
                 dashboardDataService.SelectDashboardById(dashboard_id, dashboard_group_id);
+                console.log(dashboard_id+"::"+dashboard_group_id+"::"+dashboard_url);
         });
         }
     }
@@ -35,7 +37,8 @@ wapourApp.directive('subitemMenu', function () {
         },
         link:     function(scope, elem, attrs) {
         },
-        template: '<li navigation-subitem ng-repeat="subitem in subitems"   dashboard-group-id="parentid" dashboard-id="{{subitem.id}}"><a ui-sref="subitem.url"><i class="fa fa-circle-o"></i>{{subitem.name}}</a></li>'
+        template:'<li navigation-subitem ng-repeat="subitem in subitems" dashboard-group-id="{{parentid}}" dashboard-id="{{subitem.id}}" dashboard-url="{{subitem.url}}">'+
+                 '<a href ><i class="fa fa-circle-o"></i>{{subitem.name}}</a></li>'
     }
 });
 
