@@ -21,7 +21,7 @@ func main() {
     app.GET("/index",     index.Index())
     app.GET("/index-data",index.IndexData())
     app.GET("/userspace", userspace.Index())
-    app.GET("/appdata",   userspace.AppData())
+    app.GET("/userspace-data",   userspace.UserspaceData())
     app.GET("/wspage",    wspage.WsPage(   settings.APP_SETTINGS ))
     //
     dashboard_app:=app.Group("/dashboard")
