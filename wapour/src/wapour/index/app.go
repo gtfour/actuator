@@ -16,11 +16,29 @@ func Index()(func (c *gin.Context)) {
 
     template_name  := "index.html"
     navigaton_menu := GetNavigationMenu()
-    data:=gin.H{"navigation_items":navigaton_menu,"static_url":settings.STATIC_URL }
+    data:=gin.H{"navigation_items":navigaton_menu,"static_url":settings.STATIC_URL, "app_data_url":settings.ADMIN_DATA_URL,"websocket":"false" }
     return  func(c *gin.Context ){
         if auth.IsAuthorized(c) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login"+"?redirect_to="+"/index") }
     }
 }
+
+func IndexData()(func (c *gin.Context)) {
+
+    return  func(c *gin.Context ){
+        if auth.IsAuthorized(c) == true  {/*
+            menu_name:="Admin Dashboard"
+            var navigation_menu = gin.H { "menu_name": menu_name , "items":items    }
+            data_items:=[]gin.H{ gin.H{"data_type":"wapour-table","name":"Files Table","id":"files_table","title":"Files Table","rows":rows, "header":header}}
+            var data = gin.H{"data_items":data_items}*/
+            var data = gin.H{"navigation_menu":GetNavigationMenuJson()}
+            c.JSON(200, gin.H{"status": "ok","data":data})
+        } else {
+            c.JSON(401, gin.H{"status": "Unauthorized","data":gin.H{}})
+        }
+}
+}
+
+
 
 func Login( ) (func (c *gin.Context)) {
     template_name := "login.html"

@@ -18,21 +18,29 @@ func main() {
     //
     //
     app.GET("/index",     index.Index())
+    app.GET("/index-data",index.IndexData())
     app.GET("/userspace", userspace.Index())
-    app.GET("/appdata", userspace.AppData())
+    app.GET("/appdata",   userspace.AppData())
     app.GET("/wspage",    wspage.WsPage(   settings.APP_SETTINGS ))
     //
     dashboard_app:=app.Group("/dashboard")
     {
         dashboard_app.GET("/actions",  dashboard.ActionsView())
-        dashboard_app.GET("/actions-json",  dashboard.ActionsJson())
         dashboard_app.GET("/files",    dashboard.FilesView())
-        dashboard_app.GET("/files-json",    dashboard.FilesJson())
         dashboard_app.GET("/hosts",    dashboard.HostsView())
-        dashboard_app.GET("/hosts-json",    dashboard.HostsJson())
         dashboard_app.GET("/overview", dashboard.Overview())
+
         dashboard_app.GET("/get-dashboard-data/:dashboardGroupId/:dashboardId/", userspace.GetDashboardData())
     }
+    dashboard_json:=app.Group("/dashboard/json")
+    {
+        dashboard_json.GET("/actions",  dashboard.ActionsJson())
+        dashboard_json.GET("/files",    dashboard.FilesJson())
+        dashboard_json.GET("/hosts",    dashboard.HostsJson())
+
+    }
+
+
     auth_app:=app.Group("/auth")
     {
         auth_app.GET( "/login", index.Login() )

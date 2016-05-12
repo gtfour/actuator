@@ -1,9 +1,13 @@
 wapourApp.controller('appController',['settingsService','websocketService','$scope', function initController(settingsService,websocketService, $scope) {
     $scope.initApp = function(settings) {
         settingsService.setSettings(settings);
-        websocketService.createWsConnection(settings["ws_url"]);
+        app_settings = settingsService.getSettings();
+        if (app_settings.websocket == true){
+            websocketService.createWsConnection(settings["ws_url"]);
+        }
     };
     $scope.$on("$destroy", function(){
+        
         websocketService.closeWsConnection();
         console.log("Exit from initController . Closing ws-connetion");
     });

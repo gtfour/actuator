@@ -36,8 +36,15 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 </head>
+{{if .websocket }}
+<body class="hold-transition skin-blue-light sidebar-mini" ng-app="wapourApp" ng-controller="appController" ng-init="initApp({'ws_url':'{{.ws_url}}','get_data_url':'{{ .get_data_url }}', 'session_id':'{{ .session_id }}', 'app_data_url':'{{ .app_data_url }}', 'websocket':'{{.websocket}}'})">
+{{else}}
 
-<body class="hold-transition skin-blue-light sidebar-mini" ng-app="wapourApp" ng-controller="appController" ng-init="initApp({'ws_url':'{{.ws_url}}','get_data_url':'{{ .get_data_url }}', 'session_id':'{{ .session_id }}'})">
+<body class="hold-transition skin-blue-light sidebar-mini" ng-app="wapourApp" ng-controller="appController" ng-init="initApp({'get_data_url':'{{ .get_data_url }}', 'app_data_url':{{ .app_data_url }}, 'websocket':'{{.websocket}}'  })">
+
+<!-- websocket == false  -->
+
+{{end}}
 <div class="wrapper" ng-controller="mainController">
 
   <!-- Tests -->

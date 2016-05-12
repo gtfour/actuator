@@ -4,13 +4,13 @@ import "github.com/gin-gonic/gin"
 //##################################
 //##################################
 //##################################
-var SERVER_ADDR          = "127.0.0.1"
-//var SERVER_ADDR          = "10.10.111.143"
+//var SERVER_ADDR          = "127.0.0.1"
+var SERVER_ADDR          = "10.10.111.143"
 var SERVER_PROTO         = "http"
 var SERVER_PORT          = "8090"
 var SERVER_URL           = SERVER_PROTO+"://"+SERVER_ADDR+":"+SERVER_PORT
-var RESTAPI_SERVER_ADDR  = "127.0.0.1"
-//var RESTAPI_SERVER_ADDR  = "10.10.111.143"
+//var RESTAPI_SERVER_ADDR  = "127.0.0.1"
+var RESTAPI_SERVER_ADDR  = "10.10.111.143"
 var RESTAPI_SERVER_PROTO = "http"
 var RESTAPI_SERVER_PORT  = "9000"
 var RESTAPI_URL          = RESTAPI_SERVER_PROTO+"://"+RESTAPI_SERVER_ADDR+":"+RESTAPI_SERVER_PORT
@@ -38,7 +38,9 @@ var ONLINE_USERS_STORAGE_TYPE = "ram"
 //##################################
 //##################################
 //##################################
-var APP_SETTINGS = gin.H{ "static_url":STATIC_URL, "ws_url":WS_URL, "get_data_url":GET_DATA_URL }
+var APP_SETTINGS       = gin.H{ "static_url":STATIC_URL, "ws_url":WS_URL, "get_data_url":GET_DATA_URL }
+var USERSPACE_DATA_URL ="/appdata"
+var ADMIN_DATA_URL     ="/index-data"
 //##################################
 //##################################
 //##################################

@@ -4,6 +4,8 @@ wapourApp.service('settingsService', ['$q','$rootScope', function($q, $rootScope
     Settings["ws_url"]       = "" ;
     Settings["get_data_url"] = "" ;
     Settings["session_id"]   = "" ;
+    Settings["app_data_url"] = "" ;
+    Settings["websocket"]    = false ;
     function setSettings( settings ) {
         for ( var key in settings ){
             if (key == "ws_url") {
@@ -11,12 +13,20 @@ wapourApp.service('settingsService', ['$q','$rootScope', function($q, $rootScope
             }
             if (key == "get_data_url") {
                 Settings["get_data_url"] = settings["get_data_url"];
-
             }
             if (key == "session_id") {
                 Settings["session_id"] = settings["session_id"];
-
             }
+            if (key == "app_data_url") {
+                Settings["app_data_url"] = settings["app_data_url"];
+            }
+            if (key == "websocket") {
+                if ( settings["websocket"] == 'true' ) {
+                    Settings["websocket"] = true;
+                } 
+            }
+
+
         }
         console.log("settingsService:"+JSON.stringify(Settings))
     }
@@ -35,13 +45,16 @@ wapourApp.factory('dashboardDataService',['websocketService','settingsService','
     var callbacks_url = [];
     function SelectDashboardById(dashboard_id, dashboard_group_id) {
         settings               = settingsService.getSettings();
-        session_id             = settings["session_id"];
-        var data               = {};
-        var message            = {"datatype":"message_switch_dashboard"};
-        var selected_dashboard = {"dashboardgroupid":dashboard_group_id, "dashboardid":dashboard_id};
-        message["data"]        = selected_dashboard ;
-        message["session_id"]  = session_id ;
-        websocketService.sendRequest(message)
+        if ( settings.websocket == true ) {
+            var session_id         = settings["session_id"];
+            var data               = {};
+            var message            = {"datatype":"message_switch_dashboard"};
+            var selected_dashboard = {"dashboardgroupid":dashboard_group_id, "dashboardid":dashboard_id};
+
+            message["data"]        = selected_dashboard ;
+            message["session_id"]  = session_id ;
+            websocketService.sendRequest(message)
+        }
         Notify(dashboard_id, dashboard_group_id);
     }
 

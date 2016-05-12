@@ -19,6 +19,8 @@ func Index()(func (c *gin.Context)) {
             data           := settings.APP_SETTINGS
             data["navigation_items"] = navigaton_menu
             data["session_id"]       = session_id
+            data["websocket"]        = "true"
+            data["app_data_url"]     = settings.USERSPACE_DATA_URL
             c.HTML(200, template_name,  data )
         } else {
             c.Redirect(302,"/auth/login?redirect_to="+self_link)
