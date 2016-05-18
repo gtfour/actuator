@@ -61,7 +61,16 @@ wapourApp.controller('dashboardController', ['$scope','dashboardDataService', fu
     $scope.dashboard_data = {} ;
 
     var notifier = function(dashboard_id, dashboard_group_id) {
-        $scope.dashboard_data = dashboardDataService.GetDashboardData(dashboard_id, dashboard_group_id); 
+        console.log("::calling callback::");
+        //$scope.dashboard_data = dashboardDataService.GetDashboardData(dashboard_id, dashboard_group_id); 
+        var data_promise = dashboardDataService.GetDashboardData(dashboard_id, dashboard_group_id);
+        data_promise.then(function(result) {
+           if (result.status == "ok") {
+               console.log("Result data");
+               console.log(result.data) ; 
+           }
+           return result;
+        });
         console.log("-- dashboard_data --")
         console.log($scope.dashboard_data);
     }

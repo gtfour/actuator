@@ -81,10 +81,11 @@ wapourApp.factory('dashboardDataService',['websocketService','settingsService','
         var get_data_url = settings["get_data_url"];
         var dashboard_url = get_data_url+dashboard_group_id+"/"+dashboard_id
         var data_promise = GetHttp(dashboard_url);
-        data_promise.then(function(result) {  
-           console.log(result);
-           return result;
-        });
+        //data_promise.then(function(result) {  
+        //   return result;
+        //});
+        // returning promise
+        return data_promise ; 
     }
     function GetDashboardDataByUrl(dashboard_url) {
         var settings     = settingsService.getSettings();
@@ -97,12 +98,14 @@ wapourApp.factory('dashboardDataService',['websocketService','settingsService','
         });
     }
     function AddCallback(callback) {
+        console.log("Adding callback");
         callbacks.push(callback);
     }
     function AddUrlCallback(callback) {
         callbacks_url.push(callback);
     }
     function Notify(dashboard_id, dashboard_group_id){
+        console.log("<<notify>>");
         for (var key in callbacks){
             var callback = callbacks[key];
             callback(dashboard_id, dashboard_group_id);
