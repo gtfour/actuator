@@ -18,17 +18,17 @@ type DashboardGroupList struct{
 
 
 type Dashboard struct {
-
     Id           string
     Name         string
     Title        string
+    Icon         string
     Url          string
     Composition  []Component
-
 }
 
 type DashboardGroup struct{
     Id    string
+    Name  string
     Title string
     Icon  string
     List  []string

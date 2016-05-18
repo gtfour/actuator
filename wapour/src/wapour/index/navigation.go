@@ -35,16 +35,15 @@ func GetNavigationMenuJson()( gin.H ){
 
     default_icon:="fa fa-circle-o"
 
-    hostsList   :=gin.H{"name":"list","url":JSON_URL_HEADER+"/hosts",  "icon":default_icon}
-    filesList   :=gin.H{"name":"list","url":JSON_URL_HEADER+"/files",  "icon":default_icon}
-    actionsList :=gin.H{"name":"list","url":JSON_URL_HEADER+"/actions","icon":default_icon}
-    wsMessages  :=gin.H{"name":"messages","url":JSON_URL_HEADER+"/websocket","icon":default_icon}
+    hostsList   :=gin.H{"name":"list","title":"List","url":JSON_URL_HEADER+"/hosts",  "icon":default_icon}
+    filesList   :=gin.H{"name":"list","title":"List","url":JSON_URL_HEADER+"/files",  "icon":default_icon}
+    actionsList :=gin.H{"name":"list","title":"List","url":JSON_URL_HEADER+"/actions","icon":default_icon}
+    wsMessages  :=gin.H{"name":"messages","title":"Messages","url":JSON_URL_HEADER+"/websocket","icon":default_icon}
 
-
-    hosts_item   := gin.H{"name":"Hosts",   "subitems":[]gin.H{hostsList}  , "icon":"fa-desktop"}
-    files_item   := gin.H{"name":"Files",   "subitems":[]gin.H{filesList}  , "icon":"fa-stack-overflow"}
-    actions_item := gin.H{"name":"Actions", "subitems":[]gin.H{actionsList}, "icon":"fa-gamepad"}
-    ws_item      := gin.H{"name":"WebSocket", "subitems":[]gin.H{wsMessages}, "icon":"fa-flash"}
+    hosts_item   := gin.H{"name":"Hosts",    "title":"Hosts"     ,"subitems":[]gin.H{hostsList}  , "icon":"fa-desktop"}
+    files_item   := gin.H{"name":"Files",    "title":"Files"     , "subitems":[]gin.H{filesList}  , "icon":"fa-stack-overflow"}
+    actions_item := gin.H{"name":"Actions",  "title":"Actions"   , "subitems":[]gin.H{actionsList}, "icon":"fa-gamepad"}
+    ws_item      := gin.H{"name":"WebSocket","title":"WebSocket" , "subitems":[]gin.H{wsMessages}, "icon":"fa-flash"}
 
     menu_name:="Admin Dashboard"
     //navigation_menu["menu_name"]  = menu_name

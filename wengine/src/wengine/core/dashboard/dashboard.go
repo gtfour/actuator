@@ -10,6 +10,7 @@ type DashboardGroupList struct{
 
 type DashboardGroup struct{
     Id    string
+    Name  string
     Title string
     Icon  string
     List  []string
@@ -19,6 +20,7 @@ type Dashboard struct {
     Id           string
     Name         string
     Title        string
+    Icon         string
     Url          string
     Composition  []Component
 }

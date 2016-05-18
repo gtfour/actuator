@@ -15,12 +15,12 @@ func main() {
     user_riah_id,_        := d.CreateUser(user_riah)
     user_kelly_id,_        := d.CreateUser(user_kelly)
 
-    new_dashboard1       :=&dashboard.Dashboard{Id:"groups_dashboard",              Title:"Groups",     Url:"groups-dashboard"}
-    new_dashboard2       :=&dashboard.Dashboard{Id:"networking_hosts_dashboard",    Title:"Hosts",      Url:"networking-hosts-dashboard"}
-    new_dashboard3       :=&dashboard.Dashboard{Id:"networking_nsswitch_dashboard", Title:"Nsswitch",   Url:"networking-nsswitch-dashboard"}
-    new_dashboard4       :=&dashboard.Dashboard{Id:"hardware_partitions_dashboard", Title:"Partitions", Url:"hardware-partitions-dashboard"}
-    new_dashboard5       :=&dashboard.Dashboard{Id:"hardware_dmidecode_dashboard",  Title:"Dmidecode",  Url:"hardware-dmidecode-dashboard"}
-    new_dashboard6       :=&dashboard.Dashboard{Id:"users_dashboard",               Title:"Users",      Url:"users-dashboard"}
+    new_dashboard1       :=&dashboard.Dashboard{Id:"groups_dashboard",              Title:"Groups",     Url:"groups-dashboard", Icon:"fa fa-circle-o"}
+    new_dashboard2       :=&dashboard.Dashboard{Id:"networking_hosts_dashboard",    Title:"Hosts",      Url:"networking-hosts-dashboard", Icon:"fa fa-circle-o"}
+    new_dashboard3       :=&dashboard.Dashboard{Id:"networking_nsswitch_dashboard", Title:"Nsswitch",   Url:"networking-nsswitch-dashboard", Icon:"fa fa-circle-o"}
+    new_dashboard4       :=&dashboard.Dashboard{Id:"hardware_partitions_dashboard", Title:"Partitions", Url:"hardware-partitions-dashboard", Icon:"fa fa-circle-o"}
+    new_dashboard5       :=&dashboard.Dashboard{Id:"hardware_dmidecode_dashboard",  Title:"Dmidecode",  Url:"hardware-dmidecode-dashboard", Icon:"fa fa-circle-o"}
+    new_dashboard6       :=&dashboard.Dashboard{Id:"users_dashboard",               Title:"Users",      Url:"users-dashboard", Icon:"fa fa-circle-o"}
 
     d1_id,_    :=d.CreateDashboard(new_dashboard1)
     d2_id,_    :=d.CreateDashboard(new_dashboard2)
@@ -58,9 +58,9 @@ func main() {
     //token,err:=d.CreateToken("C5952D91-9AA5-4EEB-A21A-F138445103D5")
     //fmt.Printf("token exists %v",d.TokenExists("AF35CEFC-1AEA-A399-7448-C2EF4B80E77F", "8D52B9F2-2E19-427F-4E72-04AF9BF91571"))
     //fmt.Printf("New token: %s Err: %v",token,err)
-    dgroup_usermanagement := &dashboard.DashboardGroup{Icon:"fa-child",Title:"User Management",List:[]string{d1_id,d6_id}}
-    dgroup_networking     := &dashboard.DashboardGroup{Icon:"fa-share-alt-square",Title:"Networking",List:[]string{d2_id,d3_id}}
-    dgroup_hardware       := &dashboard.DashboardGroup{Icon:"fa-tv",Title:"Hardware",List:[]string{d4_id,d5_id}}
+    dgroup_usermanagement := &dashboard.DashboardGroup{Icon:"fa-child"           ,Title:"User Management",Name:"user_management",List:[]string{d1_id,d6_id}}
+    dgroup_networking     := &dashboard.DashboardGroup{Icon:"fa-share-alt-square",Title:"Networking"     ,Name:"networking"     ,List:[]string{d2_id,d3_id}}
+    dgroup_hardware       := &dashboard.DashboardGroup{Icon:"fa-tv"              ,Title:"Hardware"       ,Name:"hardware"       ,List:[]string{d4_id,d5_id}}
 
     dg1_id,_:=d.CreateDashboardGroup(dgroup_usermanagement)
     dg2_id,_:=d.CreateDashboardGroup(dgroup_networking)

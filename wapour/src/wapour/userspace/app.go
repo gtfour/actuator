@@ -1,4 +1,5 @@
 package userspace
+
 import "github.com/gin-gonic/gin"
 import "wapour/api/webclient"
 import "wapour/auth"
@@ -34,8 +35,9 @@ func UserspaceData()(func (c *gin.Context)) {
         if user_id,token_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c) && err==nil {
             dashboards               := webclient.GetUserDashboards(user_id, token_id)
             data                     := settings.APP_SETTINGS
-            data["navigation_items"] =  dashboards
-            c.JSON(200, data)
+            data["navigation_menu"] =  CreateNavigationMenuJson(dashboards)
+            //data["status"]           = "ok"
+            c.JSON(200, gin.H{"status": "ok","data":data})
         } else {
             c.JSON(401, gin.H{"status": "Unauthorized","data":gin.H{}})
         }
