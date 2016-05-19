@@ -54,11 +54,13 @@ type UserMethods interface {
 
 type DashboardMethods interface {
 
-    CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id string, err error)
     // DashboardGroupMethods
+    CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id string, err error)
     DashboardExists(dashboard_id string)(bool)
     AttachDashboardToUser(user_id,dash_id string)(error)
     GetMyDashboardList(user_id,token_id string)(dashboard_list dashboard.DashboardList, err error)
+    //GetDashboardData(dashboard_group_id string,dashboard_id string)()
+    //UpdateDashboardData(dashboard_group_id string,dashboard_id string, dashboard_data )
 
 }
 

@@ -9,7 +9,7 @@ import "wapour/api/wengine"
 
 
 var USER_DASHBOARD_LIST_URL string = "/rest/user/get-my-dashboards"
-var USER_GET_DASHBOARD_DATA string = "/rest/user/get-dashboard-data"
+var USER_GET_DASHBOARD_DATA string = "/rest/dashboard/get-dashboard-data"
 
 type DashboardListResult struct {
     Status             string                     `json:"status"`

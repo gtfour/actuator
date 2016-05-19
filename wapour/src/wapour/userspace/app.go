@@ -1,5 +1,6 @@
 package userspace
 
+import "fmt"
 import "github.com/gin-gonic/gin"
 import "wapour/api/webclient"
 import "wapour/auth"
@@ -49,7 +50,8 @@ func GetDashboardData()(func (c *gin.Context)) {
     return  func(c *gin.Context ){
         if user_id,token_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c) && err==nil {
             dashboardId        := c.Param("dashboardId")
-            _                  = c.Param("dashboardGroupId")
+            dashboardGroupId   := c.Param("dashboardGroupId")
+            fmt.Printf("\nDashboard %v DashboardGroup %v\n",dashboardId,dashboardGroupId)
             dashboard_data,_ := webclient.GetDashboardData(user_id, token_id, dashboardId)
             c.JSON(200, gin.H{"status": "ok","data":dashboard_data})
         } else {

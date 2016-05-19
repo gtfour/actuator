@@ -16,6 +16,8 @@ func main() {
     {
         restapp.POST("/user/:duskModuleName", rest.DuskUserRoute( gin.H{},  database ) )
         restapp.GET("/user/:duskModuleName",  rest.DuskUserRoute( gin.H{},  database ) )
+        restapp.GET("/dashboard/get-dashboard-data/:dashboardGroupId/:dashboardId/",  rest.GetDashboardData( gin.H{},  database ) )
+        restapp.POST("/dashboard/set-dashboard-data/", rest.SetDashboardData( gin.H{},  database ) )
     }
     app.Run(":9000")
 
