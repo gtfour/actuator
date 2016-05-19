@@ -1,4 +1,4 @@
-package arista
+package aristo
 
 type Object struct {
 

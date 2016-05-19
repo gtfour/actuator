@@ -1,7 +1,7 @@
-package arista
+package aristo
 import "errors"
 
-var base_word = "arista"
+var base_word = "aristo"
 
 func errwrap(in string)(string) {
     return base_word+":"+in
