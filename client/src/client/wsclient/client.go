@@ -1,8 +1,11 @@
-package main
+//package main
+package wsclient
+
 //package wsclient
 
 import (
-       "code.google.com/p/go.net/websocket"
+       //"code.google.com/p/go.net/websocket"
+       "golang.org/x/net/websocket"
        "fmt"
        "log"
        "encoding/json"
@@ -21,6 +24,8 @@ type Event struct {
     //Release  string
 
 }
+
+
 
 func CreateConnection ( origin, url string ) ( ws *websocket.Conn, err error ) {
 
