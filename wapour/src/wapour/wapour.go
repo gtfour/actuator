@@ -48,7 +48,7 @@ func main() {
         auth_app.POST("/login", index.LoginPost() )
         auth_app.GET( "/logout" , index.Logout()  )
     }
-    server:=ws.NewServer("/entry")
+    server := ws.NewServer("/entry")
     go server.Listen()
     app.GET("/entry", ws.WSserver(gin.H{}, server.WShandler))
     app.Run(":8090")
