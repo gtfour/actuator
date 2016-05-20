@@ -1,15 +1,14 @@
 //package main
 package wsclient
 
-//package wsclient
+import "fmt"
+import "log"
+import "encoding/json"
+import "golang.org/x/net/websocket"
+import "client/settings"
 
-import (
-       //"code.google.com/p/go.net/websocket"
-       "golang.org/x/net/websocket"
-       "fmt"
-       "log"
-       "encoding/json"
-)
+var WebSocketConnection, WebSocketConnectionError = CreateConnection(settings.RESTAPI_WS_ORIGIN, settings.RESTAPI_WS_URL)
+
 
 type Event struct {
 
@@ -27,7 +26,7 @@ type Event struct {
 
 
 
-func CreateConnection ( origin, url string ) ( ws *websocket.Conn, err error ) {
+func CreateConnection ( origin string, url string ) ( ws *websocket.Conn, err error ) {
 
     protocol  :=  ""
 

@@ -1,15 +1,15 @@
 package wsclient
 
-import "client/settings"
+//import "client/settings"
 
-var Connection   =  CreateConnection()
-
-
-
-func CreateConnection() () {
+//var Connection   =  CreateConnection()
 
 
 
-}
+//func CreateConnection() () {
+
+
+
+//}
 
 

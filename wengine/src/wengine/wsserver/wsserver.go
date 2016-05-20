@@ -2,10 +2,11 @@ package wsserver
 
 import "log"
 import "golang.org/x/net/websocket"
+import "github.com/gin-gonic/gin"
 import "wengine/settings"
 // import "golang.org/x/net/websocket"
 
-var WebsocketServer = CreateServer(settings.WS_DATA_URL)
+var WebSocketServer = CreateServer(settings.WS_DATA_URL)
 
 type Server struct {
 
@@ -57,7 +58,10 @@ func CreateServer (pattern string) *Server {
         client.Listen()
     }
     s.WShandler = websocket.Handler(onConnected)
-
+    // test
+    go s.Listen()
+    log.Printf("Server has been created :)\nServer is listening connection :)\n")
+    // test
     return s
 }
 //
@@ -109,3 +113,10 @@ func (s *Server) Listen() {
     }
 }
 
+func WebSocketHandle(data gin.H)( func(c *gin.Context) ) {
+
+    return func(c *gin.Context)  {
+            handler := WebSocketServer.WShandler
+            handler.ServeHTTP(c.Writer, c.Request)
+    }
+}

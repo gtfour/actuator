@@ -4,10 +4,10 @@ package wsclient
 
 
 
-type Event struct {
+//type Event struct {
 
-    Author string
-    Body string
+//    Author string
+//    Body string
     //Name     string
     //Type     string
     //FilePath string
@@ -15,12 +15,7 @@ type Event struct {
     //Os       string
     //Version  string
     //Release  string
+//}
 
-}
-
-func ( event *Event )  () {
-
-
-
-
-}
+//func ( event *Event )  () {
+//}
