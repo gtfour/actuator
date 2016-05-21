@@ -3,11 +3,11 @@ package wsclient
 
 import "fmt"
 import "log"
-import "encoding/json"
+//import "encoding/json"
 import "golang.org/x/net/websocket"
 import "client/settings"
 
-var WebSocketConnection, WebSocketConnectionError = CreateConnection(settings.RESTAPI_WS_ORIGIN, settings.RESTAPI_WS_URL)
+var WsConn = CreateConnection(settings.RESTAPI_WS_ORIGIN, settings.RESTAPI_WS_URL)
 
 
 type Event struct {
@@ -24,27 +24,68 @@ type Event struct {
 
 }
 
+type WebSocketConnection struct {
 
+    ws         *websocket.Conn
+    InChannel  chan *Message
+    OutChannel chan *Message
+    OpenError  error
 
-func CreateConnection ( origin string, url string ) ( ws *websocket.Conn, err error ) {
+}
 
-    protocol  :=  ""
+func (wsconn *WebSocketConnection) Handle()(error) {
+    if wsconn.OpenError == nil {
+        for {
+            select {
+                case message :=<-wsconn.InChannel:
+                    message_raw,_:=message.Data.GetRaw()
+                    if test,err := wsconn.ws.Write(message_raw) ; err != nil {
+                        fmt.Println(test)
+                        log.Fatal(err)
+                    }
+            }
+        }
+    } else {
+        fmt.Printf("\nError while opening ws connection\n")
 
-    ws,err    =  websocket.Dial( url, protocol, url )
-
-    if err != nil {
-
-       return
 
     }
+    return nil
+}
 
-    return
+func (wsconn *WebSocketConnection) Write(m *Message )( ) {
+    wsconn.InChannel <- m
+}
+
+
+
+func CreateConnection ( origin string, url string ) (  *WebSocketConnection ) {
+
+    fmt.Printf("Creating connection:\norigin:%v\nurl:%v\n",origin,url)
+
+    wsConn:=&WebSocketConnection{}
+    protocol  :=  ""
+    ws,err    :=  websocket.Dial( url, protocol, url )
+
+    if err != nil {
+       wsConn.OpenError = err
+       return wsConn
+
+    } else {
+        wsConn.ws         = ws
+        wsConn.InChannel  = make(chan *Message, 100)
+        wsConn.OutChannel = make(chan *Message, 100)
+        wsConn.OpenError  = nil
+        go wsConn.Handle()
+        fmt.Printf("\nws-connection has been opened\n")
+        return wsConn
+    }
 }
 
 
 
 
-func main() {
+/*func main() {
 
     origin    :=  "http://127.0.0.1"
     url       :=  "ws://127.0.0.1:8090/entry"
@@ -82,4 +123,4 @@ func main() {
 
     fmt.Printf("Received: %s.\n",msg[:n])
 
-}
+}*/

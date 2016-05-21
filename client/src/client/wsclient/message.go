@@ -1,15 +1,17 @@
 package wsclient
 
+import "encoding/json"
+
 // marconi message
 
-type MessageUpdate struct {
-    DataType   string          `json:"datatype"`
-    Data       DataUpdate      `json:"data"`
+type Message struct {
+    DataType   string `json:"datatype"`
+    Data       Data   `json:"data"`
 }
 
 type DataUpdate struct {
 
-    SourceType string // file or command ( actuator or balckout  )
+    SourceType string // file or command ( actuator or blackout  )
     SourceName string
     SourcePath string // /filename or /command_name
     UpdateType string // Update,Append,Remove,RemoveFile
@@ -18,6 +20,15 @@ type DataUpdate struct {
     ServerTime string
     ServerId   string
 
+}
+
+func ( data DataUpdate) GetRaw ()([]byte, error) {
+    raw,err:=json.Marshal(data)
+    return raw,err
+}
+
+type Data interface {
+    GetRaw()([]byte, error)
 }
 
 

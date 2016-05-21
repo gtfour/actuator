@@ -2,6 +2,7 @@ package evebridge
 
 import "time"
 import "fmt"
+import "client/wsclient"
 
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
@@ -35,6 +36,7 @@ type MngMessage struct {
     path   string
 }
 
+/*
 type DataUpdate struct {
 
     SourceType string // file or command ( actuator or balckout  )
@@ -47,12 +49,18 @@ type DataUpdate struct {
     ServerId   string
 
 }
-
+*/
 
 func Handle(messages chan CompNotes )() {
+        var websocket_connection = wsclient.WsConn
         for {
             select{
                 case message:=<-messages:
+                    var ws_message_data = wsclient.DataUpdate{SourcePath:message.Path}
+                    var ws_message = &wsclient.Message{DataType:"data_update",Data:ws_message_data}
+                    fmt.Printf("\nStart writing\n")
+                    websocket_connection.Write(ws_message)
+                    fmt.Printf("\nFinish writing\n")
                     fmt.Printf("Message: %v HaveToParse: %v\n",message,message.FieldExists("HashSum"))
                 default:
                     time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
