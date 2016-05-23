@@ -4,7 +4,6 @@ type Dynima struct {
 
 
 
-
 }
 
 
