@@ -89,7 +89,7 @@ func (c *Client) listenRead(){
                 c.server.Error(err)
             } else {
                 data_type := msg.DataType
-                if data_type == "message_data_update" {
+                if data_type == "data_update" {
                     var msg_du marconi.DataUpdate
                     data:=msg.Data
                     err_unmarshal:=json.Unmarshal(data, &msg_du)

@@ -57,11 +57,14 @@ func Handle(messages chan CompNotes )() {
             select{
                 case message:=<-messages:
                     var ws_message_data = wsclient.DataUpdate{SourcePath:message.Path}
-                    var ws_message = &wsclient.Message{DataType:"data_update",Data:ws_message_data}
-                    fmt.Printf("\nStart writing\n")
-                    websocket_connection.Write(ws_message)
-                    fmt.Printf("\nFinish writing\n")
-                    fmt.Printf("Message: %v HaveToParse: %v\n",message,message.FieldExists("HashSum"))
+                    message_data_raw,err:= ws_message_data.GetRaw()
+                    if err == nil {
+                        var ws_message = &wsclient.Message{DataType:"data_update",Data:message_data_raw}
+                        fmt.Printf("\nStart writing\n")
+                        websocket_connection.Write(ws_message)
+                        fmt.Printf("\nFinish writing\n")
+                        fmt.Printf("Message: %v HaveToParse: %v\n",message,message.FieldExists("HashSum"))
+                    }
                 default:
                     time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
                     //fmt.Println("No messages")

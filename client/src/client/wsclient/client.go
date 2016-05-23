@@ -38,7 +38,7 @@ func (wsconn *WebSocketConnection) Handle()(error) {
         for {
             select {
                 case message :=<-wsconn.InChannel:
-                    message_raw,_:=message.Data.GetRaw()
+                    message_raw,_:=message.GetRaw()
                     if test,err := wsconn.ws.Write(message_raw) ; err != nil {
                         fmt.Println(test)
                         log.Fatal(err)

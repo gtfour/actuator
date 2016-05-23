@@ -6,7 +6,8 @@ import "encoding/json"
 
 type Message struct {
     DataType   string `json:"datatype"`
-    Data       Data   `json:"data"`
+    //Data       Data   `json:"data"`
+    Data       json.RawMessage `json:"data"`
 }
 
 type DataUpdate struct {
@@ -22,14 +23,19 @@ type DataUpdate struct {
 
 }
 
-func ( data DataUpdate) GetRaw ()([]byte, error) {
+func ( message *Message) GetRaw ()([]byte, error) {
+    raw,err:=json.Marshal(message)
+    return raw,err
+}
+
+func ( data *DataUpdate) GetRaw ()([]byte, error) {
     raw,err:=json.Marshal(data)
     return raw,err
 }
 
-type Data interface {
-    GetRaw()([]byte, error)
-}
+//type Data interface {
+//    GetRaw()([]byte, error)
+//}
 
 
 
