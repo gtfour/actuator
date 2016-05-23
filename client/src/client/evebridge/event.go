@@ -23,6 +23,16 @@ type Event struct {
 type CompNotes struct {
     Path  string
     State int8
+    //
+    SourceType string // file or command ( actuator or blackout  )
+    SourceName string
+    SourcePath string // /filename or /command_name
+    //UpdateType string // Update,Append,Remove,RemoveFile
+    //UpdateData string //
+    DataHash   string
+    //ServerTime string
+    //ServerId   string
+    //
     List  []CompNote
 }
 
@@ -56,7 +66,7 @@ func Handle(messages chan CompNotes )() {
         for {
             select{
                 case message:=<-messages:
-                    var ws_message_data = wsclient.DataUpdate{SourcePath:message.Path}
+                    var ws_message_data = wsclient.DataUpdate{ SourcePath:message.Path, SourceType:message.SourceType }
                     message_data_raw,err:= ws_message_data.GetRaw()
                     if err == nil {
                         var ws_message = &wsclient.Message{DataType:"data_update",Data:message_data_raw}

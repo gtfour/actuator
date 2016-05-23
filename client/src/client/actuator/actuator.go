@@ -362,6 +362,11 @@ func CompareProp(old_prop,new_prop *Prop, path string)(cnotes evebridge.CompNote
 
     //fmt.Printf("\n Compare prop: %s %s %s\n",path,valueOld.Kind(),valueNew.Kind())
     //fmt.Printf("\n"+fmt.Sprint(valueOld.Kind())+" -- "+fmt.Sprint(valueNew.Kind())+"\n")
+    if (new_prop.IsDir == true ) {
+        cnotes.SourceType = "dir"
+    } else if ( new_prop.IsRegular == true ) {
+        cnotes.SourceType = "file"
+    }
 
     field:=reflect.TypeOf(old_prop).Elem()
 

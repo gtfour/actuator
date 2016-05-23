@@ -81,7 +81,7 @@ func (c *Client) listenRead(){
             //var msg MessageType
             var msg Message
             err := websocket.JSON.Receive(c.ws, &msg)
-            fmt.Printf("\nMessage : %v\n",msg)
+            //fmt.Printf("\nMessage : %v\n",msg)
 
             if err == io.EOF {
                 c.doneChannel <- true
