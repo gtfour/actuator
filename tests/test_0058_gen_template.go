@@ -52,17 +52,16 @@ func GetFixedArrayChars(lineAsArray []string, data_indexes[][]int) (string) {
 
     word:=""
     template_variable_counter:=0
-    //pending_index            :=-1
 
     for i := range  lineAsArray {
+        last_pair_index:=-1
         on_interval:=false
         for z := range data_indexes {
             pair:=data_indexes[z]
             if DigitInInterval(i, pair) == DIGIT_IN_INTERVAL {
                 on_interval = true
-                if ( i<len(lineAsArray)-1 && DigitInInterval(i+1, pair) == DIGIT_IN_INTERVAL ) {
-                    next_symbol:=i+1
-
+                if len(pair) == 2 {
+                    last_pair_index = pair[1]
                 }
                 break
             }
@@ -74,6 +73,7 @@ func GetFixedArrayChars(lineAsArray []string, data_indexes[][]int) (string) {
         } else {
             word=word+fmt.Sprintf("{{index .Data %d}}",template_variable_counter)
             template_variable_counter+=1
+            i = last_pair_index
         }
     }
     fmt.Printf("\nword %s\n",word)
