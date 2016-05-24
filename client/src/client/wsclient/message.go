@@ -6,7 +6,6 @@ import "encoding/json"
 
 type Message struct {
     DataType   string `json:"datatype"`
-    //Data       Data   `json:"data"`
     Data       json.RawMessage `json:"data"`
 }
 
@@ -33,10 +32,18 @@ func ( data *DataUpdate) GetRaw ()([]byte, error) {
     return raw,err
 }
 
-//type Data interface {
-//    GetRaw()([]byte, error)
-//}
+type DataModify struct {
 
+    DynimaId   string
+    SourceType string // file or command ( actuator or blackout  )
+    SourceName string
+    SourcePath string // /filename or /command_name
+    UpdateType string // Update,Append,Remove,RemoveFile
+    UpdateData string //
+    DataHash   string
+    ServerTime string
+    ServerId   string
 
+}
 
 
