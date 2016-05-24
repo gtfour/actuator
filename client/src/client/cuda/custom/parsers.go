@@ -1,7 +1,8 @@
 package custom
+import "client/cuda"
 
-var shitty_parser = Parser{Name:"shitty",
+var shitty_parser = cuda.Parser{Name:"shitty",
                            Call:func( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
-                                    return delims,data
-                           }
+                               return delims,data
+                           },
                     }

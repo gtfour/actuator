@@ -26,7 +26,7 @@ type Section struct {
 
 }
 
-
+/*
 func Parser(entry string) ( interface{} ) {
 
     sub_entries      :=  strings.Split(entry," ")
@@ -41,7 +41,7 @@ func Parser(entry string) ( interface{} ) {
 
     return nil
 }
-
+*/
 func Escape_Spaces (oldlineAsArray []string) (indexes [][]int) {
     // 
     // Duplicate spaces will be present as one : wrong specification !!!

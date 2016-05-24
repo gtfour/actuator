@@ -1,9 +1,10 @@
 package sisb
-import "github.com/boltdb/bolt"
+
 import "fmt"
 import "io/ioutil"
+import "github.com/boltdb/bolt"
+import "client/settings"
 
-var db_path string =  "/tmp/sis.db"
 var comments =  []string {`//` , `#`}
 
 type Storage struct {
@@ -28,7 +29,7 @@ type Difference struct {
 
 
 func Open()(s Storage) {
-    db, err := bolt.Open(db_path, 0600, nil)
+    db, err := bolt.Open(settings.SYSTEM_DATABASE, 0600, nil)
     if err!= nil { s.Error = true ; return } else { s.Db = db }
     return
 

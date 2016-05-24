@@ -20,4 +20,7 @@ var CLIENT_ID                    = ""
 //var PKI_DIR                      = "/top_secret_dir"
 var PUBKEY_PATH                  = "/top_secret_dir/pub.rsa"
 var PRIVATEKEY_PATH              = "/top_secret_dir/private.rsa"
+//
+//
+var SYSTEM_DATABASE              = "/tmp/sis.db"
 
