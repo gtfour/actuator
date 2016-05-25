@@ -42,3 +42,4 @@ func (d *Dynima) SetTemplate()(error) {
 func (d *Dynima) SetSource (sourceType string, sourcePath string)(error) {
     return nil
 }
+

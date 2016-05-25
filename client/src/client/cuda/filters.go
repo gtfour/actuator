@@ -1,10 +1,12 @@
 package cuda
 
 import "errors"
+//import "client/cuda/custom"
 
 var dup_name     = errors.New("error:filter with following name is already exist")
 var name_is_none = errors.New("error:filter name wasn't specified")
 
+var GetCustonFilters = func()(fl FilterList){ return fl  } ;
 var Filters = CreateFilterList()
 
 
@@ -26,16 +28,34 @@ func (fl FilterList) Append (new_filter Filter)(error) {
 
 type Filter struct {
 
-    Name string
-    Call func( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int)
+    Name     string
+    Enabled  bool
+    Call     func( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int)
 
 }
 
 
 func CreateFilterList ()(FilterList) {
 
-    fl := make(FilterList, 0)
-    //pl.Append(shitty_parser)
+    fl := make(FilterList,0)
+
+    var url_filter      = Filter{Name:"url_filter",      Call:UrlFilter,      Enabled:true}
+    var path_filter     = Filter{Name:"path_filter",     Call:PathFilter,     Enabled:true}
+    var brackets_filter = Filter{Name:"brackets_filter", Call:BracketsFilter, Enabled:true}
+    var quotes_filter   = Filter{Name:"quotes_filter",   Call:QuotesFilter,   Enabled:true}
+
+
+    fl.Append(url_filter)
+    fl.Append(path_filter)
+    fl.Append(brackets_filter)
+    fl.Append(quotes_filter)
+
+    var custom_filters = GetCustonFilters()
+    for i:= range custom_filters {
+        filter:=custom_filters[i]
+        fl.Append(filter)
+    }
+
     return fl
 
 }

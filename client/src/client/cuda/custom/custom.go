@@ -3,7 +3,9 @@ package custom
 import "client/cuda"
 
 
-var CustomFilters = CreateCustomFilterList()
+//var CustomFilters = CreateCustomFilterList()
+
+cuda.GetCustonFilters = CreateCustomFilterList
 
 
 
