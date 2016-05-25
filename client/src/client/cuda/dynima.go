@@ -2,32 +2,43 @@ package cuda
 
 type Dynima struct {
     //parsers    
+    Id              string
     ids             []int // id column number
     SourcePath      string
     SourceType      string
     header          []string
     data            [][]string
-    parsers         ParserList
-    insert_template 
+    filters         FilterList
+    template        string
+    data_indexes    [][]int
+    delim_indexes   [][]int
 }
 
 
-func (d *Dynima) BindParser (parser_name string)(error) {
+func (d *Dynima) BindFilter (filter_name string)(error) {
     return nil
 }
 
-func (d *Dynima) UnbindParser (parser_name string)(error) {
+func (d *Dynima) UnbindFilter (filter_name string)(error) {
     return nil
 }
 
-func (d *Dynima) RunParser (parser_name string)(error) {
-    return nil
-}
+//func (d *Dynima) RunFilter (filter_name string)(error) {
+//    return nil
+//}
 
 func (d *Dynima) Save ()(error) {
     return nil
 }
 
 func (d *Dynima) GetData ()(error) {
+    return nil
+}
+
+func (d *Dynima) SetTemplate()(error) {
+    return nil
+}
+
+func (d *Dynima) SetSource (sourceType string, sourcePath string)(error) {
     return nil
 }

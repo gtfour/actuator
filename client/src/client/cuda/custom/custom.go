@@ -3,15 +3,15 @@ package custom
 import "client/cuda"
 
 
-var CUSTOM_PARSERS = CreateParserList()
+var CustomFilters = CreateCustomFilterList()
 
 
 
-func CreateParserList ()(cuda.ParserList) {
+func CreateCustomFilterList ()(cuda.FilterList) {
 
-    pl := make(cuda.ParserList,0)
-    pl.Append(shitty_parser)
-    return pl
+    fl := make(cuda.FilterList,0)
+    fl.Append(shitty_filter)
+    return fl
 
 }
 

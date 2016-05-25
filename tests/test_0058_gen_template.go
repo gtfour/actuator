@@ -17,11 +17,12 @@ type Tango struct {
 
 func main() {
 
+
   //new_data    := []int {1,2,3}
   //line        := "a=22 b=1 c=0"
-  line        := "наименование='курица' вес=3.5кг процентное содержание воды=40%"
+  line        := "名前='курица' вес=3.5кг процентное содержание воды=40%"
   lineAsArray := strings.Split(line, "")
-  data_pos    := [][]int{{14,19},{26,28},{59,60}}
+  data_pos    := [][]int{{4,9},{16,18},{49,50}}
   //fmt.Printf("\n %v   %v\n",new_data,line)
 
   GenTemplate(lineAsArray, data_pos)
@@ -59,7 +60,7 @@ func GetFixedArrayChars(lineAsArray []string, data_indexes[][]int) (string) {
     //for i,c := range  lineAsArray {
         //last_pair_index := -1
         //if i == start_at {
-        //fmt.Printf("%s %s  %d\n",lineAsArray[i],string(c),i)
+        fmt.Printf("%s %d\n",lineAsArray[i],i)
         on_interval     := false
         invert          := false
         matched_pair    := []int{-1,-1}
