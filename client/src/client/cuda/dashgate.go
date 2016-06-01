@@ -6,6 +6,7 @@ var DASHGATE_TYPE_GROUP       int = 10002
 
 type Dashgate struct {
     Id               string
+    
     SourcePath       string
     SourceType       string // file or command
     //
