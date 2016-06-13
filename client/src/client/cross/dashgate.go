@@ -1,4 +1,4 @@
-package cuda
+package cross
 
 var DASHGATE_TYPE_SINGLE      int = 10000
 var DASHGATE_TYPE_SINGLE_FILE int = 10001

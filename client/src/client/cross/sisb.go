@@ -1,4 +1,4 @@
-package sisb
+package cross
 
 import "fmt"
 import "io/ioutil"

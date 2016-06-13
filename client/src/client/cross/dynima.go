@@ -1,14 +1,16 @@
-package cuda
-/*
+package cross
+
+import "fmt"
+
 type Dynima struct {
-    //parsers    
+    //parsers
     Id              string
     ids             []int // id column number
     SourcePath      string
     SourceType      string
     header          []string
     data            [][]string
-    filters         FilterList
+    filters         []string //FilterList
     template        string
     data_indexes    [][]int
     delim_indexes   [][]int
@@ -42,4 +44,19 @@ func (d *Dynima) SetTemplate()(error) {
 func (d *Dynima) SetSource (sourceType string, sourcePath string)(error) {
     return nil
 }
-*/
+
+
+func CreateDynima(id string)(error) {
+
+    fmt.Printf("Storage error %v\nNew dynima id %s\n",STORAGE_INSTANCE.Error,id)
+    return nil
+
+}
+
+func EditDynima(id string)(error) {
+
+    return nil
+
+
+}
+
