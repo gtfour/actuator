@@ -12,8 +12,10 @@ var STORAGE_INSTANCE = Open()
 
 
 type Storage struct {
-    Db    *bolt.DB
-    Error bool
+    Db                 *bolt.DB
+    Error              bool
+    dynimasTableName   string
+    dashgatesTableName string
 }
 
 
@@ -34,11 +36,15 @@ type Difference struct {
 }
 
 
-func Open()(s Storage) {
+func Open()(s Storage){
     db, err := bolt.Open(settings.SYSTEM_DATABASE, 0600, nil)
-    if err!= nil { s.Error = true ; return } else { s.Db = db }
+    if err!= nil { s.Error = true ; return } else {
+        s.Db                = db
+        s.dynimaTableName   = "dynimas"
+        s.dashgateTableName = "dashgates"
+        s.Error             = false
+    }
     return
-
 }
 
 func (s *Storage) Close () {

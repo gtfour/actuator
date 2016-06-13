@@ -1,6 +1,9 @@
 package cross
 
 import "fmt"
+import "errors"
+
+var dynima_edit_error =  errors.New("Unable to edit dynima")
 
 type Dynima struct {
     //parsers
@@ -53,10 +56,25 @@ func CreateDynima(id string)(error) {
 
 }
 
-func EditDynima(id string)(error) {
+func EditDynima(d Dynima)(error){
+    if STORAGE_INSTANCE.Error == false {
 
-    return nil
+        db:=STORAGE_INSTANCE.Db
+        err=db.Update(func(tx *bolt.Tx) error {
+            b:=tx.Bucket([]byte(db.dynimasTableName))
+            if b==nil{ return nil }
+            session,err:=b.CreateBucket([]byte(s.SessionId))
+            if err==nil || err==bolt.ErrBucketExists { // If the key exist then its previous value will be overwritten
+                err=session.Put([]byte("dashboard_id"),[]byte(s.DashboardId))
+                if err!=nil{ return err }
+                err=session.Put([]byte("user_id"),[]byte(s.UserId))
+                if err!=nil{ return err }
+                err=session.Put([]byte("token_id"),[]byte(s.TokenId))
+                if err!=nil{ return err }
+            } else { return err }
+            return nil
+        });
 
-
+    }
+    return dynima_edit_error
 }
-
