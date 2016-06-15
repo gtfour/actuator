@@ -96,6 +96,9 @@ func GetUserStorage()(UserStorage) {
                 if err_users != nil || err_sessions != nil {
                     db_open_failed = true
                     defer db.Close()
+                    //
+                    // Have to check value of this err
+                    //
                     return err
                 }
                 return nil

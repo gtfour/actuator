@@ -40,8 +40,23 @@ func Open()(s Storage){
     db, err := bolt.Open(settings.SYSTEM_DATABASE, 0600, nil)
     if err!= nil { s.Error = true ; return } else {
         s.Db                = db
-        s.dynimaTableName   = "dynimas"
-        s.dashgateTableName = "dashgates"
+        s.dynimasTableName   = "dynimas"
+        s.dashgatesTableName = "dashgates"
+        // init collections
+        db.Update(func(tx *bolt.Tx) error {
+            _,err_dynimas    := tx.CreateBucket([]byte(s.dynimasTableName))
+            _,err_dashgates :=  tx.CreateBucket([]byte(s.dashgatesTableName))
+            if err_dynimas != nil || err_dashgates != nil {
+                s.Error = true
+                defer db.Close()
+                return err
+            }
+            return nil
+        });
+
+
+
+        // 
         s.Error             = false
     }
     return
