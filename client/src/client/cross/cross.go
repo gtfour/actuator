@@ -1,11 +1,13 @@
 package cross
 
 import "fmt"
+import "errors"
 import "io/ioutil"
 import "github.com/boltdb/bolt"
 import "client/settings"
 
 var comments =  []string {`//` , `#`}
+var unable_to_init =  errors.New("Unable to init default collections")
 
 var STORAGE_INSTANCE = Open()
 
@@ -44,12 +46,14 @@ func Open()(s Storage){
         s.dashgatesTableName = "dashgates"
         // init collections
         db.Update(func(tx *bolt.Tx) error {
-            _,err_dynimas    := tx.CreateBucket([]byte(s.dynimasTableName))
-            _,err_dashgates :=  tx.CreateBucket([]byte(s.dashgatesTableName))
+            //_,err_dynimas    := tx.CreateBucket([]byte(s.dynimasTableName))
+            //_,err_dashgates :=  tx.CreateBucket([]byte(s.dashgatesTableName))
+            _,err_dynimas    := tx.CreateBucketIfNotExists([]byte(s.dynimasTableName))
+            _,err_dashgates  := tx.CreateBucketIfNotExists([]byte(s.dashgatesTableName))
             if err_dynimas != nil || err_dashgates != nil {
                 s.Error = true
                 defer db.Close()
-                return err
+                return unable_to_init
             }
             return nil
         });

@@ -1,6 +1,6 @@
 package cross
 
-import "fmt"
+//import "fmt"
 import "errors"
 import "github.com/boltdb/bolt"
 
@@ -53,7 +53,7 @@ func (d *Dynima) SetSource (sourceType string, sourcePath string)(error) {
 
 func CreateDynima(id string)(error) {
 
-    fmt.Printf("Storage error %v\nNew dynima id %s\n",STORAGE_INSTANCE.Error,id)
+    //fmt.Printf("Storage error %v\nNew dynima id %s\n",STORAGE_INSTANCE.Error,id)
     return nil
 
 }
@@ -65,8 +65,9 @@ func EditDynima(d Dynima)(err error){
         err=db.Update(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
             if b==nil{ return nil }
-            dynima,err:=b.CreateBucket([]byte(d.Id))
+            dynima,err:=b.CreateBucketIfNotExists([]byte(d.Id)) //CreateBucket has been replaced to CreateBucketIfNotExists because when err==bolt.ErrBucketExists - dynima is nil
             if err==nil || err==bolt.ErrBucketExists { // If the key exist then its previous value will be overwritten
+                //fmt.Printf("\nEdit dynima:\n%v\nError: %v\n",d,err)
                 err=dynima.Put([]byte("source_path"),[]byte(d.SourcePath))
                 if err!=nil{ return err }
                 err=dynima.Put([]byte("source_type"),[]byte(d.SourceType))
@@ -87,10 +88,10 @@ func GetDynima(id string)(dynima *Dynima,err error){
         db:=STORAGE_INSTANCE.Db
         err = db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            fmt.Printf("\nDynimas collection doesnt exist\n")
+            //fmt.Printf("\nDynimas collection doesnt exist\n")
             if b==nil{ return dynima_get_error }
             d:=b.Bucket([]byte(id))
-            fmt.Printf("\nDynima doesnt exist\n")
+            //fmt.Printf("\nDynima doesnt exist\n")
             if d==nil{ return dynima_get_error }
             dynima = &Dynima{}
             source_path := d.Get([]byte("source_path"))
