@@ -2,6 +2,7 @@ package cross
 
 //import "fmt"
 import "errors"
+import "encoding/json"
 import "github.com/boltdb/bolt"
 
 var dynima_edit_error =  errors.New("Unable to edit dynima")
@@ -58,7 +59,38 @@ func CreateDynima(id string)(error) {
 
 }
 
-func EditDynima(d Dynima)(err error){
+func (d *Dynima) Write()(err error){
+    if STORAGE_INSTANCE.Error == false {
+
+        db:=STORAGE_INSTANCE.Db
+        err=db.Update(func(tx *bolt.Tx) error {
+            b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
+            if b==nil{ return nil }
+            encoded, err := json.Marshal(d)
+            if err!=nil{ return err }
+            return b.Put([]byte(d.Id), encoded) //CreateBucket has been replaced to CreateBucketIfNotExists because when err==bolt.ErrBucketExists - dynima is nil
+         //// if err==nil || err==bolt.ErrBucketExists { // If the key exist then its previous value will be overwritten
+                //fmt.Printf("\nEdit dynima:\n%v\nError: %v\n",d,err)
+                ////err=dynima.Put([]byte("source_path"),[]byte(d.SourcePath))
+                ////if err!=nil{ return err }
+                ////err=dynima.Put([]byte("source_type"),[]byte(d.SourceType))
+                ////if err!=nil{ return err }
+                ////err=dynima.Put([]byte("template"),[]byte(d.template))
+                ////if err!=nil{ return err }
+             //// encoded, err := json.Marshal(d)
+            ////  if err != nil {
+            ////      return err
+           ////   }
+          ////    return dynima.Put([]byte(user.Name), encoded)
+            ////} else { return err }
+            return nil
+        });
+
+    }
+    return dynima_edit_error
+}
+
+func EditDynimaData(d Dynima, data [][]string)(err error){
     if STORAGE_INSTANCE.Error == false {
 
         db:=STORAGE_INSTANCE.Db
@@ -70,10 +102,7 @@ func EditDynima(d Dynima)(err error){
                 //fmt.Printf("\nEdit dynima:\n%v\nError: %v\n",d,err)
                 err=dynima.Put([]byte("source_path"),[]byte(d.SourcePath))
                 if err!=nil{ return err }
-                err=dynima.Put([]byte("source_type"),[]byte(d.SourceType))
-                if err!=nil{ return err }
-                err=dynima.Put([]byte("template"),[]byte(d.template))
-                if err!=nil{ return err }
+                //
             } else { return err }
             return nil
         });
@@ -81,6 +110,7 @@ func EditDynima(d Dynima)(err error){
     }
     return dynima_edit_error
 }
+
 
 func GetDynima(id string)(dynima *Dynima,err error){
     if STORAGE_INSTANCE.Error == false {
@@ -90,20 +120,20 @@ func GetDynima(id string)(dynima *Dynima,err error){
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
             //fmt.Printf("\nDynimas collection doesnt exist\n")
             if b==nil{ return dynima_get_error }
-            d:=b.Bucket([]byte(id))
+            d:=b.Get([]byte(id))
             //fmt.Printf("\nDynima doesnt exist\n")
-            if d==nil{ return dynima_get_error }
-            dynima = &Dynima{}
-            source_path := d.Get([]byte("source_path"))
-            if source_path == nil { source_path=[]byte("")  }
-            source_type      := d.Get([]byte("source_type"))
-            if source_type == nil { source_type=[]byte("")  }
-            template     := d.Get([]byte("template"))
-            if template == nil { template=[]byte("")  }
-            dynima.SourcePath   = id
-            dynima.SourcePath   = string(source_path)
-            dynima.SourceType   = string(source_type)
-            dynima.template     = string(template)
+            ////if d==nil{ return dynima_get_error }
+            ////dynima = &Dynima{}
+            ////source_path := d.Get([]byte("source_path"))
+            ////if source_path == nil { source_path=[]byte("")  }
+            ////source_type      := d.Get([]byte("source_type"))
+            ////if source_type == nil { source_type=[]byte("")  }
+            ////template     := d.Get([]byte("template"))
+            ////if template == nil { template=[]byte("")  }
+            ////dynima.SourcePath   = id
+            ////dynima.SourcePath   = string(source_path)
+            ////dynima.SourceType   = string(source_type)
+            ////dynima.template     = string(template)
             return nil
         });
         if err == nil { return dynima, nil } else { return nil, err }
