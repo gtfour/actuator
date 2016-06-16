@@ -8,7 +8,10 @@ func main() {
 
     fmt.Printf("\n Storage error %v\n",cross.STORAGE_INSTANCE.Error)
     new_id,err:=common.GenId()
-    dynima:=cross.Dynima{Id:new_id,SourcePath:"/etc/passwd",SourceType:"file"}
+
+    var data =  [][]string {[]string{"a"},[]string{"b"},[]string{"c"}}
+
+    dynima:=cross.Dynima{Id:new_id,SourcePath:"/etc/passwd",SourceType:"file", Data:data}
     dynima.Write()
     //if err == nil {
     //    _ = cross.CreateDynima(new_id)

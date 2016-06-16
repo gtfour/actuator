@@ -15,7 +15,7 @@ type Dynima struct {
     SourcePath      string
     SourceType      string
     header          []string
-    data            [][]string
+    Data            [][]string
     filters         []string //FilterList
     template        string
     data_indexes    [][]int
@@ -112,15 +112,19 @@ func EditDynimaData(d Dynima, data [][]string)(err error){
 }
 
 
-func GetDynima(id string)(dynima *Dynima,err error){
+func GetDynima(id string)(*Dynima,error){
+    var err error
     if STORAGE_INSTANCE.Error == false {
 
-        db:=STORAGE_INSTANCE.Db
+        db     := STORAGE_INSTANCE.Db
+        dynima := &Dynima{}
         err = db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
             //fmt.Printf("\nDynimas collection doesnt exist\n")
             if b==nil{ return dynima_get_error }
-            d:=b.Get([]byte(id))
+            data:=b.Get([]byte(id))
+            err = json.Unmarshal(data, &dynima)
+            return err
             //fmt.Printf("\nDynima doesnt exist\n")
             ////if d==nil{ return dynima_get_error }
             ////dynima = &Dynima{}
@@ -134,12 +138,9 @@ func GetDynima(id string)(dynima *Dynima,err error){
             ////dynima.SourcePath   = string(source_path)
             ////dynima.SourceType   = string(source_type)
             ////dynima.template     = string(template)
-            return nil
         });
-        if err == nil { return dynima, nil } else { return nil, err }
-
-
+        if err == nil { return dynima, nil } else { return nil, dynima_get_error }
     }
-    return dynima, err
+    return nil, dynima_get_error
 }
 
