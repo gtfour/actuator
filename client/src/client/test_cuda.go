@@ -39,6 +39,10 @@ func main() {
     fmt.Printf("\nAfter PathFilter:  delims: %v\n data: %v \n" , delims , data)
     delims,data=cuda.UrlFilter(lineAsArray3,delims,data)
     fmt.Printf("\nAfter UrlFilter:  delims: %v\n data: %v \n" , delims , data)
+
+    template_string:=cuda.GenTemplate(lineAsArray3, data)
+    fmt.Printf("###\nTemplate string:\n%s\n",template_string)
+
     //delims,data=cuda.UrlFilter(lineAsArray3,delims,data)
     //fmt.Printf("\n === \ndelims: %v\n data: %v \n" , delims , data)
 

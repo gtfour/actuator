@@ -24,7 +24,7 @@ type CompNotes struct {
     Path  string
     State int8
     //
-    SourceType string // file or command ( actuator or blackout  )
+    SourceType string // file or directory or command ( source: actuator or blackout  )
     SourceName string
     SourcePath string // /filename or /command_name
     //UpdateType string // Update,Append,Remove,RemoveFile

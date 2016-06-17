@@ -1,8 +1,8 @@
 package main
 
-import _ "net/http/pprof"
-import "net/http"
-import "fmt"
+//import _ "net/http/pprof"
+//import "net/http"
+//import "fmt"
 //
 import "client/chase"
 import "client/evebridge"
@@ -10,9 +10,9 @@ import "client/evebridge"
 
 func main() {
 
-    go func() {
-        fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
-    }()
+    //go func() {
+    //    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
+    //}()
     path     := "/tmp/test/"
     messages :=   make(chan evebridge.CompNotes,100)
     wp       :=  chase.WPCreate()

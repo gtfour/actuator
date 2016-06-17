@@ -1,68 +1,19 @@
-package main
+package cuda
 
 import "fmt"
-import "os"
-import "log"
-import "text/template"
-import "strings"
-
-var DIGIT_LESS_INTERVAL    int = 3579
-var DIGIT_GREATER_INTERVAL int = 9753
-var DIGIT_IN_INTERVAL      int = 9779
-
-type Tango struct {
-    Data []string
-}
-
-
-func main() {
-
-
-  //new_data    := []int {1,2,3}
-  line        := "a=22 b=1 c=0 d=''"
-  //line        := "名前='курица' вес=3.5кг процентное содержание воды=40%"
-
-  lineAsArray := strings.Split(line, "")
-  //data_pos    := [][]int{{4,9},{16,18},{49,50}}
-  data_pos    := [][]int{{2,3},{7,7},{11,11},{16,15}}
-  //fmt.Printf("\n %v   %v\n",new_data,line)
-
-  Render(lineAsArray, data_pos)
-  //data   := []
-
-}
-
-//func GenTemplate(lineAsArray []string, data_pos [][]int)( *template.Template) {
-func Render(lineAsArray []string, data_pos [][]int)() {
-    //new_line = ``
-    new_data    := []string {"говядина","1.3","30","22"}
-
-    template_string:=GenTemplate(lineAsArray, data_pos)
-
-    t:=template.Must(template.New("data_replace").Parse(template_string))
-
-    tango:=&Tango{Data:new_data}
-
-    err := t.Execute(os.Stdout, tango)
-
-    if err != nil {
-        log.Println("executing template:", err)
-    }
-    //fmt.Printf("\n Line without data: %v \n", template_string)
-}
 
 func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
 
     word:=""
     template_variable_counter:=0
-    fmt.Printf("\n Line Array %v\n",lineAsArray)
+    //fmt.Printf("\n Line Array %v\n",lineAsArray)
 
     //for i := range  lineAsArray {
     for i := 0; i < len(lineAsArray); i++ {
     //for i,c := range  lineAsArray {
         //last_pair_index := -1
         //if i == start_at {
-        fmt.Printf("%s %d\n",lineAsArray[i],i)
+        //fmt.Printf("%s %d\n",lineAsArray[i],i)
         on_interval     := false
         invert          := false
         matched_pair    := []int{-1,-1}
@@ -106,20 +57,7 @@ func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
             i = matched_pair[1]// start iterating array from next index of found pair
         }
     }
-    fmt.Printf("\nword %s\n",word)
+    //fmt.Printf("\nword %s\n",word)
     return word
-}
-
-func DigitInInterval(digit int, interval []int) (int) {
-    if digit <= interval[1] && digit >= interval[0] {
-        return DIGIT_IN_INTERVAL
-    }
-    if digit < interval[0] {
-        return DIGIT_LESS_INTERVAL
-    }
-    if digit > interval[1] {
-        return DIGIT_GREATER_INTERVAL
-    }
-    return 0
 }
 
