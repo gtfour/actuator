@@ -5,8 +5,10 @@ import "errors"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 
-var dynima_edit_error =  errors.New("Unable to edit dynima")
-var dynima_get_error  =  errors.New("Unable to get dynima")
+var dynima_edit_error     = errors.New("Unable to edit dynima")
+var dynima_get_error      = errors.New("Unable to get dynima")
+var dynima_remove_error   = errors.New("Unable to remove dynima")
+var dynimas_list_is_empty = errors.New("Dynimas list is empty")
 
 type Dynima struct {
     //parsers
@@ -121,7 +123,17 @@ func EditDynimaData(d Dynima, data [][]string)(err error){
 }
 
 func RemoveDynima(id string)(error){
-    return nil
+    if STORAGE_INSTANCE.Error == false {
+        db:=STORAGE_INSTANCE.Db
+        err := db.Update(func(tx *bolt.Tx) error {
+            b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
+            if b==nil{ return dynima_remove_error }
+            err:=b.Delete([]byte(id))
+            return err
+        });
+        return err
+    }
+    return dynima_remove_error
 }
 
 
@@ -180,6 +192,9 @@ func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
                 }
                 return nil
             })
+            if len(dynimas) == 0 {
+                return dynimas_list_is_empty
+            }
 
 
 
@@ -200,7 +215,7 @@ func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
             ////dynima.SourceType   = string(source_type)
             ////dynima.template     = string(template)
         });
-        if err == nil { return dynimas, err } else { return nil,err }
+        if err == nil {  return dynimas, err } else {  return nil,err }
     }
     return nil, err
 }

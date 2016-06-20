@@ -19,7 +19,8 @@ func main() {
 
     d,err:=cross.GetDynima(new_id)
     fmt.Printf("\nDynima:\n%v\nErr:%v",d,err)
-    dns,err:=cross.GetDynimasByPath("/etc/passwd")
+    dns,err:=cross.GetDynimasByPath("/etc/passw")
+    fmt.Printf("\nGet Dynimas By Path\n DNS: %v\nErr %v\n",dns,err)
     for i:= range dns {
         fmt.Printf("--\n%v\n--",dns[i])
     }
