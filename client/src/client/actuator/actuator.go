@@ -311,7 +311,8 @@ func ( directory *Directory ) GetHashSumDir (path string, mode int) (err error){
     for file:= range directory.Prop.DirContent{
 
         fstruct            :=  &File{}
-        file_path          :=  path+"/"+directory.Prop.DirContent[file]
+        //file_path          :=  path+"/"+directory.Prop.DirContent[file] // trying to fix bug with dup slash
+        file_path          :=  path+directory.Prop.DirContent[file]
         fstruct.Path       =   file_path
         fstruct.Prop   =   GetProp( file_path, mode )
         if fstruct.Prop.Error == true  { continue }
@@ -328,7 +329,8 @@ func ( directory *Directory ) GetHashSumDir (path string, mode int) (err error){
 
             another_dir                   :=  &Directory{}
             another_dir.DiscoveredInodes  =   directory.DiscoveredInodes
-            subdir_path                   :=  path+"/"+directory.Prop.DirContent[file]
+            subdir_path                   :=  path+"/"+directory.Prop.DirContent[file] // trying to fix bug with dup slash
+            // subdir_path                   :=  path+directory.Prop.DirContent[file]
             err                           =   another_dir.GetHashSumDir( subdir_path , mode)
 
             if (err!=nil) { continue }

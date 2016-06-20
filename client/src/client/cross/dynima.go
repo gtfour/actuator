@@ -1,6 +1,6 @@
 package cross
 
-//import "fmt"
+import "fmt"
 import "errors"
 import "encoding/json"
 import "github.com/boltdb/bolt"
@@ -121,7 +121,7 @@ func EditDynimaData(d Dynima, data [][]string)(err error){
 }
 
 func RemoveDynima(id string)(error){
-    return
+    return nil
 }
 
 
@@ -162,13 +162,29 @@ func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
     if STORAGE_INSTANCE.Error == false {
 
         db     := STORAGE_INSTANCE.Db
-        dynima := &Dynima{}
+        dynimas = make([]Dynima,0)
+        //dynima := &Dynima{}
         err = db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
             //fmt.Printf("\nDynimas collection doesnt exist\n")
             if b==nil{ return dynima_get_error }
-            data:=b.Get([]byte(id))
-            err = json.Unmarshal(data, &dynima)
+            //data:=b.Get([]byte(id))
+            err=b.ForEach(func(key, value []byte)(error){
+                dynima := Dynima{}
+                err    = json.Unmarshal(value, &dynima)
+                if err == nil {
+                    if( dynima.SourcePath == path) {
+                        fmt.Printf("\nMatched %s\n",path)
+                        dynimas = append(dynimas,dynima)
+                    }
+                }
+                return nil
+            })
+
+
+
+
+            //err = json.Unmarshal(data, &dynima)
             return err
             //fmt.Printf("\nDynima doesnt exist\n")
             ////if d==nil{ return dynima_get_error }
