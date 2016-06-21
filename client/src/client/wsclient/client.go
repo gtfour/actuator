@@ -3,7 +3,7 @@ package wsclient
 
 import "fmt"
 import "log"
-//import "encoding/json"
+import "encoding/json"
 import "golang.org/x/net/websocket"
 import "client/settings"
 
@@ -35,6 +35,7 @@ type WebSocketConnection struct {
 
 func (wsconn *WebSocketConnection) Handle()(error) {
     if wsconn.OpenError == nil {
+        go wsconn.Read()
         for {
             select {
                 case message :=<-wsconn.InChannel:
@@ -43,6 +44,8 @@ func (wsconn *WebSocketConnection) Handle()(error) {
                         fmt.Println(test)
                         log.Fatal(err)
                     }
+                case message :=<-wsconn.OutChannel:
+                    fmt.Printf("Message from server: %v",message)
             }
         }
     } else {
@@ -56,6 +59,18 @@ func (wsconn *WebSocketConnection) Handle()(error) {
 func (wsconn *WebSocketConnection) Write(m *Message )( ) {
     wsconn.InChannel <- m
 }
+
+func (wsconn *WebSocketConnection) Read()(error) {
+    for {
+        var data []byte
+        var message Message
+        _, err := wsconn.ws.Read(data) // replace n to _
+        if err!= nil { return err }
+        err    = json.Unmarshal(data, &message)
+        if err == nil { wsconn.OutChannel <- &message  }
+    }
+}
+
 
 
 

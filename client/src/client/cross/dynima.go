@@ -5,6 +5,7 @@ import "errors"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 
+var dynimas_open_error    = errors.New("Unable to open dynimas collection")
 var dynima_edit_error     = errors.New("Unable to edit dynima")
 var dynima_get_error      = errors.New("Unable to get dynima")
 var dynima_remove_error   = errors.New("Unable to remove dynima")
@@ -34,9 +35,6 @@ func (d *Dynima) UnbindFilter (filter_name string)(error) {
     return nil
 }
 
-//func (d *Dynima) RunFilter (filter_name string)(error) {
-//    return nil
-//}
 
 func (d *Dynima) Save ()(error) {
     return nil
@@ -54,39 +52,15 @@ func (d *Dynima) SetSource (sourceType string, sourcePath string)(error) {
     return nil
 }
 
-
-func CreateDynima(id string)(error) {
-
-    //fmt.Printf("Storage error %v\nNew dynima id %s\n",STORAGE_INSTANCE.Error,id)
-    return nil
-
-}
-
 func (d *Dynima) Write()(err error){
     if STORAGE_INSTANCE.Error == false {
-
         db:=STORAGE_INSTANCE.Db
         err=db.Update(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            if b==nil{ return nil }
+            if b==nil{ return dynimas_open_error }
             encoded, err := json.Marshal(d)
             if err!=nil{ return err }
             return b.Put([]byte(d.Id), encoded) //CreateBucket has been replaced to CreateBucketIfNotExists because when err==bolt.ErrBucketExists - dynima is nil
-         //// if err==nil || err==bolt.ErrBucketExists { // If the key exist then its previous value will be overwritten
-                //fmt.Printf("\nEdit dynima:\n%v\nError: %v\n",d,err)
-                ////err=dynima.Put([]byte("source_path"),[]byte(d.SourcePath))
-                ////if err!=nil{ return err }
-                ////err=dynima.Put([]byte("source_type"),[]byte(d.SourceType))
-                ////if err!=nil{ return err }
-                ////err=dynima.Put([]byte("template"),[]byte(d.template))
-                ////if err!=nil{ return err }
-             //// encoded, err := json.Marshal(d)
-            ////  if err != nil {
-            ////      return err
-           ////   }
-          ////    return dynima.Put([]byte(user.Name), encoded)
-            ////} else { return err }
-            return nil
         });
 
     }
@@ -95,9 +69,6 @@ func (d *Dynima) Write()(err error){
 
 func (d *Dynima) UpdateTemplate()(){
     if d.delim_indexes != nil {
-
-
-
     }
 }
 
@@ -107,7 +78,7 @@ func EditDynimaData(d Dynima, data [][]string)(err error){
         db:=STORAGE_INSTANCE.Db
         err=db.Update(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            if b==nil{ return nil }
+            if b==nil{ return dynimas_open_error }
             dynima,err:=b.CreateBucketIfNotExists([]byte(d.Id)) //CreateBucket has been replaced to CreateBucketIfNotExists because when err==bolt.ErrBucketExists - dynima is nil
             if err==nil || err==bolt.ErrBucketExists { // If the key exist then its previous value will be overwritten
                 //fmt.Printf("\nEdit dynima:\n%v\nError: %v\n",d,err)
@@ -127,7 +98,7 @@ func RemoveDynima(id string)(error){
         db:=STORAGE_INSTANCE.Db
         err := db.Update(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            if b==nil{ return dynima_remove_error }
+            if b==nil{ return dynimas_open_error }
             err:=b.Delete([]byte(id))
             return err
         });
@@ -140,29 +111,14 @@ func RemoveDynima(id string)(error){
 func GetDynima(id string)(*Dynima,error){
     var err error
     if STORAGE_INSTANCE.Error == false {
-
         db     := STORAGE_INSTANCE.Db
         dynima := &Dynima{}
         err = db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            //fmt.Printf("\nDynimas collection doesnt exist\n")
-            if b==nil{ return dynima_get_error }
+            if b==nil{ return dynimas_open_error }
             data:=b.Get([]byte(id))
             err = json.Unmarshal(data, &dynima)
             return err
-            //fmt.Printf("\nDynima doesnt exist\n")
-            ////if d==nil{ return dynima_get_error }
-            ////dynima = &Dynima{}
-            ////source_path := d.Get([]byte("source_path"))
-            ////if source_path == nil { source_path=[]byte("")  }
-            ////source_type      := d.Get([]byte("source_type"))
-            ////if source_type == nil { source_type=[]byte("")  }
-            ////template     := d.Get([]byte("template"))
-            ////if template == nil { template=[]byte("")  }
-            ////dynima.SourcePath   = id
-            ////dynima.SourcePath   = string(source_path)
-            ////dynima.SourceType   = string(source_type)
-            ////dynima.template     = string(template)
         });
         if err == nil { return dynima, nil } else { return nil, dynima_get_error }
     }
@@ -172,15 +128,11 @@ func GetDynima(id string)(*Dynima,error){
 func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
 
     if STORAGE_INSTANCE.Error == false {
-
         db     := STORAGE_INSTANCE.Db
         dynimas = make([]Dynima,0)
-        //dynima := &Dynima{}
         err = db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            //fmt.Printf("\nDynimas collection doesnt exist\n")
-            if b==nil{ return dynima_get_error }
-            //data:=b.Get([]byte(id))
+            if b==nil{ return dynimas_open_error }
             err=b.ForEach(func(key, value []byte)(error){
                 dynima := Dynima{}
                 err    = json.Unmarshal(value, &dynima)
@@ -195,25 +147,7 @@ func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
             if len(dynimas) == 0 {
                 return dynimas_list_is_empty
             }
-
-
-
-
-            //err = json.Unmarshal(data, &dynima)
             return err
-            //fmt.Printf("\nDynima doesnt exist\n")
-            ////if d==nil{ return dynima_get_error }
-            ////dynima = &Dynima{}
-            ////source_path := d.Get([]byte("source_path"))
-            ////if source_path == nil { source_path=[]byte("")  }
-            ////source_type      := d.Get([]byte("source_type"))
-            ////if source_type == nil { source_type=[]byte("")  }
-            ////template     := d.Get([]byte("template"))
-            ////if template == nil { template=[]byte("")  }
-            ////dynima.SourcePath   = id
-            ////dynima.SourcePath   = string(source_path)
-            ////dynima.SourceType   = string(source_type)
-            ////dynima.template     = string(template)
         });
         if err == nil {  return dynimas, err } else {  return nil,err }
     }
