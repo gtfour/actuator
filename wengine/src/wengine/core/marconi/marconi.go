@@ -1,5 +1,7 @@
 package marconi
 
+import "encoding/json"
+
 type ChangeRequest struct {
 
 
@@ -18,3 +20,13 @@ type DataUpdate struct {
     ServerId   string
 
 }
+
+type Response struct {
+    Status string
+}
+
+func ( r *Response) GetRaw ()([]byte, error) {
+    raw,err:=json.Marshal(r)
+    return raw,err
+}
+
