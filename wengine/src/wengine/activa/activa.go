@@ -13,6 +13,11 @@ type AbMotion interface {
     GetDashboards   ([]dashboard.Dashboard)
 }
 
+type Key struct {
+    Name  string
+    Value string
+}
+
 type Motion struct {
 
 

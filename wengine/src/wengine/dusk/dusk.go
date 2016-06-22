@@ -2,6 +2,7 @@ package dusk
 
 import "wengine/core/utah"
 import "wengine/core/dashboard"
+import "wengine/activa"
 
 
 type Database interface {
@@ -82,6 +83,17 @@ type TokenMethods interface {
 }
 
 type AristaMethods interface {
+
+
+}
+
+type ActivaMethods interface {
+
+    WriteMotion(*activa.Motion)(error)
+    GetMotion  (...activa.Key)(error)
+    UpdateMotion(motion_id string)(error)
+    RemoveMotion(...activa.Key)(error)
+
 
 
 }
