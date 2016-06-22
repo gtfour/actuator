@@ -1,7 +1,8 @@
 package common
 
-import "crypto/rand"
 import "fmt"
+import "time"
+import "crypto/rand"
 
 func GenId()(uuid string,err error) {
     b := make([]byte, 16)
@@ -23,4 +24,9 @@ func CombineErrors(errors ...error) ( map[string][]string ) {
         }
     }
     return errors_map
+}
+
+func GetTime()(time_now string) {
+    t := time.Now()
+    return t.Format(time.RFC3339Nano)
 }

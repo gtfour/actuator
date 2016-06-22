@@ -23,7 +23,7 @@ type Motion struct {
 
 }
 
-func CreateMotion () {
+func CreateMotion ()() {
 
 }
 
