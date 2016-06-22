@@ -68,12 +68,12 @@ func (wsconn *WebSocketConnection) Write(m *Message )( ) {
 func (wsconn *WebSocketConnection) Read()(error) {
     for {
         var data []byte
-        data = make([]byte, 53)
+        data = make([]byte, 512) // 53
         var message Message
-        _, err := wsconn.ws.Read(data) // replace n to _
-        fmt.Printf("\n<<Reading1>>\nErr:%v\ndata:%v\n",err,data)
+        n, err := wsconn.ws.Read(data) // replace n to _
+        fmt.Printf("\n<<Reading1>>\nErr:%v\ndata:%v\nread data:%v\n",err,data,n)
         if err!= nil { return err }
-        err    = json.Unmarshal(data, &message)
+        err    = json.Unmarshal(data[:n], &message)
         fmt.Printf("\n<<Reading2>>\nErr:%v\n",err)
         if err == nil { wsconn.OutChannel <- &message  }
     }
