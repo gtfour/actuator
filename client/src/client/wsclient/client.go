@@ -45,7 +45,12 @@ func (wsconn *WebSocketConnection) Handle()(error) {
                         log.Fatal(err)
                     }
                 case message :=<-wsconn.OutChannel:
-                    fmt.Printf("Message from server: %v",message)
+                    var response Response
+                    data:=message.Data
+                    err_unmarshal:=json.Unmarshal(data, &response)
+                    if err_unmarshal == nil {
+                        fmt.Printf("\nMessage from server: %v\n",response)
+                    }
             }
         }
     } else {
@@ -63,10 +68,10 @@ func (wsconn *WebSocketConnection) Write(m *Message )( ) {
 func (wsconn *WebSocketConnection) Read()(error) {
     for {
         var data []byte
-        data = make([]byte, 512)
+        data = make([]byte, 53)
         var message Message
         _, err := wsconn.ws.Read(data) // replace n to _
-        fmt.Printf("\n<<Reading1>>\nErr:%v\n",err)
+        fmt.Printf("\n<<Reading1>>\nErr:%v\ndata:%v\n",err,data)
         if err!= nil { return err }
         err    = json.Unmarshal(data, &message)
         fmt.Printf("\n<<Reading2>>\nErr:%v\n",err)

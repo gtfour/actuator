@@ -47,3 +47,7 @@ type DataModify struct {
 }
 
 
+type Response struct {
+    Status string
+}
+
