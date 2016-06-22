@@ -98,7 +98,7 @@ func (c *Client) listenRead(){
                         fmt.Printf("\n<Message Data Update: %v\n",msg_du)
                         var response      Message
                         var response_data marconi.Response
-                        response_data.Status = "ok"
+                        response_data.Status = marconi.STATUS_OK
                         response.DataType    = "server_response"
                         response_data_raw,err:=response_data.GetRaw()
                         fmt.Printf("\nStatus message len %v\n",len(response_data_raw))

@@ -311,8 +311,8 @@ func ( directory *Directory ) GetHashSumDir (path string, mode int) (err error){
     for file:= range directory.Prop.DirContent{
 
         fstruct            :=  &File{}
-        //file_path          :=  path+"/"+directory.Prop.DirContent[file] // trying to fix bug with dup slash
-        file_path          :=  path+directory.Prop.DirContent[file]
+        file_path          :=  path+"/"+directory.Prop.DirContent[file] // trying to fix bug with dup slash
+        //file_path          :=  path+directory.Prop.DirContent[file] // new
         fstruct.Path       =   file_path
         fstruct.Prop   =   GetProp( file_path, mode )
         if fstruct.Prop.Error == true  { continue }

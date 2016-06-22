@@ -2,6 +2,10 @@ package marconi
 
 import "encoding/json"
 
+var STATUS_OK   = 8000
+var STATUS_FAIL = 8001
+
+
 type ChangeRequest struct {
 
 
@@ -22,7 +26,7 @@ type DataUpdate struct {
 }
 
 type Response struct {
-    Status string
+    Status int
 }
 
 func ( r *Response) GetRaw ()([]byte, error) {

@@ -66,6 +66,7 @@ func Handle(messages chan CompNotes )() {
         for {
             select{
                 case message:=<-messages:
+                    fmt.Printf("\n<<Evebridge: message has been recieved>>\n")
                     var ws_message_data = wsclient.DataUpdate{ SourcePath:message.Path, SourceType:message.SourceType }
                     message_data_raw,err:= ws_message_data.GetRaw()
                     if err == nil {

@@ -18,9 +18,18 @@ type Motion struct {
 
 }
 
-func CreateMotion ()
+func CreateMotion () {
 
-func (m *Motion)
+}
+
+func (m *Motion) Test ()() {
+
+}
+
+func Update()() {
+
+
+}
 
 
 

@@ -45,9 +45,3 @@ type DataModify struct {
     ServerId   string
 
 }
-
-
-type Response struct {
-    Status string
-}
-
