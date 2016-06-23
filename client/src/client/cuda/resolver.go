@@ -383,7 +383,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                     last_matched_strada_id = i
                 }
             } else {
-                fmt.Printf("\n::else::\n")
+                // // fmt.Printf("\n::else::\n")
                 interval_between_data:=make([]int,2)
                 first_strada         := indexes[0]
                 last_strada          := indexes[1]

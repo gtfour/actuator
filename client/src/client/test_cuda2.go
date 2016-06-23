@@ -1,5 +1,9 @@
 package main
-import "client/blackout"
+import "fmt"
+import "strings"
+import "client/blacktop"
+import "client/cuda"
+
 
 //import "fmt"
 //import "strings"
@@ -7,5 +11,31 @@ import "client/blackout"
 
 
 func main() {
-    blackout.Blackout()
+
+
+    lines,err:=blacktop.ReadFileLines("/etc/passwd")
+    if (err==nil) {
+
+
+    for i:= range lines {
+        line:=lines[i]
+        lineAsArray3:=strings.Split(line, "")
+        delims,data:=cuda.GetIndexes(lineAsArray3)
+        //delims,data=cuda.PathFilter(lineAsArray3,delims,data)
+        delims,data=cuda.QuotesFilter(lineAsArray3,delims,data)
+        delims,data=cuda.PathFilter(lineAsArray3,delims,data)
+        delims,data=cuda.UrlFilter(lineAsArray3,delims,data)
+        template_string:=cuda.GenTemplate(lineAsArray3, data)
+        fmt.Printf("line:%s\n",line)
+        fmt.Printf("Template string:%s\n",template_string)
+
+    }
+
+    }
+
+
+
+
+
+
 }

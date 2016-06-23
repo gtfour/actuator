@@ -10,8 +10,8 @@ import "client/cuda"
 
 
 func Blackout() {
-        cmd := exec.Command("ifconfig","eth0")
-        cmd.Stdin = strings.NewReader("some input")
+        cmd := exec.Command("top")
+        cmd.Stdin = strings.NewReader("n\n")
         var out bytes.Buffer
         cmd.Stdout = &out
         err := cmd.Run()
@@ -27,7 +27,5 @@ func Blackout() {
             fmt.Printf("\nBefore delims: %v\n data: %v \n" , delims , data)
             delims,data=cuda.PathFilter(lineAsArray,delims,data)
             fmt.Printf("\nAfter delims: %v\n data: %v \n" , delims , data)
-
         }
 }
-
