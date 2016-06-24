@@ -3,9 +3,8 @@ package cross
 import "client/activa"
 
 
-func Register(m *activa.Motion)(err error) {
+func Write(m *activa.Motion)(err error) {
 
     return
-
 
 }

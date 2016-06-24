@@ -16,6 +16,7 @@ type Storage struct {
     Error              bool
     dynimasTableName   string
     dashgatesTableName string
+    motionsTableName   string
 }
 
 
@@ -42,13 +43,15 @@ func Open()(s Storage){
         s.Db                = db
         s.dynimasTableName   = "dynimas"
         s.dashgatesTableName = "dashgates"
+        s.motionsTableName   = "motions"
         // init collections
         db.Update(func(tx *bolt.Tx) error {
             //_,err_dynimas    := tx.CreateBucket([]byte(s.dynimasTableName))
             //_,err_dashgates :=  tx.CreateBucket([]byte(s.dashgatesTableName))
             _,err_dynimas    := tx.CreateBucketIfNotExists([]byte(s.dynimasTableName))
             _,err_dashgates  := tx.CreateBucketIfNotExists([]byte(s.dashgatesTableName))
-            if err_dynimas != nil || err_dashgates != nil {
+            _,err_motions    := tx.CreateBucketIfNotExists([]byte(s.motionsTableName))
+            if err_dynimas != nil || err_dashgates != nil || err_motions != nil {
                 s.Error = true
                 defer db.Close()
                 return unable_to_init

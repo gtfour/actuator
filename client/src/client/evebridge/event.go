@@ -3,6 +3,7 @@ package evebridge
 import "time"
 import "fmt"
 import "client/wsclient"
+import "client/activa"
 
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
@@ -62,6 +63,7 @@ type DataUpdate struct {
 */
 
 func Handle(messages chan CompNotes )() {
+        motions := make(chan *activa.Motion,100)
         var websocket_connection = wsclient.WsConn
         for {
             select{
