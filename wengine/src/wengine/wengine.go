@@ -9,7 +9,7 @@ import   "wengine/settings"
 func main() {
 
     app      := gin.Default()
-    database := dusk.OpenDatabase( settings.PrimaryDatabase, settings.DBusername , settings.DBpassword , settings.DBhost, settings.DBdbname )
+    database := dusk.DATABASE_INSTANCE
     defer database.Close()
     app.POST("/auth/:authModuleName",  rest.AuthRoute( gin.H{}, database ))
     app.GET("/auth/:authModuleName",   rest.AuthRoute( gin.H{}, database ))

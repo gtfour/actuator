@@ -1,8 +1,15 @@
 package dusk
 
+import "wengine/settings"
+import "wengine/activa"
 import "wengine/core/utah"
 import "wengine/core/dashboard"
-import "wengine/activa"
+
+var DATABASE_INSTANCE = OpenDatabase(settings.PrimaryDatabase,
+                                     settings.DBusername,
+                                     settings.DBpassword,
+                                     settings.DBhost,
+                                     settings.DBname)
 
 
 type Database interface {

@@ -1,4 +1,7 @@
 package activa
+
+import "encoding/json"
+import "wengine/core/common"
 import "wengine/core/utah"
 import "wengine/core/dashboard"
 
@@ -19,14 +22,32 @@ type Key struct {
 }
 
 type Motion struct {
-    Id           string //`bson:"id"`
-    InitTime     string //`bson:"init_time"`
-    EndTime      string //`bson:"end_time"`
-    UserName     string //`bson:"user_name"`
-    GroupName    string //`bson:"group_name"`
+    Id           string // `bson:"id"`
+    InitTime     string // `bson:"init_time"`
+    StartTime    string // `bson:"start_time"`
+    EndTime      string // `bson:"end_time"`
+    UserName     string // `bson:"user_name"`
+    GroupName    string // `bson:"group_name"`
+    SourceType   string // `bson:"source_type"`
+    SourcePath   string // `bson:"source_path"`
+    ActionType   string // `bson:"action_type"`
+    ActionName   string // `bson:"action_name"`
+    TaskState    int    // `bson:"task_state"`
 }
 
-func CreateMotion ()() {
+func (m *Motion)GetRaw()([]byte, error) {
+    raw,err:=json.Marshal(m)
+    return raw,err
+}
+
+func CreateMotion ()(m Motion) {
+
+    time_now    := common.GetTime()
+    m.Id        =  time_now
+    m.InitTime  =  time_now
+    m.TaskState =  TASK_STATE_new
+    return m
+
 
 }
 

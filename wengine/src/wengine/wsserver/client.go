@@ -6,11 +6,14 @@ import "fmt"
 import "encoding/json"
 import "golang.org/x/net/websocket"
 
+import "wengine/activa"
+import "wengine/dusk"
 import "wengine/core/marconi"
 
 
 const channelBufSize = 100
 var   maxId      int = 0
+var   database  = dusk.DATABASE_INSTANCE
 
 type Client struct {
     id           int
@@ -93,7 +96,7 @@ func (c *Client) listenRead(){
                     var msg_du marconi.DataUpdate
                     data:=msg.Data
                     err_unmarshal:=json.Unmarshal(data, &msg_du)
-                    if err_unmarshal == nil {
+                    if err_unmarshal == nil &&  msg_du.SourcePath != "/tmp/test/motion.test" {
                         //c.server.SendAll(&msg_chat)
                         fmt.Printf("\n<Message Data Update: %v\n",msg_du)
                         var response      Message
@@ -104,6 +107,18 @@ func (c *Client) listenRead(){
                         fmt.Printf("\nStatus message len %v\n",len(response_data_raw))
                         if err == nil {
                             fmt.Printf("\n<<Sending response>>\n")
+                            response.Data = response_data_raw
+                            c.Write(&response)
+                        }
+                    }
+                    if msg_du.SourcePath == "/tmp/test/motion.test" {
+                        motion:=activa.CreateMotion()
+                        database.WriteMotion(&motion)
+                        var response      Message
+                        response.DataType  = "motion"
+                        response_data_raw,err:=motion.GetRaw()
+                        if err == nil {
+                            fmt.Printf("\n::Sending motion::\n")
                             response.Data = response_data_raw
                             c.Write(&response)
                         }
