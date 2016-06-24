@@ -19,8 +19,11 @@ type Key struct {
 }
 
 type Motion struct {
-
-
+    Id           string //`bson:"id"`
+    InitTime     string //`bson:"init_time"`
+    EndTime      string //`bson:"end_time"`
+    UserName     string //`bson:"user_name"`
+    GroupName    string //`bson:"group_name"`
 }
 
 func CreateMotion ()() {

@@ -18,6 +18,7 @@ type CollectionsNames struct {
     dashboards_c_name       string
     dashboard_groups_c_name string
     tokens_c_name           string
+    motions_c_name          string
 }
 
 func (d *MongoDb)Close()() {
@@ -31,5 +32,6 @@ func (d *MongoDb)Connect() ( err error ) {
     d.tokens_c_name           = "user_tokens"
     d.dashboards_c_name       = "dashboards"
     d.dashboard_groups_c_name = "dashboard_groups"
+    d.motions_c_name          = "motions"
     return err
 }

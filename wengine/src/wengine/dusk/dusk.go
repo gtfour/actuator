@@ -27,6 +27,7 @@ type Database interface {
     DashboardMethods
     DashboardGroupMethods
     TokenMethods
+    ActivaMethods
 
 
     //GetUserToken(userid string)(token string,error)
@@ -89,12 +90,10 @@ type AristaMethods interface {
 
 type ActivaMethods interface {
 
-    WriteMotion(*activa.Motion)(error)
-    GetMotion  (...activa.Key)(error)
-    UpdateMotion(motion_id string)(error)
-    RemoveMotion(...activa.Key)(error)
-
-
+    WriteMotion (*activa.Motion)(error)
+    //GetMotion   (...activa.Key)(error)
+    //UpdateMotion(*activa.Motion)(error)
+    //RemoveMotion(...activa.Key)(error)
 
 }
 
