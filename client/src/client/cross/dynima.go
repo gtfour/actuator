@@ -16,7 +16,7 @@ type Dynima struct {
     Id              string
     ids             []int // id column number
     SourcePath      string
-    SourceType      string
+    SourceType      string // file/dir/command
     header          []string
     Data            [][]string
     filters         []string //FilterList
