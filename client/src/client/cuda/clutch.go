@@ -5,6 +5,7 @@ import "client/cross"
 type Clutch struct {
 
     // middleware between cross.Dynima and parsers
+    filter_sequence []string
 
 
 }
