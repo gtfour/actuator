@@ -44,18 +44,18 @@ func (wsconn *WebSocketConnection) Handle()(error) {
                         fmt.Println(test)
                         log.Fatal(err)
                     }
-                case message :=<-wsconn.OutChannel:
+                /*case message :=<-wsconn.OutChannel:
                     var response Response
                     data:=message.Data
                     err_unmarshal:=json.Unmarshal(data, &response)
                     if err_unmarshal == nil {
                         fmt.Printf("\nMessage from server: %v\n",response)
                     }
+                */
             }
         }
     } else {
         fmt.Printf("\nError while opening ws connection\n")
-
 
     }
     return nil

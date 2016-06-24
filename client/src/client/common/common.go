@@ -16,9 +16,14 @@ func GenId()(uuid string,err error) {
     return uuid, nil
 }
 
-func GetTime()(time_now string) {
+func GetTimeId()(time_now string) {
     t := time.Now()
     return t.Format(time.RFC3339Nano)
+}
+
+func GetTime()(time_now string) {
+    t := time.Now()
+    return t.Format(time.RFC822)
 }
 
 /*

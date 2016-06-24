@@ -1,7 +1,8 @@
 package evebridge
 
-import "time"
 import "fmt"
+import "time"
+import "encoding/json"
 import "client/wsclient"
 import "client/activa"
 
@@ -63,7 +64,7 @@ type DataUpdate struct {
 */
 
 func Handle(messages chan CompNotes )() {
-        motions := make(chan *activa.Motion,100)
+        motions := make(chan *activa.Motion, 100)
         var websocket_connection = wsclient.WsConn
         for {
             select{
@@ -78,6 +79,24 @@ func Handle(messages chan CompNotes )() {
                         fmt.Printf("\nFinish writing\n")
                         fmt.Printf("Message: %v HaveToParse: %v\n",message,message.FieldExists("HashSum"))
                     }
+                  case message :=<-websocket_connection.OutChannel:
+                      if message.DataType == "server_response" {
+                          var response wsclient.Response
+                          data:=message.Data
+                          err_unmarshal:=json.Unmarshal(data, &response)
+                          if err_unmarshal == nil {
+                              fmt.Printf("\nMessage from server: %v\n",response)
+                          }
+                      } else if message.DataType == "motion" {
+                          var motion activa.Motion
+                          data:=message.Data
+                          err_unmarshal:=json.Unmarshal(data, &motion)
+                          if err_unmarshal == nil {
+                              //fmt.Printf("\nNew motion %v\n", motion)
+                              motions<-&motion
+                          }
+
+                      }
                 default:
                     time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
                     //fmt.Println("No messages")
