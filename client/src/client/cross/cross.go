@@ -1,13 +1,11 @@
 package cross
 
 import "fmt"
-import "errors"
 import "io/ioutil"
 import "github.com/boltdb/bolt"
 import "client/settings"
 
 var comments =  []string {`//` , `#`}
-var unable_to_init =  errors.New("Unable to init default collections")
 
 var STORAGE_INSTANCE = Open()
 
