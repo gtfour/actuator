@@ -13,7 +13,7 @@ import "client/cuda"
 func main() {
 
 
-    lines,err:=blacktop.ReadFileLines("/etc/passwd")
+    lines,err:=blacktop.ReadFileLines("/tmp/hello.txt")
     if (err==nil) {
 
 

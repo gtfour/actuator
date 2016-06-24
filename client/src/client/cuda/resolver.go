@@ -61,7 +61,7 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 }
 
-func BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+func(c *Clutch)BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
     //var section_brackets_square   =  [2]string {"[","]"}
     //var section_brackets_triangle =  [3]string {"<",">","</"}
@@ -71,7 +71,7 @@ func BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelim
 }
 
 
-func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+func(c *Clutch)QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
     single_quote :=[]string{"'"}
     double_quote :=[]string{`"`}
@@ -123,7 +123,7 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
     return
 }
 
-func PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+func (c *Clutch)PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
     //PATH_SPEC_CHARS     :=[]string {"/"}
     PATH_SPEC_CHARS     :=[]string{"%",":","/","@","?","#","-",".","_","+","="}
     path_marker         := []string {"/"}
@@ -158,7 +158,7 @@ func PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims 
     return ndelims,ndata
 }
 
-func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+func (c *Clutch)UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
 
     URL_SPEC_CHARS     :=[]string{"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
