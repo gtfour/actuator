@@ -65,6 +65,7 @@ type DataUpdate struct {
 
 func Handle(messages chan CompNotes )() {
         motions := make(chan *activa.Motion, 100)
+        go activa.Handle(motions)
         var websocket_connection = wsclient.WsConn
         for {
             select{
@@ -89,7 +90,7 @@ func Handle(messages chan CompNotes )() {
                           }
                       } else if message.DataType == "motion" {
                           var motion activa.Motion
-                          data:=message.Data
+                          data  :=  message.Data
                           err_unmarshal:=json.Unmarshal(data, &motion)
                           if err_unmarshal == nil {
                               //fmt.Printf("\nNew motion %v\n", motion)

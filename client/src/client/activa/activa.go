@@ -1,4 +1,5 @@
 package activa
+import "fmt"
 type Motion struct {
     /*Id           string
     InitTime     string
@@ -26,5 +27,12 @@ type Task struct {
 
 }
 
+func Handle( motions chan *Motion )() {
+    for {
+        select {
+            case motion:=<-motions:
+                fmt.Printf("<<New motion:\n%v\n>>", motion)
 
-
+            }
+        }
+}
