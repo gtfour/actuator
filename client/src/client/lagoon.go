@@ -1,11 +1,16 @@
 package main
 
-import "client/evebri"
+import "client/evebridge"
 
 
+func Drift() {
 
-type Lagoon struct {
+    //ocean:=evebridge.App{
+
+    //}
 
 
 
 }
+
+
