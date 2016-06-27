@@ -2,10 +2,10 @@ package main
 
 import "fmt"
 import "client/cross"
-import "client/common"
+//import "client/common"
 
 func main() {
-
+    /*
     fmt.Printf("\n Storage error %v\n",cross.STORAGE_INSTANCE.Error)
     new_id,err:=common.GenId()
 
@@ -24,4 +24,9 @@ func main() {
     for i:= range dns {
         fmt.Printf("--\n%v\n--",dns[i])
     }
+    */
+    motions,err:=cross.GetAllMotions()
+    fmt.Printf("\nErr:%v\n",err)
+    fmt.Printf("\nData:\n%v",motions)
+
 }

@@ -5,6 +5,7 @@ import "time"
 import "encoding/json"
 import "client/wsclient"
 import "client/activa"
+import "client/cross"
 
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
@@ -63,7 +64,8 @@ type DataUpdate struct {
 }
 */
 
-func Handle(messages chan CompNotes )() {
+
+func HandleDataChanges(messages chan CompNotes )() {
         motions := make(chan *activa.Motion, 100)
         go activa.Handle(motions)
         var websocket_connection = wsclient.WsConn
@@ -94,6 +96,8 @@ func Handle(messages chan CompNotes )() {
                           err_unmarshal:=json.Unmarshal(data, &motion)
                           if err_unmarshal == nil {
                               //fmt.Printf("\nNew motion %v\n", motion)
+                              motion.TaskState=activa.TASK_STATE_inprogress
+                              cross.WriteMotion(&motion)
                               motions<-&motion
                           }
 

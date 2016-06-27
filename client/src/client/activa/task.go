@@ -7,3 +7,4 @@ var TASK_STATE_running           int = 4004
 var TASK_STATE_hang              int = 4001
 var TASK_STATE_permission_denied int = 4007
 var TASK_STATE_pending           int = 4008
+var TASK_STATE_inprogress        int = 4010
