@@ -1,5 +1,6 @@
 package activa
 import "fmt"
+import "client/cross"
 type Motion struct {
     /*Id           string
     InitTime     string
@@ -31,6 +32,7 @@ func Handle( motions chan *Motion )() {
     for {
         select {
             case motion:=<-motions:
+                cross.WriteMotion(motion)
                 fmt.Printf("<<New motion:\n%v\n>>", motion)
 
             }

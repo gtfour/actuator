@@ -51,14 +51,14 @@ func (d *Dynima) Write()(err error){
         db:=STORAGE_INSTANCE.Db
         err=db.Update(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            if b==nil{ return dynimas_open_error }
+            if b==nil{ return collection_open_error }
             encoded, err := json.Marshal(d)
             if err!=nil{ return err }
             return b.Put([]byte(d.Id), encoded) //CreateBucket has been replaced to CreateBucketIfNotExists because when err==bolt.ErrBucketExists - dynima is nil
         });
 
     }
-    return dynima_edit_error
+    return collection_entry_edit_error
 }
 
 func (d *Dynima) UpdateTemplate()(){
@@ -72,7 +72,7 @@ func EditDynimaData(d Dynima, data [][]string)(err error){
         db:=STORAGE_INSTANCE.Db
         err=db.Update(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            if b==nil{ return dynimas_open_error }
+            if b==nil{ return collection_open_error }
             dynima,err:=b.CreateBucketIfNotExists([]byte(d.Id)) //CreateBucket has been replaced to CreateBucketIfNotExists because when err==bolt.ErrBucketExists - dynima is nil
             if err==nil || err==bolt.ErrBucketExists { // If the key exist then its previous value will be overwritten
                 //fmt.Printf("\nEdit dynima:\n%v\nError: %v\n",d,err)
@@ -84,7 +84,7 @@ func EditDynimaData(d Dynima, data [][]string)(err error){
         });
 
     }
-    return dynima_edit_error
+    return collection_entry_edit_error
 }
 
 func RemoveDynima(id string)(error){
@@ -92,13 +92,13 @@ func RemoveDynima(id string)(error){
         db:=STORAGE_INSTANCE.Db
         err := db.Update(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            if b==nil{ return dynimas_open_error }
+            if b==nil{ return collection_open_error }
             err:=b.Delete([]byte(id))
             return err
         });
         return err
     }
-    return dynima_remove_error
+    return collection_entry_remove_error
 }
 
 
@@ -109,14 +109,14 @@ func GetDynima(id string)(*Dynima,error){
         dynima := &Dynima{}
         err = db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            if b==nil{ return dynimas_open_error }
+            if b==nil{ return collection_open_error }
             data:=b.Get([]byte(id))
             err = json.Unmarshal(data, &dynima)
             return err
         });
-        if err == nil { return dynima, nil } else { return nil, dynima_get_error }
+        if err == nil { return dynima, nil } else { return nil, collection_entry_get_error }
     }
-    return nil, dynima_get_error
+    return nil, collection_entry_get_error
 }
 
 func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
@@ -126,7 +126,7 @@ func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
         dynimas = make([]Dynima,0)
         err = db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
-            if b==nil{ return dynimas_open_error }
+            if b==nil{ return collection_open_error }
             err=b.ForEach(func(key, value []byte)(error){
                 dynima := Dynima{}
                 err    = json.Unmarshal(value, &dynima)
@@ -139,7 +139,7 @@ func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
                 return nil
             })
             if len(dynimas) == 0 {
-                return dynimas_list_is_empty
+                return collection_entry_list_is_empty
             }
             return err
         });

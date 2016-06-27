@@ -13,10 +13,16 @@ func main() {
     //go func() {
     //    fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
     //}()
-    path     := "/tmp/test"
-    messages :=   make(chan evebridge.CompNotes,100)
-    wp       :=  chase.WPCreate()
-    _ = chase.Listen(path, messages, wp)
+    path1    := "/etc/passwd"
+    path2    := "/etc/group"
+    path3    := "/proc/net"
+    messages := make(chan evebridge.CompNotes, 100)
+    wp       := chase.WPCreate()
+
+    _ = chase.Listen(path1, messages, wp)
+    _ = chase.Listen(path2, messages, wp)
+    _ = chase.Listen(path3, messages, wp)
+
     //go func(){
     //    time.Sleep( 10000 * time.Millisecond)
     //    wp.RemoveTarget("/tmp/test/test2/toremove.txt")
