@@ -65,7 +65,7 @@ type DataUpdate struct {
 */
 
 
-func HandleDataChanges(messages chan CompNotes )() {
+func Handle(messages chan CompNotes )() {
         motions := make(chan *activa.Motion, 100)
         go activa.Handle(motions)
         var websocket_connection = wsclient.WsConn
