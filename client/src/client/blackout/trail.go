@@ -10,6 +10,11 @@ type Bounce struct {
     Out      strings.Reader
 }
 
+type BounceFlow struct {
+
+
+}
+
 type Key struct {
     Name  string
     Value string
