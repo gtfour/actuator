@@ -1,5 +1,6 @@
 package activa
 
+var TASK_STATE_empty             int
 var TASK_STATE_new               int = 4000
 var TASK_STATE_completed         int = 4002
 var TASK_STATE_failed            int = 4003
