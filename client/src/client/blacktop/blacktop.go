@@ -4,8 +4,16 @@ import "io"
 import "os"
 import "bufio"
 
+import "client/activa"
 
 
+func LayDown(motion *activa.Motion)(error) {
+
+    return nil
+
+
+
+}
 
 
 func ReadFileLines(path string)(lines []string ,err error) {
