@@ -9,3 +9,8 @@ type Condition struct {
 
 
 }
+
+type Mads struct {
+
+
+}
