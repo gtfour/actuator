@@ -1,5 +1,6 @@
 package activa
 import "fmt"
+import "encoding/json"
 type Motion struct {
     /*Id           string
     InitTime     string
@@ -12,12 +13,14 @@ type Motion struct {
     EndTime      string
     UserName     string
     GroupName    string
-    SourceType   string
-    SourcePath   string
-    ActionType   string
-    ActionName   string
+    Type         int
+    // SourceType   string
+    // SourcePath   string
+    // ActionType   string
+    // ActionName   string
     TaskState    int
     //Task
+    MotionData   json.RawMessage `json:"data"`
 }
 type Task struct {
 

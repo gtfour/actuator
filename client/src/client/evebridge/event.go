@@ -98,6 +98,14 @@ func Handle(messages chan CompNotes )() {
                               //fmt.Printf("\nNew motion %v\n", motion)
                               motion.TaskState=activa.TASK_STATE_inprogress
                               cross.WriteMotion(&motion)
+                              //
+                              if motion.Type == activa.MOTION_TYPE_BLACKOUT {
+
+                              } else if motion.Type == activa.MOTION_TYPE_BLACKTOP {
+
+                              }
+
+                              //
                               motions<-&motion
                           }
 

@@ -3,21 +3,34 @@ package blackout
 import "bytes"
 //import "fmt"
 import "log"
-import "os/exec"
 import "strings"
+import "os/exec"
+import "encoding/json"
 //import "client/cuda"
 
 import "client/activa"
 
-func(b *Bounce)BlackTrail(motion *activa.Motion)(error){
+
+
+func MakeBounce(motion *activa.Motion)(*Bounce, error) {
+
+    data:=motion.MotionData
+    var b Bounce
+    err    := json.Unmarshal(data, &b)
+    if err == nil {
+        return &b,nil
+    } else {
+        return nil,err
+    }
+}
+
+func(b *Bounce)Trail(motion *activa.Motion)(error){
     return nil
 }
 
 
-
-
 func Blackout() {
-        cmd := exec.Command("top")
+        cmd := exec.Command("ifconfig","-a")
         cmd.Stdin = strings.NewReader("n\n")
         var out bytes.Buffer
         cmd.Stdout = &out

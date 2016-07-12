@@ -3,11 +3,25 @@ package blacktop
 import "io"
 import "os"
 import "bufio"
+import "encoding/json"
 
 import "client/activa"
 
 
-func LayDown(motion *activa.Motion)(error) {
+func MakeRoller(motion *activa.Motion)(*Roller,error) {
+
+    data:=motion.MotionData
+    var r Roller
+    err    := json.Unmarshal(data, &r)
+    if err == nil {
+        return &r,nil
+    } else {
+        return nil,err
+    }
+}
+
+
+func (r *Roller)LayDown(motion *activa.Motion)(error) {
 
     return nil
 
