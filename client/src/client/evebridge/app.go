@@ -11,6 +11,8 @@ type App struct {
     CommandUpdates  chan CompNotes
     Motions         chan *activa.Motion
 
+
+
 }
 
 func (a *App) Handle ()(error) {
