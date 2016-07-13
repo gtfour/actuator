@@ -1,9 +1,8 @@
 package cross
 
-import "client/activa"
 import "encoding/json"
 import "github.com/boltdb/bolt"
-
+import "client/activa"
 
 func WriteMotion(m *activa.Motion)(err error) {
 
@@ -22,6 +21,9 @@ func WriteMotion(m *activa.Motion)(err error) {
         return unable_to_open_db
     }
 }
+
+
+
 
 func GetAllMotions() ( motions  []activa.Motion , err  error ) {
 

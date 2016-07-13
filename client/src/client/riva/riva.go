@@ -1,5 +1,6 @@
 package riva
 
+//import "encoding/json"
 import "client/activa"
 //import "client/evebridge"
 
@@ -15,9 +16,9 @@ func Handle()(error){
 type Trigger interface {
 
     SetMeow(*Meow)
-    GetMeow(meow_id string)
+    GetMeow(meow_id string)(*Meow)
     SetFractal(*Fractal)
-    GetFractal(fractal_id string)
+    GetFractal(fractal_id string)(*Fractal)
     Remove()
 
 }
@@ -40,11 +41,9 @@ type Fractal interface {
 
 type Runner struct {
 
-
 }
 
 type Editor struct {
-
 
 }
 
@@ -55,8 +54,11 @@ func CreateTrigger()(t *Trigger,err error) {
     return
 }
 
-func MakeShiver()(m *activa.Motion){
+func MakeShiver(t *Trigger)(*activa.Motion){
+
+    var m activa.Motion
+    m.TaskState = activa.TASK_STATE_new
 
 
-    return
+    return &m
 }
