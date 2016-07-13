@@ -20,6 +20,8 @@ var collection_entry_remove_error  = errors.New("\nErr:Unable to remove collecti
 var collection_entry_write_error   = errors.New("\nErr:Unable to write collection entry")
 var collection_entry_list_is_empty = errors.New("\nErr:Collection entry list is empty")
 
+var trigger_wasnt_assigned         = errors.New("\nErr:Trigger wasnt assigned to this target")
+
 
 
 
