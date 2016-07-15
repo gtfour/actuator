@@ -1,9 +1,9 @@
 package rest
 import "fmt"
-import "wengine/dusk"
+//import "wengine/dusk"
 import "github.com/gin-gonic/gin"
 
-func GetDashboardData(data  gin.H, database dusk.Database)(func (c *gin.Context)) {
+func GetDashboardData(data  gin.H)(func (c *gin.Context)) {
     return  func(c *gin.Context ){
         //if user_id,token_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c) && err==nil {
             dashboardId        := c.Param("dashboardId")
@@ -17,7 +17,7 @@ func GetDashboardData(data  gin.H, database dusk.Database)(func (c *gin.Context)
     }
 }
 
-func SetDashboardData(data  gin.H, database dusk.Database)(func (c *gin.Context)) {
+func SetDashboardData(data  gin.H)(func (c *gin.Context)) {
     return  func(c *gin.Context ){
         //if user_id,token_id,err:=auth.GetTokenFromCookies(c); auth.IsAuthorized(c) && err==nil {
             dashboardId        := c.PostForm("dashboardid")

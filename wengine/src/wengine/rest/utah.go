@@ -1,6 +1,6 @@
 package rest
 import "github.com/gin-gonic/gin"
-import "wengine/dusk"
+//import "wengine/dusk"
 import "net/http"
 
 
@@ -9,7 +9,7 @@ type Credentials struct {
     Password string `json:"password"`
 }
 
-func AuthRoute( data  gin.H, database dusk.Database) ( func (c *gin.Context) ) {
+func AuthRoute( data  gin.H) ( func (c *gin.Context) ) {
     return func (c *gin.Context) {
         param:=c.Param("authModuleName")
         switch {

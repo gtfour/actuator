@@ -1,9 +1,9 @@
 package rest
 import "github.com/gin-gonic/gin"
-import "wengine/dusk"
+//import "wengine/dusk"
 
 
-func DuskUserRoute( data  gin.H, database dusk.Database ) ( func (c *gin.Context) ) {
+func DuskUserRoute( data  gin.H ) ( func (c *gin.Context) ) {
 
 
         return func (c *gin.Context)  {
@@ -14,13 +14,13 @@ func DuskUserRoute( data  gin.H, database dusk.Database ) ( func (c *gin.Context
                 case authorized == false:
                     Unauthorized(c)
                 case param == "get-user-by-id":
-                    handler:=GetUserById( data, database, c )
+                    handler:=GetUserById( data, c )
                     handler(c)
                 case param == "get-my-dashboards":
-                    handler:=GetMyDashboards( data, database, c )
+                    handler:=GetMyDashboards( data, c )
                     handler(c)
                 case param == "get-all-users":
-                    handler:=GetAllUsers( data, database, c )
+                    handler:=GetAllUsers( data, c )
                     handler(c)
             }
             }

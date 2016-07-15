@@ -2,7 +2,7 @@ package rest
 
 import "github.com/gin-gonic/gin"
 import "encoding/json"
-import "wengine/dusk"
+//import "wengine/dusk"
 import .  "wengine/core/common"
 
 
@@ -12,7 +12,7 @@ func DashboardUsersList( data  gin.H, params ...[]string )(func (c *gin.Context)
     }
 }
 
-func GetUserById( data  gin.H, database dusk.Database ,c *gin.Context)(func(c *gin.Context)) {
+func GetUserById( data  gin.H, c *gin.Context)(func(c *gin.Context)) {
     handler := func(c *gin.Context)( func(c *gin.Context) ) {
         _,user_id,err:=GetTokenFromCookies(c)
         if err != nil {  return func(c *gin.Context ) {  c.JSON(401, gin.H{"status": "login_failed" }) }  } else {
@@ -34,7 +34,7 @@ func GetUserById( data  gin.H, database dusk.Database ,c *gin.Context)(func(c *g
     return handler(c)
 }
 
-func GetMyDashboards(data  gin.H, database dusk.Database ,c *gin.Context) (func(c *gin.Context)) {
+func GetMyDashboards(data  gin.H, c *gin.Context) (func(c *gin.Context)) {
     handler := func(c *gin.Context)( func(c *gin.Context) ) {
         token_id,user_id,err:=GetTokenFromCookies(c)
         if err != nil { return func(c *gin.Context ){ c.JSON(401, gin.H{"status": "login_failed"}) } } else {
@@ -61,7 +61,7 @@ func GetMyDashboards(data  gin.H, database dusk.Database ,c *gin.Context) (func(
     return handler(c)
 }
 
-func GetAllUsers(data  gin.H, database dusk.Database ,c *gin.Context) (func(c *gin.Context)) {
+func GetAllUsers(data  gin.H, c *gin.Context) (func(c *gin.Context)) {
     handler := func(c *gin.Context)( func(c *gin.Context) ) {
             users,err_db    := database.GetAllUsers()
             if err_db == nil {
