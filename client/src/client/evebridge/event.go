@@ -82,7 +82,7 @@ func Handle(messages chan CompNotes )() {
                         fmt.Printf("\nFinish writing\n")
                         fmt.Printf("Message: %v HaveToParse: %v\n",message,message.FieldExists("HashSum"))
                     }
-                  case message :=<-websocket_connection.OutChannel:
+                case message :=<-websocket_connection.OutChannel:
                       if message.DataType == "server_response" {
                           var response wsclient.Response
                           data:=message.Data

@@ -6,7 +6,8 @@ import "github.com/gin-gonic/gin"
 import "wengine/settings"
 // import "golang.org/x/net/websocket"
 
-var WebSocketServer = CreateServer(settings.WS_DATA_URL)
+var WebSocketServerWeb = CreateServer(settings.WS_WEBDATA_URL)
+var WebSocketServerSrv = CreateServer(settings.WS_SRVDATA_URL)
 
 type Server struct {
 
@@ -116,7 +117,7 @@ func (s *Server) Listen() {
 func WebSocketHandle(data gin.H)( func(c *gin.Context) ) {
 
     return func(c *gin.Context)  {
-            handler := WebSocketServer.WShandler
+            handler := WebSocketServerWeb.WShandler
             handler.ServeHTTP(c.Writer, c.Request)
     }
 }
