@@ -16,7 +16,7 @@ var   maxId      int = 0
 var   database  = dusk.DATABASE_INSTANCE
 
 type Client struct {
-    id           int
+    Id           int
     ws           *websocket.Conn
     server       *Server
     ch           chan             *Message
@@ -42,7 +42,7 @@ func (c *Client) Write(msg *Message) {
         case c.ch <- msg:
         default:
             c.server.Del(c)
-            err := fmt.Errorf("client %d is disconnected.", c.id)
+            err := fmt.Errorf("client %d is disconnected.", c.Id)
             c.server.Error(err)
         }
 }

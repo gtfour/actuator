@@ -13,7 +13,7 @@ type Server struct {
 
     pattern        string
     messages       []*Message
-    clients        map[int]*Client
+    Clients        map[int]*Client
     addChannel     chan *Client
     delChannel     chan *Client
     sendAllChannel chan *Message
@@ -38,7 +38,7 @@ func CreateServer (pattern string) *Server {
     s:=&Server {
         pattern:pattern,
         messages:messages,
-        clients:clients,
+        Clients:clients,
         addChannel:addChannel,
         delChannel:delChannel,
         sendAllChannel:sendAllChannel,
@@ -85,7 +85,7 @@ func (s *Server) Error (err error) {
 }
 
 func (s *Server) SendToAllClients (msg *Message) {
-    for _, c := range s.clients {
+    for _, c := range s.Clients {
         c.Write(msg)
     }
 }
@@ -97,11 +97,11 @@ func (s *Server) Listen() {
         select {
             case c:= <-s.addChannel:
                 log.Println("Added new client")
-                s.clients[c.id] = c
-                log.Println("Now", len(s.clients), "clients connected")
+                s.Clients[c.Id] = c
+                log.Println("Now", len(s.Clients), "clients connected")
             case c:= <-s.delChannel:
-                log.Printf("Delete client %s",c.id)
-                delete(s.clients, c.id)
+                log.Printf("Delete client %s",c.Id)
+                delete(s.Clients, c.Id)
             case msg:= <-s.sendAllChannel:
                 log.Println("Send all:", msg)
                 s.messages = append(s.messages, msg)
