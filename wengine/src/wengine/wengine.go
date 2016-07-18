@@ -23,6 +23,4 @@ func main() {
     app.GET(settings.WS_DATA_URL, wsserver.WebSocketHandle(gin.H{}))
     app.Run(":9000")
 
-
-
 }

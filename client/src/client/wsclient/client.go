@@ -13,7 +13,7 @@ var WsConn = CreateConnection(settings.RESTAPI_WS_ORIGIN, settings.RESTAPI_WS_UR
 type Event struct {
 
     Author string `json:"author"`
-    Body string `json:"body"`
+    Body   string `json:"body"`
     //Name     string
     //Type     string
     //FilePath string
@@ -85,8 +85,7 @@ func (wsconn *WebSocketConnection) Read()(error) {
 func CreateConnection ( origin string, url string ) (  *WebSocketConnection ) {
 
     fmt.Printf("Creating connection:\norigin:%v\nurl:%v\n",origin,url)
-
-    wsConn:=&WebSocketConnection{}
+    wsConn    :=  &WebSocketConnection{}
     protocol  :=  ""
     ws,err    :=  websocket.Dial( url, protocol, url )
 

@@ -83,7 +83,9 @@ func (c *Client) listenRead(){
         default:
             //var msg MessageType
             var msg Message
+            log.Println("Recieve has been started...")
             err := websocket.JSON.Receive(c.ws, &msg)
+            log.Println("Recieved has been finished. Processing...")
             //fmt.Printf("\nMessage : %v\n",msg)
 
             if err == io.EOF {

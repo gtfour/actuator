@@ -4,6 +4,8 @@ import "encoding/json"
 
 // marconi message
 
+// don't forget to add two types of message sent to server : with waiting and without waiting
+
 type Message struct {
     DataType   string `json:"datatype"`
     Data       json.RawMessage `json:"data"`

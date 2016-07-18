@@ -1,4 +1,5 @@
 package wisel
+// handle ws-messages
 
 import "fmt"
 import "wengine/wsserver"
