@@ -359,6 +359,14 @@ func ( directory *Directory ) GetHashSumDir (path string, mode int) (err error){
 func CompareProp(old_prop,new_prop *Prop, path string)(cnotes evebridge.CompNotes) {
 
 
+    fmt.Println("<<Old dir files>>")
+    fmt.Printf("%v",old_prop.DirContent)
+    fmt.Println("<<New dir files>>")
+    fmt.Printf("%v",new_prop.DirContent)
+    fmt.Println("------------------")
+
+
+
     valueOld:=reflect.ValueOf(old_prop).Elem()
     valueNew:=reflect.ValueOf(new_prop).Elem()
 

@@ -123,7 +123,7 @@ func(c *Clutch)QuotesFilter( lineAsArray []string , delims [][]int , data [][]in
     return
 }
 
-func (c *Clutch)PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+func(c *Clutch)PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
     //PATH_SPEC_CHARS     :=[]string {"/"}
     PATH_SPEC_CHARS     :=[]string{"%",":","/","@","?","#","-",".","_","+","="}
     path_marker         := []string {"/"}
@@ -158,7 +158,7 @@ func (c *Clutch)PathFilter ( lineAsArray []string , delims [][]int , data [][]in
     return ndelims,ndata
 }
 
-func (c *Clutch)UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+func(c *Clutch)UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
 
     URL_SPEC_CHARS     :=[]string{"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
