@@ -11,3 +11,5 @@ var WRITTEN_TO_THE_END  int = 4
 var REMOVED_ENTRY       int = 1000
 
 var MODIFIED_ENTRY      int = 2000
+var REPLACED_ENTRY      int = 2001
+var EQUAL_ENTRY         int = 2002

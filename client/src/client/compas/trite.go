@@ -3,18 +3,36 @@ package compas
 // do not forget to match line number
 // uncertain module
 
-func Trite(abc [][]string, xyz [][]string) {
+// abcData and xyzData is data parsed by cuda
 
-    for i:= range abc {
-
-    }
-
-
+type CmpDataProp struct {
 
 
 }
 
-func TriteLine(abc_line []string, xyz_line [][]string) {
+type CmpDataEntryProp struct {
 
+    oldLineNumber  int
+    newLineNumber  int
+    statuses       []int
+    value          []string
+
+}
+
+
+
+func Trite(abcData [][]string, xyzData [][]string) {
+    for i:= range abcData {
+
+    }
+}
+
+func TriteLine(abcDataLine []string, xyzDataLine [][]string)(status int) {
+
+    if len(abcDataLine) == len(xyzDataLine) {
+
+    } else {
+
+    }
 
 }
