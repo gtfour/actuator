@@ -120,6 +120,7 @@ func GetDynima(id string)(*Dynima,error){
 }
 
 func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
+    // get dynimas related to this path
 
     if STORAGE_INSTANCE.Error == false {
         db     := STORAGE_INSTANCE.Db
