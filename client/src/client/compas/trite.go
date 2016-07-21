@@ -19,6 +19,20 @@ type CmpDataEntryProp struct {
 
 }
 
+type Change struct {
+
+  // modify orig
+
+
+
+}
+
+func(c *Cmp)GetChanges()() {
+
+
+}
+
+
 
 
 func Trite(abcData [][]string, xyzData [][]string) {
@@ -34,5 +48,13 @@ func TriteLine(abcDataLine []string, xyzDataLine [][]string)(status int) {
     } else {
 
     }
+
+}
+
+func cutCheck(abcData [][]string, xyzData [][]string)(){
+
+}
+
+func insertCheck(abcData [][]string, xyzData [][]string)(){
 
 }
