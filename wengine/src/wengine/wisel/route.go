@@ -34,6 +34,16 @@ type SrvClient struct {
     connected_at string
 }
 
+func (wc *WebClient)EncodeMessage()() {
+
+
+}
+
+func (sc *SrvClient)EncodeMessage()() {
+
+
+}
+
 func (r *Router)GetAllWebClients()(error) {
     clients:=r.web.server.Clients
     for i:= range clients {
