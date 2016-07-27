@@ -21,33 +21,6 @@ type CmpDataEntryProp struct {
 
 }
 
-type Change struct {
-
-  // modify orig
-  directives  []int
-  data        [][]string
-  dataLine    []string
-  start
-
-
-}
-
-//func(c *Cmp)GetChanges()() {
-//}
-
-func (c *Change)Perform(data [][]string)(status int) {
-    return
-}
-
-func (chs *changes)Verify(oldData [][]string, newData [][]string) {
-
-
-
-}
-
-
-
-
 func Trite(abcData [][]string, xyzData [][]string) {
     for _= range abcData {
 
