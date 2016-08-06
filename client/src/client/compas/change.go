@@ -16,8 +16,6 @@ func (changes *changes)Verify(oldData [][]string, newData [][]string) {
     return
 }
 
-func GetChanges([][]string,[][]string)(chs changes,err error) {
-
+func GetChanges([][]string,[][]string)(chs changes,err error){
     return chs,err
-
 }
