@@ -23,15 +23,15 @@ type Stance interface {
     RemoveGroupId(string)(error)
 }
 
-type Member interface {
+type User interface {
     Stance
 }
 
 type group interface {
-    GetMember()(*Member,error)
-    AddMember(Member)(error)
-    RemoveMember(Member)(error)
-    GetMembers()([]Member)
+    GetUser()(*User,error)
+    AddUser(User)(error)
+    RemoveUser(User)(error)
+    GetUsers()([]User)
 }
 
 type Group interface {
@@ -41,11 +41,11 @@ type Group interface {
 
 
 type resource interface {
-    GrantAccessToMember(string)(error)
-    RemoveAccessForMember(string)(error)
+    GrantAccessToUser(string)(error)
+    RemoveAccessForUser(string)(error)
     GrantAccessToGroup(string)(error)
     RemoveAccessForGroup(string)(error)
-    CheckPermissionForMember(string)(error)
+    CheckPermissionForUser(string)(error)
     CheckPermissionForGroup(string)(error)
 }
 
@@ -68,9 +68,9 @@ type ResourceGroup interface {
 }
 
 
-func GetMember(string)(m Member) {
-    return m
-}
+//func GetUser(string)(m User) {
+//    return m
+//}
 
 func GetResource(string)(r Resource){
     return r

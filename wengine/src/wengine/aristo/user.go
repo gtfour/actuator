@@ -1,6 +1,6 @@
 package aristo
 
-type User struct {
+type Human struct {
 //    SetName(string)(error)
 //    GetName(string)(error)
 //    SetType(string)(error)
@@ -13,25 +13,25 @@ type User struct {
     name string
 }
 
-func ( u *User ) SetName ( name string )(error){
-    u.name = name
+func ( h *Human )SetName( name string )(error){
+    h.name = name
     return nil
 }
 
-func ( u *User ) GetName ()( string, error){
-    return u.name,nil
+func ( h *Human )GetName()( string, error){
+    return h.name,nil
 }
 
-func GetUser(string)(m Member) {
-    return m
+func GetUser(string)(u User) {
+    return u
 }
 
-func CreateUser(string)(m Member) {
-    return m
+func CreateUser(string)(u User) {
+    return u
 }
 
 
-func (m *User)EditUser(prop ...map[string]string)() {
+func (h *Human)EditUser(prop ...map[string]string)() {
 }
 
 
