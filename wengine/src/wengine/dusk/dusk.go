@@ -36,6 +36,8 @@ type Database interface {
     TokenMethods
     ActivaMethods
 
+    AristoMethods
+
 
     //GetUserToken(userid string)(token string,error)
     //RemoveUserToken(userid string)(token string,error)
@@ -91,9 +93,9 @@ type TokenMethods interface {
 }
 
 type AristoMethods interface {
-
-
-
+    CheckAccess(initiator_type,initiator_id,target_type,target_id string)(error)
+    GrantAccess(initiator_type,initiator_id,target_type,target_id string)(error)
+    RemoveAccess(initiator_type,initiator_id,target_type,target_id string)(error)
 }
 
 type ActivaMethods interface {

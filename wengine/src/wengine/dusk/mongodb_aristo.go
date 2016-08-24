@@ -2,7 +2,7 @@ package dusk
 
 import "fmt"
 
-func(d *MongoDb)CheckAccesss(initiator_type,initiator_id,target_type,target_id string)(error) {
+func(d *MongoDb)CheckAccess(initiator_type,initiator_id,target_type,target_id string)(error) {
 
     fmt.Printf("InitiatorType: %s InitiatorId: %s\nTargetType: %s TargetId: %s",initiator_type,initiator_id,target_type,target_id)
     //user   := utah.User{}
@@ -23,5 +23,14 @@ func(d *MongoDb)CheckAccesss(initiator_type,initiator_id,target_type,target_id s
     */
     return nil
 }
+
+func(d *MongoDb)GrantAccess(initiator_type,initiator_id,target_type,target_id string)(error) {
+    return nil
+}
+
+func(d *MongoDb)RemoveAccess(initiator_type,initiator_id,target_type,target_id string)(error) {
+    return nil
+}
+
 
 
