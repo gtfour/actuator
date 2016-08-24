@@ -24,13 +24,53 @@ func(d *MongoDb)CheckAccess(initiator_type,initiator_id,target_type,target_id st
     return nil
 }
 
-func(d *MongoDb)GrantAccess(initiator_type,initiator_id,target_type,target_id string)(error) {
-    return nil
+func InputPropValidate(prop map[string]string)(int) {
+
+    _, ok_initiator_type := prop["initiator_type"]
+    _, ok_initiator_id   := prop["initiator_id"]
+    _, ok_action_type    := prop["action_type"]
+    _, ok_target_type    := prop["target_type"]
+    _, ok_target_id      := prop["target_id"]
+    //action_id, ok := m["initiator_type"]
+
+        if ok_initiator_type == false {return ARISTO_initiatorTypeIsEmpty}
+        if ok_initiator_id   == false {return ARISTO_initiatorIdIsEmpty}
+        if ok_action_type    == false {return ARISTO_actionTypeIsEmpty}
+        if ok_target_type    == false {return ARISTO_targetTypeIsEmpty}
+        if ok_target_id      == false {return ARISTO_targetIdIsEmpty}
+
+    return ARISTO_inputIsCorrect
+
 }
 
-func(d *MongoDb)RemoveAccess(initiator_type,initiator_id,target_type,target_id string)(error) {
-    return nil
+func(d *MongoDb)GrantAccess(prop map[string]string)(error,int) {
+
+    check_input_state:=InputPropValidate(prop)
+    if check_input_state != ARISTO_inputIsCorrect {
+        return nil,check_input_state
+
+    }
+
+    return nil,ARISTO_AccessGranted
+
 }
 
+func(d *MongoDb)RemoveAccess(prop map[string]string)(error,int) {
 
+    check_input_state:=InputPropValidate(prop)
+    if check_input_state != ARISTO_inputIsCorrect {
+        return nil,check_input_state
+
+    }
+
+    return nil,ARISTO_AccessRemoved
+
+}
+
+func(d *MongoDb)GetPrivileges(prop map[string]string)(error){
+    // _, ok := m["route"]
+
+    return nil
+
+}
 

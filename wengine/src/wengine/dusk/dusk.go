@@ -94,8 +94,8 @@ type TokenMethods interface {
 
 type AristoMethods interface {
     CheckAccess(initiator_type,initiator_id,target_type,target_id string)(error)
-    GrantAccess(initiator_type,initiator_id,target_type,target_id string)(error)
-    RemoveAccess(initiator_type,initiator_id,target_type,target_id string)(error)
+    GrantAccess(prop map[string]string)(error,int)
+    RemoveAccess(prop map[string]string)(error,int)
 }
 
 type ActivaMethods interface {
