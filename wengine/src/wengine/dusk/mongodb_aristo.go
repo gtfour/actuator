@@ -24,7 +24,7 @@ func(d *MongoDb)CheckAccess(initiator_type,initiator_id,target_type,target_id st
     return nil
 }
 
-func InputPropValidate(prop map[string]string)(int) {
+func InputPropValidation(prop map[string]string)(int) {
 
     _, ok_initiator_type := prop["initiator_type"]
     _, ok_initiator_id   := prop["initiator_id"]
@@ -43,26 +43,25 @@ func InputPropValidate(prop map[string]string)(int) {
 
 }
 
+func InputStanceValidation(prop map[string]string)(int){
+    return ARISTO_inputIsCorrect
+}
+
 func(d *MongoDb)GrantAccess(prop map[string]string)(error,int) {
 
-    check_input_state:=InputPropValidate(prop)
+    check_input_state:=InputPropValidation(prop)
     if check_input_state != ARISTO_inputIsCorrect {
         return nil,check_input_state
-
     }
-
     return nil,ARISTO_AccessGranted
-
 }
 
 func(d *MongoDb)RemoveAccess(prop map[string]string)(error,int) {
 
-    check_input_state:=InputPropValidate(prop)
+    check_input_state:=InputPropValidation(prop)
     if check_input_state != ARISTO_inputIsCorrect {
         return nil,check_input_state
-
     }
-
     return nil,ARISTO_AccessRemoved
 
 }

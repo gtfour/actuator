@@ -47,6 +47,8 @@ type resource interface {
     RemoveAccessForGroup(string)(error)
     CheckPermissionForUser(string)(error)
     CheckPermissionForGroup(string)(error)
+    //
+    GetRaw()([]byte, error)
 }
 
 type Action interface {
