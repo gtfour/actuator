@@ -1,11 +1,13 @@
 package aristo
 
 type User struct {
-
-
+    name        string
+    id          string
+    second_name string
+    email       string
 }
 
-type Human struct {
+type HumanUser struct {
 //    SetName(string)(error)
 //    GetName(string)(error)
 //    SetType(string)(error)
@@ -16,15 +18,20 @@ type Human struct {
 //    AddGroupId(string)(error)
 //    RemoveGroupId(string)(error)
     name string
+    User
 }
 
-func ( h *Human )SetName( name string )(error){
-    h.name = name
+type SystemUser struct {
+    User
+}
+
+func ( u *User )SetName( name string )(error){
+    u.name = name
     return nil
 }
 
-func ( h *Human )GetName()( string, error){
-    return h.name,nil
+func ( u *User )GetName()( string, error){
+    return u.name,nil
 }
 
 func GetUser(string)(u User) {
@@ -36,7 +43,7 @@ func CreateUser(string)(u User) {
 }
 
 
-func (h *Human)EditUser(prop ...map[string]string)() {
+func (u *User)EditUser(prop map[string]interface{})() {
 }
 
 

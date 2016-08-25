@@ -73,3 +73,11 @@ func(d *MongoDb)GetPrivileges(prop map[string]string)(error){
 
 }
 
+func(d *MongoDb)AristoMakeQuery(prop map[string]string)(error){
+    // _, ok := m["route"]
+
+    return nil
+
+}
+
+
