@@ -1,10 +1,9 @@
 package aristo
 
 type Query struct {
-    Type  string
+    Type  int
     Table string
     Body  map[string]interface{}
-
 }
 
 
