@@ -12,15 +12,17 @@ var access_denied  = errors.New(errwrap("access_denied"))
 
 
 type Stance interface {
-    SetName(string)(error)
-    GetName(string)(error)
-    SetType(string)(error)
-    GetType()(string,error)
-    SetId(string)(error)
-    GetId()(string,error)
-    GetGroupIds()([]string,error)
-    AddGroupId(string)(error)
-    RemoveGroupId(string)(error)
+    //SetName(string)(error)
+    //GetName(string)(error)
+    //SetType(string)(error)
+    //GetType()(string,error)
+    //SetId(string)(error)
+    //GetId()(string,error)
+    //GetGroupIds()([]string,error)
+    //AddGroupId(string)(error)
+    //RemoveGroupId(string)(error)
+    SetProp(map[string]string)(error)
+    GetProp()(map[string]string,error)
 }
 
 type User interface {
@@ -28,15 +30,16 @@ type User interface {
 }
 
 type group interface {
-    GetUser()(*User,error)
-    AddUser(User)(error)
-    RemoveUser(User)(error)
-    GetUsers()([]User)
+    //Stance
+    //GetUser()(*User,error)
+    //AddUser(User)(error)
+    //RemoveUser(User)(error)
+    //GetUsers()([]User)
 }
 
 type Group interface {
     Stance
-    group
+    //group
 }
 
 
