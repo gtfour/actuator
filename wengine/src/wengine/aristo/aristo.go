@@ -25,8 +25,9 @@ type Stance interface {
     GetProp()(map[string]string,error)
 }
 
+/*
 type User interface {
-    Stance
+    // Stance
 }
 
 type group interface {
@@ -38,10 +39,10 @@ type group interface {
 }
 
 type Group interface {
-    Stance
+    //Stance
     //group
 }
-
+*/
 
 type resource interface {
     GrantAccessToUser(string)(error)
@@ -69,7 +70,7 @@ type Resource interface {
 type ResourceGroup interface {
     Stance
     resource
-    group
+    //group
 }
 
 

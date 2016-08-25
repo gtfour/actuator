@@ -1,5 +1,10 @@
 package aristo
 
+type User struct {
+
+
+}
+
 type Human struct {
 //    SetName(string)(error)
 //    GetName(string)(error)
