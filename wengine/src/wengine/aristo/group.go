@@ -8,6 +8,8 @@ type Group struct {
 
 func CreateNewGroup()(g *Group,err error) {
    //group_prop := s.GetProp
+   new_query:=Query{Table:GROUPS_T}
+   new_query.Run()
    return g,err
 }
 

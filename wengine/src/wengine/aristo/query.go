@@ -1,10 +1,13 @@
 package aristo
 
 type Query struct {
-    type string
+    Type  string
+    Table string
+    Body  map[string]interface{}
+
 }
 
 
-func(q *Query)Make(error){
-
+func(q *Query)Run()(err error){
+    return err
 }
