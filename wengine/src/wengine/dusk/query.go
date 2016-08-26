@@ -1,6 +1,7 @@
 package dusk
 
 import "gopkg.in/mgo.v2/bson"
+import "wengine/core/types/db_types"
 
 type Query struct {
 
@@ -14,20 +15,17 @@ type Query struct {
 
 func(d *MongoDb)RunQuery(q Query)(result map[string]interface{}, err error){
     c      := d.Session.DB(d.dbname).C(q.Table)
-
-    if q.Type == CREATE_NEW || q.Type == UPDATE || q.Type == EDIT   {
-
-
-    } else if q.Type == GET  || q.Type == CHECK_EXIST {
+    if q.Type == db_types.CREATE_NEW || q.Type == db_types.UPDATE || q.Type == db_types.EDIT   {
 
 
-    } else  if q.Type == REMOVE {
+    } else if q.Type == db_types.GET || q.Type == db_types.GET_ALL  || q.Type == db_types.CHECK_EXIST {
+
+
+    } else  if q.Type == db_types.REMOVE {
 
 
     } else {
-        return nil,err
-
-
+        return nil, incorrect_query_type
     }
 
     err    =  c.Find(bson.M(q.KeyBody)).One(&result)

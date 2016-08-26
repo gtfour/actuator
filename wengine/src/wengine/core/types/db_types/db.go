@@ -15,4 +15,5 @@ var REMOVE      = 4004
 var EDIT        = 4006
 var CHECK_EXIST = 4008
 var GET         = 4010
+var GET_ALL     = 4012
 
