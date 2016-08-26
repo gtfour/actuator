@@ -50,6 +50,17 @@ func(d *MongoDb)RunQuery(q Query)(result map[string]interface{}, err error){
         } else {
             return nil, empty_key
         }
+    } else if q.Type == db_types.INSERT_ITEM || q.Type == db_types.REMOVE_ITEM {
+        if q.KeyBody   == nil { return nil,empty_key   }
+        if q.QueryBody == nil { return nil,empty_query }
+
+        if q.Type      == db_types.INSERT_ITEM {
+            err            =  c.Update(bson.M(q.KeyBody), bson.M{"$push":bson.M(q.QueryBody)})
+        } else {
+            err            =  c.Update(bson.M(q.KeyBody), bson.M{"$pull":bson.M(q.QueryBody)})
+        }
+
+
     } else {
         return nil, incorrect_query_type
     }

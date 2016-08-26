@@ -17,3 +17,6 @@ var CHECK_EXIST = 4008
 var GET         = 4010
 var GET_ALL     = 4012
 
+var INSERT_ITEM = 4014
+var REMOVE_ITEM = 4016
+
