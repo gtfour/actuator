@@ -17,5 +17,9 @@ var dashboard_group_doesnt_exist  = errors.New("Dashboard group does'nt exist")
 var dashboard_doesnt_exist        = errors.New("Group does'nt exist")
 var token_doesnt_exist            = errors.New("Token does'nt exist")
 
+var empty_key                     = errors.New("Key is empty")
+var empty_query                   = errors.New("Query is empty")
+
+
 
 
