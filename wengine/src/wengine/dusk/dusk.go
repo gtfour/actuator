@@ -35,10 +35,9 @@ type Database interface {
     DashboardGroupMethods
     TokenMethods
     ActivaMethods
-
     AristoMethods
-
-
+    //
+    QueryMethods
     //GetUserToken(userid string)(token string,error)
     //RemoveUserToken(userid string)(token string,error)
     //RemoveUsers( map[string]interface{} )
@@ -109,9 +108,13 @@ type ActivaMethods interface {
 
 
 type SolisMethods interface {
-
-
 }
+
+type QueryMethods interface {
+    RunQuery(Query)(map[string]interface{},error)
+}
+
+
 
 
 func OpenDatabase ( dbtype, username, password, host, dbname  string) ( d Database ) {

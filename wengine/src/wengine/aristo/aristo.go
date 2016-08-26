@@ -1,7 +1,10 @@
 package aristo
-import "errors"
 
-var base_word = "aristo"
+import "errors"
+import "wengine/dusk"
+
+var database dusk.Database = dusk.DATABASE_INSTANCE
+var base_word              = "aristo"
 
 func errwrap(in string)(string) {
     return base_word+":"+in
