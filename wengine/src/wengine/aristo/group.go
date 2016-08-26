@@ -1,6 +1,7 @@
 package aristo
 
 
+import "wengine/dusk"
 import "wengine/core/common"
 import "wengine/core/types/aristo_types"
 
@@ -14,7 +15,7 @@ func CreateNewGroup()(g *Group,err error) {
    //group_prop := s.GetProp
    new_group:=make(map[string]interface{},0)
    new_group["id"],_=common.GenId()
-   new_query:=Query{Table:GROUPS_T,Type:aristo_types.CREATE_NEW,Body:new_group}
+   new_query:=dusk.Query{Table:GROUPS_T,Type:aristo_types.CREATE_NEW,Body:new_group}
    new_query.Run()
    return g,err
 }
