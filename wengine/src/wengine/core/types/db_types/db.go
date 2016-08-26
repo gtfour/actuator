@@ -1,4 +1,4 @@
-package aristo_types
+package db_types
 
 var USER_HUMAN  = 1000
 var USER_SYSTEM = 1002

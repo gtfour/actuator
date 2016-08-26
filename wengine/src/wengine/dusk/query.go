@@ -3,16 +3,16 @@ package dusk
 //import "gopkg.in/mgo.v2/bson"
 
 type Query struct {
-    Type  int
-    Table string
-    Body  map[string]interface{}
+
+    Type      int
+    Table     string
+    KeyBody   map[string]interface{}
+    QueryBody map[string]interface{}
+
 }
 
 
-func(q *Query)Run()(err error){
-    return err
+func(d *MongoDb)RunQuery(q *Query)(result map[string]interface{}, err error){
+    return result, err
 }
 
-func AristoQuery(query map[string]interface{})(err error){
-    return err
-}
