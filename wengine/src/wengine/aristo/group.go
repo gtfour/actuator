@@ -6,14 +6,17 @@ import "wengine/dusk"
 import "wengine/core/common"
 import "wengine/core/types/db_types"
 
-type member struct {
-
-
+type Member struct {
+    Type  string
+    Id    string
+    Name  string
 }
+
 
 type Group struct {
     Name    string
-    Members []string
+    Id      string
+    Members []Member
 }
 
 
@@ -44,21 +47,20 @@ func GetGroup(prop map[string]interface{},query_type ...int)(gs map[string]inter
                 selected_query_type = prov_query_type
             }
         }
-        new_query       := dusk.Query{Table:GROUPS_T, Type:selected_query_type, KeyBody:prop}
-        result, err     := database.RunQuery(new_query)
-        fmt.Printf("Result:\n%v\n",result)
+        new_query         := dusk.Query{Table:GROUPS_T, Type:selected_query_type, KeyBody:prop}
+        result_slice, err := database.RunQuery(new_query)
 
+        fmt.Printf("Result:\n%v\n",result_slice)
         gs = nil
         if gs == nil {
             return nil, group_list_is_empty
         } else {
             return gs,err
         }
-    } else {
+    }else{
         return nil, prop_is_empty
 
     }
-
 }
 
 func EditGroup(prop map[string]interface{}, new_prop map[string]interface{})(err error){
@@ -78,5 +80,12 @@ func GetGroupProp(id string)(props map[string]interface{},err error) {
     return props,err
 }
 
+func LoadMember(prop map[string]interface{})(members []Member,err error){
+    return members,err
+}
+
+func AddMember()(members []Member,err error){
+    return members,err
+}
 
 
