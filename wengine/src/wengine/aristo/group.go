@@ -7,15 +7,16 @@ import "wengine/core/common"
 import "wengine/core/types/db_types"
 
 type Member struct {
-    Type  string
     Id    string
     Name  string
+    Type  string
 }
 
 
 type Group struct {
-    Name    string
     Id      string
+    Name    string
+    Type    string
     Members []Member
 }
 
@@ -24,7 +25,6 @@ type Group struct {
 
 func CreateNewGroup()(g *Group,err error) {
    //group_prop := s.GetProp
-
    new_group         := make(map[string]interface{},0)
    new_group["id"],_ =  common.GenId()
    new_query         := dusk.Query{Table:GROUPS_T, Type:db_types.CREATE_NEW, QueryBody:new_group}
@@ -84,8 +84,53 @@ func LoadMember(prop map[string]interface{})(members []Member,err error){
     return members,err
 }
 
-func AddMember()(members []Member,err error){
-    return members,err
+func (g *Group)AddMember(m Member)(err error){
+    group,err_group       := g.Check()
+    member,err_member     := m.Check()
+    query_body            := make(map[string]interface{}, 0)
+    query_body["members"] = member
+    if err_group == nil || err_member == nil {
+        new_query         := dusk.Query{Table:GROUPS_T, Type:db_types.INSERT_ITEM, KeyBody:group ,QueryBody:query_body}
+        _,err             = database.RunQuery(new_query)
+    }
+    return err
 }
+
+func (g *Group)RemoveMember(member Member)(err error){
+
+
+    return err
+}
+
+
+func(m *Member)GetMemberGroups()(gs []Group,err error) {
+    return gs,err
+}
+
+func (g *Group)Check()(group map[string]interface{}, err error){
+    if g.Id == "" || g.Name == "" || g.Type == "" {
+        return nil, group_invalid
+    } else {
+        group = make(map[string]interface{},0)
+        group["id"]   = g.Id
+        group["name"] = g.Name
+        group["type"] = g.Type
+        return group, nil
+    }
+}
+
+func (m *Member)Check()(member map[string]interface{},err error){
+    if  m.Id == "" || m.Name == "" || m.Type == "" {
+        return nil, member_invalid
+
+    } else {
+        member = make(map[string]interface{},0)
+        member["id"]   = m.Id
+        member["name"] = m.Name
+        member["type"] = m.Type
+        return member, nil
+    }
+}
+
 
 

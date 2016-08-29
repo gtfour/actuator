@@ -17,6 +17,9 @@ var id_isnot_specified  = errors.New(errwrap("id is'not specified"))
 var prop_is_empty       = errors.New(errwrap("prop is empty"))
 var group_list_is_empty = errors.New(errwrap("group list is empty"))
 
+var group_invalid       = errors.New(errwrap("group is invalid"))
+var member_invalid      = errors.New(errwrap("member is invalid"))
+
 
 type Stance interface {
     //SetName(string)(error)

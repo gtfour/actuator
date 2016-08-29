@@ -1,10 +1,10 @@
 package aristo
 
 type User struct {
-    name        string
-    id          string
-    second_name string
-    email       string
+    id           string
+    name         string
+    utype        string
+    email        string
 }
 
 type HumanUser struct {
@@ -17,8 +17,9 @@ type HumanUser struct {
 //    GetGroupIds()([]string,error)
 //    AddGroupId(string)(error)
 //    RemoveGroupId(string)(error)
-    name string
+    //name string
     User
+    second_name  string
 }
 
 type SystemUser struct {
@@ -47,4 +48,13 @@ func (u *User)EditUser(prop map[string]interface{})() {
 }
 
 
+
+
+
+func(u *User)UserToMember()(m Member, err error) {
+    m.Id   = u.id
+    m.Name = u.name
+    m.Type = u.utype
+    return m,err
+}
 
