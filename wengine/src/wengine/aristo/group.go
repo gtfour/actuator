@@ -1,6 +1,7 @@
 package aristo
 
 
+import "fmt"
 import "wengine/dusk"
 import "wengine/core/common"
 import "wengine/core/types/db_types"
@@ -31,13 +32,23 @@ func CreateNewGroup()(g *Group,err error) {
 }
 
 
-func GetGroup(prop map[string]interface{})(gs map[string]interface{},err error){
+func GetGroup(prop map[string]interface{},query_type ...int)(gs map[string]interface{},err error){
 
     //key`_body        := make(map[string]interface{},0)
     //key_body["id"]  =  id
     if prop != nil {
-        new_query       := dusk.Query{Table:GROUPS_T, Type:db_types.GET, KeyBody:prop}
-        gs,err          = database.RunQuery(new_query)
+        selected_query_type:=db_types.GET
+        if len(query_type) == 1 {
+            prov_query_type:=query_type[0]
+            if prov_query_type == db_types.GET || prov_query_type == db_types.GET_ALL {
+                selected_query_type = prov_query_type
+            }
+        }
+        new_query       := dusk.Query{Table:GROUPS_T, Type:selected_query_type, KeyBody:prop}
+        result, err     := database.RunQuery(new_query)
+        fmt.Printf("Result:\n%v\n",result)
+
+        gs = nil
         if gs == nil {
             return nil, group_list_is_empty
         } else {

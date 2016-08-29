@@ -111,7 +111,7 @@ type SolisMethods interface {
 }
 
 type QueryMethods interface {
-    RunQuery(Query)(map[string]interface{},error)
+    RunQuery(Query)(result_slice *[]map[string]interface{}, err error)
 }
 
 

@@ -13,8 +13,10 @@ type Query struct {
 }
 
 
-func(d *MongoDb)RunQuery(q Query)(result map[string]interface{}, err error){
+func(d *MongoDb)RunQuery(q Query)(result_slice_addr *[]map[string]interface{}, err error){
 
+    result_slice:=make([]map[string]interface{},0)
+    //result_slice = &result_slice_full
     c      := d.Session.DB(d.dbname).C(q.Table)
     if q.Type == db_types.CREATE_NEW {
         if q.QueryBody != nil {
@@ -33,14 +35,21 @@ func(d *MongoDb)RunQuery(q Query)(result map[string]interface{}, err error){
     } else if q.Type == db_types.GET || q.Type == db_types.GET_ALL  || q.Type == db_types.CHECK_EXIST {
         if q.KeyBody != nil {
             if q.Type == db_types.GET_ALL {
-                err     =  c.Find(bson.M(q.KeyBody)).All(&result)
+                err     =  c.Find(bson.M(q.KeyBody)).All(&result_slice)
+                if err == nil {
+                    return &result_slice, err
+                } else {
+                    return nil, err
+                }
             } else {
+                result:=make(map[string]interface{})
                 err     =  c.Find(bson.M(q.KeyBody)).One(&result)
-            }
-            if err == nil {
-                return result, err
-            } else {
-                return nil, err
+                result_slice = append(result_slice, result)
+                if err == nil {
+                    return &result_slice, err
+                } else {
+                    return nil, err
+                }
             }
         } else {
             return nil, empty_key
@@ -58,16 +67,18 @@ func(d *MongoDb)RunQuery(q Query)(result map[string]interface{}, err error){
 
         if q.Type      == db_types.INSERT_ITEM {
             err            =  c.Update(bson.M(q.KeyBody), bson.M{"$push":bson.M(q.QueryBody)})
+            return nil,err
         } else {
             err            =  c.Update(bson.M(q.KeyBody), bson.M{"$pull":bson.M(q.QueryBody)})
+            return nil,err
         }
     } else {
         return nil, incorrect_query_type
     }
 
-    err    =  c.Find(bson.M(q.KeyBody)).One(&result)
-    if err != nil {
-        return result,err
-    }
-    return result, err
+    // err    =  c.Find(bson.M(q.KeyBody)).One(&result)
+    // if err != nil {
+    //     return result,err
+    // }
+    // return result, err
 }
