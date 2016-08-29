@@ -24,10 +24,12 @@ func(d *MongoDb)RunQuery(q Query)(result map[string]interface{}, err error){
             return nil, empty_query
         }
     } else if q.Type == db_types.UPDATE || q.Type == db_types.EDIT   {
-
         if q.KeyBody   == nil { return nil,empty_key   }
         if q.QueryBody == nil { return nil,empty_query }
-
+        //
+	err = c.Update(bson.M(q.KeyBody), bson.M{"$set": bson.M(q.QueryBody)})
+        return nil, err
+        //
     } else if q.Type == db_types.GET || q.Type == db_types.GET_ALL  || q.Type == db_types.CHECK_EXIST {
         if q.KeyBody != nil {
             if q.Type == db_types.GET_ALL {
@@ -59,8 +61,6 @@ func(d *MongoDb)RunQuery(q Query)(result map[string]interface{}, err error){
         } else {
             err            =  c.Update(bson.M(q.KeyBody), bson.M{"$pull":bson.M(q.QueryBody)})
         }
-
-
     } else {
         return nil, incorrect_query_type
     }
