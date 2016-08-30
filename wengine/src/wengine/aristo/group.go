@@ -22,15 +22,44 @@ type Group struct {
 
 
 
+func CreateNewMember(name string, mtype string)(m Member){
+    member_type:="general"
+    if mtype != "" { member_type=mtype }
+    new_id,_   := common.GenId()
+    return Member{Id:new_id,Name:name,Type:member_type}
+}
 
-func CreateNewGroup()(g *Group,err error) {
+func (m *Member)Write()(err error){
+
+    member_map,err:=m.Check()
+    if err == nil {
+        new_query:=dusk.Query{Table:MEMBERS_T, Type:db_types.CREATE_NEW, QueryBody:member_map}
+        _,err   = database.RunQuery(new_query)
+        return err
+    } else { return err }
+}
+
+func CreateNewGroup(name string, gtype string)(g Group) {
+   // default type: general
    //group_prop := s.GetProp
-   new_group         := make(map[string]interface{},0)
-   new_group["id"],_ =  common.GenId()
-   new_query         := dusk.Query{Table:GROUPS_T, Type:db_types.CREATE_NEW, QueryBody:new_group}
-   /*result*/_,err   = database.RunQuery(new_query)
+    group_type :="general"
+    if gtype   != "" { group_type=gtype }
+    new_id,_   :=  common.GenId()
+    g.Members  =make([]Member,0)
+    g.Id       = new_id
+    g.Type     = group_type
+    return g
 
-   return g,err
+}
+
+func (g *Group)Write()(err error){
+    group_map,err:=g.Check()
+    if err == nil {
+        new_query         := dusk.Query{Table:GROUPS_T, Type:db_types.CREATE_NEW, QueryBody:group_map}
+        _,err   = database.RunQuery(new_query)
+        return err
+    } else { return err }
+
 
 }
 
@@ -108,19 +137,34 @@ func(m *Member)GetMemberGroups()(gs []Group,err error) {
 }
 
 func (g *Group)Check()(group map[string]interface{}, err error){
-    if g.Id == "" || g.Name == "" || g.Type == "" {
+    if g.Id == "" || g.Type == "" {
         return nil, group_invalid
     } else {
         group = make(map[string]interface{},0)
         group["id"]   = g.Id
         group["name"] = g.Name
         group["type"] = g.Type
+
+        if len(g.Members) > 0 { group["members"] = make([]map[string]interface{},0) }
+
+        member_list:=make([]map[string]interface{},0)
+
+        for i:= range g.Members {
+            member         := g.Members[i]
+            member_map,err := member.Check()
+            if err == nil {
+                member_list = append(member_list, member_map)
+            }
+        }
+
+        if len(member_list) > 0 { group["members"]=member_list }
+
         return group, nil
     }
 }
 
 func (m *Member)Check()(member map[string]interface{},err error){
-    if  m.Id == "" || m.Name == "" || m.Type == "" {
+    if  m.Id == "" || m.Type == "" {
         return nil, member_invalid
 
     } else {
