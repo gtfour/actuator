@@ -4,7 +4,7 @@ package aristo
 import "fmt"
 import "wengine/dusk"
 import "wengine/core/common"
-import "wengine/core/types/db_types"
+import "wengine/core/types/db"
 
 type Member struct {
     Id    string
@@ -26,14 +26,17 @@ func CreateNewMember(name string, mtype string)(m Member){
     member_type:="general"
     if mtype != "" { member_type=mtype }
     new_id,_   := common.GenId()
-    return Member{Id:new_id,Name:name,Type:member_type}
+    m.Id = new_id
+    m.Name = name
+    m.Type = member_type
+    return m
 }
 
 func (m *Member)Write()(err error){
 
     member_map,err:=m.Check()
     if err == nil {
-        new_query:=dusk.Query{Table:MEMBERS_T, Type:db_types.CREATE_NEW, QueryBody:member_map}
+        new_query:=dusk.Query{Table:MEMBERS_T, Type:db.CREATE_NEW, QueryBody:member_map}
         _,err   = database.RunQuery(new_query)
         return err
     } else { return err }
@@ -48,6 +51,7 @@ func CreateNewGroup(name string, gtype string)(g Group) {
     g.Members  =make([]Member,0)
     g.Id       = new_id
     g.Type     = group_type
+    g.Name     = name
     return g
 
 }
@@ -55,7 +59,7 @@ func CreateNewGroup(name string, gtype string)(g Group) {
 func (g *Group)Write()(err error){
     group_map,err:=g.Check()
     if err == nil {
-        new_query         := dusk.Query{Table:GROUPS_T, Type:db_types.CREATE_NEW, QueryBody:group_map}
+        new_query         := dusk.Query{Table:GROUPS_T, Type:db.CREATE_NEW, QueryBody:group_map}
         _,err   = database.RunQuery(new_query)
         return err
     } else { return err }
@@ -69,10 +73,10 @@ func GetGroup(prop map[string]interface{},query_type ...int)(gs map[string]inter
     //key`_body        := make(map[string]interface{},0)
     //key_body["id"]  =  id
     if prop != nil {
-        selected_query_type:=db_types.GET
+        selected_query_type:=db.GET
         if len(query_type) == 1 {
             prov_query_type:=query_type[0]
-            if prov_query_type == db_types.GET || prov_query_type == db_types.GET_ALL {
+            if prov_query_type == db.GET || prov_query_type == db.GET_ALL {
                 selected_query_type = prov_query_type
             }
         }
@@ -100,7 +104,7 @@ func EditGroup(prop map[string]interface{}, new_prop map[string]interface{})(err
     if ok_old == false || ok_new == false  {
         return id_isnot_specified
     }
-    new_query         := dusk.Query{Table:GROUPS_T, Type:db_types.EDIT, KeyBody:prop ,QueryBody:new_prop}
+    new_query         := dusk.Query{Table:GROUPS_T, Type:db.EDIT, KeyBody:prop ,QueryBody:new_prop}
     _,err   = database.RunQuery(new_query)
     return err
 }
@@ -119,14 +123,23 @@ func (g *Group)AddMember(m Member)(err error){
     query_body            := make(map[string]interface{}, 0)
     query_body["members"] = member
     if err_group == nil || err_member == nil {
-        new_query         := dusk.Query{Table:GROUPS_T, Type:db_types.INSERT_ITEM, KeyBody:group ,QueryBody:query_body}
+        new_query         := dusk.Query{Table:GROUPS_T, Type:db.INSERT_ITEM, KeyBody:group ,QueryBody:query_body}
         _,err             = database.RunQuery(new_query)
     }
     return err
 }
 
-func (g *Group)RemoveMember(member Member)(err error){
+func (g *Group)Remove()(err error){
 
+    group,err := g.Check()
+    if err == nil {
+        new_query         := dusk.Query{Table:GROUPS_T, Type:db.REMOVE, KeyBody:group}
+        _,err             = database.RunQuery(new_query)
+        return err
+    } else { return err }
+}
+
+func (g *Group)RemoveMember(member Member)(err error){
 
     return err
 }
@@ -175,6 +188,15 @@ func (m *Member)Check()(member map[string]interface{},err error){
         return member, nil
     }
 }
+
+func MakeMember(member_prop map[string]interface{})(m *Member,err error){
+    return m,err
+}
+
+func MakeGroup(group_prop map[string]interface{})(g *Group,err error){
+    return g,err
+}
+
 
 
 
