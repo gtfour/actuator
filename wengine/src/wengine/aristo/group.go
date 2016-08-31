@@ -99,10 +99,14 @@ func GetGroup(prop map[string]interface{},query_type ...int)(gs map[string]inter
 func EditGroup(prop map[string]interface{}, new_prop map[string]interface{})(err error){
 
     //key_body := make(map[string]interface{},0)
-    _, ok_old := prop["id"]
-    _, ok_new := new_prop["id"]
-    if ok_old == false || ok_new == false  {
+    // old_id and new_id should be equal
+    old_id, ok_old := prop["id"]
+    new_id, ok_new := new_prop["id"]
+    if ok_old == false {  //|| ok_new == false  {
         return id_isnot_specified
+    }
+    if ok_new == true && old_id!= new_id {
+        return id_change_is_not_allowed
     }
     new_query         := dusk.Query{Table:GROUPS_T, Type:db.EDIT, KeyBody:prop ,QueryBody:new_prop}
     _,err   = database.RunQuery(new_query)
