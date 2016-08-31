@@ -1,5 +1,7 @@
 package compas
 
+// ignore entry  sequence :  yes/no
+
 type Change struct {
   directive int
   keyData   []string
