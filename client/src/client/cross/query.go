@@ -72,14 +72,15 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
                     return nil, err
                 }
             } else {
-                result:=make(map[string]interface{})
-                err     =  c.Find(bson.M(q.KeyBody)).One(&result)
-                result_slice = append(result_slice, result)
-                if err == nil {
-                    return &result_slice, err
-                } else {
-                    return nil, err
-                }
+                //result:=make(map[string]interface{})
+                //err     =  c.Find(bson.M(q.KeyBody)).One(&result)
+                //result_slice = append(result_slice, result)
+                //if err == nil {
+                //    return &result_slice, err
+                //} else {
+                //    return nil, err
+                //}
+                
             }
         } else {
             return nil, empty_key
