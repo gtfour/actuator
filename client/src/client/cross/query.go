@@ -16,12 +16,26 @@ func (s *Storage)RunQuery(query *Query)(result_slice_addr *[]map[string]interfac
     //c      := d.Session.DB(d.dbname).C(q.Table)
 
     if q.Type == types.CREATE_NEW_TABLE {
-
+        err:=s.db.Update(func(tx *bolt.Tx) error {
+            _,err    := tx.CreateBucketIfNotExists([]byte(query.Table))
+            return err
+        });
+        return nil,err
     } else if q.Type == types.CHECK_TABLE_EXIST  {
-
-
-
-    } else if q.Type == types.CREATE_NEW {
+        err := boltdb.db.View(func(tx *bolt.Tx) error {
+            b:=tx.Bucket([]byte(boltdb.usersTableName))
+            if b==nil{ return table_doesnt_exist } else{
+                return nil
+            }
+        });
+        return err
+    } else if q.Type == types.REMOVE_TABLE {
+        err:=s.db.Update(func(tx *bolt.Tx) error {
+            err:=tx.DeleteBucket([]byte(query.Table))
+            return err
+        });
+        return err
+    }  else if q.Type == types.CREATE_NEW {
         if q.QueryBody != nil {
             //err         = c.Insert(q.QueryBody)
             err=s.db.Update(func(tx *bolt.Tx) error {
