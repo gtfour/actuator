@@ -23,6 +23,8 @@ var collection_entry_list_is_empty = errors.New("\nErr:Collection entry list is 
 var trigger_wasnt_assigned         = errors.New("\nErr:Trigger wasnt assigned to this target")
 
 var table_doesnt_exist = errors.New("\nTable does'nt exist")
+var encode_error       = errors.New("\nEncode error")
+var decode_error       = errors.New("\nDecode error")
 
 
 

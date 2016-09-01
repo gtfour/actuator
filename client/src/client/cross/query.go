@@ -1,5 +1,7 @@
 package cross
 
+import "encoding/json"
+import "github.com/boltdb/bolt"
 import "client/common/types"
 
 type Query struct {
@@ -9,40 +11,46 @@ type Query struct {
     QueryBody map[string]interface{}
 }
 
-func (s *Storage)RunQuery(query *Query)(result_slice_addr *[]map[string]interface{}, err error){
+func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{}, err error){
 
     result_slice:=make([]map[string]interface{},0)
     //result_slice = &result_slice_full
     //c      := d.Session.DB(d.dbname).C(q.Table)
 
     if q.Type == types.CREATE_NEW_TABLE {
-        err:=s.db.Update(func(tx *bolt.Tx) error {
-            _,err    := tx.CreateBucketIfNotExists([]byte(query.Table))
+        err:=s.Db.Update(func(tx *bolt.Tx) error {
+            _,err    := tx.CreateBucketIfNotExists([]byte(q.Table))
             return err
         });
-        return nil,err
+        return nil, err
     } else if q.Type == types.CHECK_TABLE_EXIST  {
-        err := boltdb.db.View(func(tx *bolt.Tx) error {
-            b:=tx.Bucket([]byte(boltdb.usersTableName))
+        err := s.Db.View(func(tx *bolt.Tx) error {
+            b:=tx.Bucket([]byte(q.Table))
             if b==nil{ return table_doesnt_exist } else{
                 return nil
             }
         });
-        return err
+        return nil, err
     } else if q.Type == types.REMOVE_TABLE {
-        err:=s.db.Update(func(tx *bolt.Tx) error {
-            err:=tx.DeleteBucket([]byte(query.Table))
+        err:=s.Db.Update(func(tx *bolt.Tx) error {
+            err:=tx.DeleteBucket([]byte(q.Table))
             return err
         });
-        return err
+        return nil, err
     }  else if q.Type == types.CREATE_NEW {
-        if q.QueryBody != nil {
+        if q.QueryBody != nil && q.KeyBody != nil {
             //err         = c.Insert(q.QueryBody)
-            err=s.db.Update(func(tx *bolt.Tx) error {
-                b := tx.Bucket([]byte(query.Table))
-                if b==nil { return table_doesnt_exist }
-
+            key_byte,err_key     := json.Marshal(q.KeyBody)
+            query_byte,err_query := json.Marshal(q.QueryBody)
+            if err_key!=nil || err_query!=nil {
+                return nil, encode_error
             }
+            //
+            err=s.Db.Update(func(tx *bolt.Tx) error {
+                b := tx.Bucket([]byte(q.Table))
+                if b==nil { return table_doesnt_exist }
+                err:=b.Put(key_byte, query_byte)
+            })
             return nil, err
         } else {
             return nil, empty_query
