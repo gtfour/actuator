@@ -1,4 +1,6 @@
 package cuda
+
+import "client/cross"
 /*
 type Dynima struct {
     //parsers    
@@ -86,16 +88,15 @@ func (d *Dynima) SetSource (sourceType string, sourcePath string)(error) {
 }
 
 func (d *Dynima) Write()(err error){
-    if STORAGE_INSTANCE.Error == false {
-        db:=STORAGE_INSTANCE.Db
+    if Database.Error == false {
+        db:=Database.Db
         err=db.Update(func(tx *bolt.Tx) error {
-            b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
+            b:=tx.Bucket([]byte(Database.dynimasTableName))
             if b==nil{ return collection_open_error }
             encoded, err := json.Marshal(d)
             if err!=nil{ return err }
             return b.Put([]byte(d.Id), encoded) //CreateBucket has been replaced to CreateBucketIfNotExists because when err==bolt.ErrBucketExists - dynima is nil
         });
-
     }
     return collection_entry_edit_error
 }
@@ -106,11 +107,11 @@ func (d *Dynima) UpdateTemplate()(){
 }
 
 func EditDynimaData(d Dynima, data [][]string)(err error){
-    if STORAGE_INSTANCE.Error == false {
+    if Database.Error == false {
 
-        db:=STORAGE_INSTANCE.Db
+        db:=Database.Db
         err=db.Update(func(tx *bolt.Tx) error {
-            b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
+            b:=tx.Bucket([]byte(Database.dynimasTableName))
             if b==nil{ return collection_open_error }
             dynima,err:=b.CreateBucketIfNotExists([]byte(d.Id)) //CreateBucket has been replaced to CreateBucketIfNotExists because when err==bolt.ErrBucketExists - dynima is nil
             if err==nil || err==bolt.ErrBucketExists { // If the key exist then its previous value will be overwritten
@@ -127,10 +128,10 @@ func EditDynimaData(d Dynima, data [][]string)(err error){
 }
 
 func RemoveDynima(id string)(error){
-    if STORAGE_INSTANCE.Error == false {
-        db:=STORAGE_INSTANCE.Db
+    if Database.Error == false {
+        db:=Database.Db
         err := db.Update(func(tx *bolt.Tx) error {
-            b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
+            b:=tx.Bucket([]byte(Database.dynimasTableName))
             if b==nil{ return collection_open_error }
             err:=b.Delete([]byte(id))
             return err
@@ -143,11 +144,11 @@ func RemoveDynima(id string)(error){
 
 func GetDynima(id string)(*Dynima,error){
     var err error
-    if STORAGE_INSTANCE.Error == false {
-        db     := STORAGE_INSTANCE.Db
+    if Database.Error == false {
+        db     := Database.Db
         dynima := &Dynima{}
         err = db.View(func(tx *bolt.Tx) error {
-            b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
+            b:=tx.Bucket([]byte(Database.dynimasTableName))
             if b==nil{ return collection_open_error }
             data:=b.Get([]byte(id))
             err = json.Unmarshal(data, &dynima)
@@ -161,11 +162,11 @@ func GetDynima(id string)(*Dynima,error){
 func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
     // get dynimas related to this path
 
-    if STORAGE_INSTANCE.Error == false {
-        db     := STORAGE_INSTANCE.Db
+    if Database.Error == false {
+        db     := Database.Db
         dynimas = make([]Dynima,0)
         err = db.View(func(tx *bolt.Tx) error {
-            b:=tx.Bucket([]byte(STORAGE_INSTANCE.dynimasTableName))
+            b:=tx.Bucket([]byte(Database.dynimasTableName))
             if b==nil{ return collection_open_error }
             err=b.ForEach(func(key, value []byte)(error){
                 dynima := Dynima{}

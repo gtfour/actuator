@@ -6,10 +6,10 @@ import "client/activa"
 
 func WriteMotion(m *activa.Motion)(err error) {
 
-    if STORAGE_INSTANCE.Error == false {
-        db:=STORAGE_INSTANCE.Db
+    if Database.Error == false {
+        db:=Database.Db
         err=db.Update(func(tx *bolt.Tx) error {
-            b:=tx.Bucket([]byte(STORAGE_INSTANCE.motionsTableName))
+            b:=tx.Bucket([]byte(Database.motionsTableName))
             if b==nil{ return collection_open_error }
             encoded, err := json.Marshal(m)
             if err!=nil{ return err }
@@ -27,11 +27,11 @@ func WriteMotion(m *activa.Motion)(err error) {
 
 func GetAllMotions() ( motions  []activa.Motion , err  error ) {
 
-    if STORAGE_INSTANCE.Error == false {
-        db     := STORAGE_INSTANCE.Db
+    if Database.Error == false {
+        db     := Database.Db
         motions = make([]activa.Motion,0)
         err = db.View(func(tx *bolt.Tx) error {
-            b:=tx.Bucket([]byte(STORAGE_INSTANCE.motionsTableName))
+            b:=tx.Bucket([]byte(Database.motionsTableName))
             if b==nil{ return collection_open_error }
             err=b.ForEach(func(key, value []byte)(error){
                 motion := activa.Motion{}

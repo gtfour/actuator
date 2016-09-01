@@ -7,7 +7,7 @@ import "client/settings"
 
 var comments =  []string {`//` , `#`}
 
-var STORAGE_INSTANCE = Open()
+var Database = Open()
 
 
 
