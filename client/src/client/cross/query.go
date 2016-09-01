@@ -13,10 +13,22 @@ func (s *Storage)RunQuery(query *Query)(result_slice_addr *[]map[string]interfac
 
     result_slice:=make([]map[string]interface{},0)
     //result_slice = &result_slice_full
-    c      := d.Session.DB(d.dbname).C(q.Table)
-    if q.Type == types.CREATE_NEW {
+    //c      := d.Session.DB(d.dbname).C(q.Table)
+
+    if q.Type == types.CREATE_NEW_TABLE {
+
+    } else if q.Type == types.CHECK_TABLE_EXIST  {
+
+
+
+    } else if q.Type == types.CREATE_NEW {
         if q.QueryBody != nil {
-            err         = c.Insert(q.QueryBody)
+            //err         = c.Insert(q.QueryBody)
+            err=s.db.Update(func(tx *bolt.Tx) error {
+                b := tx.Bucket([]byte(query.Table))
+                if b==nil { return table_doesnt_exist }
+
+            }
             return nil, err
         } else {
             return nil, empty_query
