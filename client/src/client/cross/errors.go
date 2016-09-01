@@ -22,10 +22,12 @@ var collection_entry_list_is_empty = errors.New("\nErr:Collection entry list is 
 
 var trigger_wasnt_assigned         = errors.New("\nErr:Trigger wasnt assigned to this target")
 
-var table_doesnt_exist = errors.New("\nTable does'nt exist")
-var encode_error       = errors.New("\nEncode error")
-var decode_error       = errors.New("\nDecode error")
+var table_doesnt_exist   = errors.New("Table does'nt exist")
+var entry_doesnt_exist   = errors.New("Entry does'nt exist")
+var encode_error         = errors.New("Encode error")
+var decode_error         = errors.New("Decode error")
 
+var empty_key            = errors.New("Key is empty")
+var empty_query          = errors.New("Query is empty")
 
-
-
+var incorrect_query_type = errors.New("Incorrect query type")

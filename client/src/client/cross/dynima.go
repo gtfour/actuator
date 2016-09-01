@@ -1,4 +1,5 @@
 package cross
+/*
 
 import "fmt"
 import "encoding/json"
@@ -148,4 +149,4 @@ func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
     }
     return nil, err
 }
-
+*/

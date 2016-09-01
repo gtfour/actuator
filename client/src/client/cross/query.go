@@ -50,44 +50,55 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
                 b := tx.Bucket([]byte(q.Table))
                 if b==nil { return table_doesnt_exist }
                 err:=b.Put(key_byte, query_byte)
+                return err
             })
             return nil, err
         } else {
             return nil, empty_query
         }
     } else if q.Type == types.UPDATE || q.Type == types.EDIT   {
-        if q.KeyBody   == nil { return nil,empty_key   }
-        if q.QueryBody == nil { return nil,empty_query }
+        if q.KeyBody   == nil { return nil, empty_key   }
+        if q.QueryBody == nil { return nil, empty_query }
         //
-        err = c.Update(bson.M(q.KeyBody), bson.M{"$set": bson.M(q.QueryBody)})
+        //err = c.Update(bson.M(q.KeyBody), bson.M{"$set": bson.M(q.QueryBody)})
         return nil, err
         //
     } else if q.Type == types.GET || q.Type == types.GET_ALL  || q.Type == types.CHECK_EXIST {
         if q.KeyBody != nil {
             if q.Type == types.GET_ALL {
-                err     =  c.Find(bson.M(q.KeyBody)).All(&result_slice)
+                //
+
+
+                //
                 if err == nil {
                     return &result_slice, err
                 } else {
                     return nil, err
                 }
             } else {
-                //result:=make(map[string]interface{})
-                //err     =  c.Find(bson.M(q.KeyBody)).One(&result)
-                //result_slice = append(result_slice, result)
-                //if err == nil {
-                //    return &result_slice, err
-                //} else {
-                //    return nil, err
-                //}
-                
+                if q.KeyBody == nil { return nil, empty_key }
+                key_byte,err_key := json.Marshal(q.KeyBody)
+                if err_key != nil {
+                    return nil, encode_error
+                }
+                err:=s.Db.View(func(tx *bolt.Tx) error {
+                    table := tx.Bucket([]byte(q.Table))
+                    if table==nil { return table_doesnt_exist }
+                    entry := table.Get(key_byte)
+                    if entry == nil {
+                        return entry_doesnt_exist
+                    } else {
+                        return nil
+                    }
+                })
+                return nil,err
             }
         } else {
             return nil, empty_key
         }
     } else  if q.Type == types.REMOVE {
         if q.KeyBody != nil {
-            err    =  c.Remove(bson.M(q.KeyBody))
+            //err    =  c.Remove(bson.M(q.KeyBody))
             return nil, err
         } else {
             return nil, empty_key
@@ -97,10 +108,10 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
         if q.QueryBody == nil { return nil,empty_query }
 
         if q.Type      == types.INSERT_ITEM {
-            err            =  c.Update(bson.M(q.KeyBody), bson.M{"$push":bson.M(q.QueryBody)})
+            //err            =  c.Update(bson.M(q.KeyBody), bson.M{"$push":bson.M(q.QueryBody)})
             return nil,err
         } else {
-            err            =  c.Update(bson.M(q.KeyBody), bson.M{"$pull":bson.M(q.QueryBody)})
+            //err            =  c.Update(bson.M(q.KeyBody), bson.M{"$pull":bson.M(q.QueryBody)})
             return nil,err
         }
     } else {
