@@ -1,5 +1,4 @@
 package cross
-/*
 
 import "fmt"
 import "encoding/json"
@@ -21,7 +20,7 @@ type Dynima struct {
     delim_indexes   [][]int
 }
 
-
+/*
 func (d *Dynima) BindFilter (filter_name string)(error) {
     return nil
 }

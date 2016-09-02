@@ -58,7 +58,7 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
                     return entry_already_exist
                 }
 
-                err:=b.Put(key_byte, query_byte)
+                err:=table.Put(key_byte, query_byte)
                 return err
             })
             return nil, err
@@ -99,8 +99,10 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
 
     // // // 
     // // // 
-        var match_by_key   bool
-        var match_by_value bool
+        var match_by_key    bool
+        var match_by_value  bool
+        var key_byte        []byte
+        var query_byte      []byte
 
         if q.KeyBody != nil || q.QueryBody == nil {
             match_by_key   = true
@@ -111,31 +113,40 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
         if match_by_key == false && match_by_value == false {
             return nil, key_and_value_empty
         }
-        if q.Type == types.GET_ALL {
-            //
-            //
-            if err == nil {
-                return &result_slice, err
-            } else {
-                return nil, err
-            }
-        } else {
-            key_byte,err_key := json.Marshal(q.KeyBody)
-            if err_key != nil {
-                return nil, encode_error
-            }
-            err:=s.Db.View(func(tx *bolt.Tx) error {
-                table := tx.Bucket([]byte(q.Table))
-                if table==nil { return table_doesnt_exist }
-                entry := table.Get(key_byte)
-                if entry == nil {
-                    return entry_doesnt_exist
-                } else {
-                    return nil
-                }
-            })
-            return nil,err
+        //
+        //
+        if match_by_key {
+            key_byte,err=json.Marshal(q.KeyBody)
         }
+        if match_by_value {
+            query_byte,err=json.Marshal(q.QueryBody)
+        }
+        key_byte,err_key     := json.Marshal(q.KeyBody)
+        query_byte,err_query := json.Marshal(q.QueryBody)
+        if err_key!=nil && err_query!=nil {
+            return nil, encode_error
+        }
+        err := s.Db.View(func(tx *bolt.Tx) error {
+            table := tx.Bucket([]byte(q.Table))
+
+            if table==nil { return table_doesnt_exist }
+
+             err=table.ForEach(func(key, value []byte)(error){
+
+                key_map   := make(map[string]interface{}, 0)
+                query_map := make(map[string]interface{}, 0)
+
+                err_key   := json.Unmarshal(key, &key_map)
+                err_value := json.Unmarshal(value, &query_map)
+                if err_key != nil || err_value != nil {
+                    return encode_error
+                }
+                if match_by_key {
+
+                }
+             })
+        })
+        return nil,err
     // // //
     } else  if q.Type == types.REMOVE {
         if q.KeyBody != nil {
