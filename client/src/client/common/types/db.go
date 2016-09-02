@@ -15,7 +15,8 @@ var INSERT_ITEM       = 4016
 var REMOVE            = 4018
 var REMOVE_ITEM       = 4020
 var REMOVE_TABLE      = 4022
-var UPDATE            = 4024
+var REPLACE           = 4024
+var UPDATE            = 4026
 // db tables
 var DYNIMAS_T   = "dynimas"
 var ACTIVA_T    = "activas"
