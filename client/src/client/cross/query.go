@@ -101,8 +101,8 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
     // // // 
         var match_by_key    bool
         var match_by_value  bool
-        var key_byte        []byte
-        var query_byte      []byte
+        //var key_byte        []byte
+        //var query_byte      []byte
 
         if q.KeyBody != nil || q.QueryBody == nil {
             match_by_key   = true
@@ -115,17 +115,18 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
         }
         //
         //
-        if match_by_key {
-            key_byte,err=json.Marshal(q.KeyBody)
-        }
-        if match_by_value {
-            query_byte,err=json.Marshal(q.QueryBody)
-        }
-        key_byte,err_key     := json.Marshal(q.KeyBody)
-        query_byte,err_query := json.Marshal(q.QueryBody)
-        if err_key!=nil && err_query!=nil {
-            return nil, encode_error
-        }
+        // if match_by_key {
+        //    key_byte,err=json.Marshal(q.KeyBody)
+        //  }
+        //  if match_by_value {
+        //      query_byte,err=json.Marshal(q.QueryBody)
+        //  }
+        //  key_byte,err_key     := json.Marshal(q.KeyBody)
+        //  query_byte,err_query := json.Marshal(q.QueryBody)
+        //  if err_key!=nil && err_query!=nil {
+        //      return nil, encode_error
+        //  }
+        //
         err := s.Db.View(func(tx *bolt.Tx) error {
             table := tx.Bucket([]byte(q.Table))
 
@@ -136,15 +137,22 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
                 key_map   := make(map[string]interface{}, 0)
                 query_map := make(map[string]interface{}, 0)
 
-                err_key   := json.Unmarshal(key, &key_map)
+                err_key   := json.Unmarshal(key,   &key_map)
                 err_value := json.Unmarshal(value, &query_map)
                 if err_key != nil || err_value != nil {
                     return encode_error
                 }
                 if match_by_key {
-
+                    for kk,kv := range q.KeyBody {
+                    }
                 }
+                if match_by_value {
+                    for qk,qv := range q.QueryBody {
+                    }
+                }
+                return nil
              })
+             return err
         })
         return nil,err
     // // //
@@ -173,5 +181,5 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
     // if err != nil {
     //     return result,err
     // }
-    // return result, err
+    return result_slice, err
 }

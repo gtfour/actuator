@@ -1,10 +1,8 @@
 package cross
 
-import "fmt"
-import "encoding/json"
-import "github.com/boltdb/bolt"
-
-
+//import "fmt"
+//import "encoding/json"
+//import "github.com/boltdb/bolt"
 type Dynima struct {
     //parsers
     Id              string
