@@ -20,5 +20,6 @@ func main() {
         restapp.POST( "/dashboard/set-dashboard-data/", rest.SetDashboardData(gin.H{}))
     }
     app.GET(settings.WS_DATA_URL, wsserver.WebSocketHandle(gin.H{}))
+    // s.GetHandler()
     app.Run(":9000")
 }

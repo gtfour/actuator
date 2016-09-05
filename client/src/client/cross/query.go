@@ -1,5 +1,6 @@
 package cross
 
+//import "fmt"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 import "client/common/types"
@@ -97,8 +98,8 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
         //
     } else if q.Type == types.GET || q.Type == types.GET_ALL  || q.Type == types.CHECK_EXIST {
 
-    // // // 
-    // // // 
+        // // // 
+        // // // 
         var match_by_key    bool
         var match_by_value  bool
         //var key_byte        []byte
@@ -132,18 +133,26 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
 
             if table==nil { return table_doesnt_exist }
 
+
+             var key_exist   = false
+             var value_exist = false
+
              err=table.ForEach(func(key, value []byte)(error){
 
                 key_map   := make(map[string]interface{}, 0)
                 query_map := make(map[string]interface{}, 0)
 
-                err_key   := json.Unmarshal(key,   &key_map)
+                err_key   := json.Unmarshal(key,   &key_map  )
                 err_value := json.Unmarshal(value, &query_map)
+
                 if err_key != nil || err_value != nil {
                     return encode_error
                 }
                 if match_by_key {
                     for kk,kv := range q.KeyBody {
+                        if existing_value,kk_ok := key_map[kk]; kk_ok == true {
+
+                        }
                     }
                 }
                 if match_by_value {
@@ -181,5 +190,5 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
     // if err != nil {
     //     return result,err
     // }
-    return result_slice, err
+    return &result_slice, err
 }

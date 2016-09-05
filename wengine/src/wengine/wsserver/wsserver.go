@@ -1,9 +1,11 @@
 package wsserver
 
+import "fmt"
 import "log"
 import "golang.org/x/net/websocket"
 import "github.com/gin-gonic/gin"
 import "wengine/settings"
+import "wengine/rest"
 // import "golang.org/x/net/websocket"
 
 var WebSocketServerWeb = CreateServer(settings.WS_WEBDATA_URL)
@@ -23,7 +25,25 @@ type Server struct {
 
 }
 
+func(s *Server)GetHandler(c *gin.Context)(function func(ws *websocket.Conn)){
 
+    token,user,err:=rest.GetTokenFromCookies(c)
+    fmt.Printf("token:%v\nuser:%v\nerr:%v\n",token,user,err)
+
+    function = func(ws *websocket.Conn){
+        defer func(){
+            err := ws.Close()
+            if err != nil {
+                s.errChannel <- err
+            }
+        }()
+        client := NewClient(ws, s)
+        s.Add(client)
+        client.Listen()
+    }
+
+    return function
+}
 
 
 func CreateServer (pattern string) *Server {
@@ -35,7 +55,7 @@ func CreateServer (pattern string) *Server {
     doneChannel    := make(chan bool)
     errChannel     := make(chan error)
     // gen ws handler
-    s:=&Server {
+    s:=&Server{
         pattern:pattern,
         messages:messages,
         Clients:clients,
@@ -47,18 +67,18 @@ func CreateServer (pattern string) *Server {
         //s.WShandler:handler,
     }
 
-    onConnected := func(ws *websocket.Conn) {
-        defer func() {
-            err := ws.Close()
-            if err != nil {
-                s.errChannel <- err
-            }
-        }()
-        client := NewClient(ws, s)
-        s.Add(client)
-        client.Listen()
-    }
-    s.WShandler = websocket.Handler(onConnected)
+    //onConnected := func(ws *websocket.Conn){
+    //    defer func(){
+    //        err := ws.Close()
+    //        if err != nil {
+    //            s.errChannel <- err
+    //        }
+    //    }()
+    //    client := NewClient(ws, s)
+    //    s.Add(client)
+    //    client.Listen()
+   // }
+    //s.WShandler = websocket.Handler(onConnected)
     // test
     go s.Listen()
     log.Printf("Server has been created :)\nServer is listening connection :)\n")
@@ -91,7 +111,7 @@ func (s *Server) SendToAllClients (msg *Message) {
 }
 //
 //
-func (s *Server) Listen() {
+func (s *Server) Listen(){
     log.Println("Listening server...")
     for {
         select {
@@ -114,10 +134,9 @@ func (s *Server) Listen() {
     }
 }
 
-func WebSocketHandle(data gin.H)( func(c *gin.Context) ) {
-
-    return func(c *gin.Context)  {
-            handler := WebSocketServerWeb.WShandler
-            handler.ServeHTTP(c.Writer, c.Request)
+func WebSocketHandle(data gin.H)(func(c *gin.Context)){
+    return func(c *gin.Context){
+        handler   := websocket.Handler(WebSocketServerWeb.GetHandler(c))
+        handler.ServeHTTP(c.Writer, c.Request)
     }
 }
