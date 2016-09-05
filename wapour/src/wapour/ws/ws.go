@@ -1,11 +1,15 @@
 package ws
 
+import "fmt"
 import "log"
 //import "net/http"
 import "golang.org/x/net/websocket"
 import "github.com/gin-gonic/gin"
 import "wapour/auth"
+import "wapour/settings"
 //import "wapour/api/webclient"
+
+var WebSocketServer = NewServer(settings.WS_LINE)
 
 type Server struct {
 
@@ -17,8 +21,26 @@ type Server struct {
     sendAllChannel chan *MessageChat
     doneChannel    chan bool
     errChannel     chan error
-    WShandler      websocket.Handler
+    // WShandler      websocket.Handler
 
+}
+
+func(s *Server)GetHandler(c *gin.Context)(function func(ws *websocket.Conn)){
+
+    token,user,err := auth.GetTokenFromCookies(c)
+    fmt.Printf("token:%v\nuser:%v\nerr:%v\n",token,user,err)
+    function = func(ws *websocket.Conn){
+        defer func(){
+            err := ws.Close()
+            if err != nil {
+                s.errChannel <- err
+            }
+        }()
+        client := NewClient(ws, s)
+        s.Add(client)
+        client.Listen()
+    }
+    return function
 }
 
 func NewServer (pattern string) *Server {
@@ -42,20 +64,21 @@ func NewServer (pattern string) *Server {
         //s.WShandler:handler,
     }
 
-    onConnected := func(ws *websocket.Conn) {
-        defer func() {
-            err := ws.Close()
-            if err != nil {
-                s.errChannel <- err
-            }
-        }()
-        client := NewClient(ws, s)
-        s.Add(client)
-        client.Listen()
-    }
-    //http.Handle(s.pattern, websocket.Handler(onConnected))
-    s.WShandler = websocket.Handler(onConnected)
-    //s.WShandler := handler
+    // onConnected := func(ws *websocket.Conn) {
+    //     defer func() {
+    //         err := ws.Close()
+    //         if err != nil {
+    //             s.errChannel <- err
+    //         }
+    //     }()
+    //     client := NewClient(ws, s)
+    //     s.Add(client)
+    //     client.Listen()
+    // }
+    // http.Handle(s.pattern, websocket.Handler(onConnected))
+    // s.WShandler = websocket.Handler(onConnected)
+    // s.WShandler := handler
+    go s.Listen()
 
     return s
 }
@@ -126,13 +149,20 @@ func (s *Server) Listen() {
     }
 }
 
-
+/*
 func WSserver(data gin.H, wshandler websocket.Handler)( func(c *gin.Context) ) {
 
-    return func(c *gin.Context)  {
+    return func(c *gin.Context){
         if auth.IsAuthorized(c) == false { c.JSON(401, gin.H{"status": "not_authorized"}) } else {
             handler := wshandler
             handler.ServeHTTP(c.Writer, c.Request)
         }
+    }
+}
+*/
+func WebSocketHandle(data gin.H)(func(c *gin.Context)){
+    return func(c *gin.Context){
+        handler   := websocket.Handler(WebSocketServer.GetHandler(c))
+        handler.ServeHTTP(c.Writer, c.Request)
     }
 }

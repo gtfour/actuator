@@ -48,8 +48,8 @@ func main() {
         auth_app.POST("/login", index.LoginPost() )
         auth_app.GET( "/logout" , index.Logout()  )
     }
-    server := ws.NewServer("/entry")
-    go server.Listen()
-    app.GET("/entry", ws.WSserver(gin.H{}, server.WShandler))
+    // server := ws.NewServer("/entry")
+    // go server.Listen()
+    app.GET("/entry", ws.WebSocketHandle(gin.H{}))
     app.Run(":8090")
 }
