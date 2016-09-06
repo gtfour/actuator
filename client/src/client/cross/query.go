@@ -5,6 +5,11 @@ import "encoding/json"
 import "github.com/boltdb/bolt"
 import "client/common/types"
 
+var TRUE_SLICE  = int 9001
+var FALSE_SLICE = int 9000
+var BUNT_SLICE  = int 9002
+var EMPTY_SLICE = int 9004
+
 type Query struct {
     Type      int
     Table     string
@@ -133,11 +138,11 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
 
             if table==nil { return table_doesnt_exist }
 
-
-             var key_exist   = false
-             var value_exist = false
-
              err=table.ForEach(func(key, value []byte)(error){
+
+                var key_matched   = make([]bool,0)
+                var value_matched = make([]bool,0)
+
 
                 key_map   := make(map[string]interface{}, 0)
                 query_map := make(map[string]interface{}, 0)
@@ -151,8 +156,16 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
                 if match_by_key {
                     for kk,kv := range q.KeyBody {
                         if existing_value,kk_ok := key_map[kk]; kk_ok == true {
+                            if kv == existing_value {
+                                key_matched = append(key_matched, true)
+                            } else {
+                                value_matched = append(value_matched, false)
+                            }
 
                         }
+                    }
+                    if CheckBoolSlice(key_matched) == TRUE_SLICE{
+
                     }
                 }
                 if match_by_value {
@@ -191,4 +204,27 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
     //     return result,err
     // }
     return &result_slice, err
+}
+
+func CheckBoolSlice(slice []bool)(slice_type int){
+
+    true_values  := make([]bool,0)
+    false_values := make([]bool,0)
+    for i:= range slice {
+        value := slice[i]
+        if value {
+            true_values=append(true_values,value)
+        } else {
+            false_values=append(false_values,value)
+        }
+    }
+    if len(true_values)>0 && len(false_values)>0 {
+        return BUNT_SLICE
+    } else if len(true_values)>0 && len(false_values)==0 {
+        return TRUE_SLICE
+    } else if en(true_values)==0 && len(false_values)>0 {
+        return FALSE_SLICE
+    } else {
+        return EMPTY_SLICE
+    }
 }
