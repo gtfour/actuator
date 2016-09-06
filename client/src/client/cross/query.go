@@ -5,10 +5,10 @@ import "encoding/json"
 import "github.com/boltdb/bolt"
 import "client/common/types"
 
-var TRUE_SLICE  = int 9001
-var FALSE_SLICE = int 9000
-var BUNT_SLICE  = int 9002
-var EMPTY_SLICE = int 9004
+var TRUE_SLICE  int =  9001
+var FALSE_SLICE int =  9000
+var BUNT_SLICE  int =  9002
+var EMPTY_SLICE int =  9004
 
 type Query struct {
     Type      int
@@ -140,8 +140,11 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
 
              err=table.ForEach(func(key, value []byte)(error){
 
-                var key_matched   = make([]bool,0)
-                var value_matched = make([]bool,0)
+                var key_satisfied    bool = false
+                var value_satisfied  bool = false
+
+                var key_matching   = make([]bool,0)
+                var value_matching = make([]bool,0)
 
 
                 key_map   := make(map[string]interface{}, 0)
@@ -157,20 +160,31 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
                     for kk,kv := range q.KeyBody {
                         if existing_value,kk_ok := key_map[kk]; kk_ok == true {
                             if kv == existing_value {
-                                key_matched = append(key_matched, true)
+                                key_matching = append(key_matching, true)
                             } else {
-                                value_matched = append(value_matched, false)
+                                key_matching = append(key_matching, false)
                             }
 
                         }
                     }
-                    if CheckBoolSlice(key_matched) == TRUE_SLICE{
-
+                    if CheckBoolSlice(key_matching) == TRUE_SLICE{
+                        key_satisfied = true
                     }
                 }
                 if match_by_value {
                     for qk,qv := range q.QueryBody {
+                        if existing_value,qk_ok := query_map[qk]; qk_ok == true {
+                            if qv == existing_value {
+                                value_matching = append(value_matching, true)
+                            } else {
+                                value_matching = append(value_matching, false)
+                            }
+                        }
                     }
+                    if CheckBoolSlice(value_matching) == TRUE_SLICE {
+                        value_satisfied = true
+                    }
+
                 }
                 return nil
              })
@@ -222,7 +236,7 @@ func CheckBoolSlice(slice []bool)(slice_type int){
         return BUNT_SLICE
     } else if len(true_values)>0 && len(false_values)==0 {
         return TRUE_SLICE
-    } else if en(true_values)==0 && len(false_values)>0 {
+    } else if len(true_values)==0 && len(false_values)>0 {
         return FALSE_SLICE
     } else {
         return EMPTY_SLICE
