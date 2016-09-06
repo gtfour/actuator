@@ -164,7 +164,6 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
                             } else {
                                 key_matching = append(key_matching, false)
                             }
-
                         }
                     }
                     if CheckBoolSlice(key_matching) == TRUE_SLICE{
@@ -184,7 +183,6 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
                     if CheckBoolSlice(value_matching) == TRUE_SLICE {
                         value_satisfied = true
                     }
-
                 }
                 return nil
              })
