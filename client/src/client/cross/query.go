@@ -102,94 +102,8 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
         return nil, err
         //
     } else if q.Type == types.GET || q.Type == types.GET_ALL  || q.Type == types.CHECK_EXIST {
-
-        // // // 
-        // // // 
-        var match_by_key    bool
-        var match_by_value  bool
-        //var key_byte        []byte
-        //var query_byte      []byte
-
-        if q.KeyBody != nil || q.QueryBody == nil {
-            match_by_key   = true
-        }
-        if q.KeyBody == nil || q.QueryBody != nil {
-            match_by_value = true
-        }
-        if match_by_key == false && match_by_value == false {
-            return nil, key_and_value_empty
-        }
-        //
-        //
-        // if match_by_key {
-        //    key_byte,err=json.Marshal(q.KeyBody)
-        //  }
-        //  if match_by_value {
-        //      query_byte,err=json.Marshal(q.QueryBody)
-        //  }
-        //  key_byte,err_key     := json.Marshal(q.KeyBody)
-        //  query_byte,err_query := json.Marshal(q.QueryBody)
-        //  if err_key!=nil && err_query!=nil {
-        //      return nil, encode_error
-        //  }
-        //
-        err := s.Db.View(func(tx *bolt.Tx) error {
-            table := tx.Bucket([]byte(q.Table))
-
-            if table==nil { return table_doesnt_exist }
-
-             err=table.ForEach(func(key, value []byte)(error){
-
-                var key_satisfied    bool = false
-                var value_satisfied  bool = false
-
-                var key_matching   = make([]bool,0)
-                var value_matching = make([]bool,0)
-
-
-                key_map   := make(map[string]interface{}, 0)
-                query_map := make(map[string]interface{}, 0)
-
-                err_key   := json.Unmarshal(key,   &key_map  )
-                err_value := json.Unmarshal(value, &query_map)
-
-                if err_key != nil || err_value != nil {
-                    return encode_error
-                }
-                if match_by_key {
-                    for kk,kv := range q.KeyBody {
-                        if existing_value,kk_ok := key_map[kk]; kk_ok == true {
-                            if kv == existing_value {
-                                key_matching = append(key_matching, true)
-                            } else {
-                                key_matching = append(key_matching, false)
-                            }
-                        }
-                    }
-                    if CheckBoolSlice(key_matching) == TRUE_SLICE{
-                        key_satisfied = true
-                    }
-                }
-                if match_by_value {
-                    for qk,qv := range q.QueryBody {
-                        if existing_value,qk_ok := query_map[qk]; qk_ok == true {
-                            if qv == existing_value {
-                                value_matching = append(value_matching, true)
-                            } else {
-                                value_matching = append(value_matching, false)
-                            }
-                        }
-                    }
-                    if CheckBoolSlice(value_matching) == TRUE_SLICE {
-                        value_satisfied = true
-                    }
-                }
-                return nil
-             })
-             return err
-        })
-        return nil,err
-    // // //
+        result_slice_addr,err:=s.RunQueryGet(q)
+        return result_slice_addr,err
     } else  if q.Type == types.REMOVE {
         if q.KeyBody != nil {
             //err    =  c.Remove(bson.M(q.KeyBody))
@@ -218,8 +132,84 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
     return &result_slice, err
 }
 
-func CheckBoolSlice(slice []bool)(slice_type int){
+func(s *Storage)RunQueryGet(q *Query)(result_slice_addr *[]map[string]interface{}, err error) {
 
+    result_slice:=make([]map[string]interface{},0)
+    var match_by_key    bool
+    var match_by_value  bool
+
+    if q.KeyBody != nil || q.QueryBody == nil {
+        match_by_key   = true
+    }
+    if q.KeyBody == nil || q.QueryBody != nil {
+        match_by_value = true
+    }
+    if match_by_key == false && match_by_value == false {
+        return nil, key_and_value_empty
+    }
+
+
+    err = s.Db.View(func(tx *bolt.Tx) error {
+
+        table := tx.Bucket([]byte(q.Table))
+        if table==nil { return table_doesnt_exist }
+        err=table.ForEach(func(key, value []byte)(error){
+
+            var key_satisfied    bool = false
+            var value_satisfied  bool = false
+            var key_matching   = make([]bool,0)
+            var value_matching = make([]bool,0)
+
+            search_result := make(map[string] interface{},0)
+            key_map       := make(map[string]interface{}, 0)
+            query_map     := make(map[string]interface{}, 0)
+
+            err_key   := json.Unmarshal(key,   &key_map  )
+            err_value := json.Unmarshal(value, &query_map)
+
+            if err_key != nil || err_value != nil {
+                return encode_error
+            }
+            if match_by_key {
+                for kk,kv := range q.KeyBody {
+                    if existing_value,kk_ok := key_map[kk]; kk_ok == true {
+                        if kv == existing_value {
+                            key_matching = append(key_matching, true)
+                        } else {
+                            key_matching = append(key_matching, false)
+                        }
+                    }
+                }
+                if CheckBoolSlice(key_matching) == TRUE_SLICE{
+                    key_satisfied = true
+                }
+            }
+            if match_by_value {
+                for qk,qv := range q.QueryBody {
+                    if existing_value,qk_ok := query_map[qk]; qk_ok == true {
+                        if qv == existing_value {
+                            value_matching = append(value_matching, true)
+                        } else {
+                            value_matching = append(value_matching, false)
+                        }
+                    }
+                }
+                if CheckBoolSlice(value_matching) == TRUE_SLICE {
+                    value_satisfied = true
+                }
+            }
+            if match_by_key && key_satisfied {
+                
+
+            }
+            return nil
+         })
+         return err
+    })
+    return nil,err
+}
+
+func CheckBoolSlice(slice []bool)(slice_type int){
     true_values  := make([]bool,0)
     false_values := make([]bool,0)
     for i:= range slice {
