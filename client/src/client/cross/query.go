@@ -1,5 +1,7 @@
 package cross
 
+// i also have to implement simple query where type of  Key or/and Query is string 
+
 //import "fmt"
 import "encoding/json"
 import "github.com/boltdb/bolt"
@@ -18,6 +20,7 @@ type Query struct {
 }
 
 func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{}, err error){
+
 
     result_slice:=make([]map[string]interface{},0)
     //result_slice = &result_slice_full
@@ -134,6 +137,8 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
 
 func(s *Storage)RunQueryGet(q *Query)(result_slice_addr *[]map[string]interface{}, err error) {
 
+    // run queries with map types of KeyBody or/and QueryBody
+
     result_slice:=make([]map[string]interface{},0)
     var match_by_key    bool
     var match_by_value  bool
@@ -160,9 +165,9 @@ func(s *Storage)RunQueryGet(q *Query)(result_slice_addr *[]map[string]interface{
             var key_matching   = make([]bool,0)
             var value_matching = make([]bool,0)
 
-            search_result := make(map[string] interface{},0)
-            key_map       := make(map[string]interface{}, 0)
-            query_map     := make(map[string]interface{}, 0)
+            search_result_slice := make(map[string] interface{},0)
+            key_map             := make(map[string]interface{}, 0)
+            query_map           := make(map[string]interface{}, 0)
 
             err_key   := json.Unmarshal(key,   &key_map  )
             err_value := json.Unmarshal(value, &query_map)
@@ -198,15 +203,17 @@ func(s *Storage)RunQueryGet(q *Query)(result_slice_addr *[]map[string]interface{
                     value_satisfied = true
                 }
             }
-            if match_by_key && key_satisfied {
-                
-
+            if (match_by_key && match_by_value == false && key_satisfied) || (match_by_value && match_by_key == false && value_satisfied) || (match_by_key && match_by_value && key_satisfied && value_satisfied ) {
+                search_result_slice["key"]   = key_map
+                search_result_slice["value"] = query_map
+                result_slice=append(result_slice, search_result_slice)
             }
+
             return nil
          })
          return err
     })
-    return nil,err
+    return &result_slice,err
 }
 
 func CheckBoolSlice(slice []bool)(slice_type int){
