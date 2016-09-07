@@ -185,7 +185,7 @@ func(s *Storage)RunQueryGet(q Query)(result_slice_addr *[]map[string]interface{}
             }
             if match_by_value {
                 value_satisfied = CompareMap(q.QueryBody, query_map)
-            }
+		}
             if (match_by_key && match_by_value == false && key_satisfied) || (match_by_value && match_by_key == false && value_satisfied) || (match_by_key && match_by_value && key_satisfied && value_satisfied ) {
                 search_result_slice["key"]   = key_map
                 search_result_slice["value"] = query_map
