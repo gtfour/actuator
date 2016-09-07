@@ -19,7 +19,7 @@ type Query struct {
     QueryBody map[string]interface{}
 }
 
-func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{}, err error){
+func (s *Storage)RunQuery(q Query)(result_slice_addr *[]map[string]interface{}, err error){
 
 
     result_slice:=make([]map[string]interface{},0)
@@ -135,7 +135,7 @@ func (s *Storage)RunQuery(q *Query)(result_slice_addr *[]map[string]interface{},
     return &result_slice, err
 }
 
-func(s *Storage)RunQueryGet(q *Query)(result_slice_addr *[]map[string]interface{}, err error) {
+func(s *Storage)RunQueryGet(q Query)(result_slice_addr *[]map[string]interface{}, err error) {
 
     // run queries with map types of KeyBody or/and QueryBody
 
