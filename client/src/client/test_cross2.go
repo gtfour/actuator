@@ -9,9 +9,9 @@ var database = cross.Database
 
 func main(){
 
-   new_id,_:=common.GenId()
-   key_body   := make(map[string]interface{},0)
-   query_body := make(map[string]interface{},0)
+   new_id,_                := common.GenId()
+   key_body                := make(map[string]interface{},0)
+   query_body              := make(map[string]interface{},0)
    key_body["Id"]          = new_id
    query_body["SourcePath"] ="/etc/hosts"
    query_body["SourceType"] ="file"
@@ -31,7 +31,5 @@ func main(){
         fmt.Printf("%v\n",get_res)
 
     }
-
-
 }
 
