@@ -16,10 +16,14 @@ var SATISFIED   int =  9006
 var UNSATISFIED int =  9008
 
 type Query struct {
-    Type      int
-    Table     string
-    KeyBody   map[string]interface{}
-    QueryBody map[string]interface{}
+    Type        int
+    Table       string
+    // just  one of the Key type should be used: map or string 
+    KeyBody     map[string]interface{}
+    KeyString   string
+    // just  one of the Query type should be used: map or string
+    QueryBody   map[string]interface{}
+    QueryString string
 }
 
 func (s *Storage)RunQuery(q Query)(result_slice_addr *[]map[string]interface{}, err error){
