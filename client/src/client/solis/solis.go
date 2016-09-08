@@ -77,6 +77,19 @@ func CheckHostId()(error){
 
 }
 
+func GetHostId()(error){
+
+    key_body:=make(map[string]interface{},0)
+    key_body["key"]="host_id"
+    check_query:=cross.Query{Table:types.SOLIS_T,Type:types.GET,KeyBody:key_body}
+    answer,err:=database.RunQuery(check_query)
+    fmt.Printf("\n%v\n",answer)
+    return err
+
+
+
+}
+
 func SetNewHostId()(error){
     new_id,_            := common.GenId()
     key_body            := make(map[string]interface{},0)

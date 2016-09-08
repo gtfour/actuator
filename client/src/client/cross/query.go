@@ -2,7 +2,7 @@ package cross
 
 // i also have to implement simple query where type of  Key or/and Query is string 
 
-//import "fmt"
+import "fmt"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 import "client/common/types"
@@ -203,6 +203,7 @@ func(s *Storage)RunQueryGet(q Query)(result_slice_addr *[]map[string]interface{}
     }
     if q.Type == types.GET {
         result_slice_single:=make([]map[string]interface{},1)
+        fmt.Printf("\nGet result slice %v\n",result_slice)
         result_slice_single=append(result_slice_single, result_slice[0])
         return &result_slice_single,err
     }
