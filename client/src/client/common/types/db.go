@@ -18,10 +18,10 @@ var REMOVE_TABLE            = 4022
 var REPLACE                 = 4024
 var UPDATE                  = 4026
 
-var QUERY_KEY_STRING_FORM   = 5002
-var QUERY_KEY_MAP_FORM      = 5004
-var QUERY_VALUE_STRING_FORM = 5006
-var QUERY_VALUE_MAP_FORM    = 5008
+// var QUERY_KEY_STRING_FORM   = 5002
+// var QUERY_KEY_MAP_FORM      = 5004
+// var QUERY_VALUE_STRING_FORM = 5006
+// var QUERY_VALUE_MAP_FORM    = 5008
 
 // db tables
 var DYNIMAS_T    = "dynimas"

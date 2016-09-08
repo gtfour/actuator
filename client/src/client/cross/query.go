@@ -18,12 +18,8 @@ var UNSATISFIED int =  9008
 type Query struct {
     Type        int
     Table       string
-    // just  one of the Key type should be used: map or string 
     KeyBody     map[string]interface{}
-    KeyString   string
-    // just  one of the Query type should be used: map or string
     QueryBody   map[string]interface{}
-    QueryString string
 }
 
 func (s *Storage)RunQuery(q Query)(result_slice_addr *[]map[string]interface{}, err error){
@@ -190,12 +186,26 @@ func(s *Storage)RunQueryGet(q Query)(result_slice_addr *[]map[string]interface{}
                 search_result_slice["key"]   = key_map
                 search_result_slice["value"] = query_map
                 result_slice                 = append(result_slice, search_result_slice)
+                if q.Type == types.GET || q.Type == types.CHECK_EXIST {
+                    return nil
+                }
             }
-
             return nil
          })
          return err
     })
+    if len(result_slice) == 0 {
+        result_slice=nil
+        err=entry_doesnt_exist
+    }
+    if q.Type == types.CHECK_EXIST {
+        result_slice=nil
+    }
+    if q.Type == types.GET {
+        result_slice_single:=make([]map[string]interface{},1)
+        result_slice_single=append(result_slice_single, result_slice[0])
+        return &result_slice_single,err
+    }
     return &result_slice, err
 }
 
