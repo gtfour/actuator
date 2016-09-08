@@ -26,5 +26,5 @@ var UPDATE                  = 4026
 // db tables
 var DYNIMAS_T    = "dynimas"
 var ACTIVAS_T    = "activas"
-var SOLIS        = "solis"
+var SOLIS_T      = "solis"
 
