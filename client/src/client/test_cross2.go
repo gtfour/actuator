@@ -9,17 +9,17 @@ var database = cross.Database
 
 func main(){
 
-   _,_                = common.GenId()
-   key_body                := make(map[string]interface{},0)
-   query_body              := make(map[string]interface{},0)
-   key_body["Id"]          = "E41E78B1-32F5-DA85-A44A-6AA805A2A102"
-   query_body["SourcePath"] ="/etc/lss.mix"
-   query_body["SourceType"] ="file"
-   create_new_query:=cross.Query{Table:types.DYNIMAS_T,KeyBody:key_body,QueryBody:query_body,Type:types.CREATE_NEW}
+    new_id,_                := common.GenId()
+    key_body                := make(map[string]interface{},0)
+    query_body              := make(map[string]interface{},0)
+    key_body["Id"]          = new_id
+    query_body["SourcePath"] ="/etc/lss.mix"
+    query_body["SourceType"] ="file"
+    create_new_query:=cross.Query{Table:types.DYNIMAS_T,KeyBody:key_body,QueryBody:query_body,Type:types.CREATE_NEW}
 
-   get_query_body:=make(map[string]interface{},0)
-   get_query_body["Id"]="E41E78B1-32F5-DA85-A44A-6AA805A2A102"
-   get_query:=cross.Query{Table:types.DYNIMAS_T,KeyBody:get_query_body,Type:types.GET_ALL}
+    get_query_body:=make(map[string]interface{},0)
+    get_query_body["SourceType"]="file"
+    get_query:=cross.Query{Table:types.DYNIMAS_T,KeyBody:get_query_body,Type:types.GET_ALL}
 
     res1,err1:=database.RunQuery(create_new_query)
     res2,err2:=database.RunQuery(get_query)
