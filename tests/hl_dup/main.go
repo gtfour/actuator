@@ -8,8 +8,9 @@ func main(){
     GenData("hello")
     SplitIp("192.168.1.2")
     app      := gin.Default()
-    //app.POST("/check", Check())
+    app.POST("/check", Check())
     app.GET("/check", Check())
-    app.Run("127.0.0.1:9020")
+    app.POST("/insert",Insert())
+    app.Run("0.0.0.0:9020")
 
 }
