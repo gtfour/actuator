@@ -28,7 +28,10 @@ func Replace(file_path string , offset int64 , new_entry string)(err error){
         return err
     }
     f.Seek(offset, os.SEEK_SET)
-    f.Write([]byte(new_entry))
+    cycle_range:=int(offset)
+    for i:=0 ; i<= cycle_range ; i++ {
+        f.Write([]byte(new_entry+"\n"))
+    }
     f.Close()
     return err
 }
