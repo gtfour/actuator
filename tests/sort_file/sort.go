@@ -35,3 +35,5 @@ func Replace(file_path string , offset int64 , new_entry string)(err error){
     f.Close()
     return err
 }
+
+func WriteAt(file path )
