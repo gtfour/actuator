@@ -1,17 +1,23 @@
 package main
-import . "fila"
-import   "github.com/gin-gonic/gin"
+
+import "fmt"
+import  "github.com/gin-gonic/gin"
+
+import "run"
+import "fila"
 
 var LOG_FILE string = "/tmp/connection.log"
 
 func main(){
 
-    GenData("hello")
-    SplitIp("192.168.1.2")
+    fmt.Printf("\nServer Props:\n%v\n",run.Props)
+
+    fila.GenData("hello")
+    fila.SplitIp("192.168.1.2")
     app      := gin.Default()
-    app.POST("/check",  Check() )
-    app.GET("/check",   Check() )
-    app.POST("/insert", Insert())
-    app.Run("0.0.0.0:9020")
+    app.POST("/check",  fila.Check() )
+    app.GET("/check",   fila.Check() )
+    app.POST("/insert", fila.Insert())
+    app.Run(run.Props["server_addr"])
 
 }
