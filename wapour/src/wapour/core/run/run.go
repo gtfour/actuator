@@ -3,6 +3,19 @@ package run
 import "flag"
 import "wapour/settings"
 
+var initial = []string {
+
+    "SERVER_ADDR",
+    "SERVER_PORT",
+    "SERVER_PROTO",
+    "SERVER_URL",
+    "RESTAPI_SERVER_ADDR",
+    "RESTAPI_SERVER_PROTO",
+    "RESTAPI_SERVER_PORT",
+    "RESTAPI_URL",
+
+}
+
 var Props = GetProps()
 
 func GetProps()(props map[string]string){
@@ -12,9 +25,9 @@ func GetProps()(props map[string]string){
     // serve
     // flag.Lookup
 
-    ip_version_ptr       := flag.String("ipversion","v4", "Server ip version"  )
-    ip_port_ptr          := flag.String("port","80",       "Server port number" )
-    ip_addr_ptr          := flag.String("addr","0.0.0.0",  "Server ip address"  )
+    ip_version_ptr       := flag.String("ipversion","v4",      "Server ip version"  )
+    ip_port_ptr          := flag.String("port",     "80",      "Server port number" )
+    ip_addr_ptr          := flag.String("addr",     "0.0.0.0", "Server ip address"  )
 
     flag.Parse()
     //out_file_ptr       := flag.String("outfile","out.txt","Out file")
@@ -31,4 +44,8 @@ func GetProps()(props map[string]string){
 
     return
 
+}
+
+func GetSettings()(props map[string]string){
+    return
 }
