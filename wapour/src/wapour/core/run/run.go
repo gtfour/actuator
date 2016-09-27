@@ -1,7 +1,12 @@
 package run
 
+import "fmt"
 import "flag"
-import "wapour/settings"
+import "go/types"
+import "go/importer"
+
+var app_settings_package_name = "wapour/settings"
+var app_settings_directory    = "/actuator/wapour"
 
 var initial = []string {
 
@@ -46,6 +51,26 @@ func GetProps()(props map[string]string){
 
 }
 
-func GetSettings()(props map[string]string){
+func GetCurrentAppSettings(conf_dir string)(props map[string]string){
+
+    // pkg, err := importer.Default().Import(app_settings_package_name)
+    //pkg = importer.ImporterFrom(app_settings_package_name)
+    pkg,err      := importer.Default().ImportFrom(app_settings_package_name,app_settings_directory)
+    //pkg, err := importer.Default().ImporterFrom(app_settings_package_name,app_settings_directory,types.ImportMode)
+    if err != nil {
+        fmt.Printf("error: %s\n", err.Error())
+        return
+    }
+    scope:=pkg.Scope()
+    fmt.Printf("\nScope:%v\n",scope)
+    for prop := range initial {
+        prop_name:=initial[prop]
+        prop_obj:=scope.Lookup(prop_name)
+        fmt.Printf("prop:%v",prop_obj)
+    }
+
+
     return
 }
+
+
