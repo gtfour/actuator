@@ -2,11 +2,10 @@ package run
 
 import "fmt"
 import "flag"
-import "go/types"
 import "go/importer"
 
 var app_settings_package_name = "wapour/settings"
-var app_settings_directory    = "/actuator/wapour"
+//var app_settings_directory    = "/actuator/wapour/src/wapour/settings"
 
 var initial = []string {
 
@@ -51,11 +50,11 @@ func GetProps()(props map[string]string){
 
 }
 
-func GetCurrentAppSettings(conf_dir string)(props map[string]string){
+func GetCurrentAppSettings()(props map[string]string){
 
-    // pkg, err := importer.Default().Import(app_settings_package_name)
+    pkg, err := importer.Default().Import(app_settings_package_name)
     //pkg = importer.ImporterFrom(app_settings_package_name)
-    pkg,err      := importer.Default().ImportFrom(app_settings_package_name,app_settings_directory)
+    //pkg,err      := importer.Default().ImportFrom(app_settings_package_name,app_settings_directory)
     //pkg, err := importer.Default().ImporterFrom(app_settings_package_name,app_settings_directory,types.ImportMode)
     if err != nil {
         fmt.Printf("error: %s\n", err.Error())
