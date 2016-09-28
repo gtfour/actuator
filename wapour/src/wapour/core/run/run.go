@@ -1,9 +1,16 @@
 package run
 
-import "fmt"
 import "flag"
-import "go/importer"
 
+import "go/ast"
+import "go/importer"
+import "go/parser"
+import "go/token"
+import "go/types"
+
+
+var default_settings_path          = "/etc/wapour/settings.go"
+var default_relative_settings_path =  "../../settings/settings.go"
 var app_settings_package_name = "wapour/settings"
 //var app_settings_directory    = "/actuator/wapour/src/wapour/settings"
 
@@ -32,6 +39,7 @@ func GetProps()(props map[string]string){
     ip_version_ptr       := flag.String("ipversion","v4",      "Server ip version"  )
     ip_port_ptr          := flag.String("port",     "80",      "Server port number" )
     ip_addr_ptr          := flag.String("addr",     "0.0.0.0", "Server ip address"  )
+    //settings_file_path   := flag.String("SETTINGS", default_settings_path , "Server ip address"  )
 
     flag.Parse()
     //out_file_ptr       := flag.String("outfile","out.txt","Out file")
@@ -50,26 +58,31 @@ func GetProps()(props map[string]string){
 
 }
 
-func GetCurrentAppSettings()(props map[string]string){
+func GetCurrentAppSettings(settings_path string)(settings map[string]string,err error){
 
-    pkg, err := importer.Default().Import(app_settings_package_name)
-    //pkg = importer.ImporterFrom(app_settings_package_name)
-    //pkg,err      := importer.Default().ImportFrom(app_settings_package_name,app_settings_directory)
-    //pkg, err := importer.Default().ImporterFrom(app_settings_package_name,app_settings_directory,types.ImportMode)
+    fset := token.NewFileSet()
+
+    f, err := parser.ParseFile(fset, default_settings_path, nil, 0)
     if err != nil {
-        fmt.Printf("error: %s\n", err.Error())
-        return
-    }
-    scope:=pkg.Scope()
-    fmt.Printf("\nScope:%v\n",scope)
-    for prop := range initial {
-        prop_name:=initial[prop]
-        prop_obj:=scope.Lookup(prop_name)
-        fmt.Printf("prop:%v",prop_obj)
+        f, err = parser.ParseFile(fset, default_relative_settings_path, nil, 0)
+        if err!=nil{
+            return nil,err
+        }
     }
 
-
-    return
+    conf := types.Config{Importer: importer.Default()}
+    pkg, err := conf.Check("wapour/settings", fset, []*ast.File{f}, nil)
+    if err != nil {
+        return nil,err
+    }
+    settings=make(map[string]string,0)
+    for word_id := range initial {
+        word:=initial[word_id]
+        existing_set:=pkg.Scope().Lookup(word).(*types.Const).Val().String()
+        settings[word]=existing_set
+    }
+    return settings,err
 }
+
 
 
