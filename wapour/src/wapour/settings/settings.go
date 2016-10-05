@@ -47,3 +47,7 @@ const ADMIN_DATA_URL     ="/index-data"
 //##################################
 //##################################
 const ALLOWED_REDIRECTS = []string { "/userspace","/index" }
+var LINES = []string {"\n","\n","\n","\n","\n"}
+\n
+\n
+dcsdcs \n sdcsdcd
