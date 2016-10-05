@@ -164,8 +164,6 @@ func IsDigitIn(digit int, digits_sets ...[]int) (yes bool) {
     }
     return
 }
-
-
 func IsSymbolIn(char string, symbols_sets ...[]string) (yes bool) {
 
     for i := range symbols_sets {
