@@ -84,5 +84,7 @@ func GetCurrentAppSettings(settings_path string)(settings map[string]string,err 
     return settings,err
 }
 
+func GetSetting
+
 
 
