@@ -1,8 +1,8 @@
 package parse
 
 func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
-    var delimPair = []int   {-1,-1}
-    var dataPair  = []int   {-1,-1}
+    var delimPair = []int {-1,-1}
+    var dataPair  = []int {-1,-1}
     for i:= range lineAsArray {
         char:=lineAsArray[i]
         if IsSymbolIn(char,WORD_DELIM) == false && IsUnicodeLetter(char) == false  && IsUnicodeDigit(char) == false {

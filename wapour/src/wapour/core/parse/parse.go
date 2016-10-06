@@ -18,3 +18,9 @@ func ReadFileLines(filename string) (lines []string,err error){
     }
     return lines,err
 }
+
+func ParseLine(line string)(entry map[string]string) {
+    return entry
+}
+
+//func GetConfig()()
