@@ -20,6 +20,8 @@ func ReadFileLines(filename string) (lines []string,err error){
 }
 
 func ParseLine(line string)(entry map[string]string) {
+    line_slice:=strings.Split(line,"")
+    delims,data:=GetIndexes(line_slice)
     return entry
 }
 
