@@ -1,6 +1,6 @@
 package cuda
 
-import "client/cross"
+//import "client/cross"
 
 /*
 type Dynima struct {
