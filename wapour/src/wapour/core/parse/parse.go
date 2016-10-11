@@ -13,9 +13,7 @@ func ReadFileLines(filename string) (lines []string,err error){
     lines = strings.Split(string(content), "\n")
     for i := range lines {
         line:=lines[i]
-        line_slice:=strings.Split(line,"")
-        delims,data:=cuda.GetIndexes(line_slice)
-        fmt.Printf("-- %v -- %v --\n",delims,data)
+        _=ParseLine(line)
     }
     return lines,err
 }
@@ -23,6 +21,9 @@ func ReadFileLines(filename string) (lines []string,err error){
 func ParseLine(line string)(entry map[string]string) {
     line_slice:=strings.Split(line,"")
     delims,data:=cuda.GetIndexes(line_slice)
+    delims,data=cuda.QuotesFilter(line_slice,delims,data)
+    cuda.DebugPrintCharCounter(line)
+    fmt.Printf("\ndelims: %v\n data: %v\n" , delims , data)
     return entry
 }
 

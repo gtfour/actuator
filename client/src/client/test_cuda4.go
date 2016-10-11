@@ -1,5 +1,5 @@
 package main
-import "client/cuda"
+import "jumper/cuda"
 import "fmt"
 import "strings"
 
