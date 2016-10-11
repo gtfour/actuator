@@ -1,1 +1,2 @@
-// global module for commons
+// Global package for commons.
+// This package could be use by client, wengine or wapour.
