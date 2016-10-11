@@ -1,3 +1,5 @@
+package parse
+
 func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
     single_quote :=[]string{"'"}
