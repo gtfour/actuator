@@ -1,0 +1,7 @@
+[Unit]
+Description=wengine(master of actuator project)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/actuator/wengine/src/wengine/wengine

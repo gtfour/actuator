@@ -1,0 +1,7 @@
+[Unit]
+Description=wapour
+After=wengine.service
+
+[Service]
+Type=simple
+ExecStart=/actuator/wapour/src/wapour/wapour
