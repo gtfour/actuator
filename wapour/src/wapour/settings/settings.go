@@ -4,13 +4,13 @@ import "github.com/gin-gonic/gin"
 //##################################
 //##################################
 //##################################
-//const SERVER_ADDR          = "127.0.0.1"
-const SERVER_ADDR string  = "10.10.111.143"
+const SERVER_ADDR          = "127.0.0.1"
+//const SERVER_ADDR string  = "10.10.111.143"
 const SERVER_PROTO         = "http"
 const SERVER_PORT          = "8090"
 const SERVER_URL           = SERVER_PROTO+"://"+SERVER_ADDR+":"+SERVER_PORT
-//const RESTAPI_SERVER_ADDR  = "127.0.0.1"
-const RESTAPI_SERVER_ADDR  = "10.10.111.143"
+const RESTAPI_SERVER_ADDR  = "127.0.0.1"
+//const RESTAPI_SERVER_ADDR  = "10.10.111.143"
 const RESTAPI_SERVER_PROTO = "http"
 const RESTAPI_SERVER_PORT  = "9000"
 const WS_LINE              = "/entry"
