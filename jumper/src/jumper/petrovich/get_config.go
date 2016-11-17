@@ -21,7 +21,5 @@ func LoadConfig(initial_config map[string]string)(config map[string]string,err e
 }
 
 func ExtractBaseSet(initial_config map[string]string)(config_path string, config_type string, err error){
-
     return config_path, config_type, err
-
 }

@@ -40,14 +40,11 @@ const ONLINE_USERS_STORAGE_TYPE = "ram"
 //##################################
 //##################################
 //##################################
-const APP_SETTINGS       = gin.H{ "static_url":STATIC_URL, "ws_url":WS_URL, "get_data_url":GET_DATA_URL }
+var APP_SETTINGS       = gin.H{ "static_url":STATIC_URL, "ws_url":WS_URL, "get_data_url":GET_DATA_URL }
 const USERSPACE_DATA_URL ="/userspace-data"
 const ADMIN_DATA_URL     ="/index-data"
 //##################################
 //##################################
 //##################################
-const ALLOWED_REDIRECTS = []string { "/userspace","/index" }
+var ALLOWED_REDIRECTS = []string { "/userspace","/index" }
 var LINES = []string {"\n","\n","\n","\n","\n"}
-\n
-\n
-dcsdcs \n sdcsdcd
