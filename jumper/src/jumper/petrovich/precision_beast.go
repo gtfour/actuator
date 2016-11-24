@@ -44,5 +44,6 @@ func CreateHuyamba(initial_config ...map[string]string)(parser huyamba){
 
 func GetMapValue(key string, mymap map[string]string)(value string,err error){
 
+    return
 
 }
