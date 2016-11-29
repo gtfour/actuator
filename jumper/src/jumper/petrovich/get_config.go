@@ -24,3 +24,4 @@ func ExtractBaseSet(initial_config map[string]string)(config_path string, config
 
     return config_path, config_type, err
 }
+
