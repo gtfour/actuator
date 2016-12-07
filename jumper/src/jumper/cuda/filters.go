@@ -7,7 +7,7 @@ var dup_name     = errors.New("error:filter with following name is already exist
 var name_is_none = errors.New("error:filter name wasn't specified")
 
 var GetCustonFilters = func()(fl FilterList){ return fl  } ;
-var Filters = CreateFilterList()
+var DefaultFilters   = CreateDefaultFilterList()
 
 
 type FilterList []Filter
@@ -35,7 +35,7 @@ type Filter struct {
 }
 
 
-func CreateFilterList ()(FilterList) {
+func CreateDefaultFilterList ()(FilterList) {
 
     fl := make(FilterList,0)
 
