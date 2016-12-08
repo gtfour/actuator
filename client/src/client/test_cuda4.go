@@ -5,7 +5,8 @@ import "strings"
 
 func main() {
 
-    line3:=`"hello":"Jessie:'http:///www.google.com'"`
+    //line3:=`"hello":"Jessie:'http:///www.google.com'"`
+    line3:="hello=2"
 
     cuda.DebugPrintCharCounter(line3)
 

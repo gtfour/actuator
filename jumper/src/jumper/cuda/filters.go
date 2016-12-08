@@ -12,7 +12,7 @@ var DefaultFilters   = CreateDefaultFilterList()
 
 type FilterList []Filter
 
-func (fl FilterList) Append (new_filter Filter)(error) {
+func (fl FilterList)Append(new_filter Filter)(error) {
 
     if (new_filter.Name == "") { return name_is_none }
     for key := range fl {
