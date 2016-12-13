@@ -1,4 +1,6 @@
 package main
+
+import "jumper/run"
 import "wapour/index"
 import "wapour/ws"
 import "wapour/wspage"
@@ -11,6 +13,7 @@ import "github.com/gin-gonic/gin"
 
 func main() {
     //users:=make([]*webclient.WengineWrapper,0)
+    run.ParseCmd()
     app:= gin.Default()
     app.LoadHTMLGlob("/actuator/wapour/src/wapour/templates/*")                   // load app  templates
     app.Static("/static", settings.STATIC_DIR)

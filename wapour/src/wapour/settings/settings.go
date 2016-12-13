@@ -48,3 +48,4 @@ const ADMIN_DATA_URL     ="/index-data"
 //##################################
 var ALLOWED_REDIRECTS = []string { "/userspace","/index" }
 var LINES = []string {"\n","\n","\n","\n","\n"}
+var CONFIG_DIR = "/etc/wapour/"
