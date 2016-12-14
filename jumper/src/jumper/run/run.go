@@ -3,6 +3,7 @@ package run
 import "os"
 import "fmt"
 import "strings"
+import "jumper/cuda"
 
 
 func ParseCmd()(){
@@ -27,7 +28,7 @@ func ArgDoubleSplitter(args []string)(arg_pairs [][]string){
 }
 
 func IsDupSuffix(arg string)(bool){
-    if strings.IndexAny(arg,"--")>=0 {
+    if strings.HasPrefix(arg,"--"){
         return true
     }else {
         return false
