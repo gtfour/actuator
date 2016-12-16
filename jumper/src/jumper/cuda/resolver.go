@@ -61,6 +61,14 @@ func StringArrayIsEqual (abc , def []string) (bool) {
 
 }
 
+func BaseFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
+
+    // Simple wrapper
+    return
+
+
+}
+
 func/*(c *Clutch)*/BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
     //var section_brackets_square   =  [2]string {"[","]"}
