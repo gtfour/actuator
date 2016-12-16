@@ -1,6 +1,6 @@
 package custom
 
-import "client/cuda"
+import "jumper/cuda"
 
 
 //var CustomFilters = CreateCustomFilterList()

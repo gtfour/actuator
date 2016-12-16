@@ -1,5 +1,5 @@
 package custom
-import "client/cuda"
+import "jumper/cuda"
 
 var shitty_filter = cuda.Filter{Name:"shitty",
                            Call:func( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {

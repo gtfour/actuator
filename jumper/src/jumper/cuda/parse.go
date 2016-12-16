@@ -21,10 +21,10 @@ var BOTH    int                  = 2
 // ⣳ 
 
 
-type Section struct {
+//type Section struct {
 
 
-}
+//}
 
 /*
 func Parser(entry string) ( interface{} ) {

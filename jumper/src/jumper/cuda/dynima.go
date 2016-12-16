@@ -6,7 +6,7 @@ type Dynima struct {
 
 }
 
-func ( d *Dynima )  AppendFilter(f *Filter)(error){
+func ( d *Dynima )AppendFilter(f *Filter)(error){
     return nil
 }
 
