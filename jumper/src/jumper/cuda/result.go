@@ -1,5 +1,7 @@
 package cuda
 
+import "encoding/json"
+
 var RESULT_TYPE_LINE    int = 7002
 var RESULT_TYPE_SECTION int = 7004
 
@@ -7,24 +9,24 @@ type Result interface {
     ProceedTemplate([][]string)  string
     GetData        ()            ([]Line,error)
     GetType        ()            (typer int)
-    GetAllJson     ()            (map[string]interface{},error)
+    GetJson        ()            ([]byte,error)
 }
 
 
 type Line struct {
-    data_string_slice         []string
-    data_indexes              [][]int
-    delim_indexes             [][]int
-    data                      [][]string
-    template                  string
-    template_weird_data_size  int
+    data_string_slice         []string    `json:"data_string_slice"`
+    data_indexes              [][]int     `json:"data_indexes"`
+    delim_indexes             [][]int     `json:"delim_indexes"`
+    data                      [][]string  `json:"data"`
+    template                  string      `json:"template"`
+    template_data_size        int         `json:"template_data_size"`
 }
 
 type Section struct {
-    lines                     []Line
-    template                  string
-    template_weird_data_size  int
-    typer                     int
+    lines                     []Line      `json:"lines"`
+    template                  string      `json:"template"`
+    template_data_size        int         `json:"template_data_size"`
+    typer                     int         `json:"typer"`
 }
 
 
@@ -42,6 +44,16 @@ func (l *Line)GetType()(int){
     return RESULT_TYPE_LINE
 }
 
+func (l *Line)GetJson()([]byte,error){
+    if l == nil {return nil,nilResultError}
+    line_byte,err := json.Marshal(l)
+    if err != nil {
+        return nil, err
+    } else {
+        return line_byte,nil
+    }
+}
+
 func(s *Section)GetData()([]Line,error){
     if (s.lines!=nil){
         return s.lines, nil
@@ -52,4 +64,14 @@ func(s *Section)GetData()([]Line,error){
 
 func (s *Section)GetType()(int){
     return RESULT_TYPE_SECTION
+}
+
+func (s *Section)GetJson()([]byte,error){
+    if s == nil {return nil,nilResultError}
+    section_byte,err := json.Marshal(s)
+    if err != nil {
+        return nil, err
+    } else {
+        return section_byte,nil
+    }
 }

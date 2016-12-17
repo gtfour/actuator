@@ -1,10 +1,9 @@
 package cuda
 
 type Dynima struct {
-
     filters []Filter
-
 }
+
 
 func( d *Dynima ) AppendFilter (f *Filter)(error){
     return nil
