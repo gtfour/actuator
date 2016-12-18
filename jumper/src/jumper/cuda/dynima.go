@@ -26,3 +26,4 @@ func( d *Dynima )RunFilters()(r *Result,err error){
 func( d *Dynima )SetSource(t *Target)(error){
     return nil
 }
+
