@@ -11,3 +11,8 @@ func ReadFile(filename string)(lines []string,err error){
     return lines, nil
 }
 
+func ReadDir(dirname string)(filenames []string,err error){
+
+
+
+}
