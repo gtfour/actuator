@@ -24,7 +24,7 @@ type strings []string
 
 var OPEN_FILE_TIMEOUT time.Duration = 10 // Remember that OPEN_FILE_TIMEOUT digit  is dividing for two parts in RegularFileIsReadable
 var LAZY_OPENING_MODE int = 01
-var SAFE_OPENING_MODE int = 02
+var SAFE_OPENING_MODE int = 02 //with timeout-controll
 
 //type CompNote struct {
 
