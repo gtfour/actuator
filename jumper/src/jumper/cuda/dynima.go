@@ -6,8 +6,8 @@ var TARGET_FILE    int = 8004
 var TARGET_DIR     int = 8008
 
 type Dynima struct {
-    filters []Filter
-    target  *Target
+    filters  []Filter
+    target   *Target
 }
 
 type Target interface {

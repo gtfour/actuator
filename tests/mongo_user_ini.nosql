@@ -1,0 +1,8 @@
+use products
+db.createUser(
+   {
+     user: "accountUser",
+     pwd: "password",
+     roles: [ "readWrite", "dbAdmin" ]
+   }
+)
