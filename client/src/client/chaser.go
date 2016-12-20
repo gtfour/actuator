@@ -5,6 +5,7 @@ package main
 //import "fmt"
 //
 import "client/chase"
+import "client/majesta"
 import "client/evebridge"
 //import "time"
 
@@ -16,7 +17,7 @@ func main() {
     path1    := "/tmp/test"
     //path2    := "/etc/group"
     //path3    := "/proc/net"
-    messages := make(chan evebridge.CompNotes, 100)
+    messages := make(chan majesta.CompNotes, 100)
     wp       := chase.WPCreate()
 
     _ = chase.Listen(path1, messages, wp)

@@ -4,8 +4,8 @@ package chase
 //import "fmt"
 import "time"
 import "math/rand"
-import "client/actuator"
-import "client/evebridge"
+import "jumper/actuator"
+import "client/majesta"
 // Have to implement carousel method
 
 
@@ -24,7 +24,7 @@ type AbstractTarget interface {
     GetDir()            string
     Chasing(int)        error
     GetPath()           string
-    GetMessageChannel() chan evebridge.CompNotes
+    GetMessageChannel() chan majesta.CompNotes
     SetReady            (bool)()
     IsReady()           bool
     GetSelfProp         ()(*actuator.Prop)

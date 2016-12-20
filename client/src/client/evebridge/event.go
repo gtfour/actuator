@@ -6,6 +6,7 @@ import "encoding/json"
 import "client/wsclient"
 import "client/activa"
 import "client/cross"
+import "client/majesta"
 
 var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 
@@ -23,27 +24,6 @@ type Event struct {
 
 }
 
-type CompNotes struct {
-    Path  string
-    State int8
-    //
-    SourceType string // file or directory or command ( source: actuator or blackout  )
-    SourceName string
-    SourcePath string // /filename or /command_name
-    //UpdateType string // Update,Append,Remove,RemoveFile
-    //UpdateData string //
-    DataHash   string
-    //ServerTime string
-    //ServerId   string
-    //
-    List  []CompNote
-}
-
-type CompNote struct {
-    Field    string
-    Before   string
-    After    string
-}
 type MngMessage struct {
     action string
     path   string
@@ -65,7 +45,7 @@ type DataUpdate struct {
 */
 
 
-func Handle(messages chan CompNotes )() {
+func Handle(messages chan majesta.CompNotes )() {
         motions := make(chan *activa.Motion, 100)
         go activa.Handle(motions)
         var websocket_connection = wsclient.WsConn
@@ -115,16 +95,4 @@ func Handle(messages chan CompNotes )() {
                     //fmt.Println("No messages")
             }
         }
-}
-
-
-
-
-func (cn *CompNotes) FieldExists ( field string )(exists bool) {
-
-    for cnote_id := range cn.List {
-        cnote:=cn.List[cnote_id]
-        if cnote.Field == field { exists = true ; break  }
-    }
-    return exists
 }

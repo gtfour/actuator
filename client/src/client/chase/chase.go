@@ -1,8 +1,9 @@
 package chase
 //package main
 
-import "client/actuator"
-import "client/evebridge"
+import "jumper/actuator"
+import "client/majesta"
+//import "client/evebridge"
 //import "os"
 //import "fmt" // for  debug
 //import "time"
@@ -22,7 +23,7 @@ type Target struct {
     Prop                          *actuator.Prop // try to use Prop comparing instead of using markers
     InfoIn                        chan bool
     InfoOut                       chan string
-    MessageChannel                chan evebridge.CompNotes
+    MessageChannel                chan majesta.CompNotes
     WorkerPool                    *WorkerPool
     InformAboutExit               bool
     KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
@@ -35,7 +36,7 @@ type Target struct {
 
 func ( tgt *Target ) GetDir()  string { return tgt.Dir }
 func ( tgt *Target ) GetPath() string { return tgt.Path }
-func ( tgt *Target ) GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
+func ( tgt *Target ) GetMessageChannel() chan majesta.CompNotes {return tgt.MessageChannel}
 func ( tgt *Target ) IsReady() bool {return tgt.Prop.Ready }
 func ( tgt *Target ) SetReady(state bool)() {tgt.Prop.Ready = state }
 func ( tgt *Target ) GetSelfProp()(*actuator.Prop){ return tgt.Prop }
@@ -57,7 +58,7 @@ type TargetDir struct {
 
 func ( tgt *TargetDir )  GetDir()  string { return tgt.Dir }
 func ( tgt *TargetDir )  GetPath() string { return tgt.Path }
-func ( tgt *TargetDir )  GetMessageChannel() chan evebridge.CompNotes {return tgt.MessageChannel}
+func ( tgt *TargetDir )  GetMessageChannel() chan majesta.CompNotes {return tgt.MessageChannel}
 func ( tgt *TargetDir )  IsReady() bool {return tgt.Prop.Ready }
 func ( tgt *TargetDir )  SetReady(state bool)() {tgt.Prop.Ready = state }
 func ( tgt *TargetDir )  GetSelfProp()(*actuator.Prop){ return tgt.Prop }
@@ -69,7 +70,7 @@ func ( tgt *TargetDir ) GetRemove()(bool) { return tgt.Remove }
 func ( tgt *TargetDir ) ToRemove()() { tgt.Remove = true }
 
 
-func Start (targets []string, message_channel chan evebridge.CompNotes ,wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
+func Start (targets []string, message_channel chan majesta.CompNotes, wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
 
     // Bug was found : when i passing an file name not a dir name to func to func Start 
     // nil point dereference error is causing . It happens because subdirs is nil ( i suppose )
@@ -207,8 +208,8 @@ func (tgt *Target) Chasing(mode int) (err error){
 
                     actual_prop  :=   actuator.GetProp(tgt.Path,mode)
                     if actual_prop.Error == true {
-                        error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"}
-                        cnote      :=evebridge.CompNotes{Path:tgt.Path}
+                        error_field:=majesta.CompNote{Field:"Error",Before:"false",After:"true"}
+                        cnote      :=majesta.CompNotes{Path:tgt.Path}
                         cnote.List = append(cnote.List, error_field)
                         tgt.MessageChannel <- cnote
                         tgt.InformAboutExit=true
@@ -217,13 +218,13 @@ func (tgt *Target) Chasing(mode int) (err error){
                     //if ( reflect.DeepEqual(actual_prop, tgt.Prop) == false ) {
                     if tgt.InitialCheck == true {
                         empty_prop:=&actuator.Prop{}
-                        if comparison_notes:=actuator.CompareProp(empty_prop, actual_prop ,tgt.Path ); len(comparison_notes.List)>0 {
+                        if comparison_notes:=majesta.CompareProp(empty_prop, actual_prop ,tgt.Path ); len(comparison_notes.List)>0 {
                             tgt.MessageChannel <- comparison_notes
                         }
                         tgt.InitialCheck = false
                     }
 
-                    if comparison_notes:=actuator.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
+                    if comparison_notes:=majesta.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
                         //go  tgt.Reporting()
                         tgt.MessageChannel <- comparison_notes
                         tgt.Prop = actual_prop }
@@ -233,8 +234,8 @@ func (tgt *Target) Chasing(mode int) (err error){
            actual_prop  :=   actuator.GetProp(tgt.Path,mode)
 
            if actual_prop.Error == true {
-               error_field:=evebridge.CompNote{Field:"Error",Before:"false",After:"true"}
-               cnote      :=evebridge.CompNotes{Path:tgt.Path}
+               error_field:=majesta.CompNote{Field:"Error",Before:"false",After:"true"}
+               cnote      :=majesta.CompNotes{Path:tgt.Path}
                cnote.List = append(cnote.List, error_field)
                tgt.MessageChannel <- cnote
                tgt.InformAboutExit=true
@@ -243,7 +244,7 @@ func (tgt *Target) Chasing(mode int) (err error){
            }
            if tgt.InitialCheck == true {
                empty_prop:=&actuator.Prop{}
-               if comparison_notes:=actuator.CompareProp(empty_prop, actual_prop ,tgt.Path ); len(comparison_notes.List)>0 {
+               if comparison_notes:=majesta.CompareProp(empty_prop, actual_prop ,tgt.Path ); len(comparison_notes.List)>0 {
                    tgt.MessageChannel <- comparison_notes
                }
                tgt.InitialCheck = false
@@ -251,7 +252,7 @@ func (tgt *Target) Chasing(mode int) (err error){
 
 
            //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
-           if comparison_notes:=actuator.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
+           if comparison_notes:=majesta.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
                //go  tgt.Reporting()
                tgt.MessageChannel <- comparison_notes
                tgt.Prop = actual_prop
@@ -335,14 +336,14 @@ func (tgt *TargetDir) Chasing (mode int) (err error){
         }
         if tgt.InitialCheck == true {
             empty_prop:=&actuator.Prop{}
-            if comparison_notes:=actuator.CompareProp(empty_prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
+            if comparison_notes:=majesta.CompareProp(empty_prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
                 tgt.MessageChannel <- comparison_notes
             }
             tgt.InitialCheck = false
         }
 
         //if ( reflect.DeepEqual( actual_prop, tgt.Prop ) == false ) {
-        if comparison_notes:=actuator.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
+        if comparison_notes:=majesta.CompareProp(tgt.Prop, actual_prop, tgt.Path ); len(comparison_notes.List)>0 {
            tgt.MessageChannel <- comparison_notes
            tgt.Prop = actual_prop
 
@@ -363,7 +364,7 @@ func (tgt *TargetDir) Chasing (mode int) (err error){
 
 //}
 
-func Listen( path string,  messages chan evebridge.CompNotes , wp WorkerPool )(err error) {
+func Listen( path string,  messages chan majesta.CompNotes , wp WorkerPool )(err error) {
 
     target_dir_path             :=  path
 
