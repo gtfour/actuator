@@ -46,9 +46,12 @@ type DataUpdate struct {
 
 
 func Handle(messages chan majesta.CompNotes )() {
+        fmt.Printf("\n:: Start handling ::\n")
         motions := make(chan *activa.Motion, 100)
         go activa.Handle(motions)
-        var websocket_connection = wsclient.WsConn
+        fmt.Printf("\nTrying to get ws-connection...\n")
+        var websocket_connection = wsclient.GetWsConnection()
+        fmt.Printf("\n--ws-connection open error: %v --\n",websocket_connection.OpenError)
         for {
             select{
                 case message:=<-messages:
@@ -92,7 +95,7 @@ func Handle(messages chan majesta.CompNotes )() {
                       }
                 default:
                     time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
-                    //fmt.Println("No messages")
+                    fmt.Println("No messages")
             }
         }
 }

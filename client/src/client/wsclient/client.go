@@ -7,7 +7,7 @@ import "encoding/json"
 import "golang.org/x/net/websocket"
 import "client/settings"
 
-var WsConn = CreateConnection(settings.RESTAPI_WS_ORIGIN, settings.RESTAPI_WS_URL)
+//var WsConn = CreateConnection(settings.RESTAPI_WS_ORIGIN, settings.RESTAPI_WS_URL)
 
 
 type Event struct {
@@ -102,6 +102,10 @@ func CreateConnection ( origin string, url string ) (  *WebSocketConnection ) {
         fmt.Printf("\nws-connection has been opened\n")
         return wsConn
     }
+}
+
+func GetWsConnection()(*WebSocketConnection){
+    return CreateConnection(settings.RESTAPI_WS_ORIGIN, settings.RESTAPI_WS_URL)
 }
 
 
