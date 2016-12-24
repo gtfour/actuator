@@ -6,7 +6,7 @@ import "client/activa"
 
 func WriteMotion(m *activa.Motion)(err error) {
 
-    if Database.Error == false {
+    if Database.Error == nil {
         db:=Database.Db
         err=db.Update(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(Database.motionsTableName))
@@ -27,7 +27,7 @@ func WriteMotion(m *activa.Motion)(err error) {
 
 func GetAllMotions() ( motions  []activa.Motion , err  error ) {
 
-    if Database.Error == false {
+    if Database.Error == nil {
         db     := Database.Db
         motions = make([]activa.Motion,0)
         err = db.View(func(tx *bolt.Tx) error {

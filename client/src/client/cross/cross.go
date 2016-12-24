@@ -13,7 +13,7 @@ var Database = Open()
 
 type Storage struct {
     Db                 *bolt.DB
-    Error              bool
+    Error              error
     dynimasTableName   string
     dashgatesTableName string
     motionsTableName   string
@@ -39,7 +39,7 @@ type Difference struct {
 
 func Open()(s Storage){
     db, err := bolt.Open(settings.SYSTEM_DATABASE, 0600, nil)
-    if err!= nil { s.Error = true ; return } else {
+    if err!= nil { s.Error = err ; return } else {
         s.Db                = db
         s.dynimasTableName   = "dynimas"
         s.dashgatesTableName = "dashgates"
@@ -52,17 +52,13 @@ func Open()(s Storage){
             _,err_dashgates  := tx.CreateBucketIfNotExists([]byte(s.dashgatesTableName))
             _,err_motions    := tx.CreateBucketIfNotExists([]byte(s.motionsTableName))
             if err_dynimas != nil || err_dashgates != nil || err_motions != nil {
-                s.Error = true
+                s.Error = unable_to_init
                 defer db.Close()
                 return unable_to_init
             }
             return nil
         });
-
-
-
-        // 
-        s.Error             = false
+        s.Error             = nil
     }
     return
 }
