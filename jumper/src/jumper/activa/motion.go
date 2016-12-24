@@ -3,6 +3,7 @@ package activa
 import "encoding/json"
 import "jumper/common/gen"
 
+/*
 type AbMotion interface {
     GetId           (string)
     GetInitTime     (string)
@@ -18,6 +19,7 @@ type Key struct {
     Name  string
     Value string
 }
+*/
 
 type Motion struct {
     Id           string // `bson:"id"`
