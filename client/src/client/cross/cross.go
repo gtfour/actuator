@@ -38,6 +38,7 @@ type Difference struct {
 
 
 func Open()(s Storage){
+    fmt.Printf("\nTrying to open cross database: %s\n",settings.SYSTEM_DATABASE)
     db, err := bolt.Open(settings.SYSTEM_DATABASE, 0600, nil)
     if err!= nil { s.Error = err ; return } else {
         s.Db                = db

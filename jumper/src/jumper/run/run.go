@@ -58,7 +58,6 @@ func CheckSuffix(arg string)(bool,bool){
 }
 
 func KeySplitter(arg string)(values [2]string){
-    
     return values
 }
 
