@@ -22,19 +22,20 @@ type Key struct {
 */
 
 type Motion struct {
-    Id           string // `bson:"id"`
-    InitTime     string // `bson:"init_time"`
-    StartTime    string // `bson:"start_time"`
-    EndTime      string // `bson:"end_time"`
-    UserName     string // `bson:"user_name"`
-    GroupName    string // `bson:"group_name"`
-    SourceType   string // `bson:"source_type"`
-    SourcePath   string // `bson:"source_path"`
-    ActionType   string // `bson:"action_type"`
-    ActionName   string // `bson:"action_name"`
-    TaskState    int    // `bson:"task_state"`
-    Type         int
-    MotionData   json.RawMessage `json:"data"`
+    Id               string // `bson:"id"`
+    InitTime         string // `bson:"init_time"`
+    StartTime        string // `bson:"start_time"`
+    EndTime          string // `bson:"end_time"`
+    UserName         string // `bson:"user_name"`
+    GroupName        string // `bson:"group_name"`
+    SourceType       string // `bson:"source_type"`
+    SourcePath       string // `bson:"source_path"`
+    ActionType       string // `bson:"action_type"`
+    ActionName       string // `bson:"action_name"`
+    TaskState        int    // `bson:"task_state"`
+    Type             int
+    MotionData       json.RawMessage `json:"data"`
+    MotionLastUpdate string
 }
 
 func (m *Motion)GetRaw()([]byte, error) {
@@ -42,7 +43,7 @@ func (m *Motion)GetRaw()([]byte, error) {
     return raw,err
 }
 
-func CreateMotion ()(m Motion) {
+func CreateNewMotion ()(m Motion) {
 
     time_now    := gen.GetTime()
     m.Id        =  time_now
