@@ -9,7 +9,7 @@ type garreth struct {
     dbpath   string
 }
 
-func CreateConnector(dbtype string)(*garreth,error){
+func CreateConnectorTemplate(dbtype string)(*garreth,error){
     var g garreth
     switch {
         case dbtype == "mongo" || dbtype == "mongodb":
@@ -60,14 +60,14 @@ func(g garreth)Open()(d Database,err error) {
 
     switch {
         case g.dbtype == MONGODB:
-            d=&MongoDb{username:username,
+        /*    d=&MongoDb{username:username,
                       password:password,
                       host:host,
                       dbname:dbname}
             err:=d.Connect()
             if err == nil {
                 return d, nil
-            }
+            }*/
         case g.dbtype == POSTGRES:
 
 
