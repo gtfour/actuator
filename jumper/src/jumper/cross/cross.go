@@ -74,6 +74,21 @@ func (g Garreth)SetDbname(dbname string)(error){
 func (g Garreth)GetDbname()(string){
     return g.dbname
 }
+
+func (g Garreth)SetHost(host string)(error){
+    if host == "" {
+        return db_host_is_empty
+    }else {
+        g.host = host
+        return nil
+    }
+}
+
+func (g Garreth)GetHost()(string){
+    return g.host
+}
+
+
 /*
 
 func(g Garreth)Open()(d Database,err error) {

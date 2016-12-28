@@ -6,6 +6,7 @@ var db_username_is_empty = errors.New("\ncross:username is empty")
 var db_password_is_empty = errors.New("\ncross:password is empty")
 var db_path_is_empty     = errors.New("\ncross:path is empty")
 var db_dbname_is_empty   = errors.New("\ncross:dbname is empty")
+var db_host_is_empty     = errors.New("\ncross:host is empty")
 
 var CantOpenDatabase   = errors.New("\ncross:Can't open database")
 
