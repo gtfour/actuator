@@ -1,7 +1,8 @@
 package cross
 
-type garreth struct {
-    Dbtype   int
+type Garreth struct {
+    // kind of connector
+    dbtype   int
     username string
     password string
     host     string
@@ -9,23 +10,28 @@ type garreth struct {
     dbpath   string
 }
 
-func CreateConnectorTemplate(dbtype string)(*garreth,error){
-    var g garreth
+func CreateConnectorTemplate(dbtype string)(*Garreth,error){
+    var g Garreth
     switch {
         case dbtype == "mongo" || dbtype == "mongodb":
-            g.Dbtype=MONGODB
+            g.dbtype=MONGODB
             return &g, nil
         case dbtype == "postgres":
-            g.Dbtype=POSTGRES
+            g.dbtype=POSTGRES
             return &g, nil
         case dbtype == "bolt" || dbtype == "boltdb":
-            g.Dbtype=BOLTDB
+            g.dbtype=BOLTDB
             return &g, nil
     }
     return nil, db_type_is_incorrect
 }
 
-func (g garreth)set_cred( username string, password string )(error){
+func (g Garreth)GetDbType()(int){
+    return g.dbtype
+}
+
+
+func (g Garreth)SetCred( username string, password string )(error){
     if username == "" {
         return db_username_is_empty
     }else if password == "" {
@@ -37,7 +43,11 @@ func (g garreth)set_cred( username string, password string )(error){
     }
 }
 
-func (g garreth)set_path(path string)(error){
+func (g Garreth)GetCred()(string,string){
+    return g.username, g.password
+}
+
+func (g Garreth)SetPath(path string)(error){
     if path == "" {
         return db_path_is_empty
     }else {
@@ -46,7 +56,13 @@ func (g garreth)set_path(path string)(error){
     }
 }
 
-func (g garreth)set_dbname(dbname string)(error){
+func (g Garreth)GetPath()(string){
+    return g.dbpath
+}
+
+
+
+func (g Garreth)SetDbname(dbname string)(error){
     if dbname == "" {
         return db_dbname_is_empty
     }else {
@@ -55,19 +71,23 @@ func (g garreth)set_dbname(dbname string)(error){
     }
 }
 
+func (g Garreth)GetDbname()(string){
+    return g.dbname
+}
+/*
 
-func(g garreth)Open()(d Database,err error) {
+func(g Garreth)Open()(d Database,err error) {
 
     switch {
         case g.Dbtype == MONGODB:
-        /*    d=&MongoDb{username:username,
-                      password:password,
-                      host:host,
-                      dbname:dbname}
-            err:=d.Connect()
-            if err == nil {
-                return d, nil
-            }*/
+        //    d=&MongoDb{username:username,
+        //              password:password,
+        //              host:host,
+        //              dbname:dbname}
+        //    err:=d.Connect()
+        //    if err == nil {
+        //        return d, nil
+        //    }
         case g.Dbtype == POSTGRES:
 
 
@@ -77,3 +97,4 @@ func(g garreth)Open()(d Database,err error) {
     }
     return nil, cant_open_database
 }
+*/
