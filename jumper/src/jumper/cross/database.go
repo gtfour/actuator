@@ -11,7 +11,7 @@ type Query struct {
 
 type Database interface {
 
-    Connect(Garreth)(error)
+    Connect()(error)
     RunQuery(result_slice_addr *[]map[string]interface{},err error)
     Close()()
 

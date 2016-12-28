@@ -43,14 +43,14 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
             //
             err=s.Db.Update(func(tx *bolt.Tx) error {
                 table := tx.Bucket([]byte(q.Table))
-                if table==nil { return table_doesnt_exist }
+                if table==nil { return cross.TableDoesntExist }
 
                 entry := table.Get(key_byte)
                 if entry == nil {
                     err:=table.Put(key_byte, query_byte)
                     return err
                 } else {
-                    return entry_already_exist
+                    return cross.EntryAlreadyExist
                 }
 
                 err:=table.Put(key_byte, query_byte)
@@ -58,7 +58,7 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
             })
             return nil, err
         } else {
-            return nil, empty_query
+            return nil, cross.EmptyQuery
         }
 
     } else if q.Type == cross.CREATE_NEW_IFNOT {
@@ -69,14 +69,14 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
             key_byte,err_key     := json.Marshal(q.KeyBody)
             query_byte,err_query := json.Marshal(q.QueryBody)
             if err_key!=nil || err_query!=nil {
-                return nil, encode_error
+                return nil, cross.EncodeError
             }
             err=s.Db.Update(func(tx *bolt.Tx) error {
                 table := tx.Bucket([]byte(q.Table))
-                if table==nil { return table_doesnt_exist }
+                if table==nil { return cross.TableDoesntExist }
                 entry := table.Get(key_byte)
                 if entry == nil {
-                    return entry_doesnt_exist
+                    return cross.EntryDoesntExist
                 } else {
                     err:=table.Put(key_byte, query_byte)
                     return err
@@ -84,25 +84,25 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
             })
         }
     } else if q.Type == cross.UPDATE || q.Type == cross.EDIT   {
-        if q.KeyBody   == nil { return nil, empty_key   }
-        if q.QueryBody == nil { return nil, empty_query }
+        if q.KeyBody   == nil { return nil, cross.EmptyKey   }
+        if q.QueryBody == nil { return nil, cross.EmptyQuery }
         //
         //err = c.Update(bson.M(q.KeyBody), bson.M{"$set": bson.M(q.QueryBody)})
         return nil, err
         //
     } else if q.Type == cross.GET || q.Type == cross.GET_ALL  || q.Type == cross.CHECK_EXIST {
-        result_slice_addr,err := s.RunQueryGet(q)
-        return result_slice_addr, err
+        //result_slice_addr,err := s.RunQueryGet(q)
+        //return result_slice_addr, err
     } else  if q.Type == cross.REMOVE {
         if q.KeyBody != nil {
             //err    =  c.Remove(bson.M(q.KeyBody))
             return nil, err
         } else {
-            return nil, empty_key
+            return nil, cross.EmptyKey
         }
     } else if q.Type == cross.INSERT_ITEM || q.Type == cross.REMOVE_ITEM {
-        if q.KeyBody   == nil { return nil,empty_key   }
-        if q.QueryBody == nil { return nil,empty_query }
+        if q.KeyBody   == nil { return nil, cross.EmptyKey   }
+        if q.QueryBody == nil { return nil, cross.EmptyQuery }
 
         if q.Type      == cross.INSERT_ITEM {
             //err            =  c.Update(bson.M(q.KeyBody), bson.M{"$push":bson.M(q.QueryBody)})
@@ -112,7 +112,7 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
             return nil,err
         }
     } else {
-        return nil, incorrect_query_type
+        return nil, cross.IncorrectQueryType
     }
     // err    =  c.Find(bson.M(q.KeyBody)).One(&result)
     // if err != nil {
