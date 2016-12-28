@@ -4,31 +4,27 @@ import "jumper/cross"
 import "github.com/boltdb/bolt"
 
 type Storage struct {
-    Db                 *bolt.DB
-    Error              error
+    db     *bolt.DB
+    err    error
+    path   string
 }
 
 func (s *Storage) Close () {
-    s.Db.Close()
+    s.db.Close()
 }
 
 
-func (s *Storage) Connect ()() {
-    s.Db.Close()
+func (s *Storage) Connect ()(err error) {
+    s.db,err=bolt.Open(s.path, 0600, nil)
+    return err
 }
 
 
 
 func GetDatabase(g *cross.Garreth)(s *Storage,err error){
-
     path:=g.GetPath()
-    db, err := bolt.Open(path, 0600, nil)
-    if err!= nil { return  nil,cross.CantOpenDatabase }
-    s.Db=db
-    return s,nil
-
-
-
+    s.path=path
+    return s, nil
 }
 
 

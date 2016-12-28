@@ -13,13 +13,13 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
     //c      := d.Session.DB(d.dbname).C(q.Table)
 
     if q.Type == cross.CREATE_NEW_TABLE {
-        err:=s.Db.Update(func(tx *bolt.Tx) error {
+        err:=s.db.Update(func(tx *bolt.Tx) error {
             _,err    := tx.CreateBucketIfNotExists([]byte(q.Table))
             return err
         });
         return nil, err
     } else if q.Type == cross.CHECK_TABLE_EXIST  {
-        err := s.Db.View(func(tx *bolt.Tx) error {
+        err := s.db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(q.Table))
             if b==nil{ return cross.TableDoesntExist } else{
                 return nil
@@ -27,7 +27,7 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
         });
         return nil, err
     } else if q.Type == cross.REMOVE_TABLE {
-        err:=s.Db.Update(func(tx *bolt.Tx) error {
+        err:=s.db.Update(func(tx *bolt.Tx) error {
             err:=tx.DeleteBucket([]byte(q.Table))
             return err
         });
@@ -41,7 +41,7 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
                 return nil, cross.EncodeError
             }
             //
-            err=s.Db.Update(func(tx *bolt.Tx) error {
+            err=s.db.Update(func(tx *bolt.Tx) error {
                 table := tx.Bucket([]byte(q.Table))
                 if table==nil { return cross.TableDoesntExist }
 
@@ -71,7 +71,7 @@ func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interfa
             if err_key!=nil || err_query!=nil {
                 return nil, cross.EncodeError
             }
-            err=s.Db.Update(func(tx *bolt.Tx) error {
+            err=s.db.Update(func(tx *bolt.Tx) error {
                 table := tx.Bucket([]byte(q.Table))
                 if table==nil { return cross.TableDoesntExist }
                 entry := table.Get(key_byte)
