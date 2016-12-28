@@ -1,7 +1,7 @@
 package cross
 
 type garreth struct {
-    dbtype   int
+    Dbtype   int
     username string
     password string
     host     string
@@ -13,13 +13,13 @@ func CreateConnectorTemplate(dbtype string)(*garreth,error){
     var g garreth
     switch {
         case dbtype == "mongo" || dbtype == "mongodb":
-            g.dbtype=MONGODB
+            g.Dbtype=MONGODB
             return &g, nil
         case dbtype == "postgres":
-            g.dbtype=POSTGRES
+            g.Dbtype=POSTGRES
             return &g, nil
         case dbtype == "bolt" || dbtype == "boltdb":
-            g.dbtype=BOLTDB
+            g.Dbtype=BOLTDB
             return &g, nil
     }
     return nil, db_type_is_incorrect
@@ -59,7 +59,7 @@ func (g garreth)set_dbname(dbname string)(error){
 func(g garreth)Open()(d Database,err error) {
 
     switch {
-        case g.dbtype == MONGODB:
+        case g.Dbtype == MONGODB:
         /*    d=&MongoDb{username:username,
                       password:password,
                       host:host,
@@ -68,11 +68,11 @@ func(g garreth)Open()(d Database,err error) {
             if err == nil {
                 return d, nil
             }*/
-        case g.dbtype == POSTGRES:
+        case g.Dbtype == POSTGRES:
 
 
 
-        case g.dbtype == BOLTDB:
+        case g.Dbtype == BOLTDB:
 
     }
     return nil, cant_open_database

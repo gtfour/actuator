@@ -9,3 +9,6 @@ var db_dbname_is_empty   = errors.New("\ncross:dbname is empty")
 
 var cant_open_database   = errors.New("\ncross:Can't open database")
 
+var Selected_dbtype_is_not_ok_on_client_side = errors.New("\ncross:selected dbtype is not appropriate for using on client side")
+var Selected_dbtype_is_not_ok_on_server_side = errors.New("\ncross:selected dbtype is not appropriate for using on server side")
+
