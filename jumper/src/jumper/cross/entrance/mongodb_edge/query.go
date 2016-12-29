@@ -2,32 +2,32 @@ package mongodb_edge
 
 import "gopkg.in/mgo.v2/bson"
 import "wengine/core/types/db"
+import "jumper/cross"
 
+/*
 type Query struct {
-
     Type      int
     Table     string
     KeyBody   map[string]interface{}
     QueryBody map[string]interface{}
+}*/
 
-}
 
-
-func(d *MongoDb)RunQuery(q Query)(result_slice_addr *[]map[string]interface{}, err error){
+func(d *MongoDb)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
     result_slice:=make([]map[string]interface{},0)
     //result_slice = &result_slice_full
-    c      := d.Session.DB(d.dbname).C(q.Table)
+    c      := d.session.DB(d.dbname).C(q.Table)
     if q.Type == db.CREATE_NEW {
         if q.QueryBody != nil {
             err         = c.Insert(q.QueryBody)
             return nil, err
         } else {
-            return nil, empty_query
+            return nil, cross.EmptyQuery
         }
     } else if q.Type == db.UPDATE || q.Type == db.EDIT   {
-        if q.KeyBody   == nil { return nil,empty_key   }
-        if q.QueryBody == nil { return nil,empty_query }
+        if q.KeyBody   == nil { return nil, cross.EmptyKey   }
+        if q.QueryBody == nil { return nil, cross.EmptyQuery }
         //
 	err = c.Update(bson.M(q.KeyBody), bson.M{"$set": bson.M(q.QueryBody)})
         return nil, err
@@ -52,18 +52,18 @@ func(d *MongoDb)RunQuery(q Query)(result_slice_addr *[]map[string]interface{}, e
                 }
             }
         } else {
-            return nil, empty_key
+            return nil, cross.EmptyKey
         }
     } else  if q.Type == db.REMOVE {
         if q.KeyBody != nil {
             err    =  c.Remove(bson.M(q.KeyBody))
             return nil, err
         } else {
-            return nil, empty_key
+            return nil, cross.EmptyKey
         }
     } else if q.Type == db.INSERT_ITEM || q.Type == db.REMOVE_ITEM {
-        if q.KeyBody   == nil { return nil,empty_key   }
-        if q.QueryBody == nil { return nil,empty_query }
+        if q.KeyBody   == nil { return nil, cross.EmptyKey   }
+        if q.QueryBody == nil { return nil, cross.EmptyQuery }
 
         if q.Type      == db.INSERT_ITEM {
             err            =  c.Update(bson.M(q.KeyBody), bson.M{"$push":bson.M(q.QueryBody)})
@@ -73,7 +73,7 @@ func(d *MongoDb)RunQuery(q Query)(result_slice_addr *[]map[string]interface{}, e
             return nil,err
         }
     } else {
-        return nil, incorrect_query_type
+        return nil, cross.IncorrectQueryType
     }
 
     // err    =  c.Find(bson.M(q.KeyBody)).One(&result)

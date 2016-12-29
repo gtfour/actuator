@@ -5,7 +5,7 @@ import "github.com/boltdb/bolt"
 import "jumper/cross"
 
 
-func (s *Storage)RunQuery(q cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func (s *Storage)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
 
     result_slice:=make([]map[string]interface{},0)

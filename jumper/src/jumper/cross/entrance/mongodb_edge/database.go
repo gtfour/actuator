@@ -40,10 +40,17 @@ func (d *MongoDb)Connect() ( err error ) {
     return err
 }
 
-func GetDatabase(g *cross.Garreth)(s *MongoDb,err error){
-    path:=g.GetPath()
-    s.path=path
-    return s, nil
+func GetDatabase(g *cross.Garreth)(d *MongoDb,err error){
+    //path:=g.GetPath()
+    //s.path=path
+    username,password := g.GetCred()
+    dbname            := g.GetDbname()
+    host              := g.GetHost()
+    d.username        = username
+    d.password        = password
+    d.dbname          = dbname
+    d.host            = host
+    return d, nil
 }
 
 

@@ -16,8 +16,8 @@ func CreateConnectorTemplate(dbtype string)(*Garreth,error){
         case dbtype == "mongo" || dbtype == "mongodb":
             g.dbtype=MONGODB
             return &g, nil
-        case dbtype == "postgres":
-            g.dbtype=POSTGRES
+        case dbtype == "postgres" || dbtype == "postgresql"  :
+            g.dbtype=POSTGRESQL
             return &g, nil
         case dbtype == "bolt" || dbtype == "boltdb":
             g.dbtype=BOLTDB
