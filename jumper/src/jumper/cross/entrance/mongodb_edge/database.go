@@ -40,9 +40,10 @@ func (d *Database)Connect() ( err error ) {
     return err
 }
 
-func GetDatabase(g *cross.Garreth)(d *Database,err error){
+func GetDatabase(g *cross.Garreth)(*Database,error){
     //path:=g.GetPath()
     //s.path=path
+    var d Database
     username,password := g.GetCred()
     dbname            := g.GetDbname()
     host              := g.GetHost()
@@ -50,7 +51,7 @@ func GetDatabase(g *cross.Garreth)(d *Database,err error){
     d.password        = password
     d.dbname          = dbname
     d.host            = host
-    return d, nil
+    return &d, nil
 }
 
 

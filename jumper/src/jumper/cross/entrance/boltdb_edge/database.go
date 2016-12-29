@@ -21,10 +21,11 @@ func (d *Database) Connect ()(err error) {
 
 
 
-func GetDatabase(g *cross.Garreth)(d *Database,err error){
+func GetDatabase(g *cross.Garreth)(*Database,error){
+    var d Database
     path:=g.GetPath()
     d.path=path
-    return d, nil
+    return &d, nil
 }
 
 
