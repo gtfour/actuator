@@ -18,7 +18,7 @@ func main(){
 
     get_query_body           := make(map[string]interface{},0)
     get_query_body["SourceType"] = "file"
-    get_query                    := cross.Query{Table:types.DYNIMAS_T,KeyBody:get_query_body,Type:types.GET_ALL}
+    get_query                    := cross.Query{Table:types.DYNIMAS_T,QueryBody:get_query_body,Type:types.GET_ALL}
 
     res1,err1                    := database.RunQuery(create_new_query)
     res2,err2                    := database.RunQuery(get_query)
