@@ -182,7 +182,7 @@ func(s *Storage)RunQueryGet(q Query)(result_slice_addr *[]map[string]interface{}
             if match_by_value {
                 value_satisfied = CompareMap(q.QueryBody, query_map)
 		}
-            if (match_by_key && match_by_value == false && key_satisfied) || (match_by_value && match_by_key == false && value_satisfied) || (match_by_key && match_by_value && key_satisfied && value_satisfied ) {
+            if (match_by_key && (match_by_value == false) && key_satisfied) || (match_by_value && (match_by_key == false) && value_satisfied) || (match_by_key && match_by_value && key_satisfied && value_satisfied ) {
                 search_result_slice["key"]   = key_map
                 search_result_slice["value"] = query_map
                 result_slice                 = append(result_slice, search_result_slice)
@@ -233,6 +233,8 @@ func CheckBoolSlice(slice []bool)(slice_type int){
 }
 
 func CompareMap(query map[string]interface{}, dest map[string]interface{})(bool) {
+
+    fmt.Printf("\n Checking : CompareProp : query: %v dest: %v\n",query,dest)
     matching := make([]bool,0)
     for key,value := range query {
         if dest_value,ok := dest[key]; ok == true {
