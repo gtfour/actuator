@@ -3,28 +3,28 @@ package boltdb_edge
 import "jumper/cross"
 import "github.com/boltdb/bolt"
 
-type Storage struct {
+type Database struct {
     db     *bolt.DB
     err    error
     path   string
 }
 
-func (s *Storage) Close () {
-    s.db.Close()
+func (d *Database) Close () {
+    d.db.Close()
 }
 
 
-func (s *Storage) Connect ()(err error) {
-    s.db,err=bolt.Open(s.path, 0600, nil)
+func (d *Database) Connect ()(err error) {
+    d.db,err=bolt.Open(d.path, 0600, nil)
     return err
 }
 
 
 
-func GetDatabase(g *cross.Garreth)(s *Storage,err error){
+func GetDatabase(g *cross.Garreth)(d *Database,err error){
     path:=g.GetPath()
-    s.path=path
-    return s, nil
+    d.path=path
+    return d, nil
 }
 
 

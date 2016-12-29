@@ -5,7 +5,7 @@ import "github.com/boltdb/bolt"
 import "jumper/cross"
 
 
-func (s *Storage)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
 
     result_slice:=make([]map[string]interface{},0)
@@ -13,13 +13,13 @@ func (s *Storage)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interf
     //c      := d.Session.DB(d.dbname).C(q.Table)
 
     if q.Type == cross.CREATE_NEW_TABLE {
-        err:=s.db.Update(func(tx *bolt.Tx) error {
+        err:=d.db.Update(func(tx *bolt.Tx) error {
             _,err    := tx.CreateBucketIfNotExists([]byte(q.Table))
             return err
         });
         return nil, err
     } else if q.Type == cross.CHECK_TABLE_EXIST  {
-        err := s.db.View(func(tx *bolt.Tx) error {
+        err := d.db.View(func(tx *bolt.Tx) error {
             b:=tx.Bucket([]byte(q.Table))
             if b==nil{ return cross.TableDoesntExist } else{
                 return nil
@@ -27,7 +27,7 @@ func (s *Storage)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interf
         });
         return nil, err
     } else if q.Type == cross.REMOVE_TABLE {
-        err:=s.db.Update(func(tx *bolt.Tx) error {
+        err:=d.db.Update(func(tx *bolt.Tx) error {
             err:=tx.DeleteBucket([]byte(q.Table))
             return err
         });
@@ -41,7 +41,7 @@ func (s *Storage)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interf
                 return nil, cross.EncodeError
             }
             //
-            err=s.db.Update(func(tx *bolt.Tx) error {
+            err=d.db.Update(func(tx *bolt.Tx) error {
                 table := tx.Bucket([]byte(q.Table))
                 if table==nil { return cross.TableDoesntExist }
 
@@ -71,7 +71,7 @@ func (s *Storage)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interf
             if err_key!=nil || err_query!=nil {
                 return nil, cross.EncodeError
             }
-            err=s.db.Update(func(tx *bolt.Tx) error {
+            err=d.db.Update(func(tx *bolt.Tx) error {
                 table := tx.Bucket([]byte(q.Table))
                 if table==nil { return cross.TableDoesntExist }
                 entry := table.Get(key_byte)

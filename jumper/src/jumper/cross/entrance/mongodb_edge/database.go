@@ -3,7 +3,7 @@ package mongodb_edge
 import "gopkg.in/mgo.v2"
 import "jumper/cross"
 
-type MongoDb struct {
+type Database struct {
     session  *mgo.Session
     //Users    []string
     //Groups   []string
@@ -25,11 +25,11 @@ type CollectionsNames struct {
 */
 
 
-func (d *MongoDb)Close()() {
+func (d *Database)Close()() {
     d.session.Close()
 }
 
-func (d *MongoDb)Connect() ( err error ) {
+func (d *Database)Connect() ( err error ) {
     d.session,err = mgo.Dial("mongodb://"+d.username+":"+d.password+"@"+d.host+"/"+d.dbname)
     d.session.SetMode(mgo.Monotonic, true)
     //d.users_c_name            ="dashboard_users"
@@ -40,7 +40,7 @@ func (d *MongoDb)Connect() ( err error ) {
     return err
 }
 
-func GetDatabase(g *cross.Garreth)(d *MongoDb,err error){
+func GetDatabase(g *cross.Garreth)(d *Database,err error){
     //path:=g.GetPath()
     //s.path=path
     username,password := g.GetCred()

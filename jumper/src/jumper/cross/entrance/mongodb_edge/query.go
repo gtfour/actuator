@@ -12,7 +12,7 @@ type Query struct {
 }*/
 
 
-func(d *MongoDb)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func(d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
     result_slice:=make([]map[string]interface{},0)
     //result_slice = &result_slice_full

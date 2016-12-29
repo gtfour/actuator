@@ -13,8 +13,11 @@ var GET_ALL                 = 4014
 var INSERT_ITEM             = 4016
 
 var REMOVE                  = 4018
+var DELETE                  = 4018
 var REMOVE_ITEM             = 4020
+var DELETE_ITEM             = 4020
 var REMOVE_TABLE            = 4022
 var REPLACE                 = 4024
 var UPDATE                  = 4026
+var MODIFY                  = 4026
 
