@@ -93,7 +93,7 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
     } else if q.Type == cross.GET || q.Type == cross.GET_ALL  || q.Type == cross.CHECK_EXIST {
         //result_slice_addr,err := s.RunQueryGet(q)
         //return result_slice_addr, err
-        _,_=d.RunQueryGetAll(q)
+        return d.RunQueryGet(q)
     } else  if q.Type == cross.REMOVE {
         if q.KeyBody != nil {
             //err    =  c.Remove(bson.M(q.KeyBody))

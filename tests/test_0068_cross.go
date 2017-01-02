@@ -11,10 +11,17 @@ func main() {
     if err!=nil {
         fmt.Printf("\n%s is not appropriate\n",dbtype)
     }
-    g.SetPath("/tmp/hello.txt")
+    g.SetPath("/tmp/cross.db")
     database,err := client.CreateConnector(g)
-    myq:=&cross.Query{ Type:cross.GET_ALL }
-    _,_=database.RunQuery(myq)
+    //myq:=&cross.Query{ Type:cross.GET_ALL }
+
+    get_query_body               := make(map[string]interface{},0)
+    get_query_body["SourceType"] = "file"
+    get_query                    := cross.Query{Table:"dynimas",QueryBody:get_query_body,Type:cross.GET_ALL}
+
+
+    res,err:=database.RunQuery(&get_query)
+    fmt.Printf("Get Query Result:\n%v\nError:%v\n",res,err)
 
 
 
