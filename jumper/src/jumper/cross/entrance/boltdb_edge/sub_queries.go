@@ -24,7 +24,7 @@ func(d *Database)RunQueryGet(q *cross.Query)(result_slice_addr *[]map[string]int
     var match_by_key    bool
     var match_by_value  bool
 
-    if q.KeyBody != nil || q.QueryBody == nil {
+    /*if q.KeyBody != nil || q.QueryBody == nil {
         match_by_key   = true
     }
     if q.KeyBody == nil || q.QueryBody != nil {
@@ -32,7 +32,9 @@ func(d *Database)RunQueryGet(q *cross.Query)(result_slice_addr *[]map[string]int
     }
     if match_by_key == false && match_by_value == false {
         return nil, cross.KeyAndValueEmpty
-    }
+    }*/
+    match_by_key,match_by_value,err=q.ValidateBodies()
+    if err!=nil{return}
 
     err = d.db.View(func(tx *bolt.Tx) error {
 

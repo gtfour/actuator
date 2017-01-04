@@ -1,11 +1,11 @@
 package cross
 
 var CHECK_EXIST             = 4000
-var CHECK_TABLE_EXIST       = 4002
+// var CHECK_TABLE_EXIST       = 4002
 
 var CREATE_NEW              = 4004
 var CREATE_NEW_IFNOT        = 4006
-var CREATE_NEW_TABLE        = 4008
+// var CREATE_NEW_TABLE        = 4008
 
 var EDIT                    = 4010
 var GET                     = 4012
@@ -16,8 +16,16 @@ var REMOVE                  = 4018
 var DELETE                  = 4018
 var REMOVE_ITEM             = 4020
 var DELETE_ITEM             = 4020
-var REMOVE_TABLE            = 4022
+// var REMOVE_TABLE            = 4022
 var REPLACE                 = 4024
 var UPDATE                  = 4026
 var MODIFY                  = 4026
+
+var CREATE_NEW_TABLE                  = 5000
+var CREATE_NEW_TABLE_IF_DOESNT_EXIST  = 5001
+var CHECK_TABLE_EXIST                 = 5002
+var REMOVE_TABLE                      = 5003
+var DELETE_TABLE                      = 5003
+
+var TABLE_OPS = []int { CREATE_NEW_TABLE, CREATE_NEW_TABLE_IF_DOESNT_EXIST , CHECK_TABLE_EXIST , REMOVE_TABLE , DELETE_TABLE }
 
