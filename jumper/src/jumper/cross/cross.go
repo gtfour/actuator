@@ -26,12 +26,12 @@ func CreateConnectorTemplate(dbtype string)(*Garreth,error){
     return nil, db_type_is_incorrect
 }
 
-func (g Garreth)GetDbType()(int){
+func (g *Garreth)GetDbType()(int){
     return g.dbtype
 }
 
 
-func (g Garreth)SetCred( username string, password string )(error){
+func (g *Garreth)SetCred( username string, password string )(error){
     if username == "" {
         return db_username_is_empty
     }else if password == "" {
@@ -43,11 +43,11 @@ func (g Garreth)SetCred( username string, password string )(error){
     }
 }
 
-func (g Garreth)GetCred()(string,string){
+func (g *Garreth)GetCred()(string,string){
     return g.username, g.password
 }
 
-func (g Garreth)SetPath(path string)(error){
+func (g *Garreth)SetPath(path string)(error){
     if path == "" {
         return db_path_is_empty
     }else {
@@ -56,13 +56,13 @@ func (g Garreth)SetPath(path string)(error){
     }
 }
 
-func (g Garreth)GetPath()(string){
+func (g *Garreth)GetPath()(string){
     return g.dbpath
 }
 
 
 
-func (g Garreth)SetDbname(dbname string)(error){
+func (g *Garreth)SetDbname(dbname string)(error){
     if dbname == "" {
         return db_dbname_is_empty
     }else {
@@ -71,11 +71,11 @@ func (g Garreth)SetDbname(dbname string)(error){
     }
 }
 
-func (g Garreth)GetDbname()(string){
+func (g *Garreth)GetDbname()(string){
     return g.dbname
 }
 
-func (g Garreth)SetHost(host string)(error){
+func (g *Garreth)SetHost(host string)(error){
     if host == "" {
         return db_host_is_empty
     }else {
@@ -84,7 +84,7 @@ func (g Garreth)SetHost(host string)(error){
     }
 }
 
-func (g Garreth)GetHost()(string){
+func (g *Garreth)GetHost()(string){
     return g.host
 }
 

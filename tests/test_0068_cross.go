@@ -13,6 +13,8 @@ func main() {
     }
     g.SetPath("/tmp/cross.db")
     database,err := client.CreateConnector(g)
+    fmt.Printf("\ndb:%v open error:%v\ndb connect error:%v\n",database,err,database.Connect())
+
     //myq:=&cross.Query{ Type:cross.GET_ALL }
 
     get_query_body               := make(map[string]interface{},0)

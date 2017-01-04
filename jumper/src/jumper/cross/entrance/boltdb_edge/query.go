@@ -1,5 +1,6 @@
 package boltdb_edge
 
+import "fmt"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 import "jumper/cross"
@@ -93,7 +94,9 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
     } else if q.Type == cross.GET || q.Type == cross.GET_ALL  || q.Type == cross.CHECK_EXIST {
         //result_slice_addr,err := s.RunQueryGet(q)
         //return result_slice_addr, err
-        return d.RunQueryGet(q)
+        fmt.Printf("Database:\n%v\n",d)
+        res,err := d.RunQueryGet(q)
+        return res,err
     } else  if q.Type == cross.REMOVE {
         if q.KeyBody != nil {
             //err    =  c.Remove(bson.M(q.KeyBody))

@@ -1,6 +1,5 @@
 package boltdb_edge
 
-import "fmt"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 import "jumper/cross"
@@ -81,7 +80,7 @@ func(d *Database)RunQueryGet(q *cross.Query)(result_slice_addr *[]map[string]int
     }
     if q.Type == cross.GET {
         result_slice_single:=make([]map[string]interface{},1)
-        fmt.Printf("\nGet result slice %v\n",result_slice)
+        //fmt.Printf("\nGet result slice %v\n",result_slice)
         result_slice_single=append(result_slice_single, result_slice[0])
         return &result_slice_single,err
     }
@@ -90,7 +89,6 @@ func(d *Database)RunQueryGet(q *cross.Query)(result_slice_addr *[]map[string]int
 }
 
 func(d *Database)RunQueryGetAll(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
-    fmt.Printf("\nRun query: Get all :\n")
     return
 }
 
