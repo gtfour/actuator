@@ -6,14 +6,44 @@ import "jumper/cross"
 import "jumper/common/maps"
 
 func(d *Database)RunQueryCreateNew(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    _,_,err=q.ValidateBodies()
+    if err!=nil{ return }
+    err=q.CheckTableName()
+    if err!=nil{ return }
+    //
+    key_byte,err_key     := json.Marshal(q.KeyBody)
+    query_byte,err_query := json.Marshal(q.QueryBody)
+    if err_key!=nil || err_query!=nil {
+        return nil, cross.EncodeError
+    }
+    //
+    err=d.db.Update(func(tx *bolt.Tx) error {
+        table := tx.Bucket([]byte(q.Table))
+        if table==nil { return cross.TableDoesntExist }
+
+        entry := table.Get(key_byte)
+        if entry == nil {
+            err:=table.Put(key_byte, query_byte)
+            return err
+        } else {
+            return cross.EntryAlreadyExist
+        }
+
+        err:=table.Put(key_byte, query_byte)
+        return err
+    })
     return
 }
 
 func(d *Database)RunQueryUpdate(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    match_by_key,match_by_value,err:=q.ValidateBodies()
+    if err!=nil{return}
     return
 }
 
 func(d *Database)RunQueryInsert(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    match_by_key,match_by_value,err:=q.ValidateBodies()
+    if err!=nil{return}
     return
 }
 

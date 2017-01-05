@@ -25,8 +25,16 @@ func(q *Query)ValidateBodies()(match_by_key bool,match_by_value bool,err error){
 }
 
 func(q *Query)IsTableQuery()(bool){
-    q.Type
+    query_type:=q.Type
+    return IsOk(query_type, TABLE_OPS)
+}
 
+func(q *Query)CheckTableName()(error){
+    table_name:=q.Table
+    if table_name == "" {
+        return EmptyTableName
+    }
+    return nil
 }
 
 type Database interface {
