@@ -6,9 +6,7 @@ import "jumper/cross"
 import "jumper/common/maps"
 
 func(d *Database)RunQueryCreateNew(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
-    _,_,err=q.ValidateBodies()
-    if err!=nil{ return }
-    err=q.CheckTableName()
+    _,_,err=q.Validate()
     if err!=nil{ return }
     //
     key_byte,err_key     := json.Marshal(q.KeyBody)
@@ -20,7 +18,6 @@ func(d *Database)RunQueryCreateNew(q *cross.Query)(result_slice_addr *[]map[stri
     err=d.db.Update(func(tx *bolt.Tx) error {
         table := tx.Bucket([]byte(q.Table))
         if table==nil { return cross.TableDoesntExist }
-
         entry := table.Get(key_byte)
         if entry == nil {
             err:=table.Put(key_byte, query_byte)
@@ -28,21 +25,23 @@ func(d *Database)RunQueryCreateNew(q *cross.Query)(result_slice_addr *[]map[stri
         } else {
             return cross.EntryAlreadyExist
         }
-
-        err:=table.Put(key_byte, query_byte)
+        //err:=table.Put(key_byte, query_byte)
         return err
     })
-    return
+    return nil,err
 }
 
 func(d *Database)RunQueryUpdate(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
-    match_by_key,match_by_value,err:=q.ValidateBodies()
+    //
+    match_by_key,match_by_value,err:=q.Validate()
     if err!=nil{return}
+    //
     return
 }
 
 func(d *Database)RunQueryInsert(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
-    match_by_key,match_by_value,err:=q.ValidateBodies()
+    //
+    match_by_key,match_by_value,err:=q.Validate()
     if err!=nil{return}
     return
 }
@@ -63,7 +62,7 @@ func(d *Database)RunQueryGet(q *cross.Query)(result_slice_addr *[]map[string]int
     if match_by_key == false && match_by_value == false {
         return nil, cross.KeyAndValueEmpty
     }*/
-    match_by_key,match_by_value,err=q.ValidateBodies()
+    match_by_key,match_by_value,err=q.Validate()
     if err!=nil{return}
 
     err = d.db.View(func(tx *bolt.Tx) error {
@@ -75,9 +74,9 @@ func(d *Database)RunQueryGet(q *cross.Query)(result_slice_addr *[]map[string]int
             var key_satisfied    bool = false
             var value_satisfied  bool = false
 
-            search_result_slice       := make(map[string] interface{}, 0)
-            key_map                   := make(map[string]interface{},  0)
-            query_map                 := make(map[string]interface{},  0)
+            search_result_slice       := make(map[string]interface{}, 0)
+            key_map                   := make(map[string]interface{}, 0)
+            query_map                 := make(map[string]interface{}, 0)
 
             err_key                   := json.Unmarshal(key,   &key_map   )
             err_value                 := json.Unmarshal(value, &query_map )
