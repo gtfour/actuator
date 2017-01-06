@@ -4,6 +4,7 @@ type Query struct {
 
     Type      int
     Table     string
+    TableList []string
     KeyBody   map[string]interface{}
     QueryBody map[string]interface{}
 

@@ -1,11 +1,12 @@
 package boltdb_edge
 
+import "errors"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 import "jumper/cross"
 import "jumper/common/maps"
 
-func(d *Database)RunQueryCreateNew(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func(d *Database)CreateNew(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     _,_,err=q.Validate()
     if err!=nil{ return }
     //
@@ -31,17 +32,19 @@ func(d *Database)RunQueryCreateNew(q *cross.Query)(result_slice_addr *[]map[stri
     return nil,err
 }
 
-func(d *Database)RunQueryUpdate(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func(d *Database)Update(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     //
     match_by_key,match_by_value,err:=q.Validate()
+    _,_=match_by_key,match_by_value
     if err!=nil{return}
     //
     return
 }
 
-func(d *Database)RunQueryInsert(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func(d *Database)QueryInsert(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     //
     match_by_key,match_by_value,err:=q.Validate()
+    _,_=match_by_key,match_by_value
     if err!=nil{return}
     return
 }
@@ -119,13 +122,48 @@ func(d *Database)RunQueryGet(q *cross.Query)(result_slice_addr *[]map[string]int
     //return
 }
 
-func(d *Database)RunQueryGetAll(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func(d *Database)GetAll(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     return
 }
 
-func(d *Database)RunQueryRemove(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func(d *Database)Remove(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     return
 }
 
+func(d *Database)CreateNewTableIfDoesntExist(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    err = q.CheckTableName()
+    if err!= nil && len(q.TableList) == 0 {
+        return
+    }
+    if len(q.TableList) == 0 {
+        q.TableList=append(q.TableList, q.Table)
+    }
+    err=d.db.Update(func(tx *bolt.Tx) error {
+        glob_state:="cross:\n"
+        perfect:=true
+        for i:= range q.TableList {
+            table_name:=q.TableList[i]
+            state:="success\n"
+            _,err    := tx.CreateBucketIfNotExists([]byte(table_name))
+            if err!=nil { state="failed\n" ; perfect = false  }
+            glob_state=glob_state+"\n"+table_name+":"+state
+        }
+        if !perfect { return errors.New(glob_state) }
+        return nil
+    });
 
+    return
+}
 
+func (d *Database)CheckTableExist(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+
+    err = q.CheckTableName()
+    if err!= nil {
+        return
+    }
+    err = d.db.View(func(tx *bolt.Tx) error {
+        table := tx.Bucket([]byte(q.Table))
+        if table==nil { return cross.TableDoesntExist } else { return nil }
+    })
+    return nil,err
+}
