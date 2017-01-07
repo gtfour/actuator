@@ -32,12 +32,9 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
                 return err
             });
             return nil, err
-        case cross.CREATE_NEW:
+        case cross.CREATE_NEW, cross.CREATE_NEW_IFNOT, cross.UPDATE, cross.EDIT:
             res,err:=d.CreateNew(q)
             return res,err
-        case cross.CREATE_NEW_IFNOT:
-
-
         case cross.REPLACE:
             if q.QueryBody != nil && q.KeyBody != nil {
                 key_byte,err_key     := json.Marshal(q.KeyBody)
@@ -57,14 +54,6 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
                     }
                 })
             }
-        case cross.UPDATE, cross.EDIT:
-            // //if q.KeyBody   == nil { return nil, cross.EmptyKey   }
-            // //if q.QueryBody == nil { return nil, cross.EmptyQuery }
-            //
-            // //err = c.Update(bson.M(q.KeyBody), bson.M{"$set": bson.M(q.QueryBody)})
-            res,err:=d.CreateNew(q)
-            return res,err
-            //
         case cross.GET, cross.GET_ALL, cross.CHECK_EXIST:
             //result_slice_addr,err := s.RunQueryGet(q)
             //return result_slice_addr, err

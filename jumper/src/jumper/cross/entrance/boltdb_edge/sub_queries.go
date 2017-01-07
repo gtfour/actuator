@@ -1,5 +1,6 @@
 package boltdb_edge
 
+import "fmt"
 import "errors"
 import "encoding/json"
 import "github.com/boltdb/bolt"
@@ -7,6 +8,7 @@ import "jumper/cross"
 import "jumper/common/maps"
 
 func(d *Database)CreateNew(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    fmt.Printf("\n---Perform create new---\n")
     _,_,err=q.Validate()
     if err!=nil{ return }
     //
