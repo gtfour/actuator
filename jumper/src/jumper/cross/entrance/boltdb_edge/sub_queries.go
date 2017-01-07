@@ -167,3 +167,30 @@ func (d *Database)CheckTableExist(q *cross.Query)(result_slice_addr *[]map[strin
     })
     return nil,err
 }
+
+
+
+
+func (d *Database)RemoveTable(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    err = q.CheckTableName()
+    if err!= nil && len(q.TableList) == 0 {
+        return
+    }
+    if len(q.TableList) == 0 {
+        q.TableList=append(q.TableList, q.Table)
+    }
+    err=d.db.Update(func(tx *bolt.Tx) error {
+        glob_state  :="cross:\n"
+        perfect     :=true
+        for i:= range q.TableList {
+            table_name:=q.TableList[i]
+            state:="success\n"
+            err:=tx.DeleteBucket([]byte(table_name))
+            if err!=nil { state="failed\n" ; perfect = false  }
+            glob_state=glob_state+"\n"+table_name+":"+state
+        }
+        if !perfect { return errors.New(glob_state) }
+        return err
+    });
+    return nil, err
+}
