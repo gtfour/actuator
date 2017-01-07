@@ -20,13 +20,12 @@ func(d *Database)CreateNew(q *cross.Query)(result_slice_addr *[]map[string]inter
         table := tx.Bucket([]byte(q.Table))
         if table==nil { return cross.TableDoesntExist }
         entry := table.Get(key_byte)
-        if entry == nil {
+        if entry == nil || q.Type == cross.UPDATE {
             err:=table.Put(key_byte, query_byte)
             return err
         } else {
             return cross.EntryAlreadyExist
         }
-        //err:=table.Put(key_byte, query_byte)
         return err
     })
     return nil,err
@@ -127,7 +126,21 @@ func(d *Database)GetAll(q *cross.Query)(result_slice_addr *[]map[string]interfac
 }
 
 func(d *Database)Remove(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
-    return
+    match_by_key,_,err := q.Validate()
+    if err!=nil              { return }
+    if match_by_key == false { return nil, errors.New("cross:can't determinate what data should be removed because key is nil ")  }
+
+    key_byte,err_key     := json.Marshal(q.KeyBody)
+    if err_key!=nil {
+        return nil, cross.EncodeError
+    }
+    err = d.db.Update(func(tx *bolt.Tx) error {
+        table:=tx.Bucket([]byte(q.Table))
+        if table==nil{ return cross.TableDoesntExist }
+        err=table.Delete(key_byte)
+        return err
+    });
+    return nil, err
 }
 
 func(d *Database)CreateNewTableIfDoesntExist(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){

@@ -1,6 +1,5 @@
 package boltdb_edge
 
-import "fmt"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 import "jumper/cross"
@@ -34,33 +33,8 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
             });
             return nil, err
         case cross.CREATE_NEW:
-            if q.QueryBody != nil && q.KeyBody != nil {
-                //err         = c.Insert(q.QueryBody)
-                key_byte,err_key     := json.Marshal(q.KeyBody)
-                query_byte,err_query := json.Marshal(q.QueryBody)
-                if err_key!=nil || err_query!=nil {
-                    return nil, cross.EncodeError
-                }
-                //
-                err=d.db.Update(func(tx *bolt.Tx) error {
-                    table := tx.Bucket([]byte(q.Table))
-                    if table==nil { return cross.TableDoesntExist }
-
-                    entry := table.Get(key_byte)
-                    if entry == nil {
-                        err:=table.Put(key_byte, query_byte)
-                        return err
-                    } else {
-                        return cross.EntryAlreadyExist
-                    }
-
-                    err:=table.Put(key_byte, query_byte)
-                    return err
-                })
-                return nil, err
-            } else {
-                return nil, cross.EmptyQuery
-            }
+            res,err:=d.CreateNew(q)
+            return res,err
         case cross.CREATE_NEW_IFNOT:
 
 
@@ -84,16 +58,17 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
                 })
             }
         case cross.UPDATE, cross.EDIT:
-            if q.KeyBody   == nil { return nil, cross.EmptyKey   }
-            if q.QueryBody == nil { return nil, cross.EmptyQuery }
+            // //if q.KeyBody   == nil { return nil, cross.EmptyKey   }
+            // //if q.QueryBody == nil { return nil, cross.EmptyQuery }
             //
-            //err = c.Update(bson.M(q.KeyBody), bson.M{"$set": bson.M(q.QueryBody)})
-            return nil, err
+            // //err = c.Update(bson.M(q.KeyBody), bson.M{"$set": bson.M(q.QueryBody)})
+            res,err:=d.CreateNew(q)
+            return res,err
             //
         case cross.GET, cross.GET_ALL, cross.CHECK_EXIST:
             //result_slice_addr,err := s.RunQueryGet(q)
             //return result_slice_addr, err
-            fmt.Printf("Database:\n%v\n",d)
+            //fmt.Printf("Database:\n%v\n",d)
             res,err := d.Get(q)
             return res,err
         case cross.REMOVE:
@@ -104,8 +79,8 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
                 return nil, cross.EmptyKey
             }
         case cross.INSERT_ITEM, cross.REMOVE_ITEM:
-            if q.KeyBody   == nil { return nil, cross.EmptyKey   }
-            if q.QueryBody == nil { return nil, cross.EmptyQuery }
+            //if q.KeyBody   == nil { return nil, cross.EmptyKey   }
+            //if q.QueryBody == nil { return nil, cross.EmptyQuery }
 
             if q.Type      == cross.INSERT_ITEM {
                 //err            =  c.Update(bson.M(q.KeyBody), bson.M{"$push":bson.M(q.QueryBody)})

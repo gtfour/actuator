@@ -1,13 +1,19 @@
 package cross
 
 type Query struct {
+    Type        int
+    Table       string
+    TableList   []string
+    //KeyBody   map[string]interface{}
+    //QueryBody map[string]interface{}
+    QueryXY
+    Queries     []QueryXY
+    Multi       bool
+}
 
-    Type      int
-    Table     string
-    TableList []string
+type QueryXY struct {
     KeyBody   map[string]interface{}
     QueryBody map[string]interface{}
-
 }
 
 func(q *Query)ValidateBodies()(match_by_key bool,match_by_value bool,err error){
