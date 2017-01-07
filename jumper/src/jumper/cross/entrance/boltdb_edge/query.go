@@ -95,7 +95,7 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
         //result_slice_addr,err := s.RunQueryGet(q)
         //return result_slice_addr, err
         fmt.Printf("Database:\n%v\n",d)
-        res,err := d.RunQueryGet(q)
+        res,err := d.Get(q)
         return res,err
     } else  if q.Type == cross.REMOVE {
         if q.KeyBody != nil {
@@ -115,6 +115,9 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
             //err            =  c.Update(bson.M(q.KeyBody), bson.M{"$pull":bson.M(q.QueryBody)})
             return nil,err
         }
+    } else if q.Type == cross.CREATE_NEW_TABLE_IF_DOESNT_EXIST {
+        res,err:=d.CreateNewTableIfDoesntExist(q)
+        return res,err
     } else {
         return nil, cross.IncorrectQueryType
     }

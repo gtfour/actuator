@@ -49,7 +49,7 @@ func(d *Database)QueryInsert(q *cross.Query)(result_slice_addr *[]map[string]int
     return
 }
 
-func(d *Database)RunQueryGet(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func(d *Database)Get(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
     // run queries with map types of KeyBody or/and QueryBody
     result_slice := make([]map[string]interface{},0)
