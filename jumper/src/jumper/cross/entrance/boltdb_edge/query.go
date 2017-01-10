@@ -61,12 +61,8 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
             res,err := d.Get(q)
             return res,err
         case cross.REMOVE:
-            if q.KeyBody != nil {
-                //err    =  c.Remove(bson.M(q.KeyBody))
-                return nil, err
-            } else {
-                return nil, cross.EmptyKey
-            }
+            res,err:=d.Remove(q)
+            return res,err
         case cross.INSERT_ITEM, cross.REMOVE_ITEM:
             //if q.KeyBody   == nil { return nil, cross.EmptyKey   }
             //if q.QueryBody == nil { return nil, cross.EmptyQuery }

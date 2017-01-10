@@ -144,9 +144,9 @@ func(d *Database)GetAll(q *cross.Query)(result_slice_addr *[]map[string]interfac
 }
 
 func(d *Database)Remove(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
-    match_by_key,_,err := q.Validate()
+    match_by_key,match_by_value,err := q.Validate()
     if err!=nil              { return }
-    if match_by_key == false { return nil, errors.New("cross:can't determinate what data should be removed because key is nil ")  }
+    //if match_by_key == false { return nil, errors.New("cross:can't determinate what data should be removed because key is nil ")  }
 
     key_byte,err_key     := json.Marshal(q.KeyBody)
     if err_key!=nil {
@@ -154,9 +154,32 @@ func(d *Database)Remove(q *cross.Query)(result_slice_addr *[]map[string]interfac
     }
     err = d.db.Update(func(tx *bolt.Tx) error {
         table:=tx.Bucket([]byte(q.Table))
-        if table==nil{ return cross.TableDoesntExist }
         err=table.Delete(key_byte)
-        return err
+        if match_by_key && !match_by_value {
+            err=table.Delete(key_byte)
+            return err
+        } else {
+            err=table.ForEach(func(key, value []byte)(error){
+                var value_satisfied  bool =   false
+                key_map                   :=  make(map[string]interface{}, 0)
+                query_map                 :=  make(map[string]interface{}, 0)
+
+                err_key                   :=  json.Unmarshal(key,   &key_map   )
+                err_value                 :=  json.Unmarshal(value, &query_map )
+                if err_value != nil || err_key != nil {
+                    return cross.EncodeError
+                }
+                value_satisfied = maps.CompareMap(q.QueryBody, query_map)
+                if value_satisfied {
+                    err=table.Delete(key_byte)
+                    return err
+                }
+
+                return nil
+
+            });
+            return err
+        }
     });
     return nil, err
 }

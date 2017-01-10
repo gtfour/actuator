@@ -50,12 +50,18 @@ func main() {
     //
     // Runing queries
     //
-    res0,err0 := database.RunQuery(&create_query)
-    res1,err1 := database.RunQuery(&get_query)
-    res2,err2 := database.RunQuery(&maketable_query)
-    res3,err3 := database.RunQuery(&table_check_query)
-    fmt.Printf("Create new entry:\n%v\nError:%v\n"         ,res0,err0)
-    fmt.Printf("Get Query Result:\n%v\nError:%v\n"         ,res1,err1)
-    fmt.Printf("Make Tables Query Result:\n%v\nError:%v\n" ,res2,err2)
-    fmt.Printf("Check table exist:\n%vError:%v\n"          ,res3,err3)
+    r1,e1:=database.RunQuery(&create_query)
+    r2,e2:=database.RunQuery(&create_query)
+    r3,e3:=database.RunQuery(&get_query)
+    r4,e4:=database.RunQuery(&maketable_query)
+    r5,e5:=database.RunQuery(&table_check_query)
+    fmt.Printf("Create new entry1:\n%v\nError:%v\n"         , r1, e1)
+    fmt.Printf("Create new entry2:\n%v\nError:%v\n"         , r2, e2)
+    fmt.Printf("Get Query Result:\nError:%v\n"         ,   e3)
+    for i:= range (*r3) {
+        myres:=(*r3)[i]
+        fmt.Printf("%v\n",myres)
+    }
+    fmt.Printf("Make Tables Query Result:\n%v\nError:%v\n" ,  r4, e4)
+    fmt.Printf("Check table exist:\n%vError:%v\n"          ,  r5, e5)
 }
