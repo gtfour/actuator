@@ -24,7 +24,7 @@ func main() {
     create_key_body["Id"]           =   new_entry_id
     create_query_body               :=  make(map[string]interface{},0)
     create_query_body["SourceType"] =   "file"
-    create_query_body["SourcePath"] =   "/etc/passwd.so"
+    create_query_body["SourcePath"] =   "/etc/passwd22.so"
     create_query                    :=  cross.Query{Table:"dynimas", Type:cross.CREATE_NEW_IFNOT}
     create_query.QueryBody          =   create_query_body
     create_query.KeyBody            =   create_key_body
@@ -46,17 +46,24 @@ func main() {
     //
     table_check_query              := cross.Query{Table:"rytas", Type:cross.CHECK_TABLE_EXIST}
 
+    //
+    //remove query
+    //
+    remove_query         := create_query
+    remove_query.Type    =  cross.REMOVE
+    remove_query.KeyBody =  nil
+
 
     //
     // Runing queries
     //
     r1,e1:=database.RunQuery(&create_query)
-    r2,e2:=database.RunQuery(&create_query)
+    r2,e2:=database.RunQuery(&remove_query)
     r3,e3:=database.RunQuery(&get_query)
     r4,e4:=database.RunQuery(&maketable_query)
     r5,e5:=database.RunQuery(&table_check_query)
-    fmt.Printf("Create new entry1:\n%v\nError:%v\n"         , r1, e1)
-    fmt.Printf("Create new entry2:\n%v\nError:%v\n"         , r2, e2)
+    fmt.Printf("Create new entry:\n%v\nError:%v\n"         , r1, e1)
+    fmt.Printf("Remove entries by value field:\n%v\nError:%v\n"         , r2, e2)
     fmt.Printf("Get Query Result:\nError:%v\n"         ,   e3)
     for i:= range (*r3) {
         myres:=(*r3)[i]
