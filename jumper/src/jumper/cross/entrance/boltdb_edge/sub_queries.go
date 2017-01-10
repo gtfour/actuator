@@ -1,6 +1,5 @@
 package boltdb_edge
 
-import "fmt"
 import "errors"
 import "encoding/json"
 import "github.com/boltdb/bolt"
@@ -8,7 +7,6 @@ import "jumper/cross"
 import "jumper/common/maps"
 
 func(d *Database)CreateNew(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
-    fmt.Printf("\n---Perform create new---\n")
     _,_,err=q.Validate()
     if err!=nil{ return }
     //
@@ -21,12 +19,30 @@ func(d *Database)CreateNew(q *cross.Query)(result_slice_addr *[]map[string]inter
     err=d.db.Update(func(tx *bolt.Tx) error {
         table := tx.Bucket([]byte(q.Table))
         if table==nil { return cross.TableDoesntExist }
+        // 
+        multi   := q.Multi
+        queries := q.Queries
+        if multi && len(queries)>0  {
+
+        }
+
+        //
         entry := table.Get(key_byte)
-        if entry == nil || q.Type == cross.UPDATE {
-            err:=table.Put(key_byte, query_byte)
+        if entry == nil {
+            if q.Type == cross.CREATE_NEW_IFNOT {
+                err:=table.Put(key_byte, query_byte)
+                return err
+            } else if q.Type == cross.UPDATE || q.Type == cross.EDIT {
+                return cross.EntryDoesntExist
+            }
             return err
         } else {
-            return cross.EntryAlreadyExist
+            if q.Type == cross.CREATE_NEW_IFNOT {
+                return cross.EntryAlreadyExist
+            } else if q.Type == cross.UPDATE || q.Type == cross.EDIT {
+                err:=table.Put(key_byte, query_byte)
+                return err
+            }
         }
         return err
     })
