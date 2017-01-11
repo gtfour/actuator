@@ -154,7 +154,7 @@ func(d *Database)Remove(q *cross.Query)(result_slice_addr *[]map[string]interfac
     }
     err = d.db.Update(func(tx *bolt.Tx) error {
         table:=tx.Bucket([]byte(q.Table))
-        err=table.Delete(key_byte)
+        if table==nil { return cross.TableDoesntExist }
         if match_by_key && !match_by_value {
             err=table.Delete(key_byte)
             return err
