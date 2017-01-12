@@ -24,7 +24,7 @@ func main() {
     create_key_body["Id"]           =   new_entry_id
     create_query_body               :=  make(map[string]interface{},0)
     create_query_body["SourceType"] =   "file"
-    create_query_body["SourcePath"] =   "/etc/passwd22.so"
+    create_query_body["SourcePath"] =   "/etc/passwd555.so"
     create_query                    :=  cross.Query{Table:"dynimas", Type:cross.CREATE_NEW_IFNOT}
     create_query.QueryBody          =   create_query_body
     create_query.KeyBody            =   create_key_body
@@ -49,11 +49,14 @@ func main() {
     //
     //remove query
     //
-    remove_query                         := create_query
-    remove_query.Type                    =  cross.REMOVE
-    remove_query.KeyBody                 =  nil
-    remove_query.QueryBody["SourcePath"] =  "/etc/passwd33.so"
-    //fmt.Printf("\n---Remove query: %v ---\n",remove_query)
+    remove_query                         := cross.Query{Table:"dynimas", Type:cross.REMOVE}
+    remove_query_body                    := make(map[string]interface{},0)
+    remove_query_body["SourceType"]      =  "file"
+    remove_query.QueryBody               =  remove_query_body
+    //
+    fmt.Printf("\n---Remove query: %v ---\n",remove_query)
+    fmt.Printf("\n---Create query: %v ---\n",create_query)
+
 
 
     //
