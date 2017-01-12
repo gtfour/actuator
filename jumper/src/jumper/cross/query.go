@@ -16,6 +16,11 @@ type QueryXY struct {
     QueryBody map[string]interface{}
 }
 
+func MakeQuery(query_type int, table_name string)(Query){
+    q:=Query{Type:query_type,Table:table_name}
+    return q
+}
+
 func(q *Query)ValidateBodies()(match_by_key bool,match_by_value bool,err error){
     if q.KeyBody != nil || q.QueryBody == nil {
         match_by_key   = true

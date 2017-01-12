@@ -1,5 +1,6 @@
 package boltdb_edge
 
+import "fmt"
 import "errors"
 import "encoding/json"
 import "github.com/boltdb/bolt"
@@ -149,6 +150,7 @@ func(d *Database)Remove(q *cross.Query)(result_slice_addr *[]map[string]interfac
     //if match_by_key == false { return nil, errors.New("cross:can't determinate what data should be removed because key is nil ")  }
 
     key_byte,err_key     := json.Marshal(q.KeyBody)
+    //query_byte,err_query := json.Marshal(q.QueryBody)
     if err_key!=nil {
         return nil, cross.EncodeError
     }
@@ -156,9 +158,11 @@ func(d *Database)Remove(q *cross.Query)(result_slice_addr *[]map[string]interfac
         table:=tx.Bucket([]byte(q.Table))
         if table==nil { return cross.TableDoesntExist }
         if match_by_key && !match_by_value {
+            fmt.Printf("\n::Remove:by key::\n")
             err=table.Delete(key_byte)
             return err
         } else {
+            fmt.Printf("\n::Remove:by value::\n")
             err=table.ForEach(func(key, value []byte)(error){
                 var value_satisfied  bool =   false
                 key_map                   :=  make(map[string]interface{}, 0)
@@ -170,11 +174,12 @@ func(d *Database)Remove(q *cross.Query)(result_slice_addr *[]map[string]interfac
                     return cross.EncodeError
                 }
                 value_satisfied = maps.CompareMap(q.QueryBody, query_map)
+                fmt.Printf("^%v^\t\n",value_satisfied)
                 if value_satisfied {
-                    err=table.Delete(key_byte)
+                    err=table.Delete(key)
+                    //fmt.Printf("\n>>Remove by this key :\n%v\n", key_map)
                     return err
                 }
-
                 return nil
 
             });
