@@ -248,3 +248,5 @@ func (d *Database)RemoveTable(q *cross.Query)(result_slice_addr *[]map[string]in
     });
     return nil, err
 }
+
+

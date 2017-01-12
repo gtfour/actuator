@@ -9,6 +9,7 @@ type Query struct {
     QueryXY
     Queries     []QueryXY
     Multi       bool
+    RonB        bool // means that queries from Queries field will run over nested bucket identified by KeyBody
 }
 
 type QueryXY struct {
