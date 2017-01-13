@@ -28,6 +28,8 @@ var EmptyKey            = errors.New("cross:key is empty")
 var EmptyQuery          = errors.New("cross:query is empty")
 var EmptyTableName      = errors.New("cross:table name is empty")
 var KeyAndValueEmpty    = errors.New("cross:key and Value are empty")
+var KeyIsEmpty          = errors.New("cross:key is empty")
+var ValueIsEmpty        = errors.New("cross:value is empty")
 var IncorrectQueryType  = errors.New("cross:incorrect query type")
 
 

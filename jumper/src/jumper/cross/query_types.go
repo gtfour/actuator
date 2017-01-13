@@ -22,8 +22,11 @@ var DELETE_ITEM             = 4020
 var REPLACE                 = 4024
 var UPDATE                  = 4026
 var MODIFY                  = 4026
-var APPEND_TO_LIST          = 4028
-var REMOVE_FROM_LIST        = 4030
+// 
+var APPEND_TO_LIST          = 4102
+var REMOVE_FROM_LIST        = 4106
+var ADD_PAIR            = 4108 // this key-value pair  can't be present in hash marked by this key 
+var REMOVE_PAIR             = 4110 // 
 
 var CREATE_NEW_TABLE                  = 5000
 var CREATE_NEW_TABLE_IF_DOESNT_EXIST  = 5001

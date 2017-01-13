@@ -15,6 +15,7 @@ func main() {
     }
     garreth.SetPath("/tmp/cross2.db")
     database,err := client.CreateConnector(garreth)
+    defer database.Close()
     fmt.Printf("\ndb:%v open error:%v\ndb connect error:%v\n",database,err,database.Connect())
     //
     // create new query 
@@ -51,7 +52,7 @@ func main() {
     //
     remove_query                         := cross.Query{Table:"dynimas", Type:cross.REMOVE}
     remove_query_body                    := make(map[string]interface{},0)
-    remove_query_body["SourceType"]      =  "file"
+    remove_query_body["SourceType"]      =  "dir"
     remove_query.QueryBody               =  remove_query_body
     //
     fmt.Printf("\n---Remove query: %v ---\n",remove_query)

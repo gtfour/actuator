@@ -249,4 +249,38 @@ func (d *Database)RemoveTable(q *cross.Query)(result_slice_addr *[]map[string]in
     return nil, err
 }
 
+func (d *Database)AddPair(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    key_exist,value_exist,err:=q.Validate()
+    if !key_exist   { return nil,cross.KeyIsEmpty   }
+    if !value_exist { return nil,cross.ValueIsEmpty }
+    if err!=nil     { return nil,err }
+    //
+    key_byte,err_key     := json.Marshal(q.KeyBody)
+    //query_byte,err_query := json.Marshal(q.QueryBody)
+    if err_key!=nil {
+        return nil, cross.EncodeError
+    }
+    err=d.db.Update(func(tx *bolt.Tx) error {
+        table:=tx.Bucket([]byte(q.Table))
+        if table==nil{ return cross.TableDoesntExist  }
+        bucket:=table.Bucket(key_byte)
+        if bucket==nil{
+            return cross.EntryDoesntExist
+        } else {
+        //
+            for key,value := range q.QueryBody {
+                keyBYTE,   err_key       := json.Marshal(key)
+                valueBYTE, err_value     := json.Marshal(value)
+                if err_key==nil && err_value==nil {
+                    err=bucket.Put(keyBYTE, valueBYTE)
+                    if err!=nil{return err}
+                }
+            }
+        //
+        }
+        return nil
+    });
+    return nil, err
+}
+
 
