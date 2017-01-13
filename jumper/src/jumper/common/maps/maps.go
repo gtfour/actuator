@@ -45,3 +45,8 @@ func CompareMap(query map[string]interface{}, dest map[string]interface{})(bool)
         return false
     }
 }
+
+func UpdateMap(new_map map[string]interface{}, source_map map[string]interface{} ) {
+
+
+}

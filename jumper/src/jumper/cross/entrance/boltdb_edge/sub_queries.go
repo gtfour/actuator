@@ -265,7 +265,16 @@ func (d *Database)AddPair(q *cross.Query)(result_slice_addr *[]map[string]interf
         if table==nil{ return cross.TableDoesntExist  }
         bucket:=table.Bucket(key_byte)
         if bucket==nil{
-            return cross.EntryDoesntExist
+            entry:=table.Get(key_byte)
+            if entry == nil {
+                return cross.EntryDoesntExist
+            } else {
+                entry_map  := make(map[string]interface{}, 0)
+                err_entry  := json.Unmarshal(entry, &entry_map )
+                if err_entry == nil {
+
+                }
+            }
         } else {
         //
             for key,value := range q.QueryBody {
