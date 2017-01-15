@@ -130,10 +130,11 @@ func(d *Database)Get(q *cross.Query)(result_slice_addr *[]map[string]interface{}
         result_slice=nil
     }
     if q.Type == cross.GET {
-        result_slice_single:=make([]map[string]interface{},1)
-        //fmt.Printf("\nGet result slice %v\n",result_slice)
-        result_slice_single=append(result_slice_single, result_slice[0])
-        return &result_slice_single,err
+        if len(result_slice)>1 {
+            result_slice_single:=make([]map[string]interface{},1)
+            result_slice_single=append(result_slice_single, result_slice[0])
+            return &result_slice_single,err
+        }
     }
     return &result_slice, err
     //return
@@ -271,8 +272,11 @@ func (d *Database)AddPair(q *cross.Query)(result_slice_addr *[]map[string]interf
             } else {
                 entry_map  := make(map[string]interface{}, 0)
                 err_entry  := json.Unmarshal(entry, &entry_map )
+                // what ??????
                 if err_entry == nil {
-
+                    return nil
+                } else {
+                    return err_entry
                 }
             }
         } else {

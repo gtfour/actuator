@@ -17,22 +17,28 @@ func main(){
     database.Connect()
     defer database.Close()
 
-    addpair_query           := cross.Query{Table:"dynimas",Type:cross.ADD_PAIR}
+    addpair_query            := cross.Query{Table:"dynimas",Type:cross.ADD_PAIR}
     key_queryA               := make(map[string]interface{},0)
     value_queryA             := make(map[string]interface{},0)
-    key_queryA["Id"]         =  "B0E34597-AB16-8CDD-9E89-C8D1EC2DC134"
-    first_line              := []string{"a","z"}
-    second_line             := []string{"b","y"}
+    key_queryA["Id"]         =  "D454CD7E-37BA-9021-7F48-238DFA25DF2C"
+    first_line               := []string{"a","z"}
+    second_line              := []string{"b","y"}
     value_queryA["Data"]     =  [][]string{first_line,second_line}
-    addpair_query.KeyBody   =  key_queryA
-    addpair_query.QueryBody =  value_queryA
+    addpair_query.KeyBody    =  key_queryA
+    addpair_query.QueryBody  =  value_queryA
 
 
-    getentry_query              := cross.Query{Table:"dynimas",Type:cross.GET}
-    key_queryB                  := make(map[string]interface{},0)
-    key_queryB["Id"]            = "B0E34597-AB16-8CDD-9E89-C8D1EC2DC134"
-    getentry_query.KeyBody = key_queryB
+    getentry_query           := cross.Query{Table:"dynimas",Type:cross.GET}
+    key_queryB               := make(map[string]interface{},0)
+    key_queryB["Id"]         =  "D454CD7E-37BA-9021-7F48-238DFA25DF2C"
+    getentry_query.KeyBody   =  key_queryB
 
+
+
+    maketable_query                := cross.Query{TableList:[]string{"dynimas","activas"}, Type:cross.CREATE_NEW_TABLE_IF_DOESNT_EXIST}
+    res0,err0:=database.RunQuery(&maketable_query)
+
+    fmt.Printf("Make table \nResult:\n%v\nError:%v\n",res0,err0)
 
     resA,errA:=database.RunQuery(&addpair_query)
     fmt.Printf("Add pair query:\n%v\nResult:\n%v\nError:%v\n",addpair_query,resA,errA)
