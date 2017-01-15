@@ -299,11 +299,12 @@ func (d *Database)ModifyPair(q *cross.Query)(result_slice_addr *[]map[string]int
                     if q.Type == cross.ADD_PAIR {
                         err=bucket.Put(keyBYTE, valueBYTE)
                     } else {
-                        entryBYTE:=bucket.Get(keyBYTE)
+                        //entryBYTE:=bucket.Get(keyBYTE)
                         // expiremental trick. have to test
-                        if string(entryBYTE) == string(valueBYTE) {
-                            _=bucket.Delete(keyBYTE)
-                        }
+                        //if string(entryBYTE) == string(valueBYTE) {
+                        //    _=bucket.Delete(keyBYTE)
+                        //}
+                        err=bucket.Delete(keyBYTE)
 
                     }
                     if err!=nil{return err}
@@ -315,4 +316,6 @@ func (d *Database)ModifyPair(q *cross.Query)(result_slice_addr *[]map[string]int
     return nil, err
 }
 
-
+func (d *Database)GetPair(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    return
+}

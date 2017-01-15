@@ -80,6 +80,9 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
         case cross.ADD_PAIR, cross.REMOVE_PAIR:
             res,err:=d.ModifyPair(q)
             return res,err
+        case cross.GET_PAIR:
+            res,err:=d.GetPair(q)
+            return res,err
         default:
             return nil, cross.IncorrectQueryType
         // err    =  c.Find(bson.M(q.KeyBody)).One(&result)
