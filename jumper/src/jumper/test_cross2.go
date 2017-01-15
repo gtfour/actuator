@@ -43,11 +43,6 @@ func main(){
     //
     //
     //
-
-
-
-
-
     getentry_query           := cross.Query{Table:"dynimas",Type:cross.GET}
     key_queryB               := make(map[string]interface{},0)
     key_queryB["Id"]         =  "D454CD7E-37BA-9021-7F48-238DFA25DF2C"
