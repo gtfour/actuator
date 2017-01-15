@@ -46,7 +46,12 @@ func CompareMap(query map[string]interface{}, dest map[string]interface{})(bool)
     }
 }
 
-func UpdateMap(new_map map[string]interface{}, source_map map[string]interface{} ) {
+func UpdateMap(new_map map[string]interface{}, source_map map[string]interface{})(map[string]interface{}, error) {
 
-
+    if new_map == nil { return nil, InputMapIsEmpty }
+    if source_map == nil { source_map=make(map[string]interface{},0) }
+    for key,value := range new_map {
+        source_map[key]=value
+    }
+    return source_map, nil
 }

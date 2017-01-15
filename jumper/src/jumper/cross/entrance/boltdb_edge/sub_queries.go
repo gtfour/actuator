@@ -274,7 +274,15 @@ func (d *Database)AddPair(q *cross.Query)(result_slice_addr *[]map[string]interf
                 err_entry  := json.Unmarshal(entry, &entry_map )
                 // what ??????
                 if err_entry == nil {
-                    return nil
+                    updated_map,err:=maps.UpdateMap(q.QueryBody,entry_map)
+                    if err == nil {
+                         updated_byte,err_up     := json.Marshal(updated_map)
+                         if err_up!=nil {
+                             return cross.EncodeError
+                         }
+                         err=table.Put(key_byte, updated_byte)
+                         return err
+                    }
                 } else {
                     return err_entry
                 }
