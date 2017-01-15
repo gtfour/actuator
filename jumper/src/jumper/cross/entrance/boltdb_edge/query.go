@@ -77,8 +77,8 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
         case cross.CREATE_NEW_TABLE_IF_DOESNT_EXIST:
             res,err:=d.CreateNewTableIfDoesntExist(q)
             return res,err
-        case cross.ADD_PAIR:
-            res,err:=d.AddPair(q)
+        case cross.ADD_PAIR, cross.REMOVE_PAIR:
+            res,err:=d.PairModify(q)
             return res,err
         default:
             return nil, cross.IncorrectQueryType

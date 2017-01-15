@@ -17,6 +17,10 @@ func main(){
     database.Connect()
     defer database.Close()
 
+
+    //
+    // add pair
+    // 
     addpair_query            := cross.Query{Table:"dynimas",Type:cross.ADD_PAIR}
     key_queryA               := make(map[string]interface{},0)
     value_queryA             := make(map[string]interface{},0)
@@ -26,6 +30,22 @@ func main(){
     value_queryA["Data"]     =  [][]string{first_line,second_line}
     addpair_query.KeyBody    =  key_queryA
     addpair_query.QueryBody  =  value_queryA
+    //
+    // remove pair
+    //
+    removepair_query           := cross.Query{Table:"dynimas",Type:cross.REMOVE_PAIR}
+    key_queryC                 := make(map[string]interface{},0)
+    value_queryC               := make(map[string]interface{},0)
+    key_queryC["Id"]           =  "D454CD7E-37BA-9021-7F48-238DFA25DF2C"
+    value_queryC["SourceType"] =  "file"
+    removepair_query.KeyBody   =  key_queryC
+    removepair_query.QueryBody =  value_queryC
+    //
+    //
+    //
+
+
+
 
 
     getentry_query           := cross.Query{Table:"dynimas",Type:cross.GET}
@@ -44,5 +64,11 @@ func main(){
     fmt.Printf("Add pair query:\n%v\nResult:\n%v\nError:%v\n",addpair_query,resA,errA)
 
     resB,errB:=database.RunQuery(&getentry_query)
-    fmt.Printf("Get query:\n%v\nResult:\n%v\nError:%v\n",getentry_query,resB,errB)
+    fmt.Printf("==>Get query:\n%v\nResult:\n%v\nError:%v\n",getentry_query,resB,errB)
+
+    resC,errC:=database.RunQuery(&removepair_query)
+    fmt.Printf("Remove pair query:\n%v\nResult:\n%v\nError:%v\n",removepair_query,resC,errC)
+
+    resB,errB=database.RunQuery(&getentry_query)
+    fmt.Printf("==>Get query:\n%v\nResult:\n%v\nError:%v\n",getentry_query,resB,errB)
 }

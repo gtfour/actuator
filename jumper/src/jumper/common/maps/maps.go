@@ -55,3 +55,22 @@ func UpdateMap(new_map map[string]interface{}, source_map map[string]interface{}
     }
     return source_map, nil
 }
+
+func RemoveFromMap(to_remove map[string]interface{}, source_map map[string]interface{})(new_map map[string]interface{},err error) {
+    if to_remove  == nil  { return nil, NothingToRemove  }
+    if source_map == nil  { return nil, nil              }
+    new_map       =  make(map[string]interface{}, 0)
+    for key,value := range source_map {
+        var skip bool=false
+        if tr_value,ok:=to_remove[key]; ok == true {
+             if tr_value == value {
+                 skip=true
+             }
+        }
+        if !skip {
+            new_map[key]=value
+        }
+
+    }
+    return new_map, nil
+}

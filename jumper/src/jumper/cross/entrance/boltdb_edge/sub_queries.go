@@ -250,7 +250,7 @@ func (d *Database)RemoveTable(q *cross.Query)(result_slice_addr *[]map[string]in
     return nil, err
 }
 
-func (d *Database)AddPair(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func (d *Database)PairModify(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     key_exist,value_exist,err:=q.Validate()
     if !key_exist   { return nil,cross.KeyIsEmpty   }
     if !value_exist { return nil,cross.ValueIsEmpty }
@@ -272,9 +272,13 @@ func (d *Database)AddPair(q *cross.Query)(result_slice_addr *[]map[string]interf
             } else {
                 entry_map  := make(map[string]interface{}, 0)
                 err_entry  := json.Unmarshal(entry, &entry_map )
-                // what ??????
                 if err_entry == nil {
-                    updated_map,err:=maps.UpdateMap(q.QueryBody,entry_map)
+                    updated_map:=make(map[string]interface{}, 0)
+                    if q.Type == cross.ADD_PAIR {
+                        updated_map,err = maps.UpdateMap(q.QueryBody,entry_map)
+                    } else {
+                        updated_map,err = maps.RemoveFromMap(q.QueryBody,entry_map)
+                    }
                     if err == nil {
                          updated_byte,err_up     := json.Marshal(updated_map)
                          if err_up!=nil {
@@ -288,7 +292,7 @@ func (d *Database)AddPair(q *cross.Query)(result_slice_addr *[]map[string]interf
                 }
             }
         } else {
-        //
+            // incomplete part
             for key,value := range q.QueryBody {
                 keyBYTE,   err_key       := json.Marshal(key)
                 valueBYTE, err_value     := json.Marshal(value)
@@ -297,7 +301,6 @@ func (d *Database)AddPair(q *cross.Query)(result_slice_addr *[]map[string]interf
                     if err!=nil{return err}
                 }
             }
-        //
         }
         return nil
     });
