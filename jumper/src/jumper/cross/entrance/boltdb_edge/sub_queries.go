@@ -250,7 +250,7 @@ func (d *Database)RemoveTable(q *cross.Query)(result_slice_addr *[]map[string]in
     return nil, err
 }
 
-func (d *Database)PairModify(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func (d *Database)ModifyPair(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     key_exist,value_exist,err:=q.Validate()
     if !key_exist   { return nil,cross.KeyIsEmpty   }
     if !value_exist { return nil,cross.ValueIsEmpty }
@@ -292,12 +292,20 @@ func (d *Database)PairModify(q *cross.Query)(result_slice_addr *[]map[string]int
                 }
             }
         } else {
-            // incomplete part
             for key,value := range q.QueryBody {
                 keyBYTE,   err_key       := json.Marshal(key)
                 valueBYTE, err_value     := json.Marshal(value)
                 if err_key==nil && err_value==nil {
-                    err=bucket.Put(keyBYTE, valueBYTE)
+                    if q.Type == cross.ADD_PAIR {
+                        err=bucket.Put(keyBYTE, valueBYTE)
+                    } else {
+                        entryBYTE:=bucket.Get(keyBYTE)
+                        // expiremental trick. have to test
+                        if string(entryBYTE) == string(valueBYTE) {
+                            _=bucket.Delete(keyBYTE)
+                        }
+
+                    }
                     if err!=nil{return err}
                 }
             }
