@@ -24,7 +24,7 @@ func main(){
     addpair_query            := cross.Query{Table:"dynimas",Type:cross.ADD_PAIR}
     key_queryA               := make(map[string]interface{},0)
     value_queryA             := make(map[string]interface{},0)
-    key_queryA["Id"]         =  "D454CD7E-37BA-9021-7F48-238DFA25DF2C"
+    key_queryA["Id"]         =  "3E4F8EA5-92FF-7C94-0770-9C504D8EEF88"
     first_line               := []string{"a","z"}
     second_line              := []string{"b","y"}
     value_queryA["Data"]     =  [][]string{first_line,second_line}
@@ -36,7 +36,7 @@ func main(){
     removepair_query           := cross.Query{Table:"dynimas",Type:cross.REMOVE_PAIR}
     key_queryC                 := make(map[string]interface{},0)
     value_queryC               := make(map[string]interface{},0)
-    key_queryC["Id"]           =  "D454CD7E-37BA-9021-7F48-238DFA25DF2C"
+    key_queryC["Id"]           =  "3E4F8EA5-92FF-7C94-0770-9C504D8EEF88"
     value_queryC["SourceType"] =  "file"
     removepair_query.KeyBody   =  key_queryC
     removepair_query.QueryBody =  value_queryC
@@ -45,7 +45,7 @@ func main(){
     //
     getentry_query           := cross.Query{Table:"dynimas",Type:cross.GET}
     key_queryB               := make(map[string]interface{},0)
-    key_queryB["Id"]         =  "D454CD7E-37BA-9021-7F48-238DFA25DF2C"
+    key_queryB["Id"]         =  "3E4F8EA5-92FF-7C94-0770-9C504D8EEF88"
     getentry_query.KeyBody   =  key_queryB
 
 
