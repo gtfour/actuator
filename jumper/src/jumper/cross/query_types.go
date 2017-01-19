@@ -41,6 +41,8 @@ var CHECK_TABLE_EXIST                 = 5002
 var REMOVE_TABLE                      = 5003
 var DELETE_TABLE                      = 5003
 
+
+// dumm shit
 var ARRAY_TYPE_STRING                 = 6000
 var ARRAY_TYPE_INT                    = 6002
 var ARRAY_TYPE_BOOL                   = 6004
