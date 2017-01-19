@@ -83,6 +83,13 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
         case cross.GET_PAIR:
             res,err:=d.GetPair(q)
             return res,err
+
+        case cross.APPEND_TO_INCLUDED_ARRAY:
+            res,err:=d.AppendToIncludedArray(q)
+            return res, err
+        case cross.REMOVE_ELEMENT_FROM_INCLUDED_ARRAY:
+            res,err:=d.RemoveFromIncludedArray(q)
+            return res, err
         default:
             return nil, cross.IncorrectQueryType
         // err    =  c.Find(bson.M(q.KeyBody)).One(&result)

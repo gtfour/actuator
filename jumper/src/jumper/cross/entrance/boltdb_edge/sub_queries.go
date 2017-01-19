@@ -317,5 +317,110 @@ func (d *Database)ModifyPair(q *cross.Query)(result_slice_addr *[]map[string]int
 }
 
 func (d *Database)GetPair(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+
+    key_exist,value_exist,err:=q.Validate()
+
+    if !key_exist   { return nil, cross.KeyIsEmpty   }
+    if !value_exist { return nil, cross.ValueIsEmpty }
+    if err!=nil     { return nil, err }
+
+    key_byte,err_key     := json.Marshal(q.KeyBody)
+    if err_key!=nil {
+        return nil, cross.EncodeError
+    }
+
+
+    err=d.db.View(func(tx *bolt.Tx) error {
+        table:=tx.Bucket([]byte(q.Table))
+        if table==nil{ return cross.TableDoesntExist  }
+        bucket:=table.Bucket(key_byte)
+        if bucket==nil{
+
+
+        } else {
+
+
+        }
+
+        return err
+
+
+
+
+
+    });
+
     return
 }
+
+func (d *Database)AppendToIncludedArray(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+
+    key_exist,value_exist,err:=q.Validate()
+
+    if !key_exist   { return nil, cross.KeyIsEmpty   }
+    if !value_exist { return nil, cross.ValueIsEmpty }
+    if err!=nil     { return nil, err                }
+
+    key_byte,err_key     := json.Marshal(q.KeyBody)
+    if err_key!=nil {
+        return nil, cross.EncodeError
+    }
+
+    err=d.db.Update(func(tx *bolt.Tx) error {
+        table:=tx.Bucket([]byte(q.Table))
+        if table==nil{ return cross.TableDoesntExist  }
+        bucket:=table.Bucket(key_byte)
+        if bucket==nil{
+            entry:=table.Get(key_byte)
+            if entry == nil {
+                return cross.EntryDoesntExist
+            } else {
+
+
+            }
+        } else {
+
+        }
+
+
+    });
+    return
+
+}
+
+func (d *Database)RemoveFromIncludedArray(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+
+    key_exist,value_exist,err:=q.Validate()
+
+    if !key_exist   { return nil, cross.KeyIsEmpty   }
+    if !value_exist { return nil, cross.ValueIsEmpty }
+    if err!=nil     { return nil, err                }
+
+    key_byte,err_key     := json.Marshal(q.KeyBody)
+    if err_key!=nil {
+        return nil, cross.EncodeError
+    }
+
+    err=d.db.Update(func(tx *bolt.Tx) error {
+        table:=tx.Bucket([]byte(q.Table))
+        if table==nil{ return cross.TableDoesntExist  }
+        bucket:=table.Bucket(key_byte)
+        if bucket==nil{
+            entry:=table.Get(key_byte)
+            if entry == nil {
+                return cross.EntryDoesntExist
+            } else {
+
+            }
+        } else {
+
+        }
+
+
+    });
+
+    return
+
+}
+
+

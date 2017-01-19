@@ -1,6 +1,7 @@
 package main
 
 import "fmt"
+//import "encoding/json"
 import "reflect"
 
 func main(){
@@ -30,4 +31,14 @@ func main(){
 
     fmt.Printf("\n|My int interface: %v |My slice interface: %v|Type of interface: %v| Type of slice: %v|\n ", intAr,intSlice, reflect.TypeOf(intAr),reflect.TypeOf(intSlice))
 
+}
+
+func get_the_fucking_array(i interface{})(interface{}){
+
+    inVar      := reflect.ValueOf(i)
+    inVarType  := reflect.TypeOf(inVar)
+    inSlice    := reflect.MakeSlice(inVarType,0,1)
+
+    inSlice    =  reflect.Append(inSlice, inVar)
+    return inSlice.Interface()
 }
