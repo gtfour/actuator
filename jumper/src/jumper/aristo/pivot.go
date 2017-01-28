@@ -1,11 +1,11 @@
 package aristo
 
 type Signa struct{
+    Id       string
+    GroupId  string
+    Typ      int
 }
 
-func CheckAccess(signa_req *Signa, signa_tgt *Signa)(state int){
-
-
-
-
+func CheckAccess(signaReq *Signa, signaTgt *Signa)(state int){
+    return SirAccessAllowed
 }
