@@ -6,6 +6,21 @@ type Signa struct{
     Type     int
 }
 
+type Cord struct {
+    //
+    //
+    //
+    signaReqId         string
+    signaReqGroupId    string
+    //
+    //
+    signaTgtId         string
+    signaTgtGroupId    string
+    //
+    //
+    //
+}
+
 func CheckAccess(signaReq *Signa, signaTgt *Signa)(state int){
     return SirAccessAllowed
 }
