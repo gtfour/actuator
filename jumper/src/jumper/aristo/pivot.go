@@ -3,7 +3,7 @@ package aristo
 type Signa struct{
     Id       string
     GroupId  string
-    Typ      int
+    Type     int
 }
 
 func CheckAccess(signaReq *Signa, signaTgt *Signa)(state int){
