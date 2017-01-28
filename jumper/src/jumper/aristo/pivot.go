@@ -1,7 +1,11 @@
 package aristo
 
-type Signa struct {
+type Signa struct{
 }
 
-type Vida struct {
+func CheckAccess(signa_req *Signa, signa_tgt *Signa)(state int){
+
+
+
+
 }

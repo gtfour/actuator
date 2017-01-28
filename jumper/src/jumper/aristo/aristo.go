@@ -1,9 +1,9 @@
 package aristo
 
-import "errors"
 import "wengine/dusk"
 
 var database dusk.Database = dusk.DATABASE_INSTANCE
+/*
 var base_word              = "aristo"
 
 func errwrap(in string)(string) {
@@ -20,7 +20,7 @@ var group_list_is_empty = errors.New(errwrap("group list is empty"))
 
 var group_invalid       = errors.New(errwrap("group is invalid"))
 var member_invalid      = errors.New(errwrap("member is invalid"))
-
+*/
 
 type Stance interface {
     //SetName(string)(error)
