@@ -1,5 +1,7 @@
 package petrovich
 
+
+
 type huyamba struct {
     initial_config   map[string]string
     default_config   map[string]string
@@ -20,11 +22,7 @@ type huyamba struct {
 //
 
 func(h *huyamba)GetValue(key string)(value string,err int){
-
-
-
     return value,err
-
 }
 
 func(h *huyamba)ProceedLine(line string)(){
@@ -43,7 +41,13 @@ func CreateHuyamba(initial_config ...map[string]string)(parser huyamba){
 }
 
 func GetMapValue(key string, mymap map[string]string)(value string,err error){
+    return
+}
+
+func GetHuyamba()(h *huyamba,e error){
+
 
     return
-
 }
+
+
