@@ -1,35 +1,37 @@
 package aristo
 
 type Signa struct{
-    Id       string
-    GroupId  string
-    Type     int
+    Sid         string
+    PrimaryGid  string
+    Stype       int
 }
 
-type Club struct {
-    // sheep is a member
-    Sheep      string
-    SheepType  int
+type Membership struct {
+    //
+    Mid    string
+    Mtype  int
     //
     //
     //
-    Herd       string
-    HerdType    int
+    Gid    string
+    Gtype  int
     //
 }
 
 type Cord struct {
     //
     //
-    //
-    signaReqId         string
-    signaReqType       int
-    //signaReqGroupId    string
+    // cord show's access rights(relation) between an requestor(Req) and resource(Tgt)
     //
     //
-    signaTgtId         string
-    signaTgtType       int
-    //signaTgtGroupId    string
+    signaReqId          string
+    signaReqType        int
+    // signaReqGroupId  string
+    //
+    //
+    signaTgtId          string
+    signaTgtType        int
+    // signaTgtGroupId  string
     //
     //
     //
