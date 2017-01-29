@@ -6,16 +6,30 @@ type Signa struct{
     Type     int
 }
 
+type Club struct {
+    // sheep is a member
+    Sheep      string
+    SheepType  int
+    //
+    //
+    //
+    Herd       string
+    HerdType    int
+    //
+}
+
 type Cord struct {
     //
     //
     //
     signaReqId         string
-    signaReqGroupId    string
+    signaReqType       int
+    //signaReqGroupId    string
     //
     //
     signaTgtId         string
-    signaTgtGroupId    string
+    signaTgtType       int
+    //signaTgtGroupId    string
     //
     //
     //
