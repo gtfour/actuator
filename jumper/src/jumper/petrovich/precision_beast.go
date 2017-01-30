@@ -1,35 +1,40 @@
 package petrovich
 
+type Huyamba struct {
+    initial_config    map[string]string
+    default_config    map[string]string
+    cmdline_config    map[string]string
+    self_config       map[string]string
+    ontherun_config   map[string]string
+    Config            map[string]string
 
 
-type huyamba struct {
-    initial_config   map[string]string
-    default_config   map[string]string
-    cmdline_config   map[string]string
-    self_config      map[string]string
-    ontherun_config  map[string]string
-
-    config_file_path string
-    config_dir_path  string
-    config_type      string
+    config_file_path  string
+    config_dir_path   string
+    config_type       string
+    AppName           string
+    Description       string
 }
 
+//
+//
+//
+// -- -- -- -- -- -- -- -- -- -- -- --
 // search value strategy
 // initial_config -> ontherun_config 
-//
+// -- -- -- -- -- -- -- -- -- -- -- --
 //
 //
 //
 
-func(h *huyamba)GetValue(key string)(value string,err int){
+func(h *Huyamba)GetValue(key string)(value string,err int){
     return value,err
 }
 
-func(h *huyamba)ProceedLine(line string)(){
-
+func(h *Huyamba)ProceedLine(line string)(){
 }
 
-func CreateHuyamba(initial_config ...map[string]string)(parser huyamba){
+func CreateHuyamba(initial_config ...map[string]string)(parser Huyamba){
     parser.initial_config = make(map[string]string,0)
     if len(initial_config)>0{
         first_initial_config:=initial_config[0]
@@ -44,10 +49,8 @@ func GetMapValue(key string, mymap map[string]string)(value string,err error){
     return
 }
 
-func GetHuyamba()(h *huyamba,e error){
-
-
-    return
+func GetHuyamba()(h *Huyamba,e error){
+    var myHuyamba Huyamba
+    myHuyamba.Description = "Empty config"
+    return &myHuyamba, nil
 }
-
-
