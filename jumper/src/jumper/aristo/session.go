@@ -5,10 +5,10 @@ import "jumper/cross"
 var SESSION_IS_VALID  int = 6000
 var SESSION_NOT_VALID int = 6001
 
-var session, session_open_error = OpenSession()
+var session,session_open_error = OpenSession()
 
 
-type Session struct{
+type Session struct {
     cross.Database
 }
 
