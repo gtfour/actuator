@@ -9,26 +9,26 @@ func GetFilterSet()(d *cuda.Dynima){
     return
 }
 
-
 func ParseCmd()(){
     //
-    //
     InputArgSplitter(os.Args)
-    //
     //
 }
 
 func InputArgSplitter(args []string)(arg_pairs [][]string){
     //
     //
-    // Split and Glue 
-    //previous_arg_is_bool := false // Is true if currect arg is flag and previous arg is also flag
-    for i:= range args {
+    //  Split and Glue 
+    //  previous_arg_is_bool := false // Is true if currect arg is flag and previous arg is also flag
+    //
+    //
+    for i:= range args{
         arg                        := args[i]
         isDupSuffix,isSingleSuffix := CheckSuffix(arg)
-        fmt.Printf("---\n%s|Is Dup Suffix %v|Is Single Suffix %v|\n---",arg,isDupSuffix,isSingleSuffix)
+        fmt.Printf("---\n%s---|Is Dup Suffix %v|Is Single Suffix %v|\n---",arg,isDupSuffix,isSingleSuffix)
     }
     return
+    //
     //
     //
 }
