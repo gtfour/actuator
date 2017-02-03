@@ -17,11 +17,13 @@ func LoadConfig(initial_config map[string]string)(config map[string]string,err e
 
 func ExtractBaseSet(initial_config map[string]string)(config_path string, config_type string, err error){
 
+    config_path,ok_config_path:=initialConfig["config_path"]
 
-    config_path,ok_config_path:=initial_config["config_path"]
-    config_type,ok_config_type:=initial_config["config_type"]
+    config_type,ok_config_type:=initialConfig["config_type"]
+
     fmt.Printf("Config Path:%s\nConfig Type:%s\nConfig Path Extract Err:%v\nConfig Type Extract Err:%v\n",config_path,config_type,ok_config_path,ok_config_type)
 
     return config_path, config_type, err
+
 }
 

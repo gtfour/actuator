@@ -6,8 +6,7 @@ import "strings"
 import "jumper/cuda"
 
 func GetFilterSet()(d *cuda.Dynima){
-
-
+    return
 }
 
 

@@ -45,7 +45,7 @@ func (m *Member)Write()(err error){
 func CreateNewGroup(name string, gtype string)(g Group) {
    // default type: general
    //group_prop := s.GetProp
-    group_type :="general"
+    group_type := "general"
     if gtype   != "" { group_type=gtype }
     new_id,_   :=  common.GenId()
     g.Members  =make([]Member,0)
@@ -53,7 +53,6 @@ func CreateNewGroup(name string, gtype string)(g Group) {
     g.Type     = group_type
     g.Name     = name
     return g
-
 }
 
 func (g *Group)Write()(err error){
@@ -63,13 +62,10 @@ func (g *Group)Write()(err error){
         _,err   = database.RunQuery(new_query)
         return err
     } else { return err }
-
-
 }
 
 
 func GetGroup(prop map[string]interface{},query_type ...int)(gs map[string]interface{},err error){
-
     //key`_body        := make(map[string]interface{},0)
     //key_body["id"]  =  id
     if prop != nil {

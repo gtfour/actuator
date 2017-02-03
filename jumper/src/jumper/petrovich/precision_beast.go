@@ -8,23 +8,17 @@ type Huyamba struct {
     ontherun_config   map[string]string
     Config            map[string]string
 
-
     config_file_path  string
     config_dir_path   string
     config_type       string
     AppName           string
     Description       string
 }
-
-//
-//
 //
 // -- -- -- -- -- -- -- -- -- -- -- --
 // search value strategy
 // initial_config -> ontherun_config 
 // -- -- -- -- -- -- -- -- -- -- -- --
-//
-//
 //
 
 func(h *Huyamba)GetValue(key string)(value string,err int){
