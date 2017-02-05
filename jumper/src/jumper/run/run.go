@@ -15,7 +15,7 @@ func ParseCmd()(){
     //
 }
 
-func InputArgSplitter(args []string)(arg_pairs [][]string){
+func InputArgSplitter(args []string)(arg_pairs []Pair){
     //
     //Split and Glue 
     //previous_arg_is_bool := false // Is true if currect arg is flag and previous arg is also flag
@@ -30,10 +30,12 @@ func InputArgSplitter(args []string)(arg_pairs [][]string){
         this_is_hyphenized                   := is_dup_hyphen || is_single_hyphen
         //
         //
+        //
 
         //
         // finish check
-        prev_is_hyphenized := is_dup_hyphen || is_single_hyphen
+        //
+        prev_is_hyphenized                    := is_dup_hyphen || is_single_hyphen
         fmt.Printf("---\n%s---|Is Dup Suffix %v|Is Single Suffix %v|\n---", arg, is_dup_hyphen, is_single_hyphen )
     }
     return
