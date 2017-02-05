@@ -17,41 +17,48 @@ func ParseCmd()(){
 
 func InputArgSplitter(args []string)(arg_pairs [][]string){
     //
+    //Split and Glue 
+    //previous_arg_is_bool := false // Is true if currect arg is flag and previous arg is also flag
     //
-    //  Split and Glue 
-    //  previous_arg_is_bool := false // Is true if currect arg is flag and previous arg is also flag
-    //
-    //
-    for i:= range args{
-        arg                        := args[i]
-        isDupSuffix,isSingleSuffix := CheckSuffix(arg)
-        fmt.Printf("---\n%s---|Is Dup Suffix %v|Is Single Suffix %v|\n---",arg,isDupSuffix,isSingleSuffix)
+    prev_is_hyphenized  :=  false
+    this_is_hyphenized  :=  false
+    beginning           :=  true
+    for i := range args {
+        if i != 0 { beginning = false }
+        arg                                  := args[i]
+        is_dup_hyphen, is_single_hyphen      := CheckHyphen(arg)
+        this_is_hyphenized                   := is_dup_hyphen || is_single_hyphen
+        //
+        //
+
+        //
+        // finish check
+        prev_is_hyphenized := is_dup_hyphen || is_single_hyphen
+        fmt.Printf("---\n%s---|Is Dup Suffix %v|Is Single Suffix %v|\n---", arg, is_dup_hyphen, is_single_hyphen )
     }
     return
     //
-    //
-    //
 }
 
-func IsDupSuffix(arg string)(bool){
-    if strings.HasPrefix(arg,"--"){
+func IsDupHyphen(arg string)(bool){
+    if strings.HasPrefix(arg, "--"){
         return true
-    }else {
+    } else {
         return false
     }
 }
 
-func IsSingleSuffix(arg string)(bool){
-    if strings.HasPrefix(arg,"-"){
+func IsSingleHyphen(arg string)(bool){
+    if strings.HasPrefix(arg, "-"){
         return true
-    }else {
+    } else {
         return false
     }
 }
 
-func CheckSuffix(arg string)(bool,bool){
-    dup    := IsDupSuffix(arg)
-    single := IsSingleSuffix(arg)
+func CheckHyphen(arg string)(bool,bool){
+    dup    := IsDupHyphen(arg)
+    single := IsSingleHyphen(arg)
     if dup { single = false }
     return dup,single
 }
@@ -60,3 +67,7 @@ func KeySplitter(arg string)(values [2]string){
     return values
 }
 
+func NextElemExist(ci int,array_len int)( ex bool){
+    if ci < array_len { ex = true }
+    return
+}
