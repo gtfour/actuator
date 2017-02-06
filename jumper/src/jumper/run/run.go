@@ -17,25 +17,24 @@ func ParseCmd()(){
 
 func InputArgSplitter(args []string)(arg_pairs []Pair){
     //
-    //Split and Glue 
-    //previous_arg_is_bool := false // Is true if currect arg is flag and previous arg is also flag
+    // Split and Glue 
+    // previous_arg_is_bool := false // Is true if currect arg is flag and previous arg is also flag
     //
-    prev_is_hyphenized  :=  false
-    this_is_hyphenized  :=  false
-    beginning           :=  true
+    prev_is_hyphenized := false
+    this_is_hyphenized := false
+    this_is_value      := false
+    beginning          := true
+    pair_created       := false
     for i := range args {
         if i != 0 { beginning = false }
-        arg                                  := args[i]
-        is_dup_hyphen, is_single_hyphen      := CheckHyphen(arg)
-        this_is_hyphenized                   := is_dup_hyphen || is_single_hyphen
-        //
-        //
-        //
-
+        arg                                :=  args[i]
+        is_dup_hyphen, is_single_hyphen    :=  CheckHyphen(arg)
+        this_is_hyphenized                 =   is_dup_hyphen || is_single_hyphen
+        this_is_value                      !=  this_is_hyphenized
         //
         // finish check
         //
-        prev_is_hyphenized                    := is_dup_hyphen || is_single_hyphen
+        prev_is_hyphenized                  =  this_is_hyphenized
         fmt.Printf("---\n%s---|Is Dup Suffix %v|Is Single Suffix %v|\n---", arg, is_dup_hyphen, is_single_hyphen )
     }
     return
