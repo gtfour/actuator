@@ -25,17 +25,18 @@ func InputArgSplitter(args []string)(arg_pairs []Pair){
     this_is_value      := false
     beginning          := true
     pair_created       := false
+    apair              := Pair{}
     for i := range args {
         if i != 0 { beginning = false }
         arg                                :=  args[i]
         is_dup_hyphen, is_single_hyphen    :=  CheckHyphen(arg)
         this_is_hyphenized                 =   is_dup_hyphen || is_single_hyphen
-        this_is_value                      !=  this_is_hyphenized
+        this_is_value                      =   !this_is_hyphenized
         //
         // finish check
         //
         prev_is_hyphenized                  =  this_is_hyphenized
-        fmt.Printf("---\n%s---|Is Dup Suffix %v|Is Single Suffix %v|\n---", arg, is_dup_hyphen, is_single_hyphen )
+        fmt.Printf("---\n%s---|Is Dup Suffix %v|Is Single Suffix %v|Is Value %v|\n---", arg, is_dup_hyphen, is_single_hyphen,this_is_value )
     }
     return
     //

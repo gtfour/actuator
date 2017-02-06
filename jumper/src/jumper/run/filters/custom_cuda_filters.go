@@ -1,4 +1,4 @@
-package run
+package filters
 
 import "jumper/cuda"
 
@@ -10,7 +10,14 @@ func DupSuffixFilter(lineAsArray []string , delims [][]int , data [][]int)(ndeli
     return delims,data
     //
 }
+
 func SingleSuffixFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
+    //
+    return delims,data
+    //
+}
+
+func EqualitySignFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
     //
     return delims,data
     //
