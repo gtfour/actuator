@@ -53,23 +53,31 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         last_delim_index = delims_last_elem[1]
         last_data_index  = data_last_elem[1]
     }
+    //
+    // range over strada
+    //
     for i := range strada {
         ndelims := [][]int{}
         indexes := strada[i]
         if len(indexes)!=2 { continue }  //{ break ; return delims, data }
-        first := indexes[0]
-        last  := indexes[1]
+        first := indexes[0] // first strada elem
+        last  := indexes[1] // last strada  elem
         //
-        if first > last {
+        if first > last {  // ?? wut  ... so seems i still remeber why: this trick need's when strada describes an emty position  : ""
+                           // example     : ""
+                           // description : strada for emptyness between two quotes will be described by reversed indexes 
+                           // example of strada: [6,5]
             first = indexes[1]
             last  = indexes[0]
         }
         //
+        // range over delims . 
+        // 
         for de := range  delims {
             delim        := delims[de]
             if len(delim)!=2 { continue }
-            first_delim  := delim[0]
-            last_delim   := delim[1]
+            first_delim       := delim[0]
+            last_delim        := delim[1]
             first_state       := DigitInInterval(first, delim)
             last_state        := DigitInInterval(last, delim)
             first_delim_state := DigitInInterval(first_delim, indexes)
@@ -108,7 +116,10 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                 ndelims=append(ndelims, delim)
             }
         }
-        delims = ndelims
+        //
+        // stop changing existing delims
+        //
+        delims = ndelims // replace existing delims set with new 
     }
     ndelims = delims
 
