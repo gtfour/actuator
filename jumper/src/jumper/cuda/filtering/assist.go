@@ -1,6 +1,12 @@
 package filtering
 
-import . "jumper/cuda"
+import "jumper/cuda"
+
+var LEFT_DIRECTION         int = 1100
+var RIGHT_DIRECTION        int = 1001
+var DIGIT_LESS_INTERVAL    int = 3579
+var DIGIT_GREATER_INTERVAL int = 9753
+var DIGIT_IN_INTERVAL      int = 9779
 
 func Shifter(interval [][]int)(ninterval [][]int) {
     //
@@ -9,7 +15,7 @@ func Shifter(interval [][]int)(ninterval [][]int) {
     //
     var skipped []int
     for i:= range interval {
-        if IsDigitIn(i,skipped) == false {
+        if cuda.IsDigitIn(i,skipped) == false {
             parent_int_part:=interval[i]
             for z:= range interval {
                 if z == i {continue} //do not compare interval with itself
@@ -28,7 +34,7 @@ func Shifter(interval [][]int)(ninterval [][]int) {
         }
     }
     for x:= range interval {
-        if IsDigitIn(x,skipped) == false {
+        if cuda.IsDigitIn(x,skipped) == false {
             ninterval=append(ninterval, interval[x])
         }
     }
@@ -66,7 +72,8 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         if first > last {  // ?? wut  ... so seems i still remeber why: this trick need's when strada describes an emty position  : ""
                            // example     : ""
                            // description : strada for emptyness between two quotes will be described by reversed indexes 
-                           // example of strada: [6,5]
+                           // quotes indexes(quotes will be determined as delims ): 5 and 6 
+                           // strada for above example( strada describes data indexes. In this case data is empty  ): [6,5]
             first = indexes[1]
             last  = indexes[0]
         }
