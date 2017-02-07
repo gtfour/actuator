@@ -43,8 +43,10 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
     // 
     // kind of another strange and magic function :) 
     // i guess i don't know what this function does again
+    //
     var last_delim_index int
     var last_data_index  int
+    //
     delims_last_elem := delims[(len(delims)-1)]
     data_last_elem   := data[(len(data)-1)]
     if len(delims_last_elem)==2 && len(data_last_elem)==2 {
@@ -52,8 +54,8 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         last_data_index  = data_last_elem[1]
     }
     for i := range strada {
-        ndelims := [][]int {}
-        indexes:=strada[i]
+        ndelims := [][]int{}
+        indexes := strada[i]
         if len(indexes)!=2 { continue }  //{ break ; return delims, data }
         first := indexes[0]
         last  := indexes[1]
