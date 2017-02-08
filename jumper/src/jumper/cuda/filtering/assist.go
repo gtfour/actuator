@@ -1,5 +1,6 @@
 package filtering
 
+import "fmt"
 import "jumper/cuda"
 
 var LEFT_DIRECTION         int = 1100
@@ -42,13 +43,16 @@ func Shifter(interval [][]int)(ninterval [][]int) {
 }
 
 func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int, ndata [][]int) {
-    // strada should be inserted in data array
-    // delims with indexes included in strada will be ignored
-    // data  with indexes included  in strada will be ignored
-    //fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
+    //
+    //
+    //  strada should be inserted in data array
+    //  delims with indexes included in strada will be ignored
+    //  data  with indexes included  in strada will be ignored
+    //  fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
     // 
-    // kind of another strange and magic function :) 
-    // i guess i don't know what this function does again
+    //  kind of another strange and magic function :) 
+    //  i guess i don't know what this function does again
+    //
     //
     var last_delim_index int
     var last_data_index  int
@@ -63,11 +67,16 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
     // range over strada
     //
     for i := range strada {
+        // --
+        // -- delims array and data array will be updated inside each strada iteration 
+        // -- 
         ndelims := [][]int{}
         indexes := strada[i]
         if len(indexes)!=2 { continue }  //{ break ; return delims, data }
         first := indexes[0] // first strada elem
-        last  := indexes[1] // last strada  elem
+        last  := indexes[1] // last  strada elem
+        //
+        //
         //
         if first > last {  // ?? wut  ... so seems i still remeber why: this trick need's when strada describes an emty position  : ""
                            // example     : ""
@@ -77,9 +86,9 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
             first = indexes[1]
             last  = indexes[0]
         }
-        //
-        // range over delims . 
-        // 
+        // -- 
+        // -- range over delims . 
+        // --
         for de := range  delims {
             delim        := delims[de]
             if len(delim)!=2 { continue }
@@ -126,11 +135,11 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         //
         // stop changing existing delims
         //
-        delims = ndelims // replace existing delims set with new 
+        delims = ndelims // replace existing delims set with new delims set . new delims set has been updated according to strada  
     }
-    ndelims = delims
+    ndelims                =  delims     // wtf  ? unfortunately  forgot why needs this reverse :(  
+    last_matched_strada_id := -1         // what ? 
 
-    last_matched_strada_id:=-1
     for da := range  data {
         data_part:=data[da]
         if len(data_part)!=2 { continue }
