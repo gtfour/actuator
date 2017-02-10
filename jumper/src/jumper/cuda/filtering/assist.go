@@ -63,9 +63,9 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         last_delim_index = delims_last_elem[1]
         last_data_index  = data_last_elem[1]
     }
-    //
-    // range over strada
-    //
+    // --
+    // -- range over strada
+    // --
     for i := range strada {
         // --
         // -- delims array and data array will be updated inside each strada iteration 
@@ -78,11 +78,11 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
         //
         //
         //
-        if first > last {  // ?? wut  ... so seems i still remeber why: this trick need's when strada describes an emty position  : ""
-                           // example     : ""
-                           // description : strada for emptyness between two quotes will be described by reversed indexes 
-                           // quotes indexes(quotes will be determined as delims ): 5 and 6 
-                           // strada for above example( strada describes data indexes. In this case data is empty  ): [6,5]
+        if first > last {  // // ?? wut  ... so seems i still remeber why: this trick need's when strada describes an emty position  : ""
+                           // // example     : ""
+                           // // description : strada for emptyness between two quotes will be described by reversed indexes 
+                           // // quotes indexes(quotes will be determined as delims ): 5 and 6 
+                           // // strada for above example( strada describes data indexes. In this case data is empty  ): [6,5]
             first = indexes[1]
             last  = indexes[0]
         }
@@ -102,13 +102,13 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
             if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL {
                // split current delim to two new delims without strada indexes
                fmt.Printf("\nStrada on delim interval\n")
-               new_delim_first := make([]int,2)
-               new_delim_last  := make([]int,2)
-               diff_first := first - first_delim
-               diff_last  := last_delim  - last
+               new_delim_first := make([]int, 2)
+               new_delim_last  := make([]int, 2)
+               diff_first      := first - first_delim
+               diff_last       := last_delim  - last
                if diff_first>0 { new_delim_first[0] = first_delim ; new_delim_first[1] = first - 1 ; ndelims=append(ndelims, new_delim_first) }
                if diff_last >0 { new_delim_last[0]  = last +1     ; new_delim_last[1]  = last_delim; ndelims=append(ndelims, new_delim_last)  }
-               //if diff_first == 0 && diff_last == 0 {   }
+               // if diff_first == 0 && diff_last == 0 {   }
             } else if first_state == DIGIT_IN_INTERVAL {
                 new_delim    := make([]int,2)
                 diff_first   := first - first_delim
@@ -125,7 +125,9 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
                     new_delim[1]= last_delim
                     ndelims=append(ndelims, new_delim)
                 }
-            // ??? Pay attention
+            //
+            //  ???  Pay attention
+            //
             } else if first_delim_state == DIGIT_IN_INTERVAL && last_delim_state == DIGIT_IN_INTERVAL {
 
             } else {
