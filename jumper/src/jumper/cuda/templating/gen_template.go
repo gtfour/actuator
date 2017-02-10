@@ -1,4 +1,4 @@
-package cuda
+package templating
 
 import "fmt"
 
