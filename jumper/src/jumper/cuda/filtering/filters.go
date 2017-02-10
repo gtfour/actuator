@@ -92,7 +92,7 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
                 rightSearcher          := Searcher{direction:RIGHT_DIRECTION}
                 rightSearcher.since    =  path_index[1]
                 rightSearcher.accepter = func (char string)(bool) {
-                                         return IsUnicodeLetter(char) || IsUnicodeDigit(char) || IsSymbolIn(char, PATH_SPEC_CHARS )
+                                         return cuda.IsUnicodeLetter(char) || cuda.IsUnicodeDigit(char) || cuda.IsSymbolIn(char, PATH_SPEC_CHARS )
                                      }
                 searchers:=[]Searcher {rightSearcher, leftSearcher}
                 new_indexes:=RunSearchers(lineAsArray, searchers)
@@ -124,13 +124,13 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
             leftSearcher          := Searcher{direction:LEFT_DIRECTION}
             leftSearcher.since    =  url_index[0]
             leftSearcher.accepter =  func (char string)(bool) {
-                                         return IsUnicodeLetter(char) || IsUnicodeDigit(char)
+                                         return cuda.IsUnicodeLetter(char) || cuda.IsUnicodeDigit(char)
                                      }
 
             rightSearcher          := Searcher{direction:RIGHT_DIRECTION}
             rightSearcher.since    =  url_index[1]
             rightSearcher.accepter = func (char string)(bool) {
-                                         return IsUnicodeLetter(char) || IsUnicodeDigit(char) || IsSymbolIn(char, URL_SPEC_CHARS )
+                                         return cuda.IsUnicodeLetter(char) || cuda.IsUnicodeDigit(char) || cuda.IsSymbolIn(char, URL_SPEC_CHARS )
                                      }
             searchers:=[]Searcher {rightSearcher, leftSearcher}
             new_indexes:=RunSearchers(lineAsArray, searchers)

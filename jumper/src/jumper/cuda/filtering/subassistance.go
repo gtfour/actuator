@@ -2,7 +2,6 @@ package filtering
 //
 //
 //
-
 /*func DigitInInterval(digit int, interval []int) (int) {
     if digit <= interval[1] && digit >= interval[0] {
         return DIGIT_IN_INTERVAL
@@ -15,9 +14,7 @@ package filtering
     }
     return 0
 }*/
-
 func CombineDoubleSymbols ( quotes_indexes [][]int  )(combined_quotes [][]int) {
-
     if len(quotes_indexes) >=2 && len(quotes_indexes)%2 == 0 {
         pair:=make([]int,2)
         pair[0] = -1
