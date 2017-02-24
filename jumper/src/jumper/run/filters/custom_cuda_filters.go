@@ -5,19 +5,22 @@ import "jumper/cuda"
 var Filters   []cuda.Filter
 var RunDynima cuda.Dynima
 
-func DupSuffixFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
+func DupHyphenFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
     //
-    return delims,data
+    //
+    return delims, data
     //
 }
 
-func SingleSuffixFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
+func SingleHyphenFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
     //
-    return delims,data
+    //
+    return delims, data
     //
 }
 
 func EqualitySignFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
+    //
     //
     return delims,data
     //

@@ -40,21 +40,21 @@ func Shifter(interval [][]int)(ninterval [][]int) {
         }
     }
     return
+    //
+    //
+    //
 }
 
 func AlumaPaster(delims [][]int, data [][]int, strada [][]int)(ndelims [][]int, ndata [][]int){
-    //
-    //
     //
     //  strada should be inserted in data array
     //  delims with indexes included in strada will be ignored
     //  data  with indexes included  in strada will be ignored
     //  fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
+    //
     // 
     //  kind of another strange and magic function :) 
     //  i guess i don't know what this function does again
-    //
-    //
     //
     var last_delim_index int
     var last_data_index  int

@@ -1,14 +1,19 @@
 package filtering
 
 type Searcher struct {
+    // //
+    // //
     value               string
     since               int
     direction           int
     maxCount            int
-    // should satisfy to Accepter and Breaker . if  Accepter returns true and Breaker return false searching will remain
+    // //
+    // //  should satisfy to Accepter and Breaker . if  Accepter returns true and Breaker return false searching will remain
     accepter            func(string)(bool)
     breaker             func(string)(bool)
     resultPosition      int // calculating field
+    // //
+    // //
 }
 
 
