@@ -53,6 +53,7 @@ func AlumaPaster(delims [][]int, data [][]int, strada [][]int)(ndelims [][]int, 
     //  fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
     //
     // 
+    // hello
     //  kind of another strange and magic function :) 
     //  i guess i don't know what this function does again
     //
