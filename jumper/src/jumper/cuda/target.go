@@ -3,10 +3,11 @@ package cuda
 import "jumper/common/arrays"
 
 
-var TARGET_LINE    int = 8000
-var TARGET_SECTION int = 8002
-var TARGET_FILE    int = 8004
-var TARGET_DIR     int = 8008
+var TARGET_UNDEFINED int = 7999
+var TARGET_LINE      int = 8000
+var TARGET_SECTION   int = 8002
+var TARGET_FILE      int = 8004
+var TARGET_DIR       int = 8008
 
 
 
@@ -22,6 +23,8 @@ type Target struct {
     typ          int
     path         string
     lineAsArray  [][]string
+    //
+    //
 }
 
 
@@ -35,23 +38,57 @@ func(t *Target)GetType()( typ int ){
 }
 
 func(t *Target)Gather()( err error ){
+
+    // var TARGET_LINE    int = 8000
+    // var TARGET_SECTION int = 8002
+    // var TARGET_FILE    int = 8004
+    // var TARGET_DIR     int = 8008
+
+    switch target_type:=t.typ; target_type {
+        case TARGET_LINE:
+        //case TARGET_SECTION:
+        case TARGET_FILE:
+        case TARGET_DIR:
+    }
     return
 }
 
 func(t *Target)PushPart( part [][]string )( err error ){
     //  
-    //  pushing data to lineAsArray
-    //  
+    // pushing data to lineAsArray
     t.lineAsArray,err = arrays.Extend(t.lineAsArray, part)
     return err
+    //
+    //
 }
 
 
 
 
-func InitiateNewTarget(typ int)(t *Target){
-    //
-    // 
+func InitiateNewLineTarget(line string)(t *Target){
     //
     return t
+    //
 }
+
+func 
+
+func(t *Target)gatherLine()( err error ){
+    //
+    return err
+    //
+}
+
+
+func(t *Target)gatherFile()( err error ){
+    //
+    return err
+    //
+}
+
+func(t *Target)gatherDir()( err error ){
+    //
+    return err
+    //
+}
+
