@@ -8,7 +8,7 @@ var RESULT_TYPE_SECTION int = 7004
 type Result interface {
     ProceedTemplate([][]string)  string
     GetData        ()            ([]Line,error)
-    GetType        ()            (typer int)
+    GetType        ()            (typ int)
     GetJson        ()            ([]byte,error)
 }
 

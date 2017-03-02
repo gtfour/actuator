@@ -14,9 +14,8 @@ func ReadFile(filename string)(lines []string,err error){
 }
 
 func ReadDir(dirname string)(filenames []string,err error){
-
-    mode:=actuator.SAFE_OPENING_MODE
-    prop:=actuator.GetProp(dirname,mode)
+    mode := actuator.SAFE_OPENING_MODE
+    prop := actuator.GetProp(dirname,mode)
     fmt.Printf("directory prop:\n%v\n",prop)
     if prop.Error == false && prop.DirContentAvailable == true {
         return prop.DirContent,nil

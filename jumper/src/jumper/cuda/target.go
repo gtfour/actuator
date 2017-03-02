@@ -13,31 +13,32 @@ var TARGET_DIR       int = 8008
 
 type Target struct {
     //
+    // Get       ()(lineAsArray [][]string, err error)
+    // GetType   ()(typ int)
+    // Gather    ()(error)
+    // PushPart  ([][]string)(error)
     //
-    //   Get       ()(lineAsArray [][]string, err error)
-    //   GetType   ()(typ int)
-    //   Gather    ()(error)
-    //   PushPart  ([][]string)(error)
+    // # Target could store content of line, section, file or also just decribe an directory 
     //
-    //
+    selfIndex    int // self uniq number 
+    parentIndex  int // uniq parent target number
     typ          int
     path         string
     lineAsArray  [][]string
     //
-    //
 }
 
 
 
-func(t *Target)Get()(lineAsArray [][]string, err error) {
+func(t *Target)Get()(lineAsArray [][]string,err error) {
     return
 }
 
-func(t *Target)GetType()( typ int ){
+func(t *Target)GetType()(typ int){
     return
 }
 
-func(t *Target)Gather()( err error ){
+func(t *Target)Gather()(err error){
 
     // var TARGET_LINE    int = 8000
     // var TARGET_SECTION int = 8002
@@ -53,7 +54,7 @@ func(t *Target)Gather()( err error ){
     return
 }
 
-func(t *Target)PushPart( part [][]string )( err error ){
+func(t *Target)PushPart(part [][]string)(err error){
     //  
     // pushing data to lineAsArray
     t.lineAsArray,err = arrays.Extend(t.lineAsArray, part)
@@ -71,24 +72,26 @@ func InitiateNewLineTarget(line string)(t *Target){
     //
 }
 
-func 
+func InitiateNewFileOrDirectoryTarget(fpath string)(t *Target){
+    //
+    return t
+    //
+}
 
-func(t *Target)gatherLine()( err error ){
+func(t *Target)gatherLine()(err error){
     //
     return err
     //
 }
 
-
-func(t *Target)gatherFile()( err error ){
+func(t *Target)gatherFile()(err error){
     //
     return err
     //
 }
 
-func(t *Target)gatherDir()( err error ){
+func(t *Target)gatherDir()(err error){
     //
     return err
     //
 }
-
