@@ -8,13 +8,16 @@ var TARGET_DIR     int = 8008
 */
 
 type Dynima struct {
-    // // 
-    // //  dynima stores 
-    // //
+    // 
+    // dynima stores  
+    //
     // each file may got several dynimas binded to itself
-    filters   []Filter
-    targets   []*Target // ????  seems it is not necessary to store file and directory content inside dynima
-    dataSet   []Data    // data will collected while targets processing
+    //
+    filters     []Filter     // 
+    targets     []*Target    // ????  seems it is not necessary to store file and directory content inside dynima
+    // dataSet  []Data       // data will collected while targets processing
+    //
+    //
 }
 
 /*
@@ -32,7 +35,9 @@ type Target struct {  // interface {
 
 
 func(d *Dynima)AppendFilter(f *Filter)(error){
+    //
     return nil
+    //
 }
 
 func(d *Dynima)RunFilters()(r *Result, err error){
@@ -40,6 +45,7 @@ func(d *Dynima)RunFilters()(r *Result, err error){
     // apply filters targets data
     //
     return r,err
+    //
 }
 
 func(d *Dynima)SetSource(t *Target)(error){

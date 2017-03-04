@@ -24,6 +24,9 @@ var TARGET_LINE_TYPE_SINGLE      int    = 8101 // whole line placed into first e
 var LINE_SINGLE_STR              string = "SINGLE_LINE"
 var TARGET_LINE_TYPE_SPLITTED    int    = 8102 // splitted line placed inside lines array
 var LINE_SPLITTED_STR            string = "LINE_SPLITTED"
+
+var TRUE  string = "true"
+var FALSE string = "false"
 //
 
 
@@ -47,6 +50,7 @@ type Target struct {
     lines           []string
     configured      bool
     //
+    diving          bool  // gathering nested directories
 }
 
 
@@ -56,22 +60,6 @@ func(t *Target)Get()(lineAsArray [][]string,err error) {
 }
 
 func(t *Target)GetType()(typ int){
-    return
-}
-
-func(t *Target)Gather()(err error){
-
-    // var TARGET_LINE    int = 8000
-    // var TARGET_SECTION int = 8002
-    // var TARGET_FILE    int = 8004
-    // var TARGET_DIR     int = 8008
-
-    switch target_type:=t.typ; target_type {
-        case TARGET_LINE:
-        //case TARGET_SECTION:
-        case TARGET_FILE:
-        case TARGET_DIR:
-    }
     return
 }
 
@@ -87,22 +75,7 @@ func(t *Target)PushPart(part []string)(err error){
 }
 
 
-
-/*
-func InitiateNewLineTarget(line string)(t *Target){
-    //
-    return t
-    //
-}
-
-func InitiateNewFileOrDirectoryTarget(fpath string)(t *Target){
-    //
-    return t
-    //
-}
-*/
-
-func InitiateNewTarget(config map[string]string)(t *Target,err error){
+func NewTarget(config map[string]string)(t *Target,err error){
     //
     var new_target Target
     //
@@ -113,7 +86,16 @@ func InitiateNewTarget(config map[string]string)(t *Target,err error){
     if target_type == TARGET_FILE_STR || target_type == TARGET_DIR_STR {
         if path_exist == false { return nil, pathHasNotBeenSpecified } else {
             new_target.path = target_path
-            if target_type == TARGET_FILE_STR { new_target.typ = TARGET_FILE } else { new_target.typ = TARGET_DIR }
+            if target_type == TARGET_FILE_STR {
+                new_target.typ = TARGET_FILE
+            } else {
+                new_target.typ       =  TARGET_DIR
+                diving, diving_exist := config["diving"]
+                if diving_exist {
+                    if diving == TRUE  {  new_target.diving = true  }
+                    if diving == FALSE {  new_target.diving = false }
+                }
+            }
             new_target.configured = true
             return &new_target, nil
         }
@@ -134,11 +116,37 @@ func InitiateNewTarget(config map[string]string)(t *Target,err error){
     return nil, cantCreateNewTarget
 }
 
-func(t *Target)gatherLine(line string)(err error){
-    //
-    return err
-    //
+
+
+func(t *Target)Gather()(err error){
+
+    // var TARGET_LINE    int = 8000
+    // var TARGET_SECTION int = 8002
+    // var TARGET_FILE    int = 8004
+    // var TARGET_DIR     int = 8008
+
+    switch target_type:=t.typ; target_type {
+        case TARGET_LINE:
+            //
+        case TARGET_FILE:
+            t.gatherFile()
+        case TARGET_DIR:
+            t.gatherDir()
+    }
+    return
 }
+
+func (t *Target)AddLine(line []string)(err error){
+    if !t.configured { return targetWasNotConfigured }
+    if t.typ == TARGET_LINE_TYPE_SINGLE || t.typ == TARGET_LINE_TYPE_SPLITTED { } else { return cantAddLineForThisTypeOfTarget }
+    if line != nil {
+         t.lines = line
+         return nil
+    } else {
+        return lineIsNil
+    }
+}
+
 
 func(t *Target)gatherFile()(err error){
     //
