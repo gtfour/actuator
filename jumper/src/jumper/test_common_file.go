@@ -4,7 +4,7 @@ import "fmt"
 import "jumper/common/file"
 
 func main(){
-    dir_content,_:=file.ReadDir("/etc/wapourxxx/")
-    fmt.Printf("Dir Content:%v",dir_content)
-
+    dir_name:="/etc/wengine"
+    dir_content,_:=file.ReadDir(dir_name)
+    fmt.Printf("Dir %s Content:\n%v\n", dir_name, dir_content)
 }
