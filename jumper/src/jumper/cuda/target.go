@@ -1,6 +1,7 @@
 package cuda
 
 //import "jumper/common/arrays"
+import "jumper/common/file"
 
 
 //
@@ -50,7 +51,7 @@ type Target struct {
     lines           []string
     configured      bool
     //
-    diving          bool  // gathering nested directories
+    diving          bool  // gathering nested directories. seems that i can't implement this feauture yet here
 }
 
 
@@ -111,7 +112,7 @@ func NewTarget(config map[string]string)(t *Target,err error){
         return &new_target, nil
     }
     //
-    // targetTypeHasNotBeenSpecified
+    // targetTypeHasNotBeenSpecified 
     //
     return nil, cantCreateNewTarget
 }
@@ -124,7 +125,7 @@ func(t *Target)Gather()(err error){
     // var TARGET_SECTION int = 8002
     // var TARGET_FILE    int = 8004
     // var TARGET_DIR     int = 8008
-
+    if !t.configured { return targetWasNotConfigured }
     switch target_type:=t.typ; target_type {
         case TARGET_LINE:
             //
@@ -150,11 +151,15 @@ func (t *Target)AddLine(line []string)(err error){
 
 func(t *Target)gatherFile()(err error){
     //
+    lines,err:=file.ReadFile(t.path)
+    if err == nil {
+        t.lines = lines
+    }
     return err
     //
 }
 
-func(t *Target)gatherDir()(err error){
+func(t *Target)gatherDir()(err error) {
     //
     return err
     //
