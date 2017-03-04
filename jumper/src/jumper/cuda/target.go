@@ -13,18 +13,20 @@ var TARGET_DIR       int = 8008
 
 type Target struct {
     //
-    // Get       ()(lineAsArray [][]string, err error)
-    // GetType   ()(typ int)
-    // Gather    ()(error)
-    // PushPart  ([][]string)(error)
+    //  Get:       ()(lineAsArray [][]string, err error)
+    //  GetType:   ()(typ int)
+    //  Gather:    ()(error)
+    //  PushPart:  ([][]string)(error)
     //
-    // # Target could store content of line, section, file or also just decribe an directory 
+    //  # Target could  store content of line, file or also just decribe an directory 
+    //  # correction: section could not be determined as section on this level of processing
     //
-    selfIndex    int // self uniq number 
-    parentIndex  int // uniq parent target number
-    typ          int
-    path         string
-    lineAsArray  [][]string
+    selfIndex        int         //  // self uniq   number 
+    parentIndex      int         //  // uniq parent target number
+    typ              int
+    path             string
+    //lineAsArray    [][]string
+    lines            []string
     //
 }
 
