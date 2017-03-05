@@ -36,19 +36,28 @@ func ReadDir(dirname string)([]string,error){
 
 func ReadDirFiles(dirname string)([]string,error){
     //
-    //
     mode := actuator.SAFE_OPENING_MODE
     prop := actuator.GetProp(dirname, mode)
     //
-    //
+    var directory_files []string
     if prop.Error == false && prop.DirContentAvailable == true {
         if strings.HasSuffix(dirname, "/") == false { dirname = dirname+"/" }
-        var directory_files []string
+        var directory_items []string
         for i:= range prop.DirContent {
-            file            := dirname+prop.DirContent[i]
-            directory_files =  append(directory_files, file)
+            item            :=  dirname+prop.DirContent[i]
+            directory_items =   append(directory_items, item)
         }
-        return prop.DirContent, nil
+        //
+        for i:= range directory_items {
+            item      := directory_items[i]
+            item_prop := actuator.GetProp(item, mode)
+            if item_prop.IsRegular == true && item_prop.IsReadable == true {
+                // appending just only filenames , not directory names
+                directory_files = append(directory_files, item)
+            }
+
+        }
+        return directory_files, nil
     } else {
         return nil, prop_error
     }
