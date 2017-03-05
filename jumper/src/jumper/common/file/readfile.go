@@ -51,7 +51,7 @@ func ReadDirFiles(dirname string)([]string,error){
         for i:= range directory_items {
             item      := directory_items[i]
             item_prop := actuator.GetProp(item, mode)
-            if item_prop.IsRegular == true && item_prop.IsReadable == true {
+            if prop.Error == false &&  item_prop.IsRegular == true && item_prop.IsReadable == true {
                 // appending just only filenames , not directory names
                 directory_files = append(directory_files, item)
             }

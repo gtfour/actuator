@@ -52,6 +52,7 @@ type Target struct {
     configured      bool
     //
     diving          bool  // gathering nested directories. seems that i can't implement this feauture yet here
+    nestedTargets   []*Target
 }
 
 
@@ -151,7 +152,14 @@ func (t *Target)AddLine(line []string)(err error){
 
 func(t *Target)gatherFile()(err error){
     //
-    lines,err:=file.ReadFile(t.path)
+    lines,err := file.ReadFile(t.path)
+    //
+
+    //  target_config          := make(map[string]string,0)
+    //  target_config["type"]  =  "SINGLE_LINE"
+    //  tgt,err                := cuda.NewTarget(target_confi
+
+    //
     if err == nil {
         t.lines = lines
     }
@@ -161,6 +169,17 @@ func(t *Target)gatherFile()(err error){
 
 func(t *Target)gatherDir()(err error) {
     //
-    return err
+    dir_files,err := file.ReadDirFiles(t.path)
+    if err !=nil { return }
     //
+    for i:= range dir_files {
+        dir_file := dir_files[i]
+        targetFileConfig          := make(map[string]string,0)
+        targetFileConfig["type"]  =  "TARGET_FILE"
+        targetFileConfig["path"]  =  dir_file
+        tgtFile,err               := cuda.NewTarget(targetFileConfig)
+        _=dir_file
+    }
+    //
+    return nestedTargets,nil
 }
