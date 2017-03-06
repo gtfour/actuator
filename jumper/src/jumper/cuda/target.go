@@ -1,6 +1,7 @@
 package cuda
 
 //import "jumper/common/arrays"
+import "strconv"
 import "jumper/common/file"
 
 
@@ -85,6 +86,19 @@ func NewTarget(config map[string]string)(t *Target,err error){
     target_path, path_exist := config["path"]
     //
     if typ_exist == false { return nil, targetTypeHasNotBeenSpecified }
+
+    index,  index_exist := config["index"]
+    if index_exist {
+        index_int,err:=strconv.Atoi(index)
+        if err == nil { new_target.selfIndex = index_int }
+    }
+
+    parent_index, parent_index_exist := config["parent_index"]
+    if parent_index_exist {
+        parent_index_int,err:=strconv.Atoi(parent_index)
+        if err == nil { new_target.parentIndex = parent_index_int }
+    }
+
     if target_type == TARGET_FILE_STR || target_type == TARGET_DIR_STR {
         if path_exist == false { return nil, pathHasNotBeenSpecified } else {
             new_target.path = target_path
@@ -173,13 +187,18 @@ func(t *Target)gatherDir()(err error) {
     if err !=nil { return }
     //
     for i:= range dir_files {
-        dir_file := dir_files[i]
+        dir_file                  := dir_files[i]
         targetFileConfig          := make(map[string]string,0)
         targetFileConfig["type"]  =  "TARGET_FILE"
         targetFileConfig["path"]  =  dir_file
-        tgtFile,err               := cuda.NewTarget(targetFileConfig)
-        _=dir_file
+        tgtFile,err               := NewTarget(targetFileConfig)
+        if err!=nil || tgtFile.configured == false { continue }
+        err = tgtFile.Gather()
+        if err == nil {
+            tgtFile.parentIndex   =  t.selfIndex
+            t.nestedTargets       =  append(t.nestedTargets, tgtFile)
+        }
     }
     //
-    return nestedTargets,nil
+    return nil
 }
