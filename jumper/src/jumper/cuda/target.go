@@ -84,6 +84,7 @@ func NewTarget(config map[string]string)(t *Target,err error){
     var new_target Target
     //
     target_type, typ_exist  := config["type"]
+    //
     target_path, path_exist := config["path"]
     //
     if typ_exist == false { return nil, targetTypeHasNotBeenSpecified }
@@ -169,11 +170,11 @@ func(t *Target)gatherFile()(err error){
     //
     lines,err := file.ReadFile(t.path)
     //
-
+    //
     //  target_config          := make(map[string]string,0)
     //  target_config["type"]  =  "SINGLE_LINE"
-    //  tgt,err                := cuda.NewTarget(target_confi
-
+    //  tgt,err                := cuda.NewTarget( target_config )
+    //
     //
     if err == nil {
         t.lines = lines
@@ -188,16 +189,16 @@ func(t *Target)gatherDir()(err error) {
     if err !=nil { return }
     //
     for i:= range dir_files {
-        dir_file                  := dir_files[i]
-        targetFileConfig          := make(map[string]string,0)
-        targetFileConfig["type"]  =  "TARGET_FILE"
-        targetFileConfig["path"]  =  dir_file
-        tgtFile,err               := NewTarget(targetFileConfig)
+        dir_file                  :=  dir_files[i]
+        targetFileConfig          :=  make(map[string]string,0)
+        targetFileConfig["type"]  =   "TARGET_FILE"
+        targetFileConfig["path"]  =   dir_file
+        tgtFile,err               :=  NewTarget(targetFileConfig)
         if err!=nil || tgtFile.configured == false { continue }
         err = tgtFile.Gather()
         if err == nil {
             tgtFile.parentIndex   =  t.selfIndex
-            t.nestedTargets       =  append(t.nestedTargets, tgtFile)
+            t.nestedTargets       =  append( t.nestedTargets, tgtFile )
         }
     }
     //

@@ -1,6 +1,7 @@
 package templating
 
 import "fmt"
+import "jumper/cuda"
 
 func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
 
@@ -20,7 +21,7 @@ func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
         for z := range data_indexes {
             pair:=data_indexes[z]
             if (len(pair)==2 && pair[0]<=pair[1]) {
-                if DigitInInterval(i, pair) == DIGIT_IN_INTERVAL {
+                if cuda.DigitInInterval(i, pair) == cuda.DIGIT_IN_INTERVAL {
                     on_interval = true
                     if len(pair) == 2 {
                         //last_pair_index = pair[1]
@@ -30,7 +31,7 @@ func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
                 }
             } else {
                 temp_pair := []int{pair[1],pair[0]}
-                    if DigitInInterval(i, temp_pair) == DIGIT_IN_INTERVAL {
+                    if cuda.DigitInInterval(i, temp_pair) == cuda.DIGIT_IN_INTERVAL {
                         on_interval = true
                         invert      =  true
                         if len(pair) == 2 {

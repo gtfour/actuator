@@ -1,7 +1,10 @@
 package main
-import "client/cuda"
+// import "client/cuda"
+
 import "fmt"
 import "strings"
+import "jumper/cuda"
+import "jumper/cuda/templating"
 // split each file and each line in file by space and save into slice of byte()  slices
 
 
@@ -40,7 +43,7 @@ func main() {
     delims,data=cuda.UrlFilter(lineAsArray3,delims,data)
     fmt.Printf("\nAfter UrlFilter:  delims: %v\n data: %v \n" , delims , data)
 
-    template_string:=cuda.GenTemplate(lineAsArray3, data)
+    template_string:=templating.GenTemplate(lineAsArray3, data)
     fmt.Printf("###\nTemplate string:\n%s\n",template_string)
 
     //delims,data=cuda.UrlFilter(lineAsArray3,delims,data)

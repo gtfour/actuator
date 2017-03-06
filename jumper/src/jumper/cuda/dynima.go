@@ -13,7 +13,7 @@ type Dynima struct {
     //
     // each file may got several dynimas binded to itself
     //
-    filters     []Filter     // 
+    filters     []Filter     // //  
     targets     []*Target    // ????  seems it is not necessary to store file and directory content inside dynima
     // dataSet  []Data       // data will collected while targets processing
     //
@@ -22,10 +22,12 @@ type Dynima struct {
 
 /*
 type Target struct {  // interface {
-    // Get       ()(lineAsArray [][]string, err error)
-    // GetType ()(typ int)
-    // Gather    ()(error)
-    // PushPart  ([][]string)(error)
+    //
+    //  Get       ()(lineAsArray [][]string, err error)
+    //  GetType ()(typ int)
+    //  Gather    ()(error)
+    //  PushPart  ([][]string)(error)
+    //
     typ         int
     path        string
     lineAsArray [][]int
