@@ -1,5 +1,7 @@
 package cuda
 
+import "sync"
+
 /*
 var TARGET_LINE    int = 8000
 var TARGET_SECTION int = 8002
@@ -8,15 +10,21 @@ var TARGET_DIR     int = 8008
 */
 
 type Dynima struct {
-    // 
-    // dynima stores  
     //
-    // each file may got several dynimas binded to itself
+    // :
+    // :  dynima stores  
+    // :
+    // :  each file may got several dynimas binded to itself
+    // :
     //
-    filters     []Filter     // //  
-    targets     []*Target    // ????  seems it is not necessary to store file and directory content inside dynima
+    sync.RWMutex             // mutex will be used to freze operations over dynima while changing filters or modifying targets
+    filters       []Filter   // 
+    targets       []*Target  // ????  seems it is not necessary to store file and directory content inside dynima
     // dataSet  []Data       // data will collected while targets processing
     //
+    // :
+    // :
+    // :
     //
 }
 
@@ -41,34 +49,56 @@ func(d *Dynima)AppendFilter(f *Filter)(error){
     return nil
     //
 }
-
+//
 func(d *Dynima)RunFilters()(r *Result, err error){
     //
     // apply filters targets data
     //
+    d.Lock()
+    defer d.Unlock()
+
     return r,err
     //
+    //
 }
-
+//
 func(d *Dynima)SetSource(t *Target)(error){
     // unnecessary 
+    //
     return nil
     //
+    //
 }
-
+//
+func(d *Dynima)AddTarget(t *Target)(error){
+    // 
+    //
+    return nil
+    //
+    //
+}
+//
+func(d *Dynima)RemoveTarget(t *Target)(error){
+    // 
+    //
+    return nil
+    //
+    //
+}
+//
 func(d *Dynima)getTarget(tgt_id int)(t *Target,err error){
     //
-    return
-    //
-}
-
-func(d *Dynima)getChildTargets(tgt_id int)(tgts *[]Target, err error){
     //
     return
     //
+    //
 }
-/*
-func InitiateNewTarget(typ int)(t *Target){
-    return t
-}*/
-
+//
+func(d *Dynima)getChildTargets(parent_target_id int)(child_targets *[]Target, err error){
+    //
+    //
+    return
+    //
+    //
+}
+//

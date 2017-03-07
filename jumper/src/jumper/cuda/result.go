@@ -26,10 +26,26 @@ type Section struct {
     lines                     []Line      `json:"lines"`
     template                  string      `json:"template"`
     template_data_size        int         `json:"template_data_size"`
-    typer                     int         `json:"typer"`
+    typ                       int         `json:"typ"`
+    //
+    sectionTyp                int
 }
 
+type File struct {
+    //
+    path      string
+    sections  []Section
+    //
+}
 
+type Directory struct {
+    path   string
+    files  []File
+}
+
+//
+// Line methods
+//
 func(l *Line)GetData()(lines []Line,err error){
     if (l!=nil){
         lines = make([]Line,   0)
@@ -54,6 +70,10 @@ func (l *Line)GetJson()([]byte,error){
     }
 }
 
+//
+// Section methods
+//
+
 func(s *Section)GetData()([]Line,error){
     if (s.lines!=nil){
         return s.lines, nil
@@ -75,3 +95,7 @@ func (s *Section)GetJson()([]byte,error){
         return section_byte,nil
     }
 }
+
+//
+// Directory methods
+//
