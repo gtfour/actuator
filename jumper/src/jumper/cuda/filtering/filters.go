@@ -4,15 +4,11 @@ import "fmt"
 import "jumper/cuda"
 
 func BaseFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
-
     // Simple wrapper
     return
-
-
 }
 
 func BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
-
     //var section_brackets_square   =  [2]string {"[","]"}
     //var section_brackets_triangle =  [3]string {"<",">","</"}
     //var section_brackets_curly    =  [2]string {"{","}"}
@@ -41,14 +37,17 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
         single:=single_quote_complete_indexes[s]
         quotes_complete_indexes=append(quotes_complete_indexes, single)
     }
+    //
     for d:= range double_quote_complete_indexes {
         double:=double_quote_complete_indexes[d]
         quotes_complete_indexes=append(quotes_complete_indexes, double)
     }
+    //
     for g:= range grave_quote_complete_indexes {
         grave:=single_quote_complete_indexes[g]
         quotes_complete_indexes=append(quotes_complete_indexes, grave)
     }
+    //
     if len(quotes_complete_indexes)>=1 {
         for q:= range quotes_complete_indexes {
             quote_range:=quotes_complete_indexes[q]

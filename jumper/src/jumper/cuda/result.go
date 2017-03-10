@@ -64,6 +64,7 @@ type Directory struct {
 //
 
 func(l *Line)GetData()(lines []Line,err error){
+    //
     if (l!=nil){
         lines = make([]Line,   0)
         lines = append(lines, *l)
@@ -71,6 +72,7 @@ func(l *Line)GetData()(lines []Line,err error){
     } else {
         return nil, nilResultError
     }
+    //
 }
 
 func (l *Line)GetType()(int){
@@ -144,7 +146,6 @@ func (f *File)GetJson()([]byte,error){
 //
 // Directory methods
 //
-
 func(d *Directory)GetData()( []File,error ){
     if ( d.files!=nil ){
         return d.files, nil
@@ -158,6 +159,7 @@ func (d *Directory)GetType()(int){
 }
 
 func (d *Directory)GetJson()( []byte,error ){
+    //
     if d == nil { return nil, nilResultError }
     directory_byte,err := json.Marshal(d)
     if err != nil {
@@ -165,8 +167,8 @@ func (d *Directory)GetJson()( []byte,error ){
     } else {
         return directory_byte, nil
     }
+    //
 }
-
 //
 //
 //
