@@ -13,16 +13,15 @@ type Dynima struct {
     //
     // :
     // :  dynima stores  
-    // :
     // :  each file may got several dynimas binded to itself
     // :
     //
     sync.RWMutex             // mutex will be used to freze operations over dynima while changing filters or modifying targets
     filters       []Filter   // 
     targets       []*Target  // ????  seems it is not necessary to store file and directory content inside dynima
+    //
     // dataSet  []Data       // data will collected while targets processing
     //
-    // :
     // :
     // :
     //
@@ -50,13 +49,13 @@ func(d *Dynima)AppendFilter(f *Filter)(error){
     //
 }
 //
-func(d *Dynima)RunFilters()(r *Result, err error){
+func(d *Dynima)RunFilters()( r *Result, err error ){
     //
     // apply filters targets data
     //
     d.Lock()
     defer d.Unlock()
-
+    //
     return r,err
     //
     //

@@ -1,6 +1,7 @@
 package cuda
 
 //import "jumper/common/arrays"
+import "path"
 import "strconv"
 import "jumper/common/file"
 
@@ -49,6 +50,7 @@ type Target struct {
     parentIndex     int         //  // uniq parent target number
     typ             int
     path            string
+    pathShort       string
     //lineAsArray   [][]string
     lines           []string
     configured      bool
@@ -177,7 +179,8 @@ func(t *Target)gatherFile()(err error){
     //
     //
     if err == nil {
-        t.lines = lines
+        t.lines       = lines
+        t.pathShort   = path.Base(t.path)
     }
     return err
     //
@@ -188,21 +191,31 @@ func(t *Target)gatherDir()(err error) {
     dir_files,err := file.ReadDirFiles(t.path)
     if err !=nil { return }
     //
-    for i:= range dir_files {
-        dir_file                  :=  dir_files[i]
-        targetFileConfig          :=  make(map[string]string,0)
-        targetFileConfig["type"]  =   "TARGET_FILE"
-        targetFileConfig["path"]  =   dir_file
-        tgtFile,err               :=  NewTarget(targetFileConfig)
-        if err!=nil || tgtFile.configured == false { continue }
+    //
+    //
+    for i := range dir_files {
+        //
+        dir_file                   :=  dir_files[i]
+        targetFileConfig           :=  make(map[string]string,0)
+        targetFileConfig["type"]   =   "TARGET_FILE"
+        targetFileConfig["path"]   =   dir_file
+        tgtFile,err                :=  NewTarget(targetFileConfig)
+        if err != nil || tgtFile.configured == false { continue }
         err = tgtFile.Gather()
+        //
         if err == nil {
-            tgtFile.parentIndex   =  t.selfIndex
-            t.nestedTargets       =  append( t.nestedTargets, tgtFile )
+            tgtFile.parentIndex    =  t.selfIndex
+            t.nestedTargets        =  append( t.nestedTargets, tgtFile )
         }
+        //
     }
     //
+    t.pathShort = path.Base(t.path)
+    //
+    //
+    //
     return nil
+    //
 }
 
 func(t *Target)GetNestedTargets()([]*Target) {
