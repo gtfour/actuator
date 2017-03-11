@@ -1,7 +1,7 @@
 package cuda
 
 import "errors"
-// import "jumper/cuda/filtering"
+import "jumper/cuda/filtering"
 // import "client/cuda/custom"
 
 var dup_name         =  errors.New("error:filter with following name is already exist")
@@ -57,10 +57,10 @@ func CreateDefaultFilterList ()(fl FilterList) {
     //
     fl = make(FilterList,0)
     //
-    var url_filter      = Filter{ Name:"url_filter",      Call:UrlFilter,      Enabled:true }
-    var path_filter     = Filter{ Name:"path_filter",     Call:PathFilter,     Enabled:true }
-    var brackets_filter = Filter{ Name:"brackets_filter", Call:BracketsFilter, Enabled:true }
-    var quotes_filter   = Filter{ Name:"quotes_filter",   Call:QuotesFilter,   Enabled:true }
+    var url_filter      = Filter{ Name:"url_filter",      Call:filtering.UrlFilter,      Enabled:true }
+    var path_filter     = Filter{ Name:"path_filter",     Call:filtering.PathFilter,     Enabled:true }
+    var brackets_filter = Filter{ Name:"brackets_filter", Call:filtering.BracketsFilter, Enabled:true }
+    var quotes_filter   = Filter{ Name:"quotes_filter",   Call:filtering.QuotesFilter,   Enabled:true }
     //
     fl.Append(url_filter)
     fl.Append(path_filter)

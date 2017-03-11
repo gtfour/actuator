@@ -1,7 +1,7 @@
 package filtering
 
 import "fmt"
-import "jumper/cuda"
+import "jumper/cuda/commons"
 
 var LEFT_DIRECTION         int = 1100
 var RIGHT_DIRECTION        int = 1001
@@ -16,7 +16,7 @@ func Shifter(interval [][]int)(ninterval [][]int) {
     //
     var skipped []int
     for i:= range interval {
-        if cuda.IsDigitIn(i,skipped) == false {
+        if commons.IsDigitIn(i,skipped) == false {
             parent_int_part:=interval[i]
             for z:= range interval {
                 if z == i {continue} //do not compare interval with itself
@@ -26,7 +26,7 @@ func Shifter(interval [][]int)(ninterval [][]int) {
                 first:=int_part[0]
                 last :=int_part[1]
 
-                if cuda.DigitInInterval(first,parent_int_part) == DIGIT_IN_INTERVAL && cuda.DigitInInterval(last,parent_int_part) == DIGIT_IN_INTERVAL {
+                if commons.DigitInInterval(first,parent_int_part) == DIGIT_IN_INTERVAL && commons.DigitInInterval(last,parent_int_part) == DIGIT_IN_INTERVAL {
                     skipped=append(skipped, z)
                 }
 
@@ -35,7 +35,7 @@ func Shifter(interval [][]int)(ninterval [][]int) {
         }
     }
     for x:= range interval {
-        if cuda.IsDigitIn(x,skipped) == false {
+        if commons.IsDigitIn(x,skipped) == false {
             ninterval=append(ninterval, interval[x])
         }
     }
@@ -97,10 +97,10 @@ func AlumaPaster(delims [][]int, data [][]int, strada [][]int)(ndelims [][]int, 
             if len(delim)!=2 { continue }
             first_delim       := delim[0]
             last_delim        := delim[1]
-            first_state       := cuda.DigitInInterval(first, delim)
-            last_state        := cuda.DigitInInterval(last, delim)
-            first_delim_state := cuda.DigitInInterval(first_delim, indexes)
-            last_delim_state  := cuda.DigitInInterval(last_delim,  indexes)
+            first_state       := commons.DigitInInterval(first, delim)
+            last_state        := commons.DigitInInterval(last, delim)
+            first_delim_state := commons.DigitInInterval(first_delim, indexes)
+            last_delim_state  := commons.DigitInInterval(last_delim,  indexes)
             //fmt.Printf("\nfirst %v | firststate %v | laststate %v | strada %v | delim %v | firstdelimstate %v | lastdelimstate %v \n ",first,first_state,last_state, strada,delim,first_delim_state, last_delim_state)
             //
             // comparing delims array with current strada
@@ -163,8 +163,8 @@ func AlumaPaster(delims [][]int, data [][]int, strada [][]int)(ndelims [][]int, 
         for i := range strada {
             indexes:=strada[i]
             if len(indexes)!=2 { continue }
-            first_state          := cuda.DigitInInterval(first_data, indexes)
-            last_state           := cuda.DigitInInterval(last_data, indexes)
+            first_state          := commons.DigitInInterval(first_data, indexes)
+            last_state           := commons.DigitInInterval(last_data, indexes)
             if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL{
                 includes = true
                 if i != last_matched_strada_id {
@@ -209,7 +209,7 @@ func AlumaPaster(delims [][]int, data [][]int, strada [][]int)(ndelims [][]int, 
                     interval_between_data[0] = data_part[1]
                     interval_between_data[1] = data[da+1][0]
                 }
-                if  cuda.DigitInInterval(first_strada, interval_between_data)  == DIGIT_IN_INTERVAL && cuda.DigitInInterval(last_strada, interval_between_data)  == DIGIT_IN_INTERVAL {
+                if  commons.DigitInInterval(first_strada, interval_between_data)  == DIGIT_IN_INTERVAL && commons.DigitInInterval(last_strada, interval_between_data)  == DIGIT_IN_INTERVAL {
                     last_matched_strada_id = i
                     if replace_on_insert == false {
                         insert_strada = true

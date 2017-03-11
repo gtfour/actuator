@@ -9,7 +9,7 @@ func main(){
     var myFilter      cuda.Filter
     myFilter.Enabled  = true
     myFilter.Call     = filter
-    myFilter.Name     = "my filter"
+    myFilter.Name     = "myFilter"
     //
     filterList1       := cuda.CreateDefaultFilterList()
     //
