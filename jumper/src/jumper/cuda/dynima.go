@@ -17,7 +17,7 @@ type Dynima struct {
     // :
     //
     sync.RWMutex             // mutex will be used to freze operations over dynima while changing filters or modifying targets
-    filters       []Filter   // 
+    filters       FilterList // 
     targets       []*Target  // ????  seems it is not necessary to store file and directory content inside dynima
     //
     // dataSet  []Data       // data will collected while targets processing
