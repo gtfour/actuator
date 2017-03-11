@@ -1,16 +1,17 @@
 package cuda
-import "fmt"
+// import "fmt"
 
-var LEFT_DIRECTION         int = 1100
-var RIGHT_DIRECTION        int = 1001
+//var LEFT_DIRECTION         int = 1100
+//var RIGHT_DIRECTION        int = 1001
 //
-var DIGIT_LESS_INTERVAL    int = 3579
-var DIGIT_GREATER_INTERVAL int = 9753
-var DIGIT_IN_INTERVAL      int = 9779
+// var DIGIT_LESS_INTERVAL    int = 3579
+// var DIGIT_GREATER_INTERVAL int = 9753
+// var DIGIT_IN_INTERVAL      int = 9779
+//
 
-//var BOTH_DIRECTIONS  int = 2002
-var FOUND_IS_EMPTY         int = -4004
-
+// var BOTH_DIRECTIONS  int = 2002
+// var FOUND_IS_EMPTY         int = -4004
+/*
 type SpecialWord struct {
     stype int // could be an email or url address or ip or  path
     pos   []int
@@ -39,9 +40,14 @@ type Cyclone struct {
     // line prop
 }
 
+*/
+
+
+/*
 func DataHeaderSelector(first_table_string []string)(data [][]int, isTableHeader bool ) {
     return
 }
+*/
 
 /*func UrlSelector(str []string, delim []int,  data_before []int , data_after []int)(data [][]int, isUrl bool ) {
     fmt.Printf("Delim:%v StrPart:%v", delim,str[delim[0]:delim[1]])
@@ -55,13 +61,20 @@ func UrlMatcher(str []string, delim []int ) {
 
 
 }*/
-
+/*
 func StringArrayIsEqual (abc , def []string) (bool) {
 
     return true
 
 }
+*/
 
+//
+//
+// retired. functions below had been moved into filtering module
+//
+//
+/*
 func BaseFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
 
     // Simple wrapper
@@ -69,8 +82,10 @@ func BaseFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims []
 
 
 }
+*/
 
-func/*(c *Clutch)*/BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+/*
+func(c *Clutch)BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
     //var section_brackets_square   =  [2]string {"[","]"}
     //var section_brackets_triangle =  [3]string {"<",">","</"}
@@ -78,9 +93,10 @@ func/*(c *Clutch)*/BracketsFilter(lineAsArray []string , delims [][]int , data [
     return
 
 }
+*/
 
-
-func/*(c *Clutch)*/QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+/*
+func(c *Clutch)QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
     single_quote :=[]string{"'"}
     double_quote :=[]string{`"`}
@@ -131,8 +147,10 @@ func/*(c *Clutch)*/QuotesFilter( lineAsArray []string , delims [][]int , data []
     //fmt.Printf("s: %v d: %v g: %v", single_quote_complete_indexes, double_quote_complete_indexes, grave_quote_complete_indexes )
     return
 }
+*/
 
-func/*(c *Clutch)*/PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+/*
+func(c *Clutch)PathFilter ( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
     //PATH_SPEC_CHARS     :=[]string {"/"}
     PATH_SPEC_CHARS     :=[]string{"%",":","/","@","?","#","-",".","_","+","="}
     path_marker         := []string {"/"}
@@ -166,8 +184,10 @@ func/*(c *Clutch)*/PathFilter ( lineAsArray []string , delims [][]int , data [][
     }
     return ndelims,ndata
 }
+*/
 
-func/*(c *Clutch)*/UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+/*
+func(c *Clutch)UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
 
     URL_SPEC_CHARS     :=[]string{"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
@@ -208,8 +228,16 @@ func/*(c *Clutch)*/UrlFilter( lineAsArray []string , delims [][]int , data [][]i
     return ndelims,ndata
 
 }
+*/
 
 
+
+//
+//
+//  ArrayInArrayIndexes-funtion had been moved into commons module
+//
+//
+/*
 func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
 
     if (len(abc) < 1 )||(len(phrases) < 1){return}
@@ -250,7 +278,14 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
     }
     return
 }
+*/
 
+//
+//
+// function CompareArrayLen had been moved into commons module
+//
+//
+/*
 func CompareArrayLen (indexes [][]int)(int) {
     // return []int array index with max lenght 
     max_len := -1
@@ -270,7 +305,15 @@ func CompareArrayLen (indexes [][]int)(int) {
     if max_len == -1 { return FOUND_IS_EMPTY }
     return max_len_index
 }
+*/
 
+//
+//
+// RunSearchers has been moved
+//
+// 
+
+/*
 func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes []int  ) {
     extended_indexes = make([]int, 2)
     for sindex := range searchers {
@@ -299,12 +342,23 @@ func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [
     }
     return
 }
+*/
 
+
+
+//
+//
+// AlumaPaster has been moved into filtering module
+//
+//
+/*
 func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int, ndata [][]int) {
+    //
     // strada should be inserted in data array
     // delims with indexes included in strada will be ignored
     // data  with indexes included  in strada will be ignored
-    //fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
+    // fmt.Printf("  delims: %v\n  data: %v\n strada: %v\n",delims,data,strada)
+    //
     var last_delim_index int
     var last_data_index  int
     delims_last_elem := delims[(len(delims)-1)]
@@ -455,7 +509,14 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
     }
     return //ndelims,ndata
 }
+*/
 
+//
+//
+// DigitInInterval had been moved into commons 
+//
+//
+/*
 func DigitInInterval(digit int, interval []int) (int) {
     if digit <= interval[1] && digit >= interval[0] {
         return DIGIT_IN_INTERVAL
@@ -468,8 +529,14 @@ func DigitInInterval(digit int, interval []int) (int) {
     }
     return 0
 }
+*/
 
-
+//
+//
+// Now Shifter is in filtering module 
+//
+//
+/*
 func Shifter(interval [][]int)(ninterval [][]int) {
     var skipped []int
     for i:= range interval {
@@ -498,7 +565,16 @@ func Shifter(interval [][]int)(ninterval [][]int) {
     }
     return
 }
+*/
 
+
+//
+//
+// CombineDoubleSymbols is in filtering module 
+//
+//
+
+/*
 func CombineDoubleSymbols ( quotes_indexes [][]int  )(combined_quotes [][]int) {
 
     if len(quotes_indexes) >=2 && len(quotes_indexes)%2 == 0 {
@@ -521,4 +597,4 @@ func CombineDoubleSymbols ( quotes_indexes [][]int  )(combined_quotes [][]int) {
         return combined_quotes
     }
     return
-}
+}*/
