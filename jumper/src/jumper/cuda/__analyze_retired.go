@@ -1,6 +1,7 @@
 package cuda
-import "strings"
+
 import "fmt"
+import "strings"
 import "unicode"
 
 /*
@@ -10,6 +11,13 @@ var splitted_by_colon  int = 1
 /* when it facing with an of the delimiters keep it in mind and try to find next . then group text between 
 both delimiters to array  */
 
+//
+//
+// has been moved into analyzing package
+//
+//
+
+/*
 var ABC = []string  { "A","a","B","b","C","c","D","d","E","e","F","f","G","g","H","h","I","i","J","j","K","k","L","l","M","m","N","n","O","o","P","p","Q","q","R","r","S","s","T","t","U","u","V","v","W","w","X","x","Y","y","Z","z" }
 
 var NUMBERS                     = []string { "0","1","2","3","4","5","6","7","8","9" }
@@ -124,18 +132,29 @@ func SignMap()(signs map[int]string) {
 
 
 }
+*/
+//
+//
+//
 
+
+/*
 func GetKeyByValue(signs map[int]string, string_value string) (key int) {
-
-
     for key, value :=range signs {
         if value == string_value {
             return key
         }
-
     }
     return -1
 }
+*/
+
+//
+//
+// functions below has been moved into analyze
+//
+//
+/*
 func IsUnicodeLetter(char string)(yes bool) {
     for _,r := range char  { // knows about russian letters
         yes = unicode.IsLetter(r)
@@ -149,8 +168,8 @@ func IsUnicodeDigit(char string)(yes bool) {
     }
     return yes
 }
-func IsDigitIn(digit int, digits_sets ...[]int) (yes bool) {
 
+func IsDigitIn(digit int, digits_sets ...[]int) (yes bool) {
     for i := range digits_sets {
         set := digits_sets[i]
         for s := range set {
@@ -165,7 +184,6 @@ func IsDigitIn(digit int, digits_sets ...[]int) (yes bool) {
     return
 }
 func IsSymbolIn(char string, symbols_sets ...[]string) (yes bool) {
-
     for i := range symbols_sets {
         set := symbols_sets[i]
         for s := range set {
@@ -179,9 +197,20 @@ func IsSymbolIn(char string, symbols_sets ...[]string) (yes bool) {
     }
     return
 }
+*/
 
+//
+//
+//
+//
+//
+
+
+//
+// moved into analyze/maps.go
+//
+/*
 func ValueExists(signs map[int]string,value string)(found bool ) {
-
     values:=GetMapValues(signs)
     for i := range values {
         if values[i]==value {
@@ -189,18 +218,26 @@ func ValueExists(signs map[int]string,value string)(found bool ) {
         }
     }
     return found
-
 }
 
 func GetMapValues(signs map[int]string)(values []string ){
-
     for _, value := range signs {
         values=append(values, value)
     }
     return values
 }
+*/
+//
+//
+//
 
 //var SQ_CU
+
+//
+//
+// has been moved into analyze module
+//
+/*
 func GetSignsIndexes(entry string)(map[int][]int) {
 
    sign_map:=SignMap()
@@ -221,44 +258,40 @@ func GetSignsIndexes(entry string)(map[int][]int) {
     return sign_indexes
 
 }
+*/
+//
+//
+//
+//
 
 
-
+/*
 func AcidPriorityAnalyzer (entry string) () {
     //lineSplitBySpace:=
     //lineSplitByQuote:=
     //lineSplitByColon:=
-
 }
 
 func AcidSequencer(entry string) ()  {
-
-
 }
-
+*/
 //func 
 
 /*
-
 var SECTION_SQUARE_OPEN = int  0 
-
-
-
-
-
-
-
+*/
+/*
+func SortByNested ( entry string ) () {
+}
 */
 
-func SortByNested ( entry string ) () {
-
-
-
-
-}
+//
+//
+//
+//
+/*
 
 func GetSignScope( lineAsArray []string, sign int, sign_pos int) (scope [][2]int) {
-
     switch {
         case sign==EQUAL:
             var first_part [2]int
@@ -272,8 +305,6 @@ func GetSignScope( lineAsArray []string, sign int, sign_pos int) (scope [][2]int
             return scope
     }
     return scope
-
-
 }
 
 
@@ -289,17 +320,12 @@ func GoTillAnyOfSign( lineAsArray []string, signs []int, since int, direction in
 
         if direction==RIGHT {
 
-
         } else if direction==LEFT {
 
         } else {
-
             return -1, NOT_FOUND
-
         }
-
     }
-
     return index, NOT_FOUND
 
 }
@@ -307,16 +333,25 @@ func GoTillAnyOfSign( lineAsArray []string, signs []int, since int, direction in
 func CheckMatchingRx( entry string ) (code int) {
     return code
 }
-
+*/
+//
+//
+//
+//
+/*
 func PopArrray( double [][]int) (single []int) {
     if len(double)  ==  1 {
         single=double[0]
     }
     return single
 }
-
+*/
+//
+//
+// GetIndexes has been moved into analyze module
+//
+//
 func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
-
     var delimPair = []int   {-1,-1}
     var dataPair  = []int   {-1,-1}
     //var offset int
@@ -360,7 +395,6 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
                         }
                         delimPair=[]int{-1, -1}
                     }*/
-
             }
         } else {
             if dataPair[0]  == -1 {
@@ -374,7 +408,12 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
     }
     return delims,data
 }
-
+//
+//
+// Functions below has been moved into analyze module
+//
+//
+/*
 func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected []string) {
     for i := range  lineAsArray {
         char:= lineAsArray[i]
@@ -414,3 +453,9 @@ func PrepareData(lineAsArray []string, delims_indexes [][]int ) (data [][][]int)
     }
     return data
 }
+*/
+//
+//
+//
+//
+//

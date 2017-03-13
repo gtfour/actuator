@@ -1,7 +1,7 @@
 package filtering
 
 import "fmt"
-import "jumper/cuda/commons"
+import "jumper/cuda/analyze"
 
 func BaseFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
     //
@@ -28,9 +28,9 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
     grave_quote  :=[]string{"`"}
 
 
-    single_quote_indexes := commons.ArrayInArrayIndexes(lineAsArray, single_quote)
-    double_quote_indexes := commons.ArrayInArrayIndexes(lineAsArray, double_quote)
-    grave_quote_indexes  := commons.ArrayInArrayIndexes(lineAsArray, grave_quote)
+    single_quote_indexes := analyze.ArrayInArrayIndexes(lineAsArray, single_quote)
+    double_quote_indexes := analyze.ArrayInArrayIndexes(lineAsArray, double_quote)
+    grave_quote_indexes  := analyze.ArrayInArrayIndexes(lineAsArray, grave_quote)
 
     var quotes_complete_indexes   [][]int
     var data_inside_quote_indexes [][]int
@@ -80,7 +80,7 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
     //PATH_SPEC_CHARS     :=[]string {"/"}
     PATH_SPEC_CHARS       :=[]string{"%",":","/","@","?","#","-",".","_","+","="}
     path_marker           :=[]string {"/"}
-    path_marker_indexes   :=commons.ArrayInArrayIndexes(lineAsArray,path_marker)
+    path_marker_indexes   :=analyze.ArrayInArrayIndexes(lineAsArray,path_marker)
 
     if len(path_marker_indexes)>0 {
         var path_complete_indexes [][]int
@@ -95,7 +95,7 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
                 rightSearcher          := Searcher{direction:RIGHT_DIRECTION}
                 rightSearcher.since    =  path_index[1]
                 rightSearcher.accepter = func (char string)(bool) {
-                                         return commons.IsUnicodeLetter(char) || commons.IsUnicodeDigit(char) || commons.IsSymbolIn(char, PATH_SPEC_CHARS )
+                                         return analyze.IsUnicodeLetter(char) || analyze.IsUnicodeDigit(char) || analyze.IsSymbolIn(char, PATH_SPEC_CHARS )
                                      }
                 searchers:=[]Searcher {rightSearcher, leftSearcher}
                 new_indexes:=RunSearchers(lineAsArray, searchers)
@@ -117,7 +117,7 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
     URL_SPEC_CHARS     := []string{"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
     url_marker_short   := []string{":","/","/"}
     url_marker_long    := []string{":","/","/","/"}
-    url_marker_indexes := commons.ArrayInArrayIndexes(lineAsArray,url_marker_short,url_marker_long)
+    url_marker_indexes := analyze.ArrayInArrayIndexes(lineAsArray,url_marker_short,url_marker_long)
 
     if len(url_marker_indexes)>0 {
         var url_complete_indexes [][]int
@@ -127,13 +127,13 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
             leftSearcher          := Searcher{direction:LEFT_DIRECTION}
             leftSearcher.since    =  url_index[0]
             leftSearcher.accepter =  func (char string)(bool) {
-                                         return commons.IsUnicodeLetter(char) || commons.IsUnicodeDigit(char)
+                                         return analyze.IsUnicodeLetter(char) || analyze.IsUnicodeDigit(char)
                                      }
 
             rightSearcher          := Searcher{direction:RIGHT_DIRECTION}
             rightSearcher.since    =  url_index[1]
             rightSearcher.accepter = func (char string)(bool) {
-                                         return commons.IsUnicodeLetter(char) || commons.IsUnicodeDigit(char) || commons.IsSymbolIn(char, URL_SPEC_CHARS )
+                                         return analyze.IsUnicodeLetter(char) || analyze.IsUnicodeDigit(char) || analyze.IsSymbolIn(char, URL_SPEC_CHARS )
                                      }
             searchers             :=  []Searcher {rightSearcher, leftSearcher}
             new_indexes           :=  RunSearchers(lineAsArray, searchers)

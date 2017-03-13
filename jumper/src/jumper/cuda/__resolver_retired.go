@@ -234,7 +234,7 @@ func(c *Clutch)UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(
 
 //
 //
-//  ArrayInArrayIndexes-funtion had been moved into commons module
+//  ArrayInArrayIndexes-funtion had been moved into analyze module
 //
 //
 /*
@@ -282,7 +282,7 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
 
 //
 //
-// function CompareArrayLen had been moved into commons module
+// function CompareArrayLen had been moved into analyze module
 //
 //
 /*
@@ -513,7 +513,7 @@ func AlumaPaster (delims [][]int, data [][]int, strada [][]int) (ndelims [][]int
 
 //
 //
-// DigitInInterval had been moved into commons 
+// DigitInInterval had been moved into analyze 
 //
 //
 /*

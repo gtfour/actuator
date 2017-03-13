@@ -1,4 +1,4 @@
-package commons
+package analyze
 
 var FOUND_IS_EMPTY         int = -4004
 
