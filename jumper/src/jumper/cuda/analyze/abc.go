@@ -115,5 +115,52 @@ func CheckMatchingRx( entry string ) (code int) {
     return code
 }
 
+func GetSeparatorIndexes (entry, sep string) (indexes []int) {
+
+    chars := strings.Split(entry,"")
+    for char := range chars {
+        if chars[char] == sep {
+            indexes=append(indexes, char)
+        }
+    }
+    return indexes
+}
 
 
+func RemoveSpaces(lineAsArray []string, remove_type int)([]int) {
+
+    LEADING    :=0
+    CLOSING    :=1
+    BOTH       :=2
+
+    //lineAsArray:=strings.Split(entry, "")
+    leadingChar:=0
+    closingChar:=len(lineAsArray)-1
+    leadReady:=false
+    closeReady:=false
+    for char := range lineAsArray {
+        if (remove_type==LEADING || remove_type==BOTH) && lineAsArray[char] != " " {
+                if leadReady != true {
+
+                    leadingChar=char
+                    leadReady=true
+                    if remove_type==LEADING { break }
+
+                }
+        }
+
+        closing_char:=len(lineAsArray)-1-char
+
+        if (remove_type==CLOSING || remove_type==BOTH) && (lineAsArray[closing_char]!=" ")  {
+                 if closeReady != true {
+                     closingChar=closing_char // +1
+                     closeReady=true
+                     if remove_type==CLOSING { break }
+                 }
+
+        }
+        if closeReady && leadReady { break }
+    }
+    if closingChar<leadingChar { return []int {0,0} }
+    return []int {leadingChar,closingChar}
+}

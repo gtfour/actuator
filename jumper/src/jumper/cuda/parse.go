@@ -83,6 +83,10 @@ func ReplaceTabsToSpaces ( lineAsArray []string ) ( newlineAsArray []string ) {
 }
 
 
+/* 
+//
+// now is available from analyze module
+//
 func GetSeparatorIndexes (entry, sep string) (indexes []int) {
 
     chars := strings.Split(entry,"")
@@ -93,6 +97,7 @@ func GetSeparatorIndexes (entry, sep string) (indexes []int) {
     }
     return indexes
 }
+*/
 
 func GetWordIndexes (entry string) (indexes []int) {
 
@@ -224,6 +229,13 @@ func Escape_EqualSign (lineAsArray []string) (words_indexes [][]int) {
 
 }
 
+
+
+/*
+//
+// has been moved into analyze module
+//
+
 func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
 
     entryAsArray:=strings.Split(entry,"")
@@ -329,6 +341,14 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
 
 }
 
+*/
+
+
+
+/*
+//
+// has been moved into analyze module
+//
 func DebugCharCounter (line  string) (heads, foots []string) {
 
     lineAsArray:=strings.Split(line,"")
@@ -358,6 +378,13 @@ func DebugPrintCharCounter (line string) {
     }
 
 }
+*/
+
+
+/*
+//
+// moved into analyze module
+//
 
 func RemoveSpaces(lineAsArray []string, remove_type int)([]int) {
 
@@ -396,6 +423,8 @@ func RemoveSpaces(lineAsArray []string, remove_type int)([]int) {
     if closingChar<leadingChar { return []int {0,0} }
     return []int {leadingChar,closingChar}
 }
+*/
+
 
 func Escape_Sequence(entry string)(sequences [][]int) {
 
