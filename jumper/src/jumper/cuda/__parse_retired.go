@@ -1,10 +1,11 @@
 package cuda
+/*
 
 import "strings"
 import "fmt"
 import "regexp"
 
-var comments                  =  []string {`//` , `#`}
+// var comments                  =  []string {`//` , `#`}
 var delimiters                =  []string {":", "="}
 var sequence                  =  []string {",",";"}
 var word_delimiters           =  []string {"-","_"}
@@ -20,6 +21,7 @@ var BOTH    int                  = 2
 
 // ⣳ 
 
+*/
 
 //type Section struct {
 
@@ -42,6 +44,13 @@ func Parser(entry string) ( interface{} ) {
     return nil
 }
 */
+
+//
+//
+// has been moved into analyze module
+//
+//
+/*
 func Escape_Spaces (oldlineAsArray []string) (indexes [][]int) {
     // 
     // Duplicate spaces will be present as one : wrong specification !!!
@@ -63,7 +72,14 @@ func Escape_Spaces (oldlineAsArray []string) (indexes [][]int) {
     }
     return indexes
 }
+*/
 
+//
+//
+// has been moved into analyze module
+//
+//
+/*
 func IsComment(entry string) (comment bool) {
 
     for i:= range comments {
@@ -73,6 +89,16 @@ func IsComment(entry string) (comment bool) {
     }
     return false
 }
+*/
+
+
+//
+//
+// has been moved into analyze module
+//
+//
+
+/*
 
 func ReplaceTabsToSpaces ( lineAsArray []string ) ( newlineAsArray []string ) {
 
@@ -81,6 +107,8 @@ func ReplaceTabsToSpaces ( lineAsArray []string ) ( newlineAsArray []string ) {
     return strings.Split(new_entry,"")
 
 }
+
+*/
 
 
 /* 
@@ -99,6 +127,7 @@ func GetSeparatorIndexes (entry, sep string) (indexes []int) {
 }
 */
 
+/*
 func GetWordIndexes (entry string) (indexes []int) {
 
     reg:=regexp.MustCompile("[[:alnum:]-]+")
@@ -113,6 +142,9 @@ func GetWordIndexes (entry string) (indexes []int) {
     }
     return indexes
 }
+*/
+
+/*
 
 func GetQuotesIndexes (lineAsArray []string) ( indexes []int) {
 
@@ -151,6 +183,15 @@ func GroupByQuotes (lineAsArray []string) (quotes_pairs [][]int) {
 
     return
 }
+*/
+
+
+/*
+//
+//
+// has been moved into esacper.go under analyze
+//
+//
 
 func EscapeDoubleSign_functionBuilder( sign_start, sign_end string   ) ( doublesign_escaper  func ( lineAsArray []string ) ([][]int ) ) {
 
@@ -196,7 +237,9 @@ func EscapeSingleSign_functionBuilder( sign  string   ) ( singlesign_escaper  fu
     return singlesign_escaper
 }
 
+*/
 
+/*
 func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
 
     var quotes                    =  [3]string {`"`, "'", "`"}
@@ -212,6 +255,16 @@ func QuotesSpreading ( entry string) ( word_set [3]string, complete [3]bool  ) {
     }
     return word_set, complete
 }
+*/
+
+
+/*
+//
+//
+// has been moved into esacper.go under analyze
+//
+//
+
 
 func Escape_EqualSign (lineAsArray []string) (words_indexes [][]int) {
 
@@ -228,7 +281,7 @@ func Escape_EqualSign (lineAsArray []string) (words_indexes [][]int) {
     return words_indexes
 
 }
-
+*/
 
 
 /*
@@ -426,6 +479,15 @@ func RemoveSpaces(lineAsArray []string, remove_type int)([]int) {
 */
 
 
+
+//
+//
+// Functions below will be ignored 
+//
+//
+/*
+
+
 func Escape_Sequence(entry string)(sequences [][]int) {
 
     return sequences
@@ -502,3 +564,11 @@ func MakeParser(sign string) (function  func(lineAsArray []string)([][]int)) {
     return function
 
 }
+*/
+
+
+//
+//
+//
+//
+//
