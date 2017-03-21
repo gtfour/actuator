@@ -1,6 +1,7 @@
 package cuda
 
 import "sync"
+import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
 
 /*
@@ -12,21 +13,21 @@ var TARGET_DIR     int = 8008
 
 type Dynima struct {
     //
-    // :
-    // :  dynima stores  
-    // :  each file may got several dynimas binded to itself
-    // :
+    // ::
+    // ::  dynima stores  
+    // ::  each file may got several dynimas binded to itself
+    // ::
     //
     sync.RWMutex             // mutex will be used to freze operations over dynima while changing filters or modifying targets
     filters        filtering.FilterList // 
-    targets        []*Target  // ????  seems it is not necessary to store file and directory content inside dynima
+    targets        []*targets.Target  // ????  seems it is not necessary to store file and directory content inside dynima
     //
     // dataSet  []Data       // data will collected while targets processing
     //
-    // :
-    // :
-    // :
-    // :
+    // ::
+    // ::
+    // ::
+    // ::
     //
 }
 
