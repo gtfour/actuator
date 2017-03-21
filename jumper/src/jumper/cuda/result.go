@@ -13,7 +13,6 @@ type Result interface {
     GetData        ()            ([]Line,error)
     GetType        ()            (typ int)
     GetJson        ()            ([]byte,error)
-    //
     ProceedTemplate([][]string)  string
     //
 }
@@ -21,14 +20,12 @@ type Result interface {
 
 type Line struct {
     //
-    //
     data_string_slice         []string    `json:"data_string_slice"`
     data_indexes              [][]int     `json:"data_indexes"`
     delim_indexes             [][]int     `json:"delim_indexes"`
     data                      [][]string  `json:"data"`
     template                  string      `json:"template"`
     template_data_size        int         `json:"template_data_size"`
-    //
     //
 }
 
@@ -146,6 +143,7 @@ func (f *File)GetJson()([]byte,error){
 //
 // Directory methods
 //
+
 func(d *Directory)GetData()( []File,error ){
     if ( d.files!=nil ){
         return d.files, nil
@@ -169,6 +167,7 @@ func (d *Directory)GetJson()( []byte,error ){
     }
     //
 }
+
 //
 //
 //

@@ -1,6 +1,7 @@
 package cuda
 
 import "sync"
+import "jumper/cuda/filtering"
 
 /*
 var TARGET_LINE    int = 8000
@@ -17,11 +18,13 @@ type Dynima struct {
     // :
     //
     sync.RWMutex             // mutex will be used to freze operations over dynima while changing filters or modifying targets
-    filters       FilterList // 
-    targets       []*Target  // ????  seems it is not necessary to store file and directory content inside dynima
+    filters        filtering.FilterList // 
+    targets        []*Target  // ????  seems it is not necessary to store file and directory content inside dynima
     //
     // dataSet  []Data       // data will collected while targets processing
     //
+    // :
+    // :
     // :
     // :
     //
@@ -43,7 +46,7 @@ type Target struct {  // interface {
 */
 
 
-func(d *Dynima)AppendFilter(f *Filter)(error){
+func(d *Dynima)AppendFilter(f *filtering.Filter)(error){
     //
     return nil
     //
@@ -77,7 +80,7 @@ func(d *Dynima)AddTarget(t *Target)(error){
     //
 }
 //
-func(d *Dynima)RemoveTarget(t *Target)(error){
+func(d *Dynima)RemoveTarget(t *Target)( error ){
     // 
     //
     return nil
@@ -85,7 +88,7 @@ func(d *Dynima)RemoveTarget(t *Target)(error){
     //
 }
 //
-func(d *Dynima)getTarget(tgt_id int)(t *Target,err error){
+func(d *Dynima)getTarget(tgt_id int)( t *Target, err error ){
     //
     //
     return
