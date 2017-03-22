@@ -5,10 +5,10 @@ import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
 
 /*
-var TARGET_LINE    int = 8000
-var TARGET_SECTION int = 8002
-var TARGET_FILE    int = 8004
-var TARGET_DIR     int = 8008
+//  var  TARGET_LINE    int = 8000
+//  var  TARGET_SECTION int = 8002
+//  var  TARGET_FILE    int = 8004
+//  var  TARGET_DIR     int = 8008
 */
 
 type Dynima struct {
@@ -18,11 +18,12 @@ type Dynima struct {
     // ::  each file may got several dynimas binded to itself
     // ::
     //
-    sync.RWMutex             // mutex will be used to freze operations over dynima while changing filters or modifying targets
-    filters        filtering.FilterList // 
-    targets        []*targets.Target  // ????  seems it is not necessary to store file and directory content inside dynima
+    sync.RWMutex                           // mutex will be used to freze operations over dynima while changing filters or modifying targets
+    filters        filtering.FilterList    // 
+    targets        targets.TargetList      // ????  seems it is not necessary to store file and directory content inside dynima
+    configured     bool
     //
-    // dataSet  []Data       // data will collected while targets processing
+    // dataSet  []Data                     // data will collected while targets processing
     //
     // ::
     // ::
@@ -47,12 +48,6 @@ type Target struct {  // interface {
 */
 
 
-func(d *Dynima)AppendFilter(f *filtering.Filter)(error){
-    //
-    return nil
-    //
-}
-//
 func(d *Dynima)RunFilters()( r *Result, err error ){
     //
     // apply filters targets data
@@ -64,16 +59,30 @@ func(d *Dynima)RunFilters()( r *Result, err error ){
     //
     //
 }
-//
-func(d *Dynima)SetSource(t *Target)(error){
+
+func(d *Dynima)AppendFilter( f *filtering.Filter)(error){
+    //
+    return nil
+    //
+}
+
+func(d *Dynima)SetSource(t *targets.Target)(error){
     // unnecessary 
     //
     return nil
     //
     //
 }
-//
-func(d *Dynima)AddTarget(t *Target)(error){
+
+func(d *Dynima)AppendTarget(t *targets.Target)(error){
+    // 
+    //
+    return nil
+    //
+    //
+}
+
+func(d *Dynima)RemoveTarget(t *targets.Target)( error ){
     // 
     //
     return nil
@@ -81,15 +90,7 @@ func(d *Dynima)AddTarget(t *Target)(error){
     //
 }
 //
-func(d *Dynima)RemoveTarget(t *Target)( error ){
-    // 
-    //
-    return nil
-    //
-    //
-}
-//
-func(d *Dynima)getTarget(tgt_id int)( t *Target, err error ){
+func(d *Dynima)getTarget(tgt_id int)( t *targets.Target, err error ){
     //
     //
     return
@@ -97,11 +98,18 @@ func(d *Dynima)getTarget(tgt_id int)( t *Target, err error ){
     //
 }
 //
-func(d *Dynima)getChildTargets(parent_target_id int)(child_targets *[]Target, err error){
+func(d *Dynima)getChildTargets(parent_target_id int)(child_targets *[]targets.Target, err error){
     //
     //
     return
     //
     //
+}
+
+func NewDynima()( *Dynima ){
+    var d Dynima
+    d.filters     = make( filtering.FilterList, 0 )
+    d.targets     = make( targets.TargetList,   0 )
+    return &d
 }
 //

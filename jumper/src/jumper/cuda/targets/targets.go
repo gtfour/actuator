@@ -5,16 +5,18 @@ import "path"
 import "strconv"
 import "jumper/common/file"
 
+type TargetList []*Target
+
 type Target struct {
     //
     //
-    //  # Get:       ()(lineAsArray [][]string, err error)
-    //  # GetType:   ()(typ int)
-    //  # Gather:    ()(error)
-    //  # PushPart:  ([][]string)(error)
+    //  #  Get:       ()(lineAsArray [][]string, err error)
+    //  #  GetType:   ()(typ int)
+    //  #  Gather:    ()(error)
+    //  #  PushPart:  ([][]string)(error)
     //
-    //  # Target could  store content of line, file or also just decribe an directory 
-    //  # correction: section could not be determined as section on this level of processing
+    //  #  Target could  store content of line, file or also just decribe an directory 
+    //  #  correction: section could not be determined as section on this level of processing
     //
     //
     selfIndex       int         //  // self uniq   number 
@@ -28,6 +30,17 @@ type Target struct {
     //
     diving          bool  // gathering nested directories. seems that i can't implement this feauture yet here
     nestedTargets   []*Target
+    //
+    //
+}
+
+func(tl *TargetList)Append(t *Target)(err error){
+    if t.configured {
+        (*tl) = append((*tl), t)
+        return nil
+    } else {
+        return targetWasNotConfigured
+    }
 }
 
 
