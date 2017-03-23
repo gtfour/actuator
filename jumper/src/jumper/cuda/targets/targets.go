@@ -32,6 +32,11 @@ type Target struct {
     nestedTargets   []*Target
     //
     //
+    isLogFile                 bool
+    isDirectoryWithLogFiles   bool
+    offset                    int64 // for log files 
+    //
+    //
 }
 
 func(tl *TargetList)Append(t *Target)(err error){
@@ -42,6 +47,11 @@ func(tl *TargetList)Append(t *Target)(err error){
         return targetWasNotConfigured
     }
 }
+
+func(tl *TargetList)IsEmpty()(bool){
+    if len(*tl) <= 0 { return true } else { return false }
+}
+
 
 
 
