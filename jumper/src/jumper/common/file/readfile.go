@@ -1,11 +1,17 @@
 package file
-//import "fmt"
+
+import "os"
+import "io"
+import "fmt"
+import "bufio"
 import "strings"
 import "io/ioutil"
 import "jumper/actuator"
 
+
+
+
 func ReadFile(filename string)(lines []string,err error){
-    //
     //
     content, err := ioutil.ReadFile(filename)
     if err != nil {
@@ -14,10 +20,52 @@ func ReadFile(filename string)(lines []string,err error){
     lines = strings.Split(string(content), "\n")
     return lines, nil
     //
-    //
 }
 
-func ReadDir(dirname string)([]string,error){
+func ReadFileWithOffset( filename string, offset int64 )( lines []string,new_offset int64 ,err error ) {
+    if filename != "" {
+
+        file, err := os.Open(filename)
+        defer file.Close()
+
+        if err != nil {
+            return lines,0,err
+        }
+
+        var ORIGIN int     =   0
+        _,err =  file.Seek( offset, ORIGIN )
+        if err == nil {
+            reader        := bufio.NewReader(file)
+            file_info,err := file.Stat()
+            if err != nil {
+                return lines, 0, err
+            }
+            new_offset = file_info.Size()
+            fmt.Printf("--\nFile size: %v\n--", new_offset)
+            //
+            eof := false
+            for !eof {
+                var line string
+                line, err = reader.ReadString('\n')
+                if err == io.EOF || err == nil {
+                    err = nil   // io.EOF isn't really an error
+                    eof = true  // this will end the loop at the next iteration
+                    lines = append(lines, line)
+                } else if err != nil {
+                    break
+                }
+            }
+            //
+        }
+        return lines,new_offset,err
+
+    } else {
+        err = filename_is_empty
+        return
+    }
+}
+
+func ReadDirContent(dirname string)([]string,error){
     //
     // returning filenames inside specified dir
     // 

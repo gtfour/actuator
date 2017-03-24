@@ -49,6 +49,14 @@ type File struct {
     //
 }
 
+type Command struct {
+    //
+    path      string     `json:"path"`
+    sections  []Section  `json:"sections"`
+    //
+}
+
+
 type Directory struct {
     //
     path      string    `json:"path"`

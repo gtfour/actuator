@@ -13,36 +13,25 @@ import "jumper/cuda/filtering"
 
 */
 
-type Mark struct {
-    // bounding on change of an  directory/file or change of an command output
-
-}
-
 type Dynima struct {
-    //
-    //  ::
-    //  ::
-    //  ::  dynima stores  
-    //  ::  each file may got several dynimas binded to itself
-    //  ::
-    //
+    //  : :
+    //  : :  dynima stores  
+    //  : :  each file may got several dynimas binded to itself
+    //  : :
     sync.RWMutex                             //  mutex will be used to freze operations over dynima while changing filters or modifying targets
     filters          filtering.FilterList    // 
     targets          targets.TargetList      //  ????  seems it is not necessary to store file and directory content inside dynima
     configured       bool                    //
     offset           int64                   //  for log files
-    mark             Mark
-    //
     //  dataSet  []Data                      // data will collected while targets processing
-    //  ::
-    //  ::
-    //  ::
-    //  ::
-    //  ::
-    //
+    //  : :
+    //  : :
+    //  : :
+    //  : :
 }
 
 /*
+
 type Target struct {  // interface {
     //
     //  Get       ()(lineAsArray [][]string, err error)
@@ -55,6 +44,7 @@ type Target struct {  // interface {
     lineAsArray [][]int
 
 }
+
 */
 
 
