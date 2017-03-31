@@ -5,7 +5,8 @@ import "path"
 import "strconv"
 import "jumper/common/file"
 
-type TargetList []*Target
+type TargetList        []*Target
+type TargetListRigaSLR []Target
 
 type Target struct {
     //
@@ -19,17 +20,18 @@ type Target struct {
     //  #  correction: section could not be determined as section on this level of processing
     //
     //
-    selfIndex       int         //  // self uniq   number 
-    parentIndex     int         //  // uniq parent target number
-    typ             int
-    path            string
-    pathShort       string
-    //lineAsArray   [][]string
-    lines           []string
-    configured      bool
+    selfIndex                 int         //  // self uniq   number 
+    parentIndex               int         //  // uniq parent target number
+    typ                       int
+    path                      string
+    pathShort                 string
+    //lineAsArray             [][]string
+    lines                     []string
+    configured                bool
+    gatherFailed              bool
     //
-    diving          bool  // gathering nested directories. seems that i can't implement this feauture yet here
-    nestedTargets   []*Target
+    diving                    bool  // gathering nested directories. seems that i can't implement this feauture yet here
+    nestedTargets             []*Target
     //
     //
     isLogFile                 bool
@@ -42,6 +44,17 @@ type Target struct {
 func(tl *TargetList)Append(t *Target)(err error){
     if t.configured {
         (*tl) = append((*tl), t)
+        return nil
+    } else {
+        return targetWasNotConfigured
+    }
+}
+
+func(tl *TargetListRigaSLR)Append(t *Target)(err error){
+    if t.configured {
+        var target Target
+        target = *t
+        (*tl) = append((*tl), target)
         return nil
     } else {
         return targetWasNotConfigured
@@ -141,11 +154,14 @@ func(t *Target)Gather()(err error){
     if !t.configured { return targetWasNotConfigured }
     switch target_type:=t.typ; target_type {
         case TARGET_LINE:
-            //
+            err = nil
         case TARGET_FILE:
-            t.gatherFile()
+            err = t.gatherFile()
         case TARGET_DIR:
-            t.gatherDir()
+            err = t.gatherDir()
+    }
+    if err != nil {
+        t.gatherFailed = true
     }
     return
 }
@@ -219,3 +235,16 @@ func(t *Target)GetNestedTargets()([]*Target) {
     }*/
     return t.nestedTargets
 }
+
+
+
+func(t *Target)CleanLines()() {
+    /*for i:= range t.nestedTargets {
+        nestedTargetAddr:=t.nestedTargets[i]
+        var target Target
+    }*/
+    t.lines = []string {}
+}
+
+func(t *Target)GatherIsFailed()(bool) {   return t.gatherFailed  }
+func(t *Target)IsConfigured()(bool)   {   return t.configured    }

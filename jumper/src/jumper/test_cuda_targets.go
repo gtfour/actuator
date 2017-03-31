@@ -13,7 +13,7 @@ func main(){
     line                   := []string{"root:x:0:0:root:/root:/bin/bash"}
     tgt.AddLine(line)
     //
-    fmt.Printf("\n>>    Line Target:    <<\n%v\nError:\n%v\n>>        <<",tgt,err)
+    fmt.Printf("\n\n>>    Line Target:    <<\n%v\nError:\n%v\n>>        <<",tgt,err)
     // -- -- -- --
     // file target
     // -- -- -- --
@@ -21,7 +21,7 @@ func main(){
     targetFileConfig["type"]   =  "TARGET_FILE"
     targetFileConfig["path"]   =  "/etc/wengine/wengine.conf"
     tgtFile,err                := targets.NewTarget(targetFileConfig)
-    fmt.Printf("\n>>    File Target:    <<\n%v\nError:\n%v\n---\n",tgtFile,err)
+    fmt.Printf("\n\n>>    File Target:    <<\n%v\nError:\n%v\n---\n",tgtFile,err)
     err=tgtFile.Gather()
     fmt.Printf("%v\n---\nError:%v\n>>        <<", tgtFile,err)
     // -- -- -- --
@@ -31,7 +31,7 @@ func main(){
     targetDirectoryConfig["type"]      = "TARGET_DIRECTORY"
     targetDirectoryConfig["path"]      =  "/etc/wengine/"
     tgtDirectory,err                   := targets.NewTarget(targetDirectoryConfig)
-    fmt.Printf("\n>>    Directory Target:    <<\n%v\nError:\n%v\n---\n",tgtDirectory,err)
+    fmt.Printf("\n\n>>    Directory Target:    <<\n%v\nError:\n%v\n---\n",tgtDirectory,err)
     err=tgtDirectory.Gather()
     directory_nested_targets           := tgtDirectory.GetNestedTargets()
     fmt.Printf("%v\n---\n>>    Nested Targets:    <<\n%v\nError:%v\n-----", tgtDirectory, directory_nested_targets, err)

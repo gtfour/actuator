@@ -18,12 +18,12 @@ type Dynima struct {
     //  : :  dynima stores  
     //  : :  each file may got several dynimas binded to itself
     //  : :
-    sync.RWMutex                             //  mutex will be used to freze operations over dynima while changing filters or modifying targets
-    filters          filtering.FilterList    // 
-    targets          targets.TargetList      //  ????  seems it is not necessary to store file and directory content inside dynima
-    configured       bool                    //
-    offset           int64                   //  for log files
-    //  dataSet  []Data                      // data will collected while targets processing
+    sync.RWMutex                            //   mutex will be used to freze operations over dynima while changing filters or modifying targets
+    filters         filtering.FilterList    // 
+    targets         targets.TargetList      //   ????  seems it is not necessary to store file and directory content inside dynima
+    configured      bool                    //
+    offset          int64                   //   for log files, just when dynima instance binded to single file
+    //  dataSet  []Data                     //   data will collected while targets processing
     //  : :
     //  : :
     //  : :
@@ -54,6 +54,24 @@ func(d *Dynima)RunFilters()(r *Result, err error){
     //
     d.Lock()
     defer d.Unlock()
+    //
+    // test block
+    //
+    var readableTargets targets.TargetListRigaSLR
+
+    for i:= range d.targets {
+        target := d.targets[i]
+        target.Gather()
+        if target.GatherIsFailed() == false && target.IsConfigured() == true {
+            readableTargets.Append(target)
+        }
+    }
+
+    for i:= range readableTargets {
+        target := readableTargets[i]
+    }
+    //
+    //
     //
     return r,err
     //
