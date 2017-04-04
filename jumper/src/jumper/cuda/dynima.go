@@ -3,6 +3,7 @@ package cuda
 import "sync"
 import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
+import "jumper/cuda/result"
 
 /*
 
@@ -48,7 +49,7 @@ type Target struct {  // interface {
 */
 
 
-func(d *Dynima)RunFilters()(r *Result, err error){
+func(d *Dynima)RunFilters()(r *result.Result, err error){
     //
     // apply filters targets data
     //
@@ -59,15 +60,19 @@ func(d *Dynima)RunFilters()(r *Result, err error){
     //
     var readableTargets targets.TargetListRigaSLR
 
-    for i:= range d.targets {
+    for i := range d.targets {
         target := d.targets[i]
         target.Gather()
         if target.GatherIsFailed() == false && target.IsConfigured() == true {
             readableTargets.Append(target)
         }
     }
-
-    for i:= range readableTargets {
+    //
+    //
+    //
+    var result result.ResultSet
+    //
+    for i := range readableTargets {
         target := readableTargets[i]
     }
     //
@@ -140,6 +145,20 @@ func NewDynima()( *Dynima ){
     return &d
     //
     //
+}
+
+func MakeBlankResult(t targets.Target)(r *result.Result){
+    switch target_type:=t.GetType();target_type {
+        case targets.TARGET_LINE:
+            return result.BlankResult(result.RESULT_TYPE_LINE)
+        case targets.TARGET_SECTION:
+            return result.BlankResult(result.RESULT_TYPE_SECTION)
+        case targets.TARGET_FILE:
+            return result.BlankResult(result.RESULT_TYPE_FILE)
+        case targets.TARGET_DIR:
+            return result.BlankResult(result.RESULT_TYPE_DIR)
+    }
+    return
 }
 //
 //

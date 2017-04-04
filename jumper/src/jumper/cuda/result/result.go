@@ -1,20 +1,19 @@
-package cuda
+package result
 
 import "encoding/json"
 
-var RESULT_TYPE_LINE       int = 7002
-var RESULT_TYPE_SECTION    int = 7004
-var RESULT_TYPE_FILE       int = 7006
-var RESULT_TYPE_DIRECTORY  int = 7008
-var RESULT_TYPE_DIR        int = 7008
-
 type Result interface {
     //
-    GetData        ()            ([]Line,error)
+    // // GetData        ()            ([]Line,error)
+    //
     GetType        ()            (typ int)
     GetJson        ()            ([]byte,error)
-    ProceedTemplate([][]string)  string
+    // // ProceedTemplate([][]string)  string
     //
+}
+
+type ResultSet struct {
+    results []Result
 }
 
 
@@ -68,6 +67,8 @@ type Directory struct {
 // Line methods
 //
 
+
+
 func(l *Line)GetData()(lines []Line,err error){
     //
     if (l!=nil){
@@ -81,10 +82,13 @@ func(l *Line)GetData()(lines []Line,err error){
 }
 
 func (l *Line)GetType()(int){
+    //
     return RESULT_TYPE_LINE
+    //
 }
 
 func (l *Line)GetJson()([]byte,error){
+    //
     if l == nil { return nil,nilResultError }
     line_byte,err := json.Marshal(l)
     if err != nil {
@@ -92,6 +96,7 @@ func (l *Line)GetJson()([]byte,error){
     } else {
         return line_byte,nil
     }
+    //
 }
 
 //
@@ -177,5 +182,54 @@ func (d *Directory)GetJson()( []byte,error ){
 }
 
 //
+// Result Set methods
+//
+
+func(rs *ResultSet)GetData()([]Result,error ){
+    if ( rs.results != nil ){
+        return rs.results, nil
+    } else {
+        return nil, nilResultError
+    }
+}
+
+func(rs *ResultSet)GetType()(int){
+    return RESULT_TYPE_SET
+}
+
+func(rs *ResultSet)GetJson()( []byte,error ){
+    //
+    if rs == nil { return nil, nilResultError }
+    result_set_byte,err := json.Marshal(rs)
+    if err != nil {
+        return nil, err
+    } else {
+        return result_set_byte, nil
+    }
+    //
+}
+
 //
 //
+//
+
+func BlankResult(rtype int)(Result){
+    //
+    switch rtype {
+        case RESULT_TYPE_LINE:
+            var line Line
+            return line
+        case RESULT_TYPE_SECTION:
+            var section Section
+            return section
+        case RESULT_TYPE_FILE:
+            var file File
+            return file
+        case RESULT_TYPE_DIRECTORY:
+            var directory Directory
+            return directory
+        default:
+            return nil
+    }
+    //
+}
