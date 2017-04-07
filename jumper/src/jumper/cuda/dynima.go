@@ -21,7 +21,7 @@ type Dynima struct {
     //  : :
     sync.RWMutex                            //   mutex will be used to freze operations over dynima while changing filters or modifying targets
     filters         filtering.FilterList    // 
-    targets         targets.TargetList      //   ????  seems it is not necessary to store file and directory content inside dynima
+    targets         targets.TargetListPtrs  //   ????  seems it is not necessary to store file and directory content inside dynima
     configured      bool                    //
     offset          int64                   //   for log files, just when dynima instance binded to single file
     //  dataSet  []Data                     //   data will collected while targets processing
@@ -58,7 +58,7 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     //
     // test block
     //
-    var readableTargets targets.TargetListRigaSLR
+    var readableTargets targets.TargetList
 
     for i := range d.targets {
         target := d.targets[i]
@@ -70,10 +70,13 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     //
     //
     //
-    var result result.ResultSet
+    var resultSet result.ResultSet
     //
     for i := range readableTargets {
-        target := readableTargets[i]
+        //
+        target       := readableTargets[i]
+        blankResult  := MakeBlankResult(target)
+        //
     }
     //
     //
@@ -147,7 +150,7 @@ func NewDynima()( *Dynima ){
     //
 }
 
-func MakeBlankResult(t targets.Target)(r *result.Result){
+func MakeBlankResult(t targets.Target)(result.Result){
     switch target_type:=t.GetType();target_type {
         case targets.TARGET_LINE:
             return result.BlankResult(result.RESULT_TYPE_LINE)
@@ -157,8 +160,9 @@ func MakeBlankResult(t targets.Target)(r *result.Result){
             return result.BlankResult(result.RESULT_TYPE_FILE)
         case targets.TARGET_DIR:
             return result.BlankResult(result.RESULT_TYPE_DIR)
+        default:
+            return nil
     }
-    return
 }
 //
 //

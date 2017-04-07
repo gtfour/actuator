@@ -71,7 +71,7 @@ type Directory struct {
 
 func(l *Line)GetData()(lines []Line,err error){
     //
-    if (l!=nil){
+    if ( l!=nil ){
         lines = make([]Line,   0)
         lines = append(lines, *l)
         return lines, nil
@@ -215,21 +215,26 @@ func(rs *ResultSet)GetJson()( []byte,error ){
 
 func BlankResult(rtype int)(Result){
     //
+    //
     switch rtype {
         case RESULT_TYPE_LINE:
             var line Line
-            return line
+            return &line
         case RESULT_TYPE_SECTION:
             var section Section
-            return section
+            return &section
         case RESULT_TYPE_FILE:
             var file File
-            return file
+            return &file
         case RESULT_TYPE_DIRECTORY:
             var directory Directory
-            return directory
+            return &directory
         default:
             return nil
     }
     //
+    //
 }
+//
+//
+//

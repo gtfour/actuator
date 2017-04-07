@@ -5,8 +5,8 @@ import "path"
 import "strconv"
 import "jumper/common/file"
 
-type TargetList        []*Target
-type TargetListRigaSLR []Target
+type TargetListPtrs  []*Target
+type TargetList      []Target
 
 type Target struct {
     //
@@ -41,7 +41,7 @@ type Target struct {
     //
 }
 
-func(tl *TargetList)Append(t *Target)(err error){
+func(tl *TargetListPtrs)Append(t *Target)(err error){
     if t.configured {
         (*tl) = append((*tl), t)
         return nil
@@ -50,7 +50,7 @@ func(tl *TargetList)Append(t *Target)(err error){
     }
 }
 
-func(tl *TargetListRigaSLR)Append(t *Target)(err error){
+func(tl *TargetList)Append(t *Target)(err error){
     if t.configured {
         var target Target
         target = *t
@@ -59,6 +59,10 @@ func(tl *TargetListRigaSLR)Append(t *Target)(err error){
     } else {
         return targetWasNotConfigured
     }
+}
+
+func(tl *TargetListPtrs)IsEmpty()(bool){
+    if len(*tl) <= 0 { return true } else { return false }
 }
 
 func(tl *TargetList)IsEmpty()(bool){
