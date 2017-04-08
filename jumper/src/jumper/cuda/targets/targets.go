@@ -25,17 +25,18 @@ type Target struct {
     typ                       int
     path                      string
     pathShort                 string
-    //lineAsArray             [][]string
+    // lineAsArray            [][]string
     lines                     []string
     configured                bool
     gatherFailed              bool
     //
-    diving                    bool  // gathering nested directories. seems that i can't implement this feauture yet here
-    nestedTargets             []*Target
+    diving                    bool         //  // gathering nested directories. seems that i can't implement this feauture yet here
+    nestedTargets             TargetList   //  //instead of TargetListPtrs
     //
     //
     isLogFile                 bool
     isDirectoryWithLogFiles   bool
+    child                     bool
     offset                    int64 // for log files 
     //
     //
@@ -49,6 +50,17 @@ func(tl *TargetListPtrs)Append(t *Target)(err error){
         return targetWasNotConfigured
     }
 }
+
+func(tl *TargetListPtrs)GetCopy()(targets TargetList){
+    for i:= range (*tl){
+        t := (*tl)[i]
+        var target Target
+        target = *t
+        targets = append(targets, target)
+    }
+    return
+}
+
 
 func(tl *TargetList)Append(t *Target)(err error){
     if t.configured {
@@ -103,6 +115,7 @@ func NewTarget(config map[string]string)(t *Target,err error){
     if typ_exist == false { return nil, targetTypeHasNotBeenSpecified }
 
     index,  index_exist := config["index"]
+
     if index_exist {
         index_int,err:=strconv.Atoi(index)
         if err == nil { new_target.selfIndex = index_int }
@@ -209,18 +222,23 @@ func(t *Target)gatherDir()(err error) {
     //
     for i := range dir_files {
         //
+        //
         dir_file                   :=  dir_files[i]
         targetFileConfig           :=  make(map[string]string,0)
         targetFileConfig["type"]   =   "TARGET_FILE"
         targetFileConfig["path"]   =   dir_file
-        tgtFile,err                :=  NewTarget(targetFileConfig)
-        if err != nil || tgtFile.configured == false { continue }
-        err = tgtFile.Gather()
+        tgtFilePtr,err                :=  NewTarget(targetFileConfig)
+        if err != nil || tgtFilePtr.configured == false { continue }
+        err = tgtFilePtr.Gather()
         //
         if err == nil {
-            tgtFile.parentIndex    =  t.selfIndex
-            t.nestedTargets        =  append( t.nestedTargets, tgtFile )
+            tgtFilePtr.parentIndex    =  t.selfIndex
+            tgtFilePtr.child          = true
+            var tgtFile Target
+            tgtFile = *tgtFilePtr
+            t.nestedTargets           =  append( t.nestedTargets, tgtFile )
         }
+        //
         //
     }
     //
@@ -232,7 +250,7 @@ func(t *Target)gatherDir()(err error) {
     //
 }
 
-func(t *Target)GetNestedTargets()([]*Target) {
+func(t *Target)GetNestedTargets()([]Target) {
     /*for i:= range t.nestedTargets {
         nestedTargetAddr:=t.nestedTargets[i]
         var target Target
@@ -247,7 +265,7 @@ func(t *Target)CleanLines()() {
         nestedTargetAddr:=t.nestedTargets[i]
         var target Target
     }*/
-    t.lines = []string {}
+    t.lines = []string{}
 }
 
 func(t *Target)GatherIsFailed()(bool) {   return t.gatherFailed  }

@@ -59,7 +59,7 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     // test block
     //
     var readableTargets targets.TargetList
-
+    //
     for i := range d.targets {
         target := d.targets[i]
         target.Gather()
@@ -71,11 +71,17 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     //
     //
     var resultSet result.ResultSet
+    _ = resultSet
     //
     for i := range readableTargets {
         //
+        //
+        //
         target       := readableTargets[i]
         blankResult  := MakeBlankResult(target)
+        _ = blankResult
+        //
+        //
         //
     }
     //
@@ -142,10 +148,12 @@ func(d *Dynima)getChildTargets(parent_target_id int)(child_targets *[]targets.Ta
 func NewDynima()( *Dynima ){
     //
     //
+    //
     var d Dynima
     d.filters     = make( filtering.FilterList, 0 )
-    d.targets     = make( targets.TargetList,   0 )
+    d.targets     = make( targets.TargetListPtrs,   0 )
     return &d
+    //
     //
     //
 }
