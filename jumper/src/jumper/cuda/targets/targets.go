@@ -31,7 +31,7 @@ type Target struct {
     gatherFailed              bool
     //
     diving                    bool         //  // gathering nested directories. seems that i can't implement this feauture yet here
-    nestedTargets             TargetList   //  //instead of TargetListPtrs
+    nestedTargets             TargetList   //  // instead of TargetListPtrs
     //
     //
     isLogFile                 bool
@@ -227,15 +227,15 @@ func(t *Target)gatherDir()(err error) {
         targetFileConfig           :=  make(map[string]string,0)
         targetFileConfig["type"]   =   "TARGET_FILE"
         targetFileConfig["path"]   =   dir_file
-        tgtFilePtr,err                :=  NewTarget(targetFileConfig)
+        tgtFilePtr,err             :=  NewTarget(targetFileConfig)
         if err != nil || tgtFilePtr.configured == false { continue }
         err = tgtFilePtr.Gather()
         //
         if err == nil {
             tgtFilePtr.parentIndex    =  t.selfIndex
-            tgtFilePtr.child          = true
-            var tgtFile Target
-            tgtFile = *tgtFilePtr
+            tgtFilePtr.child          =  true
+            var  tgtFile  Target
+            tgtFile                   =  *tgtFilePtr
             t.nestedTargets           =  append( t.nestedTargets, tgtFile )
         }
         //

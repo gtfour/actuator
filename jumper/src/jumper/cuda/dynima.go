@@ -76,11 +76,9 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     for i := range readableTargets {
         //
         //
-        //
-        target       := readableTargets[i]
-        blankResult  := MakeBlankResult(target)
-        _ = blankResult
-        //
+        target       :=  readableTargets[i]
+        blankResult  :=  MakeBlankResult(target)
+        _            =   blankResult
         //
         //
     }
@@ -150,8 +148,8 @@ func NewDynima()( *Dynima ){
     //
     //
     var d Dynima
-    d.filters     = make( filtering.FilterList, 0 )
-    d.targets     = make( targets.TargetListPtrs,   0 )
+    d.filters     = make( filtering.FilterList, 0      )
+    d.targets     = make( targets.TargetListPtrs,   0  )
     return &d
     //
     //
@@ -161,16 +159,20 @@ func NewDynima()( *Dynima ){
 func MakeBlankResult(t targets.Target)(result.Result){
     switch target_type:=t.GetType();target_type {
         case targets.TARGET_LINE:
-            return result.BlankResult(result.RESULT_TYPE_LINE)
-        case targets.TARGET_SECTION:
-            return result.BlankResult(result.RESULT_TYPE_SECTION)
+            return result.BlankResult( result.RESULT_TYPE_LINE )
         case targets.TARGET_FILE:
-            return result.BlankResult(result.RESULT_TYPE_FILE)
+            return result.BlankResult( result.RESULT_TYPE_FILE )
         case targets.TARGET_DIR:
-            return result.BlankResult(result.RESULT_TYPE_DIR)
+            return result.BlankResult( result.RESULT_TYPE_DIR )
         default:
             return nil
     }
 }
+
+//
+//
+//
+func HandleLine()(){}
+//
 //
 //
