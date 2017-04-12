@@ -4,20 +4,14 @@ import "sync"
 import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
 import "jumper/cuda/result"
-
-/*
-
-//  var  TARGET_LINE    int = 8000
-//  var  TARGET_SECTION int = 8002
-//  var  TARGET_FILE    int = 8004
-//  var  TARGET_DIR     int = 8008
-
-*/
+import "jumper/cuda/handling"
 
 type Dynima struct {
     //  : :
+    //  : :
     //  : :  dynima stores  
     //  : :  each file may got several dynimas binded to itself
+    //  : :
     //  : :
     sync.RWMutex                            //   mutex will be used to freze operations over dynima while changing filters or modifying targets
     filters         filtering.FilterList    // 
@@ -73,11 +67,14 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     var resultSet result.ResultSet
     _ = resultSet
     //
+    handler:=handling.NewHandler(nil)
+    handler.AddFilters(d.filters)
+    //
     for i := range readableTargets {
         //
         //
         target       :=  readableTargets[i]
-        blankResult  :=  MakeBlankResult(target)
+        blankResult  :=  GetResult(target)
         _            =   blankResult
         //
         //
@@ -85,13 +82,13 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     //
     //
     //
-    return r,err
+    return r, err
     //
     //
     //
 }
 
-func(d *Dynima)AppendFilter(f *filtering.Filter)(error){
+func(d *Dynima)AppendFilter( f *filtering.Filter )( error ){
     //
     //
     return nil
@@ -99,7 +96,7 @@ func(d *Dynima)AppendFilter(f *filtering.Filter)(error){
     //
 }
 
-func(d *Dynima)SetSource(t *targets.Target)(error){
+func(d *Dynima)SetSource( t *targets.Target )( error ){
     // unnecessary 
     //
     return nil
@@ -156,23 +153,6 @@ func NewDynima()( *Dynima ){
     //
 }
 
-func MakeBlankResult(t targets.Target)(result.Result){
-    switch target_type:=t.GetType();target_type {
-        case targets.TARGET_LINE:
-            return result.BlankResult( result.RESULT_TYPE_LINE )
-        case targets.TARGET_FILE:
-            return result.BlankResult( result.RESULT_TYPE_FILE )
-        case targets.TARGET_DIR:
-            return result.BlankResult( result.RESULT_TYPE_DIR )
-        default:
-            return nil
-    }
+func GetResult(t targets.Target)(result.Result){
+    return handling.Handle(t)
 }
-
-//
-//
-//
-func HandleLine()(){}
-//
-//
-//

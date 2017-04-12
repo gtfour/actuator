@@ -1,11 +1,8 @@
 package filtering
 
-import "errors"
-// import "jumper/cuda/filtering"
-// import "client/cuda/custom"
-
-var dup_name         =  errors.New("error:filter with following name is already exist")
-var name_is_none     =  errors.New("error:filter name wasn't specified")
+//  import "errors"
+//  import "jumper/cuda/filtering"
+//  import "client/cuda/custom"
 
 var GetCustonFilters =  func()(fl FilterList){ return fl  } ;
 var DefaultFilters   =  CreateDefaultFilterList()

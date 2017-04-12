@@ -3,12 +3,6 @@ package filtering
 import "fmt"
 import "jumper/cuda/analyze"
 
-var LEFT_DIRECTION         int = 1100
-var RIGHT_DIRECTION        int = 1001
-var DIGIT_LESS_INTERVAL    int = 3579
-var DIGIT_GREATER_INTERVAL int = 9753
-var DIGIT_IN_INTERVAL      int = 9779
-
 func Shifter(interval [][]int)(ninterval [][]int) {
     //
     // what this fucking function does ?? ??

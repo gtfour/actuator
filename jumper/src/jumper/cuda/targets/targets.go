@@ -20,8 +20,8 @@ type Target struct {
     //  #  correction: section could not be determined as section on this level of processing
     //
     //
-    selfIndex                 int         //  // self uniq   number 
-    parentIndex               int         //  // uniq parent target number
+    selfIndex                 int          //  // self uniq   number 
+    parentIndex               int          //  // uniq parent target number
     typ                       int
     path                      string
     pathShort                 string
@@ -37,8 +37,9 @@ type Target struct {
     isLogFile                 bool
     isDirectoryWithLogFiles   bool
     child                     bool
-    offset                    int64 // for log files 
+    offset                    int64        // // for log files 
     //
+    // # have to add fileds to check command output
     //
 }
 
