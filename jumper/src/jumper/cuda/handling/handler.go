@@ -6,16 +6,24 @@ import "jumper/cuda/filtering"
 
 type Handler struct {
     //
-    filterList filtering.FilterList
+    //  will be heavy structure with a lot of different fields
+    //
+    filters filtering.FilterList
+    target  *targets.Target
+    //
+    //
+
+    //
+    //
     //
 }
 
-func(h *Handler)AddFilters(filterList filtering.FilterList)(error) {
+func(h *Handler)AddFilters(filterList filtering.FilterList)(error){
     //
     //
     //
     if ( filterList != nil ) {
-        h.filterList = filterList
+        h.filters = filterList
         return nil
     } else {
         return filterListIsNil
@@ -25,6 +33,26 @@ func(h *Handler)AddFilters(filterList filtering.FilterList)(error) {
     //
 }
 
+// AddTargetPtr
+
+
+func(h *Handler)AddTargetPtr(target *targets.Target)(error){
+    //
+    //
+    //
+    if ( target != nil ) {
+        h.target = target
+        return nil
+    } else {
+        return filterListIsNil
+    }
+    //
+    //
+    //
+}
+
+
+//
 
 func NewHandler(config map[string]string)(h *Handler){
     // 

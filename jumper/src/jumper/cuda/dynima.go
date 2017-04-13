@@ -67,15 +67,26 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     var resultSet result.ResultSet
     _ = resultSet
     //
-    handler:=handling.NewHandler(nil)
-    handler.AddFilters(d.filters)
+    //
+    //  handler := handling.NewHandler(nil)
+    //  handler.AddFilters(d.filters)
+    //
     //
     for i := range readableTargets {
         //
         //
-        target       :=  readableTargets[i]
-        blankResult  :=  GetResult(target)
-        _            =   blankResult
+        target := readableTargets[i]
+        //
+        //
+        handler := handling.NewHandler(nil)
+        handler.AddFilters(d.filters)
+        handler.AddTargetPtr(target)
+
+        //
+        //
+        result := handler.Handle(target)
+        //blankResult := GetResult(target)
+        //_           =  blankResult
         //
         //
     }
