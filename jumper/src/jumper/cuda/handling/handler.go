@@ -62,6 +62,29 @@ func NewHandler(config map[string]string)(h *Handler){
 
 func(h *Handler)Handle(t targets.Target)(r result.Result){
     //
+    switch target_type:=t.GetType();target_type {
+        case targets.TARGET_LINE:
+            // return result.BlankResult( result.RESULT_TYPE_LINE )
+        case targets.TARGET_FILE:
+            // return result.BlankResult( result.RESULT_TYPE_FILE )
+        case targets.TARGET_DIR:
+            // return result.BlankResult( result.RESULT_TYPE_DIR )
+        default:
+            // return nil
+    }
+    //
     return r
     //
+}
+
+
+
+
+func(h *Handler)handleLine()(r result.Result ){  return   }
+func(h *Handler)handleFile()(r result.Result ){  return   }
+
+
+func(h *Handler)handleDir()(r result.Result ){
+    return
+
 }

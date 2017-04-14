@@ -80,11 +80,11 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
         //
         handler := handling.NewHandler(nil)
         handler.AddFilters(d.filters)
-        handler.AddTargetPtr(target)
-
+        handler.AddTargetPtr(&target)
         //
         //
         result := handler.Handle(target)
+        _      = result
         //blankResult := GetResult(target)
         //_           =  blankResult
         //
@@ -162,8 +162,4 @@ func NewDynima()( *Dynima ){
     //
     //
     //
-}
-
-func GetResult(t targets.Target)(result.Result){
-    return handling.Handle(t)
 }
