@@ -89,22 +89,29 @@ func(h *Handler)Handle()(result.Result, error){
 
 
 
-func(h *Handler)handleLine()(line result.Line,err error ){
+func(h *Handler)handleLine()(line result.Line, err error ){
     //
     return
     //
 }
 
-func(h *Handler)handleFile()(file result.File,err error ){
+func(h *Handler)handleFile()(file result.File, err error ){
     //
+    target :=  h.target
+    lines  :=  target.GetLines()
+    for i := range lines {
+        line := lines[i]
+    }
     return
     //
 }
 
 func(h *Handler)handleDirectory()(directory result.Directory,err error ){
     //
+    //
     target         :=  h.target
     nestedTargets  :=  target.GetNestedTargets()
+    //
     //
     directory.Path = target.GetPath()
     for i := range nestedTargets {

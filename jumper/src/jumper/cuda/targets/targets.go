@@ -89,8 +89,9 @@ func(t *Target)Get()(lineAsArray [][]string,err error) {
     return
 }
 
-func(t *Target)GetType()(int)    { return t.typ  }
-func(t *Target)GetPath()(string) { return t.path }
+func(t *Target)GetType()(int)       { return t.typ   }
+func(t *Target)GetPath()(string)    { return t.path  }
+func(t *Target)GetLines()([]string) { return t.lines }
 
 func(t *Target)PushPart(part []string)(err error){
     //  

@@ -9,27 +9,28 @@ var section_brackets_curly    =  [2]string {"{","}"}
 
 func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
 
-    entryAsArray := strings.Split(entry,"")
+    entryAsArray  :=  strings.Split(entry,"")
+    section_type  =   NOT_SECTION
 
-    square         := 0
-    triangle       := 1
-    curly          := 2
+    //                   
+    // // square         := 0
+    // // triangle       := 1
+    // // curly          := 2
+    //
 
     opening        := 0
     closing        := 1
     opening_slashed:= 2
 
-    // When section has square type
+    // check if section has square type
     square_section_opening_index := strings.Index(entry,section_brackets_square[opening])
     square_section_closing_index := strings.Index(entry,section_brackets_square[closing])
 
     if square_section_opening_index  == 0 && square_section_closing_index  == (len(entry)-1) {
-
-        return []int {1, square_section_closing_index}, tag , square
-
+        return []int {1, square_section_closing_index}, tag , SQUARE_SECTION
     }
 
-    // When section has trianle type
+    // check if section has trianle type
 
     triangle_section_opening_index         := strings.Index(entry, section_brackets_triangle[opening])
     triangle_section_opening_slashed_index := strings.Index(entry, section_brackets_triangle[opening_slashed])
@@ -51,10 +52,10 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
                 name_index =[]int {opening_index, triangle_section_closing_index-1}
                 tag_index  =[]int {0,0}
             }
-            return name_index, tag_index, triangle
+            return name_index, tag_index, TRIANGLE_SECTION
 
     }
-    // When section has curly type
+    // check if section has curly type
     cleaned_entry_indexes:=RemoveSpaces(entryAsArray,2)
     cleaned_entry:=entry[cleaned_entry_indexes[0]:cleaned_entry_indexes[1]+1]
     cleaned_entry_asArray:=strings.Split(cleaned_entry,"")
@@ -66,7 +67,7 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
     curly_section_opening_index:=strings.Index(cleaned_entry,section_brackets_curly[opening])
     if curly_section_opening_index == (len(cleaned_entry)-1) {
         if curly_section_opening_index == 0 {
-            return []int {0,0} , []int {0,0} , curly
+            return []int {0,0} , []int {0,0} , CURLY_SECTION
         } else {
              fmt.Printf("\n^^Cleaned Entry: |%s| ^^\n",cleaned_entry)
              spaces:=GetSeparatorIndexes(cleaned_entry, " ")
@@ -82,7 +83,7 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
 
              name_index = []int {cleaned_entry_start_index,cleaned_entry_start_index+first_space_index-1}
              tag_index  = []int {cleaned_entry_start_index+first_space_index+1,nametag_end_index}
-             return name_index, tag_index, curly
+             return name_index, tag_index, CURLY_SECTION
              //if len(spaces)<=2 {
                  //return name_index, tag_index, curly
              //} else {

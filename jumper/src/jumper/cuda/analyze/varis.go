@@ -12,3 +12,10 @@ var brackets                  =  []string {"[","]","<","/>",">","{","}",")","("}
 var LEADING int                  = 0
 var CLOSING int                  = 1
 var BOTH    int                  = 2
+
+//
+
+var SQUARE_SECTION    int = 6010
+var TRIANGLE_SECTION  int = 6011
+var CURLY_SECTION     int = 6012
+var NOT_SECTION       int = 6019
