@@ -60,31 +60,61 @@ func NewHandler(config map[string]string)(h *Handler){
     //
 }
 
-func(h *Handler)Handle(t targets.Target)(r result.Result){
+func(h *Handler)Handle()(result.Result, error){
     //
-    switch target_type:=t.GetType();target_type {
+    //
+    //
+    switch target_type:=h.target.GetType();target_type {
+        //
+        //
         case targets.TARGET_LINE:
-            // return result.BlankResult( result.RESULT_TYPE_LINE )
+            r,e := h.handleLine()
+            return &r,e
         case targets.TARGET_FILE:
-            // return result.BlankResult( result.RESULT_TYPE_FILE )
+            r,e := h.handleFile()
+            return &r,e
         case targets.TARGET_DIR:
-            // return result.BlankResult( result.RESULT_TYPE_DIR )
+            r,e := h.handleDirectory()
+            return &r,e
         default:
-            // return nil
+            return nil, targetTypeUndefined
+        //
+        //
     }
     //
-    return r
+    //
     //
 }
 
 
 
 
-func(h *Handler)handleLine()(r result.Result ){  return   }
-func(h *Handler)handleFile()(r result.Result ){  return   }
-
-
-func(h *Handler)handleDir()(r result.Result ){
+func(h *Handler)handleLine()(line result.Line,err error ){
+    //
     return
+    //
+}
 
+func(h *Handler)handleFile()(file result.File,err error ){
+    //
+    return
+    //
+}
+
+func(h *Handler)handleDirectory()(directory result.Directory,err error ){
+    //
+    target         :=  h.target
+    nestedTargets  :=  target.GetNestedTargets()
+    //
+    directory.Path = target.GetPath()
+    for i := range nestedTargets {
+        tgt        := nestedTargets[i]
+        handler    := NewHandler(nil)
+        handler.AddFilters(h.filters)
+        handler.AddTargetPtr(&tgt)
+        resultFile,err :=  handler.handleFile()
+        if err == nil { directory.Append(resultFile) }
+    }
+    return
+    //
 }

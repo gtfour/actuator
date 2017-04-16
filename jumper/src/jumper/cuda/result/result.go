@@ -43,14 +43,14 @@ type Section struct {
 
 type File struct {
     //
-    path      string     `json:"path"`
+    Path      string     `json:"path"`
     sections  []Section  `json:"sections"`
     //
 }
 
 type Command struct {
     //
-    path      string     `json:"path"`
+    Path      string     `json:"path"`
     sections  []Section  `json:"sections"`
     //
 }
@@ -58,7 +58,7 @@ type Command struct {
 
 type Directory struct {
     //
-    path      string    `json:"path"`
+    Path      string    `json:"path"`
     files     []File    `json:"files"`
     //
 }
@@ -180,6 +180,11 @@ func (d *Directory)GetJson()( []byte,error ){
     }
     //
 }
+
+func (d *Directory)Append(file File)(){
+    d.files = append(d.files, file)
+}
+
 
 //
 // Result Set methods
