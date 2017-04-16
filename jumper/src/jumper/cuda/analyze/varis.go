@@ -15,7 +15,11 @@ var BOTH    int                  = 2
 
 //
 
-var SQUARE_SECTION    int = 6010
-var TRIANGLE_SECTION  int = 6011
-var CURLY_SECTION     int = 6012
-var NOT_SECTION       int = 6019
+var SQUARE_SECTION             int = 6010
+
+var TRIANGLE_SECTION_STARTING  int = 6011
+var TRIANGLE_SECTION_ENDING    int = 6012
+var TRIANGLE_SECTION_UNDEFINED int = 6013
+
+var CURLY_SECTION              int = 6014
+var NOT_SECTION                int = 6019

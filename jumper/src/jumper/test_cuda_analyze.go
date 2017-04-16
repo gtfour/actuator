@@ -9,15 +9,16 @@ func main(){
     // tag           []int
     // section_type  int
     //
-    name, tag, section_type := analyze.Escape_Section("updates")
+    name, tag, section_type := analyze.EscapeSection("updates")
     fmt.Printf("Section Parse:   %v %v  %d\n---",name,tag,section_type)
     //
-    name, tag, section_type = analyze.Escape_Section("[updates]")
+    name, tag, section_type = analyze.EscapeSection("[updates]")
     fmt.Printf("\nSection Parse:   %v %v  %d\n---",name,tag,section_type)
     //
-    name, tag, section_type = analyze.Escape_Section("<dev>")
+    name, tag, section_type = analyze.EscapeSection("<dev>")
     fmt.Printf("\nSection Parse:   %v %v  %d\n---",name,tag,section_type)
-
-
-
+    //
+    name, tag, section_type = analyze.EscapeSection("</dev>")
+    fmt.Printf("\nSection Parse:   %v %v  %d\n---",name,tag,section_type)
+    //
 }

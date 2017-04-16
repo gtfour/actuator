@@ -7,7 +7,7 @@ var section_brackets_square   =  [2]string {"[","]"}
 var section_brackets_triangle =  [3]string {"<",">","</"}
 var section_brackets_curly    =  [2]string {"{","}"}
 
-func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
+func EscapeSection ( entry string ) ( name, tag []int , section_type int ) {
 
     entryAsArray  :=  strings.Split(entry,"")
     section_type  =   NOT_SECTION
@@ -22,26 +22,41 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
     closing        := 1
     opening_slashed:= 2
 
+    //
     // check if section has square type
+    //
     square_section_opening_index := strings.Index(entry,section_brackets_square[opening])
     square_section_closing_index := strings.Index(entry,section_brackets_square[closing])
 
     if square_section_opening_index  == 0 && square_section_closing_index  == (len(entry)-1) {
         return []int {1, square_section_closing_index}, tag , SQUARE_SECTION
     }
-
+    //
     // check if section has trianle type
-
+    //
     triangle_section_opening_index         := strings.Index(entry, section_brackets_triangle[opening])
     triangle_section_opening_slashed_index := strings.Index(entry, section_brackets_triangle[opening_slashed])
     triangle_section_closing_index         := strings.Index(entry, section_brackets_triangle[closing])
 
     if (triangle_section_opening_index == 0 || triangle_section_opening_slashed_index == 0) && (strings.Index(entry,section_brackets_triangle[closing]) == (len(entry)-1)) {
 
+            //
+            kindOfTriangleSection  :=  TRIANGLE_SECTION_UNDEFINED
+            if triangle_section_opening_index == 0         { kindOfTriangleSection = TRIANGLE_SECTION_STARTING }
+            if triangle_section_opening_slashed_index == 0 { kindOfTriangleSection = TRIANGLE_SECTION_ENDING  }
+            //
             opening_index:=1
-            //replacing 1 to 2 because "</"-has two characters but "<"-just one
-            if (triangle_section_opening_slashed_index == 0){ opening_index=2 }
-            space_indexes:=GetSeparatorIndexes(entry, " ")
+            //
+            // replacing 1 to 2 because "</"-has two characters but "<"-just one
+            //
+            if (triangle_section_opening_slashed_index == 0){
+                opening_index = 2
+            }
+            space_indexes := GetSeparatorIndexes(entry, " ")
+            //
+            // it seems that here we try to get tag and name indexes
+            // i suppose that section like that "</blablabla>" could'nt has any tags inside
+            //
             var name_index  = []int {}
             var tag_index   = []int {}
             if len(space_indexes)>0 {
@@ -52,10 +67,12 @@ func Escape_Section ( entry string ) ( name, tag []int , section_type int ) {
                 name_index =[]int {opening_index, triangle_section_closing_index-1}
                 tag_index  =[]int {0,0}
             }
-            return name_index, tag_index, TRIANGLE_SECTION
+            return name_index, tag_index, kindOfTriangleSection
 
     }
+    //
     // check if section has curly type
+    //
     cleaned_entry_indexes:=RemoveSpaces(entryAsArray,2)
     cleaned_entry:=entry[cleaned_entry_indexes[0]:cleaned_entry_indexes[1]+1]
     cleaned_entry_asArray:=strings.Split(cleaned_entry,"")
