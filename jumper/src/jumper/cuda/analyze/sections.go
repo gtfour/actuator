@@ -7,7 +7,8 @@ var section_brackets_square   =  [2]string {"[","]"}
 var section_brackets_triangle =  [3]string {"<",">","</"}
 var section_brackets_curly    =  [2]string {"{","}"}
 
-func EscapeSection ( entry string ) ( name, tag []int , section_type int ) {
+
+func EscapeSection( entry string ) ( name, tag []int , section_type int ) {
 
     entryAsArray  :=  strings.Split(entry,"")
     section_type  =   NOT_SECTION

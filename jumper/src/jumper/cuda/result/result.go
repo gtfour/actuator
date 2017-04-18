@@ -31,12 +31,13 @@ type Line struct {
 type Section struct {
     //
     //
+    name                      string      `json:"name"`
+    typ                       int         `json:"typ"`
     lines                     []Line      `json:"lines"`
     template                  string      `json:"template"`
     template_data_size        int         `json:"template_data_size"`
-    typ                       int         `json:"typ"`
     //
-    sectionTyp                int
+    sectionTyp                int // is it dup field ????
     //
     //
 }
@@ -99,6 +100,7 @@ func (l *Line)GetJson()([]byte,error){
     //
 }
 
+
 //
 // Section methods
 //
@@ -151,6 +153,10 @@ func (f *File)GetJson()([]byte,error){
     } else {
         return file_byte,nil
     }
+}
+
+func (f *File)Append(section Section)(){
+    f.sections = append(f.sections, section)
 }
 
 //
@@ -213,6 +219,8 @@ func(rs *ResultSet)GetJson()( []byte,error ){
     }
     //
 }
+
+func NewSection(name string, typ int)(s Section){ s.typ = typ ; s.name = name ; return }
 
 //
 //

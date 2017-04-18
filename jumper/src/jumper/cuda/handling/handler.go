@@ -3,13 +3,14 @@ package handling
 import "jumper/cuda/result"
 import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
+import "jumper/cuda/analyze"
 
 type Handler struct {
     //
     //  will be heavy structure with a lot of different fields
     //
-    filters filtering.FilterList
-    target  *targets.Target
+    filters  filtering.FilterList
+    target   *targets.Target
     //
     //
 
@@ -97,12 +98,29 @@ func(h *Handler)handleLine()(line result.Line, err error ){
 
 func(h *Handler)handleFile()(file result.File, err error ){
     //
-    target :=  h.target
-    lines  :=  target.GetLines()
+    //
+    target      :=  h.target
+    lines       :=  target.GetLines()
+    baseSection :=  result.NewSection( "", result.SECTION_TYPE_BASE )
+    //
+    //
+    var currentSection result.Section
+    _,_ = baseSection, currentSection
+    //
+    //
     for i := range lines {
         line := lines[i]
+        //
+        // check anyway if this string could be an section identifier 
+        //
+        section_name_indexes, section_tag_indexes, section_type := analyze.EscapeSection(line)
+        _,_,_ = section_name_indexes, section_tag_indexes, section_type
+        // 
+        //
+        //
     }
     return
+    //
     //
 }
 
