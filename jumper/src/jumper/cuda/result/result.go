@@ -1,6 +1,7 @@
 package result
 
 import "encoding/json"
+import "jumper/common/gen"
 
 type Result interface {
     //
@@ -19,25 +20,34 @@ type ResultSet struct {
 
 type Line struct {
     //
-    data_string_slice         []string    `json:"data_string_slice"`
-    data_indexes              [][]int     `json:"data_indexes"`
+    //
+    //
+    data_string_slice         []string    `json:"data_string_slice"` // is it for lineAsArray ??? 
     delim_indexes             [][]int     `json:"delim_indexes"`
+    data_indexes              [][]int     `json:"data_indexes"`
     data                      [][]string  `json:"data"`
     template                  string      `json:"template"`
     template_data_size        int         `json:"template_data_size"`
     //
+    //
+    //
 }
+
+
 
 type Section struct {
     //
     //
+    //
     name                      string      `json:"name"`
+    id                        string      `json:"id"`
     typ                       int         `json:"typ"`
     lines                     []Line      `json:"lines"`
     template                  string      `json:"template"`
     template_data_size        int         `json:"template_data_size"`
     //
-    sectionTyp                int // is it dup field ????
+    sectionTyp                int          // is it dup field ????
+    //
     //
     //
 }
@@ -67,6 +77,15 @@ type Directory struct {
 //
 // Line methods
 //
+
+func NewLine( lineAsArray []string, delims [][]int, data [][]int)(line Line){
+    //
+    line.data_string_slice = lineAsArray
+    line.delim_indexes     = delims
+    line.data_indexes      = data
+    //
+    return
+}
 
 
 
@@ -128,6 +147,11 @@ func (s *Section)GetJson()([]byte,error){
         return section_byte,nil
     }
 }
+
+func (s *Section)Append(line Line)(){
+    s.lines = append( s.lines, line )
+}
+
 
 //
 // File methods
@@ -220,7 +244,14 @@ func(rs *ResultSet)GetJson()( []byte,error ){
     //
 }
 
-func NewSection(name string, typ int)(s Section){ s.typ = typ ; s.name = name ; return }
+func NewSection(name string, typ int)(s Section){
+
+    s.typ    = typ
+    s.name   = name
+    s.id,_   = gen.GenId()
+
+    return
+}
 
 //
 //

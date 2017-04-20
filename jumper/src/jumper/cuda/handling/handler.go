@@ -1,5 +1,7 @@
 package handling
 
+import "strings"
+
 import "jumper/cuda/result"
 import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
@@ -99,27 +101,87 @@ func(h *Handler)handleLine()(line result.Line, err error ){
 func(h *Handler)handleFile()(file result.File, err error ){
     //
     //
+    //
     target      :=  h.target
     lines       :=  target.GetLines()
-    baseSection :=  result.NewSection( "", result.SECTION_TYPE_BASE )
+    //
+    // passing empty name
+    //
+    baseSection :=  result.NewSection( "" , result.SECTION_TYPE_BASE )
     //
     //
-    var currentSection result.Section
-    _,_ = baseSection, currentSection
+    //
+    // baseSection contains data from whole file . will be appended to result.File.sections if any other sections won't be  found
+    // sections are collecting while cycle below
+    //
+    //
+    //
+    var currentSection *result.Section
+    // _,_ = baseSection, currentSection
+    //
+    //
+    //
+    currentSection         =   &baseSection
+    //
+    // currentSection will have baseSection address till any nested section won't be found inside that file 
+    //
+    defaultSectionBreaker  :=  func(string)(bool){ return false }
+    //
     //
     //
     for i := range lines {
+        //
+        //
+        //
         line := lines[i]
         //
         // check anyway if this string could be an section identifier 
         //
         section_name_indexes, section_tag_indexes, section_type := analyze.EscapeSection(line)
-        _,_,_ = section_name_indexes, section_tag_indexes, section_type
-        // 
         //
+        // _,_,_                                                 =   section_name_indexes, section_tag_indexes, section_type
+        //
+        if section_type == analyze.NOT_SECTION {
+            //
+            //
+            //
+            lineAsArray := strings.Split(       line, ""   )
+            delims,data := analyze.GetIndexes( lineAsArray ) // as i remember GetIndexes just making base set of delims and data by  splitting line by spaces
+            //
+            // GetIndexes  make cause a bug or mistakes
+            //
+            // // ( lineAsArray, delims, data)(ndelims, ndata)
+            for i:= range h.filters {
+                //
+                filter := h.filters[i]
+                if filter.Enabled {
+                    new_delims, new_data  := filter.Call( lineAsArray, delims, data )
+                    delims,     data      =  new_delims, new_data
+                }
+                //
+            }
+            resultLine := result.NewLine( lineAsArray, delims, data )
+            currentSection.Append( resultLine )
+            //
+            //
+            //
+        } else {
+            //
+            // new section will be found while reading file
+            //
+            section_name  :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
+            childSection  :=  result.NewSection( section_name , section_type )
+            breaker       :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
+            //
+            //
+            //
+        }
+        // 
+        // 
         //
     }
     return
+    //
     //
     //
 }

@@ -10,6 +10,7 @@ func main(){
     // tag           []int
     // section_type  int
     //
+    //
     fmt.Printf("\n--- --- ---\n")
     myString1:="updates"
     name, tag, section_type := analyze.EscapeSection(myString1)
@@ -19,13 +20,15 @@ func main(){
     fmt.Printf("\nget breaker for this string: %v\n",breaker1("bull-shit"))
     fmt.Printf("\n--- --- ---\n")
     //
+    //
     myString2:="[updates]"
     name, tag, section_type = analyze.EscapeSection(myString2)
     fmt.Printf("\nSection Parse:   %v %v  %d\n---",name,tag,section_type)
     analyze.DebugPrintCharCounter(myString2)
     breaker2 := handling.GetSectionBreaker( myString2, name, tag, section_type )
-    fmt.Printf("\nget breaker for this string: passing empty line : must be  %v\n",breaker2(""))
+    fmt.Printf("\nget breaker for this string: passing empty line : must be true: %v\n",breaker2(""))
     fmt.Printf("\n--- --- ---\n")
+    //
     //
     myString3:=`<div class="print-logo-wrapper" type="button">`
     name, tag, section_type = analyze.EscapeSection(myString3)
@@ -33,8 +36,9 @@ func main(){
     fmt.Printf("\n Section Name : %v \n",myString3[name[0]:name[1]])
     analyze.DebugPrintCharCounter(myString3)
     breaker3 := handling.GetSectionBreaker( myString3, name, tag, section_type )
-    fmt.Printf("\nget breaker for this string: passing close-tag </div> : must be : %v\n",breaker3("</div>"))
+    fmt.Printf("\nget breaker for this string: passing close-tag </div> : must be true: %v\n",breaker3("</div>"))
     fmt.Printf("\n--- --- ---\n")
+    //
     //
     myString4:="</div>"
     name, tag, section_type = analyze.EscapeSection(myString4)
@@ -43,5 +47,6 @@ func main(){
     breaker4 := handling.GetSectionBreaker( myString4, name, tag, section_type )
     fmt.Printf("\nget breaker for this string: %v\n",breaker4(myString4))
     fmt.Printf("\n--- --- ---\n")
+    //
     //
 }
