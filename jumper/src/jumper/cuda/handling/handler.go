@@ -182,6 +182,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
             oldSection = *currentSection
             file.Append( oldSection )
             //
+            //
             section_name          := line[section_name_indexes[0]:section_name_indexes[1]+1]
             childSection          := result.NewSection( section_name , section_type )
             currentSection        =  &childSection
@@ -196,7 +197,9 @@ func(h *Handler)handleFile()(file result.File, err error ){
         // 
         //
     }
-    file.Append( baseSection )
+    //
+    if file.Size() == 0 { file.Append( baseSection ) }
+    //
     return
     //
     //

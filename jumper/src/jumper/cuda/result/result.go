@@ -184,6 +184,10 @@ func (f *File)Append(section Section)(){
     f.sections = append(f.sections, section)
 }
 
+func (f *File)Size()(int){
+    return len(f.sections)
+}
+
 //
 // Directory methods
 //
