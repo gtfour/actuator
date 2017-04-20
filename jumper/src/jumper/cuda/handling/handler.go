@@ -141,6 +141,10 @@ func(h *Handler)handleFile()(file result.File, err error ){
         //
         // _,_,_                                                 =   section_name_indexes, section_tag_indexes, section_type
         //
+        if defaultSectionBreaker(line) { continue }
+        //
+        //
+        //
         if section_type == analyze.NOT_SECTION {
             //
             //
@@ -151,6 +155,8 @@ func(h *Handler)handleFile()(file result.File, err error ){
             // GetIndexes  make cause a bug or mistakes
             //
             // // ( lineAsArray, delims, data)(ndelims, ndata)
+            //
+            //
             for i:= range h.filters {
                 //
                 filter := h.filters[i]
@@ -160,8 +166,11 @@ func(h *Handler)handleFile()(file result.File, err error ){
                 }
                 //
             }
+            //
+            //
+            //
             resultLine := result.NewLine( lineAsArray, delims, data )
-            currentSection.Append( resultLine )
+            currentSection.Append(resultLine)
             //
             //
             //
@@ -169,9 +178,16 @@ func(h *Handler)handleFile()(file result.File, err error ){
             //
             // new section will be found while reading file
             //
-            section_name  :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
-            childSection  :=  result.NewSection( section_name , section_type )
-            breaker       :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
+            var oldSection result.Section
+            oldSection = *currentSection
+            file.Append( oldSection )
+            //
+            section_name          := line[section_name_indexes[0]:section_name_indexes[1]+1]
+            childSection          := result.NewSection( section_name , section_type )
+            currentSection        =  &childSection
+            newSectionBreaker     := GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
+            defaultSectionBreaker =  newSectionBreaker
+            //
             //
             //
             //
@@ -180,6 +196,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
         // 
         //
     }
+    file.Append( baseSection )
     return
     //
     //
