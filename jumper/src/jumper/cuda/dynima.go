@@ -43,7 +43,7 @@ type Target struct {  // interface {
 */
 
 
-func(d *Dynima)RunFilters()(r *result.Result, err error){
+func(d *Dynima)RunFilters()(result.Result) {
     //
     // apply filters targets data
     //
@@ -53,6 +53,7 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     // test block
     //
     var readableTargets targets.TargetList
+    //
     //
     for i := range d.targets {
         target := d.targets[i]
@@ -75,15 +76,24 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     for i := range readableTargets {
         //
         //
-        target  :=  readableTargets[i]
-        handler :=  handling.NewHandler(nil)
-        //
-        handler.AddFilters(d.filters)
-        handler.AddTargetPtr(&target)
+        target   :=  readableTargets[i]
+        handler  :=  handling.NewHandler(nil)
         //
         //
-        result  :=  handler.Handle()
-        _       =   result
+        handler.AddFilters( d.filters )
+        //
+        //
+        handler.AddTargetPtr( &target )
+        //
+        //
+        result,err :=  handler.Handle()
+        //
+        //
+        if err == nil {
+            resultSet.Append(result)
+        }
+        //
+        //
         //blankResult := GetResult(target)
         //_           =  blankResult
         //
@@ -92,16 +102,16 @@ func(d *Dynima)RunFilters()(r *result.Result, err error){
     //
     //
     //
-    return r, err
+    return &resultSet
     //
     //
     //
 }
 
-func(d *Dynima)AppendFilter( f *filtering.Filter )( error ){
+func(d *Dynima)AppendFilter( f filtering.Filter )( error ){
     //
     //
-    return nil
+    return d.filters.Append(f)
     //
     //
 }
@@ -117,7 +127,7 @@ func(d *Dynima)SetSource( t *targets.Target )( error ){
 func(d *Dynima)AppendTarget(t *targets.Target)(error){
     // 
     //
-    return nil
+    return d.targets.Append(t)
     //
     //
 }

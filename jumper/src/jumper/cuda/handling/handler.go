@@ -15,9 +15,6 @@ type Handler struct {
     target   *targets.Target
     //
     //
-
-    //
-    //
     //
 }
 
@@ -47,7 +44,7 @@ func(h *Handler)AddTargetPtr(target *targets.Target)(error){
         h.target = target
         return nil
     } else {
-        return filterListIsNil
+        return targetIsNil
     }
     //
     //
@@ -57,7 +54,7 @@ func(h *Handler)AddTargetPtr(target *targets.Target)(error){
 
 //
 
-func NewHandler(config map[string]string)(h *Handler){
+func NewHandler(config map[string]string)(h Handler){
     // 
     return h
     //
@@ -198,7 +195,11 @@ func(h *Handler)handleFile()(file result.File, err error ){
         //
     }
     //
+    // file.Size() is 0 when any nested section  has not been found
+    //
     if file.Size() == 0 { file.Append( baseSection ) }
+    //
+    //
     //
     return
     //

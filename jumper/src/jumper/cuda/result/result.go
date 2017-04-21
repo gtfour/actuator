@@ -79,17 +79,6 @@ type Directory struct {
 // Line methods
 //
 
-func NewLine( lineAsArray []string, delims [][]int, data [][]int)(line Line){
-    //
-    line.data_string_slice = lineAsArray
-    line.delim_indexes     = delims
-    line.data_indexes      = data
-    //
-    return
-}
-
-
-
 func(l *Line)GetData()(lines []Line,err error){
     //
     if ( l!=nil ){
@@ -249,12 +238,33 @@ func(rs *ResultSet)GetJson()( []byte,error ){
     //
 }
 
-func NewSection(name string, typ int)(s Section){
 
+func (rs *ResultSet)Append(result Result)(){
+    rs.results = append(rs.results, result)
+}
+
+
+
+
+//
+// Common methods
+//
+
+func NewLine( lineAsArray []string, delims [][]int, data [][]int)(line Line){
+    //
+    line.data_string_slice = lineAsArray
+    line.delim_indexes     = delims
+    line.data_indexes      = data
+    //
+    return
+}
+
+func NewSection(name string, typ int)(s Section){
+    //
     s.typ    = typ
     s.name   = name
     s.id,_   = gen.GenId()
-
+    //
     return
 }
 
