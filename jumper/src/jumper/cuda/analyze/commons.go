@@ -1,7 +1,5 @@
 package analyze
 
-import "fmt"
-
 var FOUND_IS_EMPTY         int = -4004
 
 var DIGIT_LESS_INTERVAL    int = 3579
@@ -13,11 +11,10 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
     // 
     // have a bug caused by this function 
     //
-    fmt.Printf("\n---  ---\nabc: %v phrases: %v\n---  ---\n", abc, phrases)
     //
     if ( len(abc) < 1 )||( len(phrases) < 1 ){ return }
     for i := 0; i < len(abc); i++  {
-        symbol:=abc[i]
+        symbol := abc[i]
         var found [][]int
         for p := range phrases {
             phrase      :=  phrases[p]
@@ -30,7 +27,8 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
                         xi             := i+1  // here is a bug : xi increased without checking len with abc : panic: runtime error: index out of range 
                                                // bug may cause by running over string:  # To use this repo, put in your DVD and use it with the other repos too:
                         for  ; counter < len( phrase ) ; {
-                            xsymbol    := abc[xi]
+                            if xi >= len(abc) { break } // fix
+                            xsymbol    := abc[xi] // xi may be bigger than abc size this is "cause index out of range" error
                             if xsymbol != phrase[counter] { break }
                             if counter >= len(phrase)-1 { local_found[1] = xi ; found = append(found, local_found) ; break }
                             xi         += 1
