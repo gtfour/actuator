@@ -171,20 +171,25 @@ func(h *Handler)handleFile()(file result.File, err error ){
             //
             //
             //
+            //
         } else {
             //
-            // new section will be found while reading file
+            //
+            //  new section will be found while reading file
+            //
             //
             var oldSection result.Section
             oldSection = *currentSection
             file.Append( oldSection )
             //
             //
-            section_name          := line[section_name_indexes[0]:section_name_indexes[1]+1]
-            childSection          := result.NewSection( section_name , section_type )
-            currentSection        =  &childSection
-            newSectionBreaker     := GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
-            defaultSectionBreaker =  newSectionBreaker
+            //
+            section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
+            childSection           :=  result.NewSection( section_name , section_type )
+            currentSection         =   &childSection
+            newSectionBreaker      :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
+            defaultSectionBreaker  =   newSectionBreaker
+            //
             //
             //
             //
@@ -203,7 +208,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
     //
     return
     //
-    //
+    //<F12>
     //
 }
 

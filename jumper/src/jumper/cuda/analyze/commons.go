@@ -1,5 +1,7 @@
 package analyze
 
+import "fmt"
+
 var FOUND_IS_EMPTY         int = -4004
 
 var DIGIT_LESS_INTERVAL    int = 3579
@@ -8,20 +10,26 @@ var DIGIT_IN_INTERVAL      int = 9779
 
 
 func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
-    if (len(abc) < 1 )||(len(phrases) < 1){return}
+    // 
+    // have a bug caused by this function 
+    //
+    fmt.Printf("\n---  ---\nabc: %v phrases: %v\n---  ---\n", abc, phrases)
+    //
+    if ( len(abc) < 1 )||( len(phrases) < 1 ){ return }
     for i := 0; i < len(abc); i++  {
         symbol:=abc[i]
         var found [][]int
         for p := range phrases {
-            local_found:=make( []int, 2 )
-            phrase:=phrases[p]
+            phrase      :=  phrases[p]
+            local_found :=  make( []int, 2 )
             if len(phrase) > 1 {
                     zsymbol := phrase[0]
                     if symbol == zsymbol {
                         local_found[0] =  i
-                        counter        := 1
-                        xi             := i+1
-                        for  ; counter < len(phrase) ;  {
+                        counter        := 1    // 1 because we are  keeping in mind that we already checked zsymbol with symbol earlier
+                        xi             := i+1  // here is a bug : xi increased without checking len with abc : panic: runtime error: index out of range 
+                                               // bug may cause by running over string:  # To use this repo, put in your DVD and use it with the other repos too:
+                        for  ; counter < len( phrase ) ; {
                             xsymbol    := abc[xi]
                             if xsymbol != phrase[counter] { break }
                             if counter >= len(phrase)-1 { local_found[1] = xi ; found = append(found, local_found) ; break }
@@ -29,6 +37,7 @@ func ArrayInArrayIndexes (abc []string, phrases ...[]string )(indexes [][]int) {
                             counter    += 1
                         }
                     } else {
+                        // ??? add continue or not
                     }
             } else if len(phrase) == 1  {
                 zsymbol := phrase[0]

@@ -1,6 +1,6 @@
 package analyze
 
-import "fmt"
+// import "fmt"
 import "strings"
 
 var section_brackets_square   =  [2]string {"[","]"}
@@ -12,6 +12,7 @@ func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
 
     entryAsArray  :=  strings.Split(entry,"")
     section_type  =   NOT_SECTION
+    if len(entryAsArray) == 0 { return }
 
     //                   
     // // square         := 0
@@ -74,20 +75,24 @@ func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
     //
     // check if section has curly type
     //
-    cleaned_entry_indexes:=RemoveSpaces(entryAsArray,2)
-    cleaned_entry:=entry[cleaned_entry_indexes[0]:cleaned_entry_indexes[1]+1]
-    cleaned_entry_asArray:=strings.Split(cleaned_entry,"")
+    cleaned_entry_indexes  :=  RemoveSpaces( entryAsArray, 2 )
+    // fmt.Printf("\n---\ncleaned_entry_indexes: %v\n---\nentry: %v\n---", cleaned_entry_indexes, entry )
+    cleaned_entry          :=  entry[cleaned_entry_indexes[0]:cleaned_entry_indexes[1]+1]
+    cleaned_entry_asArray  :=  strings.Split( cleaned_entry,"" )
+    //
+    //
+    //
     nametag_indexes := RemoveSpaces(cleaned_entry_asArray, 2)
-    fmt.Printf("\nnametag_indexes:|%v|\n", nametag_indexes)
+    // fmt.Printf("\nnametag_indexes:|%v|\n", nametag_indexes)
     nametag_end_index := strings.Index(entry, cleaned_entry)+(nametag_indexes[1]-nametag_indexes[0])
-    fmt.Printf("\nnametag_tag_endindex:|%v|\n", nametag_end_index)
+    // fmt.Printf("\nnametag_tag_endindex:|%v|\n", nametag_end_index)
 
     curly_section_opening_index:=strings.Index(cleaned_entry,section_brackets_curly[opening])
     if curly_section_opening_index == (len(cleaned_entry)-1) {
         if curly_section_opening_index == 0 {
             return [2]int {0,0} , [2]int {0,0} , CURLY_SECTION
         } else {
-             fmt.Printf("\n^^Cleaned Entry: |%s| ^^\n",cleaned_entry)
+             // fmt.Printf("\n^^Cleaned Entry: |%s| ^^\n",cleaned_entry)
              spaces:=GetSeparatorIndexes(cleaned_entry, " ")
              var first_space_index   int
              //var second_space_index  int
@@ -97,7 +102,7 @@ func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
              //if len(spaces) > 1  { second_space_index = spaces[1] }
 
              cleaned_entry_start_index:=strings.Index(entry, cleaned_entry)
-             fmt.Printf("\ncleaned_entry|%v|   cleaned_entry_start_index|%v|  spaces|%v|\n",cleaned_entry, cleaned_entry_start_index, spaces)
+             // fmt.Printf("\ncleaned_entry|%v|   cleaned_entry_start_index|%v|  spaces|%v|\n",cleaned_entry, cleaned_entry_start_index, spaces)
 
              name_index = [2]int {cleaned_entry_start_index,cleaned_entry_start_index+first_space_index-1}
              tag_index  = [2]int {cleaned_entry_start_index+first_space_index+1,nametag_end_index}

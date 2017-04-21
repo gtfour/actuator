@@ -43,7 +43,7 @@ type Target struct {  // interface {
 */
 
 
-func(d *Dynima)RunFilters()(result.Result) {
+func(d *Dynima)RunFilters()(resultSet result.ResultSet) {
     //
     // apply filters targets data
     //
@@ -65,8 +65,8 @@ func(d *Dynima)RunFilters()(result.Result) {
     //
     //
     //
-    var resultSet result.ResultSet
-    _ = resultSet
+    // var resultSet result.ResultSet
+    // _ = resultSet
     //
     //
     //  handler := handling.NewHandler(nil)
@@ -102,7 +102,7 @@ func(d *Dynima)RunFilters()(result.Result) {
     //
     //
     //
-    return &resultSet
+    return //&resultSet
     //
     //
     //

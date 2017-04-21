@@ -127,7 +127,9 @@ func GetSeparatorIndexes (entry, sep string) (indexes []int) {
 }
 
 
-func RemoveSpaces(lineAsArray []string, remove_type int)([]int) {
+func RemoveSpaces(lineAsArray []string, remove_type int)([2]int) {
+
+    // Lets try to set size 2  of returning array
 
     LEADING    :=0
     CLOSING    :=1
@@ -161,6 +163,6 @@ func RemoveSpaces(lineAsArray []string, remove_type int)([]int) {
         }
         if closeReady && leadReady { break }
     }
-    if closingChar<leadingChar { return []int {0,0} }
-    return []int {leadingChar,closingChar}
+    if closingChar<leadingChar { return [2]int { 0, 0 } }
+    return [2]int { leadingChar, closingChar }
 }
