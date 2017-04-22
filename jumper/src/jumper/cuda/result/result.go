@@ -22,7 +22,7 @@ type Line struct {
     //
     //
     //
-    data_string_slice         []string    `json:"data_string_slice"` // is it for lineAsArray ??? 
+    Data_string_slice         []string    `json:"data_string_slice"` // is it for lineAsArray ??? 
     delim_indexes             [][]int     `json:"delim_indexes"`
     data_indexes              [][]int     `json:"data_indexes"`
     data                      [][]string  `json:"data"`
@@ -39,10 +39,10 @@ type Section struct {
     //
     //
     //
-    name                      string      `json:"name"`
+    Name                      string      `json:"name"`
     id                        string      `json:"id"`
-    typ                       int         `json:"typ"`
-    lines                     []Line      `json:"lines"`
+    Typ                       int         `json:"typ"`
+    Lines                     []Line      `json:"lines"`
     template                  string      `json:"template"`
     template_data_size        int         `json:"template_data_size"`
     //
@@ -56,7 +56,7 @@ type Section struct {
 type File struct {
     //
     Path      string     `json:"path"`
-    sections  []Section  `json:"sections"`
+    Sections  []Section  `json:"sections"`
     //
 }
 
@@ -71,7 +71,7 @@ type Command struct {
 type Directory struct {
     //
     Path      string    `json:"path"`
-    files     []File    `json:"files"`
+    Files     []File    `json:"files"` // have to change from lowercase to Uppercase because fields with lowecase don't visible after json.Marshal
     //
 }
 
@@ -115,8 +115,8 @@ func (l *Line)GetJson()([]byte,error){
 //
 
 func(s *Section)GetData()([]Line,error){
-    if (s.lines!=nil){
-        return s.lines, nil
+    if (s.Lines!=nil){
+        return s.Lines, nil
     } else {
         return nil, nilResultError
     }
@@ -139,7 +139,7 @@ func (s *Section)GetJson()([]byte,error){
 }
 
 func (s *Section)Append(line Line)(){
-    s.lines = append( s.lines, line )
+    s.Lines = append( s.Lines, line )
 }
 
 
@@ -148,8 +148,8 @@ func (s *Section)Append(line Line)(){
 //
 
 func(f *File)GetData()([]Section,error){
-    if ( f.sections != nil ){
-        return f.sections, nil
+    if ( f.Sections != nil ){
+        return f.Sections, nil
     } else {
         return nil, nilResultError
     }
@@ -169,12 +169,15 @@ func (f *File)GetJson()([]byte,error){
     }
 }
 
-func (f *File)Append(section Section)(){
-    f.sections = append(f.sections, section)
+func (f *File)Append(s Section)(){
+    //
+    // additional section check needs
+    //
+    f.Sections = append(f.Sections, s)
 }
 
 func (f *File)Size()(int){
-    return len(f.sections)
+    return len(f.Sections)
 }
 
 //
@@ -182,8 +185,8 @@ func (f *File)Size()(int){
 //
 
 func(d *Directory)GetData()( []File,error ){
-    if ( d.files!=nil ){
-        return d.files, nil
+    if ( d.Files!=nil ){
+        return d.Files, nil
     } else {
         return nil, nilResultError
     }
@@ -206,7 +209,7 @@ func (d *Directory)GetJson()( []byte,error ){
 }
 
 func (d *Directory)Append(file File)(){
-    d.files = append(d.files, file)
+    d.Files = append(d.Files, file)
 }
 
 
@@ -252,7 +255,7 @@ func (rs *ResultSet)Append(result Result)(){
 
 func NewLine( lineAsArray []string, delims [][]int, data [][]int)(line Line){
     //
-    line.data_string_slice = lineAsArray
+    line.Data_string_slice = lineAsArray
     line.delim_indexes     = delims
     line.data_indexes      = data
     //
@@ -261,8 +264,8 @@ func NewLine( lineAsArray []string, delims [][]int, data [][]int)(line Line){
 
 func NewSection(name string, typ int)(s Section){
     //
-    s.typ    = typ
-    s.name   = name
+    s.Typ    = typ
+    s.Name   = name
     s.id,_   = gen.GenId()
     //
     return

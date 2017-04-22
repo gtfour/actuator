@@ -29,7 +29,7 @@ func main(){
     defaultFilterList := filtering.CreateDefaultFilterList()
     for i:= range filtering.CreateDefaultFilterList(){
         filter := defaultFilterList[i]
-        d.AppendFilter(filter)
+        d.AppendFilter( filter )
     }
     d.AppendTarget(tgtDirectory)
     fmt.Printf("\n:Dynima:%v\n-- -- -- --\n", d )
@@ -37,8 +37,9 @@ func main(){
     fmt.Printf("\n:ResultSet:\n-- -- -- --\n")
     results,_ := resultSet.GetData()
     for i := range results {
-        result := results[i]
-        fmt.Printf("\n%v\n",result)
+        result         := results[i]
+        resultByte,err := result.GetJson()
+        fmt.Printf("\n%s\nErr:\n%v",string(resultByte),err)
     }
     //
     //
