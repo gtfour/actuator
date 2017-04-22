@@ -67,17 +67,44 @@ func GetIndexes ( lineAsArray []string ) (delims [][]int , data [][]int) {
 //
 //
 
-func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected []string) {
+func GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected []string){
     for i := range  lineAsArray {
-        char:= lineAsArray[i]
+        char := lineAsArray[i]
         if len(selected_indexes) == 2 {
-            if i>=selected_indexes[0] && i<=selected_indexes[1] {
+            if i >= selected_indexes[0] && i <= selected_indexes[1] {
                 selected = append(selected, char)
             }
         } else { break }
     }
     return selected
 }
+
+func SelectDataByIndexes( lineAsArray []string, selected_indexes[][]int )( selected []string ) {
+    //fmt.Printf("SelectDataByIndexes:\nlineAsArray:\n%v\n---- ----\nselected_indexes:\n%v\n---- ----\n", lineAsArray, selected_indexes)
+    for i := range selected_indexes {
+        data_pair := selected_indexes[i]
+        if len(data_pair) !=2 { continue }
+        start     := data_pair[0]
+        end       := data_pair[1]
+        if ( start < len(lineAsArray) ) && ( start >= 0 )  && ( end < len(lineAsArray) ) && ( end >= 0 ) {
+            if start <= end {
+                selected_string := ""
+                for i := start ; i <= end ; i++ {
+                    s               :=  lineAsArray[i]
+                    selected_string +=  s
+                }
+                selected = append( selected, selected_string )
+            } else {
+                // if start more than end then data index presents an empty position where data should be 
+                selected = append( selected, "")
+            }
+        } else {
+            continue
+        }
+    }
+    return selected
+}
+
 
 func GetSignPair( sign string )( another_sign string) {
     var DOUBLE_SIGNS_PAIRS = [][2]string { {"[", "]"}, { "<" , ">"}, {"</" , ">"},  {"(" , ")"}, {"{", "}"}, {"'", "'" }, {`"`,`"`}, {"`","`"} }

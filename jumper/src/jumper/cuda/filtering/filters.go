@@ -16,6 +16,8 @@ func BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelim
     // var section_brackets_triangle =  [3]string {"<",">","</"}
     // var section_brackets_curly    =  [2]string {"{","}"}
     //
+    ndelims = delims
+    ndata   = data
     return
 
 }

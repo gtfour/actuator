@@ -12,7 +12,7 @@ func main(){
     // -- -- -- --
     targetDirectoryConfig              := make(map[string]string,0)
     targetDirectoryConfig["type"]      = "TARGET_DIRECTORY"
-    targetDirectoryConfig["path"]      =  "/tmp/centos_repos/yum.repos.d/"
+    targetDirectoryConfig["path"]      =  "/etc/wengine/"
     tgtDirectory,err                   := targets.NewTarget(targetDirectoryConfig)
     if err!=nil { fmt.Printf("\n Directory config error: %v \n", err)  }
     err=tgtDirectory.Gather()
@@ -21,9 +21,9 @@ func main(){
     // -- -- --
     //
     //
-    // -- -- -- --
+    // -- -- -- -- -- -- -- -- -- -- -- --
     // dynima to handle directory target
-    // -- -- -- --
+    // -- -- -- -- -- -- -- -- -- -- -- --
     //
     d                 := cuda.Dynima{}
     defaultFilterList := filtering.CreateDefaultFilterList()

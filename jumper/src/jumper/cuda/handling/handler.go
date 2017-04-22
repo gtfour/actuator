@@ -1,5 +1,6 @@
 package handling
 
+import "fmt"
 import "strings"
 
 import "jumper/cuda/result"
@@ -158,6 +159,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
                 //
                 filter := h.filters[i]
                 if filter.Enabled {
+                    fmt.Printf("\n---\ndelims: %v data: %v filter_name: %v\n---\n",delims, data , filter.Name)
                     new_delims, new_data  := filter.Call( lineAsArray, delims, data )
                     delims,     data      =  new_delims, new_data
                 }
@@ -166,7 +168,9 @@ func(h *Handler)handleFile()(file result.File, err error ){
             //
             //
             //
-            resultLine := result.NewLine( lineAsArray, delims, data )
+            selectedData := analyze.SelectDataByIndexes(lineAsArray, data)
+            resultLine   := result.NewLine(selectedData, delims, data)
+            //
             currentSection.Append(resultLine)
             //
             //
