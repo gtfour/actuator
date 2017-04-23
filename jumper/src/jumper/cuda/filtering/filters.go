@@ -118,6 +118,10 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
         fmt.Printf("\n---\nBefore Aluma: Delims:%v\tDatas:%v\n---\n",delims , data  )
         ndelims,ndata         = AlumaPaster( delims , data , path_complete_indexes )
         fmt.Printf("\n---\nAfter Aluma: Delims:%v\tDatas:%v\n---\n", ndelims,ndata )
+        //
+        ndelims = Shifter(ndelims)
+        ndata   = Shifter(ndata)
+        //
     } else {
         ndelims = delims
         ndata   = data
