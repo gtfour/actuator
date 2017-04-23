@@ -1,6 +1,5 @@
 package handling
 
-import "fmt"
 import "strings"
 
 import "jumper/cuda/result"
@@ -119,11 +118,12 @@ func(h *Handler)handleFile()(file result.File, err error ){
     //
     //
     //
-    currentSection         =   &baseSection
+    currentSection         =     &baseSection
     //
     // currentSection will have baseSection address till any nested section won't be found inside that file 
     //
-    defaultSectionBreaker  :=  func(string)(bool){ return false }
+    defaultSectionBreaker    :=  func(string)(bool){ return false }
+    writeToSectionInProgress :=  false
     //
     //
     //
@@ -139,7 +139,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
         //
         // _,_,_                                                 =   section_name_indexes, section_tag_indexes, section_type
         //
-        if defaultSectionBreaker(line) { continue }
+        if defaultSectionBreaker(line) { writeToSectionInProgress = false  ; continue }
         //
         //
         //
@@ -157,12 +157,13 @@ func(h *Handler)handleFile()(file result.File, err error ){
             //
             for i:= range h.filters {
                 //
+                //
                 filter := h.filters[i]
                 if filter.Enabled {
-                    fmt.Printf("\n---\ndelims: %v data: %v filter_name: %v\n---\n",delims, data , filter.Name)
                     new_delims, new_data  := filter.Call( lineAsArray, delims, data )
                     delims,     data      =  new_delims, new_data
                 }
+                //
                 //
             }
             //
@@ -171,19 +172,21 @@ func(h *Handler)handleFile()(file result.File, err error ){
             selectedData := analyze.SelectDataByIndexes(lineAsArray, data)
             resultLine   := result.NewLine(selectedData, delims, data)
             //
-            currentSection.Append(resultLine)
             //
+            //
+            currentSection.Append(resultLine)
             //
             //
             //
         } else {
             //
             //
-            //  new section will be found while reading file
+            //  new section may be found while reading file
             //
             //
+            writeToSectionInProgress = true
             var oldSection result.Section
-            oldSection = *currentSection
+            oldSection     = *currentSection
             file.Append( oldSection )
             //
             //
@@ -206,13 +209,20 @@ func(h *Handler)handleFile()(file result.File, err error ){
     //
     // file.Size() is 0 when any nested section  has not been found
     //
+    // check if section was not closed
+    if writeToSectionInProgress {
+        var oldSection result.Section
+        oldSection     = *currentSection
+        file.Append( oldSection )
+    }
+    //
     if file.Size() == 0 { file.Append( baseSection ) }
     //
     //
     //
     return
     //
-    //<F12>
+    //
     //
 }
 

@@ -51,6 +51,8 @@ func AlumaPaster(delims [][]int, data [][]int, strada [][]int)(ndelims [][]int, 
     //  kind of another strange and magic function :) 
     //  i guess i don't know what this function does again
     //
+    // guess have a bug there
+    //
     var last_delim_index int
     var last_data_index  int
     //

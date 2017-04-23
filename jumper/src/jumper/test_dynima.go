@@ -12,18 +12,19 @@ func main(){
     // -- -- -- --
     targetDirectoryConfig              := make(map[string]string,0)
     targetDirectoryConfig["type"]      = "TARGET_DIRECTORY"
-    targetDirectoryConfig["path"]      =  "/etc/wengine/"
+    targetDirectoryConfig["path"]      =  "/tmp/repos/yum.repos.d"
     tgtDirectory,err                   := targets.NewTarget(targetDirectoryConfig)
     if err!=nil { fmt.Printf("\n Directory config error: %v \n", err)  }
     err=tgtDirectory.Gather()
     if err!=nil { fmt.Printf("\n Directory gather error: %v \n", err)  }
     //
-    // -- -- --
-    //
-    //
-    // -- -- -- -- -- -- -- -- -- -- -- --
-    // dynima to handle directory target
-    // -- -- -- -- -- -- -- -- -- -- -- --
+    // -- -- -- -- -- -- -- -- -- -- -- -- --
+    // --                                  --
+    // -- -- -- -- -- -- -- -- -- -- -- -- --
+    // -- dynima to handle directory target--
+    // -- -- -- -- -- -- -- -- -- -- -- -- --
+    // --                                  --
+    // -- -- -- -- -- -- -- -- -- -- -- -- --
     //
     d                 := cuda.Dynima{}
     defaultFilterList := filtering.CreateDefaultFilterList()
@@ -36,6 +37,9 @@ func main(){
     resultSet := d.RunFilters()
     fmt.Printf("\n:ResultSet:\n-- -- -- --\n")
     results,_ := resultSet.GetData()
+    //
+    //
+    //
     for i := range results {
         result         := results[i]
         resultByte,err := result.GetJson()

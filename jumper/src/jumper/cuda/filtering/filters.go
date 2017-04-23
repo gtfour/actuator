@@ -79,48 +79,74 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
 }
 
 func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
-    //PATH_SPEC_CHARS     :=[]string {"/"}
-    PATH_SPEC_CHARS       :=[]string{"%",":","/","@","?","#","-",".","_","+","="}
-    path_marker           :=[]string {"/"}
-    path_marker_indexes   :=analyze.ArrayInArrayIndexes(lineAsArray,path_marker)
-
-    if len(path_marker_indexes)>0 {
+    //
+    // PATH_SPEC_CHARS   := []string {"/"}
+    //
+    PATH_SPEC_CHARS     := []string{"%",":","/","@","?","#","-",".","_","+","="}
+    path_marker         := []string{"/"}
+    path_marker_indexes := analyze.ArrayInArrayIndexes(lineAsArray,path_marker)
+    //
+    //
+    //
+    if len(path_marker_indexes) > 0 {
         var path_complete_indexes [][]int
         for i := range path_marker_indexes {
-            path_index         :=  path_marker_indexes[i]
+            //
+            path_index := path_marker_indexes[i]
+            //
             if len(path_index) !=2 { continue }
-                leftSearcher          := Searcher{direction:LEFT_DIRECTION}
+                leftSearcher          := Searcher{ direction:LEFT_DIRECTION }
                 leftSearcher.since    =  path_index[0]
-                leftSearcher.accepter =  func (char string)(bool) {
+                leftSearcher.accepter =  func ( char string )( bool ) {
                                          return false
                                      }
-                rightSearcher          := Searcher{direction:RIGHT_DIRECTION}
+                rightSearcher          := Searcher{ direction:RIGHT_DIRECTION }
                 rightSearcher.since    =  path_index[1]
-                rightSearcher.accepter = func (char string)(bool) {
-                                         return analyze.IsUnicodeLetter(char) || analyze.IsUnicodeDigit(char) || analyze.IsSymbolIn(char, PATH_SPEC_CHARS )
+                rightSearcher.accepter =  func ( char string )( bool ) {
+                                          return analyze.IsUnicodeLetter( char ) || analyze.IsUnicodeDigit( char ) || analyze.IsSymbolIn( char, PATH_SPEC_CHARS )
                                      }
-                searchers:=[]Searcher {rightSearcher, leftSearcher}
-                new_indexes:=RunSearchers(lineAsArray, searchers)
-                path_complete_indexes = append(path_complete_indexes, new_indexes)
+                //
+                searchers:=[]Searcher { rightSearcher, leftSearcher }
+                new_indexes:=RunSearchers( lineAsArray, searchers )
+                //
+                path_complete_indexes = append( path_complete_indexes, new_indexes )
 
         }
-        path_complete_indexes = Shifter(path_complete_indexes)
-        ndelims,ndata = AlumaPaster(delims , data , path_complete_indexes)
+        fmt.Printf("\n:filtering:PathFilter:\npath_complete_indexes:Before:\n%v\n",path_complete_indexes)
+        path_complete_indexes = Shifter( path_complete_indexes )
+        fmt.Printf("\n:filtering:PathFilter:\nShifter(path_complete_indexes):After:\n%v\n",path_complete_indexes)
+        fmt.Printf("\n---\nBefore Aluma: Delims:%v\tDatas:%v\n---\n",delims , data  )
+        ndelims,ndata         = AlumaPaster( delims , data , path_complete_indexes )
+        fmt.Printf("\n---\nAfter Aluma: Delims:%v\tDatas:%v\n---\n", ndelims,ndata )
     } else {
         ndelims = delims
         ndata   = data
     }
-    return ndelims,ndata
+    return ndelims, ndata
+    //
+    //
+    //
 }
 
 func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
 
     URL_SPEC_CHARS     := []string{"%","=",":","/","@","?","#","-",".","_","$"} // $ for baseurl=http://vault.centos.org/7.0.1406/extras/$basearch/
-    url_marker_short   := []string{":","/","/"}
-    url_marker_long    := []string{":","/","/","/"}
+    url_marker_short   := []string{ ":","/","/"     }
+    url_marker_long    := []string{ ":","/","/","/" }
+    //
     url_marker_indexes := analyze.ArrayInArrayIndexes(lineAsArray,url_marker_short,url_marker_long)
-
+    //
+    // seem's cause a bug because in this case we have duplicate indexes 
+    // Hope  if we push both indexes inside single array Shifter may clean nested indexes
+    // solution is below:
+    //
+    // fmt.Printf("\n:: UrlFilter::url_marker_indexes::\n%v ::\n", url_marker_indexes)
+    // url_marker_indexes = Shifter( url_marker_indexes )
+    // fmt.Printf("\n:: UrlFilter::url_marker_indexes::after Shifter()\n%v ::\n", url_marker_indexes)
+    // url_marker_indexes = Shifter(url_marker_indexes)   :) don't impact to anything , still have a bug
+    //
+    //
     if len(url_marker_indexes)>0 {
         var url_complete_indexes [][]int
         for i := range url_marker_indexes {
