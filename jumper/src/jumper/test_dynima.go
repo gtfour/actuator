@@ -11,13 +11,12 @@ func main(){
     // -- -- -- --
     targetDirectoryConfig              := make(map[string]string,0)
     targetDirectoryConfig["type"]      = "TARGET_DIRECTORY"
-    targetDirectoryConfig["path"]      = "/tmp/test/"
+    targetDirectoryConfig["path"]      = "/tmp/repos/yum.repos.d/"
     tgtDirectory,err                   := targets.NewTarget(targetDirectoryConfig)
     //
     if err!=nil { fmt.Printf("\n Directory config error: %v \n", err)  }
     //err=tgtDirectory.Gather()
     //if err!=nil { fmt.Printf("\n Directory gather error: %v \n", err)  }
-    fmt.Printf("\ntgtDirectory len of  nested targets: %v \n", len(tgtDirectory.GetNestedTargets()))
     //
     // checking directory files
     //
@@ -27,14 +26,7 @@ func main(){
     //    fmt.Printf("\nTarget: %v\n", target)
     // }
     //
-    // -- -- -- -- -- -- -- -- -- -- -- -- --
-    // --                                  --
-    // -- -- -- -- -- -- -- -- -- -- -- -- --
     //-- dynima to handle directory target  --
-    // -- -- -- -- -- -- -- -- -- -- -- -- --
-    // --                                  --
-    // -- -- -- -- -- -- -- -- -- -- -- -- --
-    //
     d                 := cuda.Dynima{}
     defaultFilterList := filtering.CreateDefaultFilterList()
     //

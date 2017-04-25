@@ -106,12 +106,8 @@ func(h *Handler)handleFile()(file result.File, err error ){
     //
     baseSection :=  result.NewSection( "" , result.SECTION_TYPE_BASE )
     //
-    //
-    //
     // baseSection contains data from whole file . will be appended to result.File.sections if any other sections won't be  found
     // sections are collecting while cycle below
-    //
-    //
     //
     var currentSection *result.Section
     // _,_ = baseSection, currentSection
@@ -138,12 +134,20 @@ func(h *Handler)handleFile()(file result.File, err error ){
         //
         // _,_,_                                                 =   section_name_indexes, section_tag_indexes, section_type
         //
-        if defaultSectionBreaker(line) { writeToSectionInProgress = false  ; continue }
+        if defaultSectionBreaker(line) {
+            if i!=len(lines)-1 {
+                // means set writeToSectionInProgress to false just when this is not last line
+                // if this last line we immediately  have to upload last section to sections slice
+                writeToSectionInProgress = false
+            }
+            continue
+        }
         //
         //
         //
         if section_type == analyze.NOT_SECTION {
             //
+            writeToSectionInProgress = true
             lineAsArray := strings.Split(       line, ""   )
             delims,data := analyze.GetIndexes( lineAsArray ) // as i remember GetIndexes just making base set of delims and data by  splitting line by spaces
             //
@@ -152,17 +156,13 @@ func(h *Handler)handleFile()(file result.File, err error ){
             // // ( lineAsArray, delims, data)(ndelims, ndata)
             //
             //
-            for i:= range h.filters {
-                //
-                //
+            for i := range h.filters {
                 //
                 filter := h.filters[i]
                 if filter.Enabled {
                     new_delims, new_data  := filter.Call( lineAsArray, delims, data )
                     delims,     data      =  new_delims, new_data
                 }
-                //
-                //
                 //
             }
             //
@@ -184,14 +184,10 @@ func(h *Handler)handleFile()(file result.File, err error ){
             //
             if currentSection.Size() > 0 {
                 //
-                //
-                //
                 writeToSectionInProgress = true
                 var oldSection result.Section
                 oldSection               = *currentSection
                 file.Append(oldSection)
-                //
-                //
                 //
             }
             //
@@ -224,12 +220,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
     if file.Size() == 0 { file.Append( baseSection ) }
     file.SetPath(target.GetPathShort())
     //
-    //
-    //
     return
-    //
-    //
-    //
 }
 
 func(h *Handler)handleDirectory()(directory result.Directory,err error ){
