@@ -142,6 +142,11 @@ func (s *Section)Append(line Line)(){
     s.Lines = append( s.Lines, line )
 }
 
+func (s *Section)Size()(int){
+    return len(s.Lines)
+}
+
+
 
 //
 // File methods
@@ -179,6 +184,15 @@ func (f *File)Append(s Section)(){
 func (f *File)Size()(int){
     return len(f.Sections)
 }
+
+func (f *File)GetPath()(string){
+    return f.Path
+}
+
+func (f *File)SetPath(path string)(){
+    f.Path = path
+}
+
 
 //
 // Directory methods

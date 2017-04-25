@@ -1,6 +1,5 @@
 package main
 
-
 import "fmt"
 import "jumper/cuda"
 import "jumper/cuda/targets"
@@ -12,27 +11,44 @@ func main(){
     // -- -- -- --
     targetDirectoryConfig              := make(map[string]string,0)
     targetDirectoryConfig["type"]      = "TARGET_DIRECTORY"
-    targetDirectoryConfig["path"]      =  "/tmp/repos/yum.repos.d"
+    targetDirectoryConfig["path"]      = "/tmp/test/"
     tgtDirectory,err                   := targets.NewTarget(targetDirectoryConfig)
+    //
     if err!=nil { fmt.Printf("\n Directory config error: %v \n", err)  }
-    err=tgtDirectory.Gather()
-    if err!=nil { fmt.Printf("\n Directory gather error: %v \n", err)  }
+    //err=tgtDirectory.Gather()
+    //if err!=nil { fmt.Printf("\n Directory gather error: %v \n", err)  }
+    fmt.Printf("\ntgtDirectory len of  nested targets: %v \n", len(tgtDirectory.GetNestedTargets()))
+    //
+    // checking directory files
+    //
+    // nestedTargets:=tgtDirectory.GetNestedTargets()
+    // for i:= range nestedTargets {
+    //     target := nestedTargets[i]
+    //    fmt.Printf("\nTarget: %v\n", target)
+    // }
     //
     // -- -- -- -- -- -- -- -- -- -- -- -- --
     // --                                  --
     // -- -- -- -- -- -- -- -- -- -- -- -- --
-    // -- dynima to handle directory target--
+    //-- dynima to handle directory target  --
     // -- -- -- -- -- -- -- -- -- -- -- -- --
     // --                                  --
     // -- -- -- -- -- -- -- -- -- -- -- -- --
     //
     d                 := cuda.Dynima{}
     defaultFilterList := filtering.CreateDefaultFilterList()
-    for i:= range filtering.CreateDefaultFilterList(){
+    //
+    //
+    //
+    for i := range filtering.CreateDefaultFilterList() {
+        //
+        //
         filter := defaultFilterList[i]
         d.AppendFilter( filter )
+        //
+        //
     }
-    d.AppendTarget(tgtDirectory)
+    d.AppendTarget( tgtDirectory )
     fmt.Printf("\n:Dynima:%v\n-- -- -- --\n", d )
     resultSet := d.RunFilters()
     fmt.Printf("\n:ResultSet:\n-- -- -- --\n")
@@ -41,9 +57,13 @@ func main(){
     //
     //
     for i := range results {
+        //
+        // 
         result         := results[i]
         resultByte,err := result.GetJson()
         fmt.Printf("\n%s\nErr:\n%v",string(resultByte),err)
+        //
+        //
     }
     //
     //

@@ -73,7 +73,12 @@ func main(){
     target.configured = true
 
     targets.Append(&target)
+    targets.Append(&target)
+    fmt.Printf("\nslr len %d\n",len(targetsSLR))
     targetsSLR.Append(&target)
+    fmt.Printf("\nslr len %d\n",len(targetsSLR))
+    targetsSLR.Append(&target)
+    fmt.Printf("\nslr len %d\n",len(targetsSLR))
 
     fmt.Printf("test#1:\nTargets:\n")
     for i:= range targets {

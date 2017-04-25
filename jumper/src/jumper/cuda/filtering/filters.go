@@ -1,6 +1,6 @@
 package filtering
 
-import "fmt"
+//import "fmt"
 import "jumper/cuda/analyze"
 
 func BaseFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
@@ -68,7 +68,7 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
                 }
             }
         }
-        fmt.Printf("\nstrada to Aluma %v\n",data_inside_quote_indexes)
+        // fmt.Printf("\nstrada to Aluma %v\n",data_inside_quote_indexes)
         ndelims,ndata = AlumaPaster(delims , data , Shifter(data_inside_quote_indexes))
     } else {
         ndelims = delims
@@ -112,12 +112,12 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
                 path_complete_indexes = append( path_complete_indexes, new_indexes )
 
         }
-        fmt.Printf("\n:filtering:PathFilter:\npath_complete_indexes:Before:\n%v\n",path_complete_indexes)
+        // fmt.Printf("\n:filtering:PathFilter:\npath_complete_indexes:Before:\n%v\n",path_complete_indexes)
         path_complete_indexes = Shifter( path_complete_indexes )
-        fmt.Printf("\n:filtering:PathFilter:\nShifter(path_complete_indexes):After:\n%v\n",path_complete_indexes)
-        fmt.Printf("\n---\nBefore Aluma: Delims:%v\tDatas:%v\n---\n",delims , data  )
+        // fmt.Printf("\n:filtering:PathFilter:\nShifter(path_complete_indexes):After:\n%v\n",path_complete_indexes)
+        // fmt.Printf("\n---\nBefore Aluma: Delims:%v\tDatas:%v\n---\n",delims , data  )
         ndelims,ndata         = AlumaPaster( delims , data , path_complete_indexes )
-        fmt.Printf("\n---\nAfter Aluma: Delims:%v\tDatas:%v\n---\n", ndelims,ndata )
+        // fmt.Printf("\n---\nAfter Aluma: Delims:%v\tDatas:%v\n---\n", ndelims,ndata )
         //
         ndelims = Shifter(ndelims)
         ndata   = Shifter(ndata)

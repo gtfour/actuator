@@ -64,11 +64,15 @@ func(tl *TargetListPtrs)GetCopy()(targets TargetList){
 
 
 func(tl *TargetList)Append(t *Target)(err error){
+    //
+    //
     if t.configured {
+        //
         var target Target
         target = *t
         (*tl) = append((*tl), target)
         return nil
+        //
     } else {
         return targetWasNotConfigured
     }
@@ -89,9 +93,10 @@ func(t *Target)Get()(lineAsArray [][]string,err error) {
     return
 }
 
-func(t *Target)GetType()(int)       { return t.typ   }
-func(t *Target)GetPath()(string)    { return t.path  }
-func(t *Target)GetLines()([]string) { return t.lines }
+func(t *Target)GetType()(int)         { return t.typ        }
+func(t *Target)GetPath()(string)      { return t.path       }
+func(t *Target)GetPathShort()(string) { return t.pathShort  }
+func(t *Target)GetLines()([]string)   { return t.lines      }
 
 func(t *Target)PushPart(part []string)(err error){
     //  
@@ -172,11 +177,17 @@ func(t *Target)Gather()(err error){
     if !t.configured { return targetWasNotConfigured }
     switch target_type:=t.typ; target_type {
         case TARGET_LINE:
+            //
             err = nil
+            //
         case TARGET_FILE:
+            //
             err = t.gatherFile()
+            //
         case TARGET_DIR:
+            //
             err = t.gatherDir()
+            //
     }
     if err != nil {
         t.gatherFailed = true
@@ -219,8 +230,6 @@ func(t *Target)gatherDir()(err error) {
     dir_files,err := file.ReadDirFiles(t.path)
     if err !=nil { return }
     //
-    //
-    //
     for i := range dir_files {
         //
         //
@@ -232,22 +241,24 @@ func(t *Target)gatherDir()(err error) {
         if err != nil || tgtFilePtr.configured == false { continue }
         err = tgtFilePtr.Gather()
         //
+        //
         if err == nil {
             tgtFilePtr.parentIndex    =  t.selfIndex
             tgtFilePtr.child          =  true
-            var  tgtFile  Target
-            tgtFile                   =  *tgtFilePtr
-            t.nestedTargets           =  append( t.nestedTargets, tgtFile )
+            // var  tgtFile  Target
+            // tgtFile                   =  *tgtFilePtr
+            // t.nestedTargets           =  append( t.nestedTargets, tgtFile )
+            t.nestedTargets.Append( tgtFilePtr )
         }
         //
         //
     }
     //
-    t.pathShort = path.Base(t.path)
-    //
-    //
+    t.pathShort = path.Base( t.path )
     //
     return nil
+    //
+    //
     //
 }
 

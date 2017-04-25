@@ -99,8 +99,8 @@ func(h *Handler)handleFile()(file result.File, err error ){
     //
     //
     //
-    target      :=  h.target
-    lines       :=  target.GetLines()
+    target := h.target
+    lines  := target.GetLines()
     //
     // passing empty name
     //
@@ -126,7 +126,6 @@ func(h *Handler)handleFile()(file result.File, err error ){
     writeToSectionInProgress :=  false
     //
     //
-    //
     for i := range lines {
         //
         //
@@ -145,8 +144,6 @@ func(h *Handler)handleFile()(file result.File, err error ){
         //
         if section_type == analyze.NOT_SECTION {
             //
-            //
-            //
             lineAsArray := strings.Split(       line, ""   )
             delims,data := analyze.GetIndexes( lineAsArray ) // as i remember GetIndexes just making base set of delims and data by  splitting line by spaces
             //
@@ -158,11 +155,13 @@ func(h *Handler)handleFile()(file result.File, err error ){
             for i:= range h.filters {
                 //
                 //
+                //
                 filter := h.filters[i]
                 if filter.Enabled {
                     new_delims, new_data  := filter.Call( lineAsArray, delims, data )
                     delims,     data      =  new_delims, new_data
                 }
+                //
                 //
                 //
             }
@@ -180,24 +179,29 @@ func(h *Handler)handleFile()(file result.File, err error ){
             //
         } else {
             //
+            // New section may be found while reading file.
+            // Let's add rule to prevent writing base section when this section is empty.
             //
-            //  new section may be found while reading file
+            if currentSection.Size() > 0 {
+                //
+                //
+                //
+                writeToSectionInProgress = true
+                var oldSection result.Section
+                oldSection               = *currentSection
+                file.Append(oldSection)
+                //
+                //
+                //
+            }
             //
             //
-            writeToSectionInProgress = true
-            var oldSection result.Section
-            oldSection     = *currentSection
-            file.Append( oldSection )
             //
-            //
-            //
-            section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
+            section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]]
             childSection           :=  result.NewSection( section_name , section_type )
             currentSection         =   &childSection
             newSectionBreaker      :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
             defaultSectionBreaker  =   newSectionBreaker
-            //
-            //
             //
             //
             //
@@ -210,6 +214,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
     // file.Size() is 0 when any nested section  has not been found
     //
     // check if section was not closed
+    //
     if writeToSectionInProgress {
         var oldSection result.Section
         oldSection     = *currentSection
@@ -217,6 +222,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
     }
     //
     if file.Size() == 0 { file.Append( baseSection ) }
+    file.SetPath(target.GetPathShort())
     //
     //
     //
@@ -234,14 +240,21 @@ func(h *Handler)handleDirectory()(directory result.Directory,err error ){
     //
     //
     directory.Path = target.GetPath()
+
     for i := range nestedTargets {
+        //
         tgt        := nestedTargets[i]
         handler    := NewHandler(nil)
-        handler.AddFilters(h.filters)
-        handler.AddTargetPtr(&tgt)
+        handler.AddFilters( h.filters )
+        handler.AddTargetPtr( &tgt )
+        //
         resultFile,err :=  handler.handleFile()
+        //
         if err == nil { directory.Append(resultFile) }
+        //
     }
+    //
+    //
     return
     //
 }
