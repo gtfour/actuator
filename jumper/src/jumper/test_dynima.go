@@ -11,7 +11,7 @@ func main(){
     // -- -- -- --
     targetDirectoryConfig              := make(map[string]string,0)
     targetDirectoryConfig["type"]      = "TARGET_DIRECTORY"
-    targetDirectoryConfig["path"]      = "/tmp/repos/yum.repos.d/"
+    targetDirectoryConfig["path"]      = "/tmp/repos/nginx/"
     tgtDirectory,err                   := targets.NewTarget(targetDirectoryConfig)
     //
     if err!=nil { fmt.Printf("\n Directory config error: %v \n", err)  }
