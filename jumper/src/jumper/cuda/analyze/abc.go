@@ -1,5 +1,6 @@
 package analyze
 
+import "fmt"
 import "unicode"
 import "strings"
 
@@ -130,6 +131,7 @@ func GetSeparatorIndexes (entry, sep string) (indexes []int) {
 func RemoveSpaces(lineAsArray []string, remove_type int)([2]int) {
 
     // Lets try to set size 2  of returning array
+    fmt.Printf("\nRemoveSpaces:len:%d   lineAsArray:|%v|\n",len(lineAsArray), lineAsArray)
 
     LEADING    :=0
     CLOSING    :=1

@@ -41,6 +41,7 @@ type Section struct {
     //
     Name                      string      `json:"name"`
     id                        string      `json:"id"`
+    parentId                  string      `json:"parentId"`
     Typ                       int         `json:"typ"`
     Lines                     []Line      `json:"lines"`
     template                  string      `json:"template"`
@@ -127,6 +128,20 @@ func (s *Section)GetType()(int){
     return RESULT_TYPE_SECTION
     //
 }
+
+func (s *Section)GetId()(string){
+    //
+    return s.id
+    //
+}
+
+func (s *Section)SetParentId(parentId string)(){
+    //
+    s.parentId = parentId
+    //
+}
+
+
 
 func (s *Section)GetJson()([]byte,error){
     if s == nil { return nil,nilResultError }

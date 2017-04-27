@@ -1,6 +1,5 @@
 package analyze
 
-// import "fmt"
 import "strings"
 
 var section_brackets_square   =  [2]string {"[","]"}
@@ -10,8 +9,8 @@ var section_brackets_curly    =  [2]string {"{","}"}
 
 func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
 
-    entryAsArray  :=  strings.Split(entry,"")
-    section_type  =   NOT_SECTION
+    entryAsArray         :=  strings.Split(entry,"")
+    section_type         =   NOT_SECTION
     if len(entryAsArray) == 0 { return }
 
     //                   
@@ -20,18 +19,48 @@ func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
     // // curly          := 2
     //
 
-    opening        := 0
-    closing        := 1
-    opening_slashed:= 2
+    opening         := 0
+    closing         := 1
+    opening_slashed := 2
 
     //
     // check if section has square type
     //
-    square_section_opening_index := strings.Index(entry,section_brackets_square[opening])
-    square_section_closing_index := strings.Index(entry,section_brackets_square[closing])
-
-    if square_section_opening_index  == 0 && square_section_closing_index  == (len(entry)-1) {
-        return [2]int {1, square_section_closing_index}, tag , SQUARE_SECTION
+    square_section_opening_index := strings.Index( entry, section_brackets_square[opening] )
+    square_section_closing_index := strings.Index( entry, section_brackets_square[closing] )
+    if ( square_section_opening_index>=0 && square_section_closing_index >0 &&  square_section_opening_index < square_section_closing_index ) {
+        //
+        // test
+        //
+        // cleanEntryIndexes            := RemoveSpaces(entryAsArray, 2)
+        // GetFixedArrayChars(lineAsArray []string, selected_indexes[]int) (selected []string)
+        //
+        sectionNameIndexes              := []int{ square_section_opening_index+1, square_section_closing_index-1 }
+        //fmt.Printf("\n<sectionNameIndexes: %v>\n", sectionNameIndexes)
+        sectionNameArray                := GetFixedArrayChars( entryAsArray, sectionNameIndexes )
+        //fmt.Printf("\n<sectionNameArray: %v>\n", sectionNameArray)
+        sectionNameWithoutSpacesIndexes := RemoveSpaces(sectionNameArray, 2)
+        //
+        // test 
+        //
+        offsetOpening     := square_section_opening_index + 1
+        offsetClosing     := offsetOpening
+        squareSectionName := [2]int{ sectionNameWithoutSpacesIndexes[0]+offsetOpening, sectionNameWithoutSpacesIndexes[1]+offsetClosing }
+        //
+        //
+        //
+        //fmt.Printf("\n<sectionNameWithoutSpacesIndexes: %v>\n", sectionNameWithoutSpacesIndexes)
+        // now we have to remove leading and closing spaces
+        //
+        //
+        if square_section_opening_index  == 0 && square_section_closing_index  == (len(entry)-1) {
+            //
+            return squareSectionName, tag , SQUARE_SECTION
+            //
+        }
+        //
+        //
+        //
     }
     //
     // check if section has trianle type
@@ -133,4 +162,10 @@ func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
     }
     return
 
+}
+
+func SectionCouldBeNested(section_type int)(yes bool) {
+    // incomplete ! have to add checking curly sections 
+    if section_type == TRIANGLE_SECTION_STARTING { yes = true }
+    return
 }

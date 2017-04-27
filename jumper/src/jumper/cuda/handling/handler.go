@@ -104,7 +104,8 @@ func(h *Handler)handleFile()(file result.File, err error ){
     //
     // passing empty name
     //
-    baseSection :=  result.NewSection( "" , result.SECTION_TYPE_BASE )
+    baseSection := result.NewSection( "" , result.SECTION_TYPE_BASE )
+    parentId    := baseSection.GetId()
     //
     // baseSection contains data from whole file . will be appended to result.File.sections if any other sections won't be  found
     // sections are collecting while cycle below
@@ -112,14 +113,14 @@ func(h *Handler)handleFile()(file result.File, err error ){
     var currentSection *result.Section
     // _,_ = baseSection, currentSection
     //
-    //
-    //
-    currentSection         =     &baseSection
+    currentSection           =   &baseSection
     //
     // currentSection will have baseSection address till any nested section won't be found inside that file 
     //
     defaultSectionBreaker    :=  func(string)(bool){ return false }
     writeToSectionInProgress :=  false
+    sectionCouldBeNested     :=  false
+    _ = sectionCouldBeNested
     //
     //
     for i := range lines {
@@ -147,9 +148,10 @@ func(h *Handler)handleFile()(file result.File, err error ){
         //
         if section_type == analyze.NOT_SECTION {
             //
-            writeToSectionInProgress = true
-            lineAsArray := strings.Split(       line, ""   )
-            delims,data := analyze.GetIndexes( lineAsArray ) // as i remember GetIndexes just making base set of delims and data by  splitting line by spaces
+            //
+            writeToSectionInProgress  =  true
+            lineAsArray               := strings.Split(       line, ""   )
+            delims,data               := analyze.GetIndexes( lineAsArray ) // as i remember GetIndexes just making base set of delims and data by  splitting line by spaces
             //
             // GetIndexes  make cause a bug or mistakes
             //
@@ -179,21 +181,29 @@ func(h *Handler)handleFile()(file result.File, err error ){
             //
         } else {
             //
+            // new section maybe found while writing to already opened section
+            //
+            sectionCouldBeNested = analyze.SectionCouldBeNested( section_type )
+            //
             // New section may be found while reading file.
             // Let's add rule to prevent writing base section when this section is empty.
             //
-            if currentSection.Size() > 0 {
+            // // if currentSection.Size() > 0 {
                 //
-                writeToSectionInProgress = true
+                // seems wrong condition check
+                // Should i have change writeToSectionInProgress to false  ?
+                // lets try
+                //
+                writeToSectionInProgress = false
                 var oldSection result.Section
                 oldSection               = *currentSection
                 file.Append(oldSection)
                 //
-            }
+            // // }
             //
             //
             //
-            section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]]
+            section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
             childSection           :=  result.NewSection( section_name , section_type )
             currentSection         =   &childSection
             newSectionBreaker      :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
@@ -217,7 +227,9 @@ func(h *Handler)handleFile()(file result.File, err error ){
         file.Append( oldSection )
     }
     //
-    if file.Size() == 0 { file.Append( baseSection ) }
+    // // if file.Size() == 0 {
+        file.Append( baseSection ) // will append baseSection anyway
+    // // }
     file.SetPath(target.GetPathShort())
     //
     return
