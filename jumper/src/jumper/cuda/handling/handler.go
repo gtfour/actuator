@@ -1,5 +1,6 @@
 package handling
 
+import "fmt"
 import "strings"
 
 import "jumper/cuda/result"
@@ -104,8 +105,8 @@ func(h *Handler)handleFile()(file result.File, err error ){
     //
     // passing empty name
     //
-    baseSection := result.NewSection( "" , result.SECTION_TYPE_BASE )
-    parentId    := baseSection.GetId()
+    baseSection       :=  result.NewSection( "" , result.SECTION_TYPE_BASE )
+    // currentSectionId  :=  parentId
     //
     // baseSection contains data from whole file . will be appended to result.File.sections if any other sections won't be  found
     // sections are collecting while cycle below
@@ -120,7 +121,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
     defaultSectionBreaker    :=  func(string)(bool){ return false }
     writeToSectionInProgress :=  false
     sectionCouldBeNested     :=  false
-    _ = sectionCouldBeNested
+    //
     //
     //
     for i := range lines {
@@ -136,6 +137,16 @@ func(h *Handler)handleFile()(file result.File, err error ){
         // _,_,_                                                 =   section_name_indexes, section_tag_indexes, section_type
         //
         if defaultSectionBreaker(line) {
+            parentSectionPointer:=currentSection.GetParentSectionPointer()
+            if currentSection.GetType() != result.SECTION_TYPE_BASE && parentSectionPointer != nil {
+                // write current section to file
+                var oldSection result.Section
+                oldSection               = *currentSection
+                file.Append( oldSection )
+                // switchback to parent section when current section will be close 
+                currentSection = parentSectionPointer
+                //
+            }
             if i!=len(lines)-1 {
                 // means set writeToSectionInProgress to false just when this is not last line
                 // if this last line we immediately  have to upload last section to sections slice
@@ -183,31 +194,47 @@ func(h *Handler)handleFile()(file result.File, err error ){
             //
             // new section maybe found while writing to already opened section
             //
-            sectionCouldBeNested = analyze.SectionCouldBeNested( section_type )
+            current_section_type := currentSection.GetType()
+            sectionCouldBeNested =  analyze.SectionCouldBeNested(current_section_type)
+            //
+            fmt.Printf("\n:else: current_section_type:%v \n",current_section_type)
+            //
+            if sectionCouldBeNested || currentSection.GetType() == result.SECTION_TYPE_BASE {
+                //
+                section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
+                childSection           :=  currentSection.NewChildSection( section_name , section_type )
+                fmt.Printf("\n child section: %v \n", childSection)
+                currentSection         =   &childSection
+                newSectionBreaker      :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
+                defaultSectionBreaker  =   newSectionBreaker
+                //
+            }
             //
             // New section may be found while reading file.
             // Let's add rule to prevent writing base section when this section is empty.
             //
-            // // if currentSection.Size() > 0 {
+            //  // if currentSection.Size() > 0 {
                 //
                 // seems wrong condition check
                 // Should i have change writeToSectionInProgress to false  ?
                 // lets try
                 //
-                writeToSectionInProgress = false
-                var oldSection result.Section
-                oldSection               = *currentSection
-                file.Append(oldSection)
+                // // writeToSectionInProgress = false
+                // // var oldSection result.Section
+                // // oldSection               = *currentSection
+                // // file.Append(oldSection)
                 //
-            // // }
+                //
+            //  //}
             //
             //
             //
-            section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
-            childSection           :=  result.NewSection( section_name , section_type )
-            currentSection         =   &childSection
-            newSectionBreaker      :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
-            defaultSectionBreaker  =   newSectionBreaker
+            // // section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
+            // // childSection           :=  result.NewSection( section_name , section_type )
+            // // childSection.SetParentId(parentId)
+            // // currentSection         =   &childSection
+            // // newSectionBreaker      :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
+            // // defaultSectionBreaker  =   newSectionBreaker
             //
             //
             //
@@ -230,6 +257,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
     // // if file.Size() == 0 {
         file.Append( baseSection ) // will append baseSection anyway
     // // }
+    //
     file.SetPath(target.GetPathShort())
     //
     return
