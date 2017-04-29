@@ -1,6 +1,5 @@
 package handling
 
-import "fmt"
 import "strings"
 
 import "jumper/cuda/result"
@@ -197,13 +196,11 @@ func(h *Handler)handleFile()(file result.File, err error ){
             current_section_type := currentSection.GetType()
             sectionCouldBeNested =  analyze.SectionCouldBeNested(current_section_type)
             //
-            fmt.Printf("\n:else: current_section_type:%v \n",current_section_type)
             //
             if sectionCouldBeNested || currentSection.GetType() == result.SECTION_TYPE_BASE {
                 //
                 section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
                 childSection           :=  currentSection.NewChildSection( section_name , section_type )
-                fmt.Printf("\n child section: %v \n", childSection)
                 currentSection         =   &childSection
                 newSectionBreaker      :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
                 defaultSectionBreaker  =   newSectionBreaker
