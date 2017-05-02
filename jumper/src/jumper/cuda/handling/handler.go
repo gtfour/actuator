@@ -6,6 +6,7 @@ import "jumper/cuda/result"
 import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
 import "jumper/cuda/analyze"
+import "jumper/cuda/templating"
 
 type Handler struct {
     //
@@ -122,6 +123,10 @@ func(h *Handler)handleFile()(file result.File, err error ){
     sectionCouldBeNested     :=  false
     //
     //
+    templateDataCounter      :=  0
+    lineTemplate             :=  ""
+    _                        = lineTemplate
+    //
     //
     for i := range lines {
         //
@@ -138,12 +143,15 @@ func(h *Handler)handleFile()(file result.File, err error ){
         if defaultSectionBreaker(line) {
             parentSectionPointer:=currentSection.GetParentSectionPointer()
             if currentSection.GetType() != result.SECTION_TYPE_BASE && parentSectionPointer != nil {
+                //
                 // write current section to file
                 var oldSection result.Section
                 oldSection               = *currentSection
+                //
                 file.Append( oldSection )
                 // switchback to parent section when current section will be close 
                 currentSection = parentSectionPointer
+                //
                 //
             }
             if i!=len(lines)-1 {
@@ -178,6 +186,18 @@ func(h *Handler)handleFile()(file result.File, err error ){
                 //
             }
             //
+            // gen template for the first line of the section
+            //
+            // templateDataCounter
+            // if currentSection.Size() ==  0 {
+            //    template, variableCounter    :=  templating.GenTemplate(lineAsArray, data)
+            //    currentSection.LineTemplate  =   template
+            // }
+            tempTemplate, tempTemplateDataCounter := templating.GenTemplate( lineAsArray, data )
+            if tempTemplateDataCounter > templateDataCounter {
+                lineTemplate = tempTemplate
+            }
+            //
             //
             //
             selectedData := analyze.SelectDataByIndexes(lineAsArray, data)
@@ -206,39 +226,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
                 defaultSectionBreaker  =   newSectionBreaker
                 //
             }
-            //
-            // New section may be found while reading file.
-            // Let's add rule to prevent writing base section when this section is empty.
-            //
-            //  // if currentSection.Size() > 0 {
-                //
-                // seems wrong condition check
-                // Should i have change writeToSectionInProgress to false  ?
-                // lets try
-                //
-                // // writeToSectionInProgress = false
-                // // var oldSection result.Section
-                // // oldSection               = *currentSection
-                // // file.Append(oldSection)
-                //
-                //
-            //  //}
-            //
-            //
-            //
-            // // section_name           :=  line[section_name_indexes[0]:section_name_indexes[1]+1]
-            // // childSection           :=  result.NewSection( section_name , section_type )
-            // // childSection.SetParentId(parentId)
-            // // currentSection         =   &childSection
-            // // newSectionBreaker      :=  GetSectionBreaker( line, section_name_indexes, section_tag_indexes, section_type )
-            // // defaultSectionBreaker  =   newSectionBreaker
-            //
-            //
-            //
         }
-        // 
-        // 
-        //
     }
     //
     // file.Size() is 0 when any nested section  has not been found
@@ -250,11 +238,7 @@ func(h *Handler)handleFile()(file result.File, err error ){
         oldSection     = *currentSection
         file.Append( oldSection )
     }
-    //
-    // // if file.Size() == 0 {
-        file.Append( baseSection ) // will append baseSection anyway
-    // // }
-    //
+    file.Append( baseSection ) // will append baseSection anyway
     file.SetPath(target.GetPathShort())
     //
     return

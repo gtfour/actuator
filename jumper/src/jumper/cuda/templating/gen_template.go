@@ -3,13 +3,11 @@ package templating
 import "fmt"
 import "jumper/cuda/analyze"
 
-func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
+func GenTemplate(lineAsArray []string, data_indexes[][]int) (string,int) {
 
-    word:=""
-    template_variable_counter:=0
-    //fmt.Printf("\n Line Array %v\n",lineAsArray)
+    word                      := ""
+    template_variable_counter := 0
 
-    //for i := range  lineAsArray {
     for i := 0; i < len(lineAsArray); i++ {
     //for i,c := range  lineAsArray {
         //last_pair_index := -1
@@ -30,7 +28,10 @@ func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
                     break
                 }
             } else {
-                temp_pair := []int{pair[1],pair[0]}
+                if len(pair)==2 {
+                    // making reverse pair
+                    temp_pair := []int{pair[1],pair[0]}
+                    // fresh change : i think i have to add additional check ( len(pair)==2 )   to prevent error
                     if analyze.DigitInInterval(i, temp_pair) == analyze.DIGIT_IN_INTERVAL {
                         on_interval = true
                         invert      =  true
@@ -40,6 +41,8 @@ func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
                         }
                         break
                     }
+                }
+                //
             }
         }
 
@@ -58,7 +61,6 @@ func GenTemplate(lineAsArray []string, data_indexes[][]int) (string) {
             i = matched_pair[1]// start iterating array from next index of found pair
         }
     }
-    //fmt.Printf("\nword %s\n",word)
-    return word
+    return word, template_variable_counter
 }
 

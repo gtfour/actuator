@@ -3,6 +3,7 @@ package cuda
 import "sync"
 import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
+import "jumper/cuda/templating"
 import "jumper/cuda/result"
 import "jumper/cuda/handling"
 
@@ -13,12 +14,16 @@ type Dynima struct {
     //  : :  each file may got several dynimas binded to itself
     //  : :
     //  : :
-    sync.RWMutex                            //   mutex will be used to freze operations over dynima while changing filters or modifying targets
-    filters         filtering.FilterList    // 
-    targets         targets.TargetListPtrs  //   ????  seems it is not necessary to store file and directory content inside dynima
-    configured      bool                    //
-    offset          int64                   //   for log files, just when dynima instance binded to single file
-    //  dataSet  []Data                     //   data will collected while targets processing
+    sync.RWMutex                               // mutex will be used to freze operations over dynima while changing filters or modifying targets
+    filters             filtering.FilterList   // 
+    targets             targets.TargetListPtrs // ? seems it is not necessary to store file and directory content inside dynima
+    templates           templating.Template    // 
+    configured          bool                   //
+    offset              int64                  // for log files, just when dynima instance binded to single file
+    id                  string                 //
+    name                string                 //
+    primaryKeysIndexes  []int                  // list of data indexes whose helps us to determine each uniq line inside file
+    //  dataSet  []Data                        // data will collected while targets processing
     //  : :
     //  : :
     //  : :
@@ -26,7 +31,6 @@ type Dynima struct {
 }
 
 /*
-
 type Target struct {  // interface {
     //
     //  Get       ()(lineAsArray [][]string, err error)
@@ -37,9 +41,7 @@ type Target struct {  // interface {
     typ         int
     path        string
     lineAsArray [][]int
-
 }
-
 */
 
 

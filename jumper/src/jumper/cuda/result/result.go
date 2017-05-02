@@ -26,8 +26,8 @@ type Line struct {
     delim_indexes             [][]int     `json:"delim_indexes"`
     data_indexes              [][]int     `json:"data_indexes"`
     data                      [][]string  `json:"data"`
-    template                  string      `json:"template"`
-    template_data_size        int         `json:"template_data_size"`
+    // template                  string      `json:"template"`
+    // template_data_size        int         `json:"template_data_size"`
     //
     //
     //
@@ -44,8 +44,8 @@ type Section struct {
     ParentId                  string      `json:"parentId"`
     Typ                       int         `json:"typ"`
     Lines                     []Line      `json:"lines"`
-    template                  string      `json:"template"`
-    template_data_size        int         `json:"template_data_size"`
+    // LineTemplate              string      `json:"line_template"`
+    // LineTemplate_data_size    int         `json:"line_template_data_size"`
     //
     sectionTyp                int          // is it dup field ????
     parentSectionPointer      *Section
@@ -57,15 +57,19 @@ type Section struct {
 
 type File struct {
     //
-    Path      string     `json:"path"`
-    Sections  []Section  `json:"sections"`
+    Path                       string    `json:"path"`
+    Sections                   []Section `json:"sections"`
+    SectionTemplate            string    `json:"section_template"`
+    SectionTemplate_data_size  int       `json:"section_template_data_size"`
     //
 }
 
 type Command struct {
     //
-    Path      string     `json:"path"`
-    sections  []Section  `json:"sections"`
+    Path                       string    `json:"path"`
+    Sections                   []Section `json:"sections"`
+    SectionTemplate            string    `json:"section_template"`
+    SectionTemplate_data_size  int       `json:"section_template_data_size"`
     //
 }
 

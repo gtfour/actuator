@@ -166,6 +166,11 @@ func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
 
 func SectionCouldBeNested(section_type int)(yes bool) {
     // incomplete ! have to add checking curly sections 
-    if section_type == TRIANGLE_SECTION_STARTING { yes = true }
+    if section_type == TRIANGLE_SECTION_STARTING || section_type == CURLY_SECTION { yes = true }
+    return
+}
+
+func SectionCouldBeInline(section_type int)(yes bool) {
+    if section_type == TRIANGLE_SECTION_STARTING || section_type == CURLY_SECTION { yes = true }
     return
 }
