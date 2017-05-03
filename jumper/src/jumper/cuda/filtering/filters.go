@@ -1,6 +1,6 @@
 package filtering
 
-//import "fmt"
+import "fmt"
 import "jumper/cuda/analyze"
 
 func BaseFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
@@ -82,6 +82,7 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
     //
     // PATH_SPEC_CHARS   := []string {"/"}
     //
+    //
     PATH_SPEC_CHARS     := []string{"%",":","/","@","?","#","-",".","_","+","="}
     path_marker         := []string{"/"}
     path_marker_indexes := analyze.ArrayInArrayIndexes(lineAsArray,path_marker)
@@ -102,9 +103,14 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
                                      }
                 rightSearcher          := Searcher{ direction:RIGHT_DIRECTION }
                 rightSearcher.since    =  path_index[1]
-                rightSearcher.accepter =  func ( char string )( bool ) {
+                rightSearcher.accepter =  func ( char string )( bool ){
                                           return analyze.IsUnicodeLetter( char ) || analyze.IsUnicodeDigit( char ) || analyze.IsSymbolIn( char, PATH_SPEC_CHARS )
                                      }
+                //
+                rightSearcher.breaker  = func ( char string )( bool ){
+                                         if char == ":/" {  return true } else { return false }
+                                     }
+                rightSearcher.breakerInputSize = 2
                 //
                 searchers:=[]Searcher { rightSearcher, leftSearcher }
                 new_indexes:=RunSearchers( lineAsArray, searchers )
@@ -126,6 +132,10 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
         ndelims = delims
         ndata   = data
     }
+    //
+    fmt.Printf("\nPathFilter: lineAsArray %v\n delims %v\n data %v\nndelims %v\n ndata %v\n",lineAsArray,delims,data,ndelims,ndata)
+
+    //
     return ndelims, ndata
     //
     //
@@ -180,6 +190,8 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
         ndelims = delims
         ndata   = data
     }
+
+    fmt.Printf("\nUrlFilter: lineAsArray %v\n delims %v\n data %v\nndelims %v\n ndata %v\n",lineAsArray,delims,data,ndelims,ndata)
 
     return ndelims,ndata
 

@@ -7,16 +7,13 @@ import "jumper/cuda/analyze"
 
 func main(){
     //
-    //
-
-    //
     first_line     := "deb http://ru.archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse"
     second_line    := "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
     third_line     := "gpgcheck=1"
     //
-    firstSlice     := strings.Split(first_line,  "")
-    secondSlice    := strings.Split(second_line, "")
-    thirdSlice     := strings.Split(third_line,  "")
+    firstSlice     := strings.Split( first_line,  "" )
+    secondSlice    := strings.Split( second_line, "" )
+    thirdSlice     := strings.Split( third_line,  "" )
     //
     delims1,datas1 := analyze.GetIndexes( firstSlice  )
     delims2,datas2 := analyze.GetIndexes( secondSlice )
@@ -32,7 +29,15 @@ func main(){
     fmt.Printf("\ndataKey2: %v dataValue2: %v\n",dataKey2,dataValue2)
     fmt.Printf("\ndataKey3: %v dataValue3: %v\n",dataKey3,dataValue3)
     //
-
+    // testing PrepareCheckSet
+    // PrepareCheckSet( lineAsArray []string, offset int, inputSize int )(checkSet string, err error)
     //
+    checkSet1,err1 := filtering.PrepareCheckSet(firstSlice, 4, 4)
+    checkSet2,err2 := filtering.PrepareCheckSet(secondSlice, 4, 12)
+    checkSet3,err3 := filtering.PrepareCheckSet(thirdSlice, 9, 1)
+    //
+    fmt.Printf("\ncheckSet1:%v err1%v\n", checkSet1,err1)
+    fmt.Printf("\ncheckSet2:%v err2%v\n", checkSet2,err2)
+    fmt.Printf("\ncheckSet3:%v err3%v\n", checkSet3,err3)
     //
 }

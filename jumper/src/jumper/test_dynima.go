@@ -4,14 +4,16 @@ import "fmt"
 import "jumper/cuda"
 import "jumper/cuda/targets"
 import "jumper/cuda/filtering"
+import "jumper/cuda/analyze"
 
 func main(){
     // -- -- -- -- -- --
     // directory target
     // -- -- -- -- -- --
+    analyze.DebugPrintCharCounter("puppet:x:999:998:puppetserver daemon:/opt/puppetlabs/server/data/puppetserver:/usr/sbin/nologin")
     targetDirectoryConfig              := make(map[string]string,0)
-    targetDirectoryConfig["type"]      = "TARGET_DIRECTORY"
-    targetDirectoryConfig["path"]      = "/home/venom/yum.repos.d.example/yum.repos.d/"
+    targetDirectoryConfig["type"]      = "TARGET_DIR"
+    targetDirectoryConfig["path"]      = "/home/venom/test_passwd"
     tgtDirectory,err                   := targets.NewTarget(targetDirectoryConfig)
     //
     if err!=nil { fmt.Printf("\n Directory config error: %v \n", err)  }
