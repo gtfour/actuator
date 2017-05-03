@@ -31,11 +31,18 @@ func RunSearchers(lineAsArray []string,searchers []Searcher)( extended_indexes [
             //
             for i := searcher.since+1 ; i < len(lineAsArray); i++ {
                 char := lineAsArray[i]
-                //
                 // checking breaker
                 if searcher.breaker != nil {
-                    // searcher.breaker(char)
-                    //breakerInputSize := searcher.breakerInputSize
+                    //searcher.breaker(char)
+                    breakerInputSize := searcher.breakerInputSize
+                    if breakerInputSize == 0 { breakerInputSize += 1 }
+                    checkSet,err        := PrepareCheckSet(lineAsArray, i, breakerInputSize)
+                    if err == nil {
+                        if searcher.breaker(checkSet) {
+                            extended_indexes[1] = i-1
+                            break
+                        }
+                    }
                 }
                 //
                 //
