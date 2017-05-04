@@ -1,5 +1,6 @@
 package main
 
+import "fmt"
 import "strings"
 import "jumper/cuda/analyze"
 import "jumper/cuda/filtering"
@@ -10,7 +11,7 @@ func main() {
     lineSlice    := strings.Split(myString,"")
     analyze.DebugPrintCharCounter(myString)
     delims,datas := analyze.GetIndexes(lineSlice)
-    filtering.ColonFilter( lineSlice, delims  , datas  )
-
+    ndelims,ndatas :=filtering.ColonFilter( lineSlice, delims  , datas  )
+    fmt.Printf("\n:: Using Colon Filter: delims: %v  datas: %v ::\n", ndelims,ndatas)
 
 }

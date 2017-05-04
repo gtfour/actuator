@@ -17,6 +17,9 @@ func MakeReverse(inputIndexes [][]int, arraySize int)( outputIndexes [][]int) {
         if len(inputPair) != 2 { continue }
         first                       := inputPair[0]
         second                      := inputPair[1]
+        first_state                 := DigitInInterval(first,  appropriateInterval)
+        second_state                := DigitInInterval(second, appropriateInterval)
+        if first_state != DIGIT_IN_INTERVAL || second_state != DIGIT_IN_INTERVAL { continue }
         reverseRightPosition        =  first - 1
         if reverseLeftPosition >= 0 && reverseRightPosition >=0 {
             outputPair[0] = reverseLeftPosition
