@@ -1,6 +1,6 @@
 package filtering
 
-import "fmt"
+//import "fmt"
 import "jumper/cuda/analyze"
 
 func Shifter(interval [][]int)(ninterval [][]int) {
@@ -103,7 +103,7 @@ func AlumaPaster(delims [][]int, data [][]int, strada [][]int)(ndelims [][]int, 
             //
             if first_state == DIGIT_IN_INTERVAL && last_state == DIGIT_IN_INTERVAL {
                // split current delim to two new delims without strada indexes
-               fmt.Printf("\nStrada on delim interval\n")
+               //fmt.Printf("\nStrada on delim interval\n")
                new_delim_first := make([]int, 2)
                new_delim_last  := make([]int, 2)
                diff_first      := first - first_delim

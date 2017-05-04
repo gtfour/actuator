@@ -1,6 +1,6 @@
 package filtering
 
-import "fmt"
+//import "fmt"
 import "jumper/cuda/analyze"
 
 func BaseFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int){
@@ -133,7 +133,7 @@ func PathFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [
         ndata   = data
     }
     //
-    fmt.Printf("\nPathFilter: lineAsArray %v\n delims %v\n data %v\nndelims %v\n ndata %v\n",lineAsArray,delims,data,ndelims,ndata)
+    //fmt.Printf("\nPathFilter: lineAsArray %v\n delims %v\n data %v\nndelims %v\n ndata %v\n",lineAsArray,delims,data,ndelims,ndata)
 
     //
     return ndelims, ndata
@@ -191,7 +191,7 @@ func UrlFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims []
         ndata   = data
     }
 
-    fmt.Printf("\nUrlFilter: lineAsArray %v\n delims %v\n data %v\nndelims %v\n ndata %v\n",lineAsArray,delims,data,ndelims,ndata)
+    //fmt.Printf("\nUrlFilter: lineAsArray %v\n delims %v\n data %v\nndelims %v\n ndata %v\n",lineAsArray,delims,data,ndelims,ndata)
 
     return ndelims,ndata
 

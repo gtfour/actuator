@@ -13,7 +13,7 @@ func main(){
     analyze.DebugPrintCharCounter("puppet:x:999:998:puppetserver daemon:/opt/puppetlabs/server/data/puppetserver:/usr/sbin/nologin")
     targetDirectoryConfig              := make(map[string]string,0)
     targetDirectoryConfig["type"]      = "TARGET_DIR"
-    targetDirectoryConfig["path"]      = "/home/venom/test_passwd"
+    targetDirectoryConfig["path"]      = "/home/venom/test_passwd/"
     tgtDirectory,err                   := targets.NewTarget(targetDirectoryConfig)
     //
     if err!=nil { fmt.Printf("\n Directory config error: %v \n", err)  }
