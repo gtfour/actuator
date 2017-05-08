@@ -14,6 +14,7 @@ type Handler struct {
     //
     filters  filtering.FilterList
     target   *targets.Target
+    single   bool
     //
     //
     //
@@ -72,7 +73,8 @@ func(h *Handler)Handle()(result.Result, error){
             r,e := h.handleLine()
             return &r,e
         case targets.TARGET_FILE:
-            r,e := h.handleFile()
+            h.single =  true
+            r,e      := h.handleFile()
             return &r,e
         case targets.TARGET_DIR:
             r,e := h.handleDirectory()
@@ -239,7 +241,11 @@ func(h *Handler)handleFile()(file result.File, err error ){
         file.Append( oldSection )
     }
     file.Append( baseSection ) // will append baseSection anyway
-    file.SetPath(target.GetPathShort())
+    if h.single {
+        file.SetPath(target.GetPath())
+    } else {
+        file.SetPath(target.GetPathShort())
+    }
     //
     return
 }

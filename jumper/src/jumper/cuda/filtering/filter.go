@@ -54,12 +54,14 @@ func CreateDefaultFilterList ()(fl FilterList) {
     fl = make(FilterList,0)
     //
     //
+    var colon_filter    = Filter{ Name:"colon_filter",    Call:ColonFilter,    Enabled:true}
     var url_filter      = Filter{ Name:"url_filter",      Call:UrlFilter,      Enabled:true }
     var path_filter     = Filter{ Name:"path_filter",     Call:PathFilter,     Enabled:true }
     var brackets_filter = Filter{ Name:"brackets_filter", Call:BracketsFilter, Enabled:true }
     var quotes_filter   = Filter{ Name:"quotes_filter",   Call:QuotesFilter,   Enabled:true }
     //
     //
+    fl.Append(colon_filter)
     fl.Append(url_filter)
     fl.Append(path_filter)
     fl.Append(brackets_filter)

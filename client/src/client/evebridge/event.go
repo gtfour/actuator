@@ -54,10 +54,11 @@ func Handle(messages chan majesta.CompNotes )() {
         fmt.Printf("\n--ws-connection open error: %v --\n",websocket_connection.OpenError)
         for {
             select{
-                case message:=<-messages:
+                case message :=<-messages:
                     fmt.Printf("\n<<Evebridge: message has been recieved>>\n")
-                    var ws_message_data = wsclient.DataUpdate{ SourcePath:message.Path, SourceType:message.SourceType }
-                    message_data_raw,err:= ws_message_data.GetRaw()
+                    var ws_message_data  =  wsclient.DataUpdate{ SourcePath:message.Path, SourceType:message.SourceType }
+                    message_data_raw,err := ws_message_data.GetRaw()
+                    //
                     if err == nil {
                         var ws_message = &wsclient.Message{DataType:"data_update",Data:message_data_raw}
                         fmt.Printf("\nStart writing\n")
@@ -65,32 +66,35 @@ func Handle(messages chan majesta.CompNotes )() {
                         fmt.Printf("\nFinish writing\n")
                         fmt.Printf("Message: %v HaveToParse: %v\n",message,message.FieldExists("HashSum"))
                     }
+                    //
                 case message :=<-websocket_connection.OutChannel:
-                      if message.DataType == "server_response" {
-                          var response wsclient.Response
-                          data:=message.Data
-                          err_unmarshal:=json.Unmarshal(data, &response)
-                          if err_unmarshal == nil {
-                              fmt.Printf("\nMessage from server: %v\n",response)
-                          }
-                      } else if message.DataType == "motion" {
-                          var motion activa.Motion
-                          data  :=  message.Data
-                          err_unmarshal:=json.Unmarshal(data, &motion)
-                          if err_unmarshal == nil {
-                              //fmt.Printf("\nNew motion %v\n", motion)
-                              motion.TaskState=activa.TASK_STATE_inprogress
-                              cross.WriteMotion(&motion)
-                              //
-                              if motion.Type == activa.MOTION_TYPE_BLACKOUT {
+                      //
+                      switch message_type := message.DataType; message_type {
+                          case "server_response":
+                              var response wsclient.Response
+                              data          := message.Data
+                              err_unmarshal := json.Unmarshal(data, &response)
+                              if err_unmarshal == nil {
+                                  fmt.Printf("\nMessage from server: %v\n",response)
+                              }
+                          case "motion":
+                              var motion activa.Motion
+                              data          := message.Data
+                              err_unmarshal := json.Unmarshal(data, &motion)
+                              if err_unmarshal == nil {
+                                  //fmt.Printf("\nNew motion %v\n", motion)
+                                  motion.TaskState=activa.TASK_STATE_inprogress
+                                  cross.WriteMotion(&motion)
+                                  //
+                                  if motion.Type == activa.MOTION_TYPE_BLACKOUT {
 
-                              } else if motion.Type == activa.MOTION_TYPE_BLACKTOP {
+                                  } else if motion.Type == activa.MOTION_TYPE_BLACKTOP {
 
+                                  }
+                                  //
+                                  motions<-&motion
                               }
 
-                              //
-                              motions<-&motion
-                          }
 
                       }
                 default:
