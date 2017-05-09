@@ -4,17 +4,10 @@ import "fmt"
 import "time"
 import "encoding/json"
 import "client/wsclient"
-import "client/activa"
-import "client/cross"
+// // import "client/activa"
+import "jumper/activa"
+// // import "client/cross"
 import "client/majesta"
-
-var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
-
-const (
-      INITIALIZED  =  0 // initialized
-      CREATED      =  1
-      MODIFIED     =  2
-      REMOVED      =  3)
 
 type Event struct {
 
@@ -46,16 +39,27 @@ type DataUpdate struct {
 
 
 func Handle(messages chan majesta.CompNotes )() {
+        //
+        //
+        //
         fmt.Printf("\n:: Start handling ::\n")
         motions := make(chan *activa.Motion, 100)
-        go activa.Handle(motions)
+        //
+        // // go activa.Handle(motions)
+        //
         fmt.Printf("\nTrying to get ws-connection...\n")
         var websocket_connection = wsclient.GetWsConnection()
-        fmt.Printf("\n--ws-connection open error: %v --\n",websocket_connection.OpenError)
+        fmt.Printf("\n--ws-connection open error: %v --\n", websocket_connection.OpenError)
+        //
+        //
+        //
         for {
             select{
                 case message :=<-messages:
+                    //
+                    //
                     fmt.Printf("\n<<Evebridge: message has been recieved>>\n")
+                    //
                     var ws_message_data  =  wsclient.DataUpdate{ SourcePath:message.Path, SourceType:message.SourceType }
                     message_data_raw,err := ws_message_data.GetRaw()
                     //
@@ -67,35 +71,70 @@ func Handle(messages chan majesta.CompNotes )() {
                         fmt.Printf("Message: %v HaveToParse: %v\n",message,message.FieldExists("HashSum"))
                     }
                     //
+                    //
                 case message :=<-websocket_connection.OutChannel:
                       //
                       switch message_type := message.DataType; message_type {
+                          //
                           case "server_response":
+                              //
+                              //
                               var response wsclient.Response
                               data          := message.Data
-                              err_unmarshal := json.Unmarshal(data, &response)
+                              err_unmarshal := json.Unmarshal( data, &response )
                               if err_unmarshal == nil {
-                                  fmt.Printf("\nMessage from server: %v\n",response)
+                                  fmt.Printf("\nMessage from server: %v\n", response)
                               }
+                              //
+                              //
                           case "motion":
+                              //
+                              // motion is instruction about which file should be modified
+                              //
                               var motion activa.Motion
-                              data          := message.Data
-                              err_unmarshal := json.Unmarshal(data, &motion)
+                              data           := message.Data
+                              err_unmarshal  := json.Unmarshal(data, &motion)
+                              //
+                              //
                               if err_unmarshal == nil {
-                                  //fmt.Printf("\nNew motion %v\n", motion)
-                                  motion.TaskState=activa.TASK_STATE_inprogress
-                                  cross.WriteMotion(&motion)
                                   //
-                                  if motion.Type == activa.MOTION_TYPE_BLACKOUT {
+                                  // fmt.Printf("\nNew motion %v\n", motion)
+                                  //
+                                  motion.TaskState   =   activa.TASK_STATE_inprogress
+                                  motionSubType      :=  motion.SubType
+                                  motionSourceType   :=  motion.SourceType
+                                  motionSourcePath   :=  motion.SourcePath
+                                  _,_ = motionSourceType, motionSourcePath 
+                                  // // cross.WriteMotion( &motion )
+                                  //
+                                  //
+                                  switch motion_type := motion.Type; motion_type {
+                                      //
+                                      //
+                                      case activa.MOTION_TYPE_BLACKOUT:
+                                      //
+                                      // // commands
 
-                                  } else if motion.Type == activa.MOTION_TYPE_BLACKTOP {
+                                      //
+                                      //
+                                      case activa.MOTION_TYPE_BLACKTOP:
+                                      //
+                                      // // files and directories
+                                      if motionSubType == activa.MOTION_SUBTYPE_ADD_DYNIMA {
+                                           
+                                      }
 
+
+                                      //
+                                      //
                                   }
+                                  //
+                                  //
                                   //
                                   motions<-&motion
                               }
-
-
+                              //
+                              //
                       }
                 default:
                     time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )

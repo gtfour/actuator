@@ -36,14 +36,13 @@ func main() {
 
         dashboard_app.GET("/get-dashboard-data/:dashboardGroupId/:dashboardId/", userspace.GetDashboardData())
     }
+
     dashboard_json:=app.Group("/dashboard/json")
     {
         dashboard_json.GET("/actions",  dashboard.ActionsJson())
         dashboard_json.GET("/files",    dashboard.FilesJson())
         dashboard_json.GET("/hosts",    dashboard.HostsJson())
-
     }
-
 
     auth_app:=app.Group("/auth")
     {

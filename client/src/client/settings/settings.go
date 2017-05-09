@@ -22,5 +22,4 @@ var PUBKEY_PATH                  = "/top_secret_dir/pub.rsa"
 var PRIVATEKEY_PATH              = "/top_secret_dir/private.rsa"
 //
 //
-var SYSTEM_DATABASE              = "/tmp/cross.db"
-
+var SYSTEM_DATABASE              = "/tmp/cross_client.db"

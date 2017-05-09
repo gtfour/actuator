@@ -16,10 +16,19 @@ func main() {
     app.GET(  "/auth/:authModuleName",  rest.AuthRoute(gin.H{}))
     restapp:=app.Group("/rest")
     {
+        //
+        //
+        //
         restapp.POST("/user/:duskModuleName", rest.DuskUserRoute(gin.H{}))
         restapp.GET("/user/:duskModuleName",  rest.DuskUserRoute(gin.H{}))
-        restapp.GET("/dashboard/get-dashboard-data/:dashboardGroupId/:dashboardId/",  rest.GetDashboardData(gin.H{}))
-        restapp.POST("/dashboard/set-dashboard-data/", rest.SetDashboardData(gin.H{}))
+        //
+        //
+        restapp.POST("/dashboard/add-dashboard/",                                    rest.AddDashboard(gin.H{})     )
+        restapp.GET("/dashboard/get-dashboard-data/:dashboardGroupId/:dashboardId/", rest.GetDashboardData(gin.H{}) )
+        restapp.POST("/dashboard/set-dashboard-data/",                               rest.SetDashboardData(gin.H{}) )
+        //
+        // 
+        //
     }
     app.GET(settings.WS_DATA_URL, wsserver.WebSocketHandle(gin.H{}))
     // s.GetHandler()

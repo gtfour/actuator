@@ -33,7 +33,7 @@ type WebSocketConnection struct {
 
 }
 
-func (wsconn *WebSocketConnection) Handle()(error) {
+func (wsconn *WebSocketConnection)Handle()(error) {
     if wsconn.OpenError == nil {
         go wsconn.Read()
         for {
@@ -50,22 +50,22 @@ func (wsconn *WebSocketConnection) Handle()(error) {
                     err_unmarshal:=json.Unmarshal(data, &response)
                     if err_unmarshal == nil {
                         fmt.Printf("\nMessage from server: %v\n",response)
-                    }
-                */
+                    } */
             }
         }
     } else {
+        //
         fmt.Printf("\nError while opening ws connection\n")
-
+        //
     }
     return nil
 }
 
-func (wsconn *WebSocketConnection) Write(m *Message )( ) {
+func(wsconn *WebSocketConnection)Write(m *Message )( ) {
     wsconn.InChannel <- m
 }
 
-func (wsconn *WebSocketConnection) Read()(error) {
+func(wsconn *WebSocketConnection)Read()(error) {
     for {
         var data []byte
         data = make([]byte, 512) // 53
@@ -92,7 +92,6 @@ func CreateConnection ( origin string, url string ) (  *WebSocketConnection ) {
     if err != nil {
        wsConn.OpenError = err
        return wsConn
-
     } else {
         wsConn.ws         = ws
         wsConn.InChannel  = make(chan *Message, 100)

@@ -34,6 +34,7 @@ type Motion struct {
     ActionName       string // `bson:"action_name"`
     TaskState        int    // `bson:"task_state"`
     Type             int
+    SubType          int
     MotionData       json.RawMessage `json:"data"`
     MotionLastUpdate string
 }

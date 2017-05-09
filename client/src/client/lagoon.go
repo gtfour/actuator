@@ -2,7 +2,7 @@ package main
 //
 import "client/evebridge"
 //
-func Drift() {
+func Drift(){
     //
     ocean := evebridge.App{}
     //
