@@ -100,11 +100,11 @@ func Handle(messages chan majesta.CompNotes )() {
                                   //
                                   // fmt.Printf("\nNew motion %v\n", motion)
                                   //
-                                  motion.TaskState   =   activa.TASK_STATE_inprogress
-                                  motionSubType      :=  motion.SubType
-                                  motionSourceType   :=  motion.SourceType
-                                  motionSourcePath   :=  motion.SourcePath
-                                  _,_ = motionSourceType, motionSourcePath 
+                                  motion.TaskState =  activa.TASK_STATE_inprogress
+                                  motionSubType    := motion.SubType
+                                  motionSourceType := motion.SourceType
+                                  motionSourcePath := motion.SourcePath
+                                  _,_              =  motionSourceType, motionSourcePath
                                   // // cross.WriteMotion( &motion )
                                   //
                                   //
@@ -121,10 +121,8 @@ func Handle(messages chan majesta.CompNotes )() {
                                       //
                                       // // files and directories
                                       if motionSubType == activa.MOTION_SUBTYPE_ADD_DYNIMA {
-                                           
+                                          fmt.Printf("\nMotion %v  Data: motionSubType: %v  motionSubType: %v motionSourceType: %v motionSourcePath: %v \n", motion_type, motionSubType, motionSourceType, motionSourcePath )
                                       }
-
-
                                       //
                                       //
                                   }

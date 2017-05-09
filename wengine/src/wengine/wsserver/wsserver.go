@@ -111,9 +111,15 @@ func (s *Server) SendToAllClients (msg *Message) {
 }
 //
 //
-func (s *Server) Listen(){
-    log.Println("Listening server...")
+func (s *Server)Listen(){
+    //
+    log.Println( "... server is listening ..." )
+    //
+    //
     for {
+        //
+        //
+        //
         select {
             case c:= <-s.addChannel:
                 log.Println("Added new client")
@@ -131,7 +137,12 @@ func (s *Server) Listen(){
             case <-s.doneChannel:
                 return
         }
+        //
+        //
+        //
     }
+    //
+    //
 }
 
 func WebSocketHandle(data gin.H)(func(c *gin.Context)){

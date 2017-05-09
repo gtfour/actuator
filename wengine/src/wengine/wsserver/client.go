@@ -73,7 +73,9 @@ func (c *Client) listenWrite(){
 
 
 func (c *Client) listenRead(){
-    log.Println("Listening read from client")
+    //
+    log.Println("\nListening read from client\n")
+    //
     for {
         select {
         case <-c.doneChannel:
@@ -86,47 +88,16 @@ func (c *Client) listenRead(){
             log.Println("Recieve has been started...")
             err := websocket.JSON.Receive(c.ws, &msg)
             log.Println("Recieved has been finished. Processing...")
-            //fmt.Printf("\nMessage : %v\n",msg)
-
+            //
+            //  fmt.Printf("\nMessage : %v\n",msg)
+            //
             if err == io.EOF {
                 c.doneChannel <- true
             } else if err != nil {
                 c.server.Error(err)
             } else {
-                data_type := msg.DataType
-                if data_type == "data_update" {
-                    var msg_du marconi.DataUpdate
-                    data:=msg.Data
-                    err_unmarshal:=json.Unmarshal(data, &msg_du)
-                    if err_unmarshal == nil &&  msg_du.SourcePath != "/tmp/test/motion.test" {
-                        //c.server.SendAll(&msg_chat)
-                        fmt.Printf("\n<Message Data Update: %v\n",msg_du)
-                        var response      Message
-                        var response_data marconi.Response
-                        response_data.Status = marconi.STATUS_OK
-                        response.DataType    = "server_response"
-                        response_data_raw,err:=response_data.GetRaw()
-                        fmt.Printf("\nStatus message len %v\n",len(response_data_raw))
-                        if err == nil {
-                            fmt.Printf("\n<<Sending response>>\n")
-                            response.Data = response_data_raw
-                            c.Write(&response)
-                        }
-                    }
-                    if msg_du.SourcePath == "/tmp/test/motion.test" {
-                        motion:=activa.CreateMotion()
-                        database.WriteMotion(&motion)
-                        var response      Message
-                        response.DataType  = "motion"
-                        response_data_raw,err:=motion.GetRaw()
-                        if err == nil {
-                            fmt.Printf("\n::Sending motion::\n")
-                            response.Data = response_data_raw
-                            c.Write(&response)
-                        }
-                    }
-
-                }/* else if data_type == "message_ws_state" {
+                _ = c.handleMessage(&msg)
+            }/* else if data_type == "message_ws_state" {
                     var msg_wsst MessageWsState
                     data:=msg.Data
                     err_unmarshal:=json.Unmarshal(data, &msg_wsst)
@@ -141,5 +112,62 @@ func (c *Client) listenRead(){
                 //c.server.SendAll(&msg)
             }
         }
-    }
 }
+
+//
+//
+//
+
+func (c *Client)handleMessage(msg *Message)(err error){
+    //
+    switch data_type := msg.DataType; data_type {
+        //
+        // according to data_type we convert Data field to appropriate message type 
+        //
+        case "data_update":
+            //
+            var msg_du marconi.DataUpdate
+            data          := msg.Data
+            err_unmarshal := json.Unmarshal(data, &msg_du)
+            //
+            if err_unmarshal == nil && msg_du.SourcePath != "/tmp/test/motion.test" {
+                //
+                // c.server.SendAll(&msg_chat)
+                //
+                fmt.Printf("\n<Message Data Update: %v\n",msg_du)
+                var response      Message
+                var response_data marconi.Response
+                response_data.Status = marconi.STATUS_OK
+                response.DataType    = "server_response"
+                response_data_raw,err:=response_data.GetRaw()
+                fmt.Printf("\nStatus message len %v\n",len(response_data_raw))
+                if err == nil {
+                    fmt.Printf("\n<<Sending response>>\n")
+                    response.Data = response_data_raw
+                    c.Write(&response)
+                }
+                //
+                //
+                //
+            }
+            //
+            //
+            if msg_du.SourcePath == "/tmp/test/motion.test" {
+                motion:=activa.CreateMotion()
+                database.WriteMotion(&motion)
+                var response      Message
+                response.DataType  = "motion"
+                response_data_raw,err:=motion.GetRaw()
+                if err == nil {
+                    fmt.Printf("\n::Sending motion::\n")
+                    response.Data = response_data_raw
+                    c.Write(&response)
+                }
+            }
+        case "message_ws_state":
+            //
+            //
+    }
+    return nil
+}
+

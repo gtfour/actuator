@@ -4,8 +4,18 @@ import "fmt"
 import "github.com/gin-gonic/gin"
 
 func AddDashboard(data  gin.H)(func (c *gin.Context)) {
-    return  func( c *gin.Context ){
-        fmt.Printf("\n__Add new dashboard__\n")
+    return  func( c *gin.Context ) {
+        //
+        // temporary handler just for fun :)
+        //
+        dashboardName := c.PostForm("dashboardName")
+        sourceType    := c.PostForm("sourceType")
+        sourcePath    := c.PostForm("sourcePath")
+        clientId      := c.PostForm("clientId")
+        fmt.Printf("\n<|<| Add dashboard handler: dashboardName : %v sourceType : %v sourcePath : %v clientId : %v |>|>\n", dashboardName, sourceType, sourcePath, clientId)
+        //
+        //
+        //
     }
 }
 
@@ -37,3 +47,23 @@ func SetDashboardData(data  gin.H)(func (c *gin.Context)) {
     }
 }
 
+func DashboardRoute( data  gin.H ) ( func (c *gin.Context) ) {
+        return func (c *gin.Context)  {
+            param:=c.Param("duskModuleName")
+            token_id,user_id,_:=GetTokenFromCookies(c)
+            authorized := database.TokenExists(user_id,token_id)
+            switch {
+                case authorized == false:
+                    Unauthorized(c)
+                case param == "get-user-by-id":
+                    handler:=GetUserById( data, c )
+                    handler(c)
+                case param == "get-my-dashboards":
+                    handler:=GetMyDashboards( data, c )
+                    handler(c)
+                case param == "get-all-users":
+                    handler:=GetAllUsers( data, c )
+                    handler(c)
+            }
+            }
+}

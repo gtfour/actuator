@@ -29,4 +29,16 @@ func main() {
     fmt.Println("response Headers:", resp.Header)
     body, _ := ioutil.ReadAll(resp.Body)
     fmt.Println("response Body:", string(body))
+
+
+    //
+    // sending json data with curl
+    //
+    curl --data 'dashboardName="Users";sourceType="TARGET_FILE";sourcePath="/etc/passwd";clientId="my-ubuntu-host"' "http://127.0.0.1:9000/rest/dashboard/add-dashboard/"
+
+    //
+    //
+    //
+
+
 }
