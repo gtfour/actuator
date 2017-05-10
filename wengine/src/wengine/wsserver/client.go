@@ -18,6 +18,7 @@ var   database       =  dusk.DATABASE_INSTANCE
 type Client struct {
     //
     //
+    //
     Id           int
     ws           *websocket.Conn
     server       *Server
@@ -27,9 +28,11 @@ type Client struct {
     name         string
     //
     //
+    //
 }
 
-func NewClient (ws *websocket.Conn, server *Server) *Client {
+func NewClient ( ws *websocket.Conn, server *Server )( *Client ) {
+    //
     //
     //
     if ws == nil {
@@ -40,16 +43,17 @@ func NewClient (ws *websocket.Conn, server *Server) *Client {
     }
     //
     //
+    //
     maxId++
     ch          := make(chan *Message, channelBufSize)
     doneChannel := make(chan bool)
     //
-    return &Client{ maxId, ws, server, ch, doneChannel,""} // session_id is empty yet . Will be filled when recieve first "ws_state":"open" message
+    return &Client{ maxId, ws, server, ch, doneChannel, "", "" } // session_id is empty yet . Will be filled when recieve first "ws_state":"open" message
     //
     //
 }
 
-func (c *Client) Write(msg *Message) {
+func (c *Client)Write(msg *Message) {
     select {
         case c.ch <- msg:
         default:
@@ -132,6 +136,8 @@ func (c *Client) listenRead(){
 
 func (c *Client)handleMessage(msg *Message)(err error){
     //
+    //
+    //
     switch data_type := msg.DataType; data_type {
         //
         // according to data_type we convert Data field to appropriate message type 
@@ -151,9 +157,9 @@ func (c *Client)handleMessage(msg *Message)(err error){
                 fmt.Printf("\n<Message Data Update: %v\n",msg_du)
                 var response      Message
                 var response_data marconi.Response
-                response_data.Status = marconi.STATUS_OK
-                response.DataType    = "server_response"
-                response_data_raw,err:=response_data.GetRaw()
+                response_data.Status  =  marconi.STATUS_OK
+                response.DataType     =  "server_response"
+                response_data_raw,err := response_data.GetRaw()
                 fmt.Printf("\nStatus message len %v\n",len(response_data_raw))
                 if err == nil {
                     fmt.Printf("\n<<Sending response>>\n")
@@ -168,13 +174,13 @@ func (c *Client)handleMessage(msg *Message)(err error){
             //
             //
             if msg_du.SourcePath == "/tmp/test/motion.test" {
-                motion:=activa.CreateMotion()
+                motion := activa.CreateMotion()
                 database.WriteMotion(&motion)
                 var response      Message
-                response.DataType  = "motion"
-                response_data_raw,err:=motion.GetRaw()
+                response.DataType     =  "motion"
+                response_data_raw,err := motion.GetRaw()
                 if err == nil {
-                    fmt.Printf("\n::Sending motion::\n")
+                    fmt.Printf("\n:: Sending motion ::\n")
                     response.Data = response_data_raw
                     c.Write(&response)
                 }

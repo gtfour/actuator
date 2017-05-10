@@ -5,7 +5,8 @@ import "log"
 import "golang.org/x/net/websocket"
 import "github.com/gin-gonic/gin"
 import "wengine/settings"
-import "wengine/rest"
+// import "wengine/rest"
+import "wengine/core/net"
 // import "golang.org/x/net/websocket"
 
 var WebSocketServerWeb = CreateServer( settings.WS_WEBDATA_URL )
@@ -27,10 +28,9 @@ type Server struct {
 
 func(s *Server)GetHandler(c *gin.Context)(function func(ws *websocket.Conn)){
 
-    token,user,err:=rest.GetTokenFromCookies(c)
+    token,user,err := net.GetTokenFromCookies(c)
     fmt.Printf("token:%v\nuser:%v\nerr:%v\n",token,user,err)
-
-    function = func(ws *websocket.Conn){
+    function = func(ws *websocket.Conn) {
         defer func(){
             err := ws.Close()
             if err != nil {
@@ -41,7 +41,6 @@ func(s *Server)GetHandler(c *gin.Context)(function func(ws *websocket.Conn)){
         s.Add(client)
         client.Listen()
     }
-
     return function
 }
 

@@ -4,6 +4,7 @@ import "github.com/gin-gonic/gin"
 import "encoding/json"
 //import "wengine/dusk"
 import .  "wengine/core/common"
+import "wengine/core/net"
 
 
 func DashboardUsersList( data  gin.H, params ...[]string )(func (c *gin.Context)) {
@@ -14,7 +15,7 @@ func DashboardUsersList( data  gin.H, params ...[]string )(func (c *gin.Context)
 
 func GetUserById( data  gin.H, c *gin.Context)(func(c *gin.Context)) {
     handler := func(c *gin.Context)( func(c *gin.Context) ) {
-        _,user_id,err:=GetTokenFromCookies(c)
+        _,user_id,err := net.GetTokenFromCookies(c)
         if err != nil {  return func(c *gin.Context ) {  c.JSON(401, gin.H{"status": "login_failed" }) }  } else {
             user,err_db    := database.GetUserById(user_id)
             b, err_marshal := json.Marshal(user)
@@ -36,7 +37,7 @@ func GetUserById( data  gin.H, c *gin.Context)(func(c *gin.Context)) {
 
 func GetMyDashboards(data  gin.H, c *gin.Context) (func(c *gin.Context)) {
     handler := func(c *gin.Context)( func(c *gin.Context) ) {
-        token_id,user_id,err:=GetTokenFromCookies(c)
+        token_id,user_id,err := net.GetTokenFromCookies(c)
         if err != nil { return func(c *gin.Context ){ c.JSON(401, gin.H{"status": "login_failed"}) } } else {
             user,err_db    := database.GetUserById(user_id)
             _, err_marshal := json.Marshal(user)

@@ -16,8 +16,8 @@ func AddDashboard(data  gin.H)(func (c *gin.Context)) {
         fmt.Printf("\n<|<| Add dashboard handler: dashboardName : %v sourceType : %v sourcePath : %v clientId : %v |>|>\n", dashboardName, sourceType, sourcePath, clientId)
         //
         //
-        // wsServer := wsserver.WebSocketServerWeb
-        // client   := wsServer.GetClientByName(clientId)
+        wsServer   := wsserver.WebSocketServerWeb
+        client,err := wsServer.GetClientById(clientId)
         //
         //
     }
