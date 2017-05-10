@@ -3,8 +3,9 @@ package aristo
 
 import "fmt"
 import "wengine/dusk"
-import "wengine/core/common"
+//import "wengine/core/common"
 import "wengine/core/types/db"
+import "jumper/common/gen"
 
 type Member struct {
     Id    string
@@ -25,7 +26,7 @@ type Group struct {
 func CreateNewMember(name string, mtype string)(m Member){
     member_type:="general"
     if mtype != "" { member_type=mtype }
-    new_id,_   := common.GenId()
+    new_id,_   := gen.GenId()
     m.Id = new_id
     m.Name = name
     m.Type = member_type
@@ -47,7 +48,7 @@ func CreateNewGroup(name string, gtype string)(g Group) {
    //group_prop := s.GetProp
     group_type :="general"
     if gtype   != "" { group_type=gtype }
-    new_id,_   :=  common.GenId()
+    new_id,_   :=  gen.GenId()
     g.Members  =make([]Member,0)
     g.Id       = new_id
     g.Type     = group_type

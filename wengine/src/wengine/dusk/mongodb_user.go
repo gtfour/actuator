@@ -2,8 +2,9 @@ package dusk
 
 import "gopkg.in/mgo.v2/bson"
 import "wengine/core/utah"
-import "wengine/core/common"
+// import "wengine/core/common"
 import "wengine/core/dashboard"
+import "jumper/common/gen"
 
 
 
@@ -20,7 +21,7 @@ func (d *MongoDb)GetGroups()([]string) {
 //mongodb_user
 func (d *MongoDb)CreateUser(user *utah.User)(user_id string, err error) {
     c           := d.Session.DB(d.dbname).C(d.users_c_name)
-    user.Id,err = common.GenId()
+    user.Id,err = gen.GenId()
     if err!=nil {
         return "",err
     }

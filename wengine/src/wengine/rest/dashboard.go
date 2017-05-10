@@ -1,6 +1,7 @@
 package rest
 import "fmt"
 //import "wengine/dusk"
+import "wengine/wsserver"
 import "github.com/gin-gonic/gin"
 
 func AddDashboard(data  gin.H)(func (c *gin.Context)) {
@@ -14,6 +15,9 @@ func AddDashboard(data  gin.H)(func (c *gin.Context)) {
         clientId      := c.PostForm("clientId")
         fmt.Printf("\n<|<| Add dashboard handler: dashboardName : %v sourceType : %v sourcePath : %v clientId : %v |>|>\n", dashboardName, sourceType, sourcePath, clientId)
         //
+        //
+        // wsServer := wsserver.WebSocketServerWeb
+        // client   := wsServer.GetClientByName(clientId)
         //
         //
     }

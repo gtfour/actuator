@@ -8,8 +8,8 @@ import "wengine/settings"
 import "wengine/rest"
 // import "golang.org/x/net/websocket"
 
-var WebSocketServerWeb = CreateServer(settings.WS_WEBDATA_URL)
-var WebSocketServerSrv = CreateServer(settings.WS_SRVDATA_URL)
+var WebSocketServerWeb = CreateServer( settings.WS_WEBDATA_URL )
+var WebSocketServerSrv = CreateServer( settings.WS_SRVDATA_URL )
 
 type Server struct {
 
@@ -111,6 +111,28 @@ func (s *Server) SendToAllClients (msg *Message) {
 }
 //
 //
+//
+func (s *Server) GetClients ()( map[int]*Client ) {
+     return s.Clients
+}
+//
+//
+//
+func (s *Server) GetClientByName ( client_name string )( *Client ) {
+    //
+    for _,c := range s.Clients {
+        name := c.name
+        if name == client_name {
+            return c
+        }
+    }
+    return nil
+    //
+}
+
+//
+//
+
 func (s *Server)Listen(){
     //
     log.Println( "... server is listening ..." )

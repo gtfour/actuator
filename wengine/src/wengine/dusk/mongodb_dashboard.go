@@ -1,14 +1,15 @@
 package dusk
 
 import "gopkg.in/mgo.v2/bson"
-import "wengine/core/common"
+//import "wengine/core/common"
+import "jumper/common/gen"
 import "wengine/core/dashboard"
 
 
 //mongodb_dashboard
 func (d *MongoDb)CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id string, err error) {
     c           := d.Session.DB(d.dbname).C(d.dashboards_c_name)
-    dashboard.Id,err = common.GenId()
+    dashboard.Id,err = gen.GenId()
     if err!=nil {
         return "",err
     }
@@ -19,7 +20,7 @@ func (d *MongoDb)CreateDashboard(dashboard *dashboard.Dashboard)(dashboard_id st
 //mongodb_dashboard
 func (d *MongoDb)CreateDashboardGroup(dgroup *dashboard.DashboardGroup)(dashboardgroup_id string, err error){
     c           := d.Session.DB(d.dbname).C(d.dashboard_groups_c_name)
-    dgroup.Id,err = common.GenId()
+    dgroup.Id,err = gen.GenId()
     if err!=nil {
         return "",err
     }

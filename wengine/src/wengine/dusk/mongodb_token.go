@@ -2,12 +2,13 @@ package dusk
 
 import "gopkg.in/mgo.v2/bson"
 import "wengine/core/utah"
-import "wengine/core/common"
+// import "wengine/core/common"
+import "jumper/common/gen"
 
 func (d *MongoDb)CreateToken(userid string)(token_id string,err error){
     _,err         = d.GetUserById(userid)
     if (err!=nil) {return "",err}
-    token_id,err = common.GenId()
+    token_id,err = gen.GenId()
     if (err!=nil) {return "",err}
     token       := utah.Token{UserId:userid,Id:token_id}
     c           := d.Session.DB(d.dbname).C(d.tokens_c_name)

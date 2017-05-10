@@ -11,30 +11,42 @@ import "wengine/dusk"
 import "wengine/core/marconi"
 
 
-const channelBufSize = 100
-var   maxId      int = 0
-var   database  = dusk.DATABASE_INSTANCE
+const channelBufSize =  100
+var   maxId      int =  0
+var   database       =  dusk.DATABASE_INSTANCE
 
 type Client struct {
+    //
+    //
     Id           int
     ws           *websocket.Conn
     server       *Server
     ch           chan             *Message
     doneChannel  chan             bool
     session_id   string
+    name         string
+    //
+    //
 }
 
 func NewClient (ws *websocket.Conn, server *Server) *Client {
+    //
+    //
     if ws == nil {
         panic("ws cannot be nil")
     }
     if server == nil {
         panic("server cannot be nil")
     }
+    //
+    //
     maxId++
-    ch := make(chan *Message, channelBufSize)
+    ch          := make(chan *Message, channelBufSize)
     doneChannel := make(chan bool)
+    //
     return &Client{ maxId, ws, server, ch, doneChannel,""} // session_id is empty yet . Will be filled when recieve first "ws_state":"open" message
+    //
+    //
 }
 
 func (c *Client) Write(msg *Message) {
@@ -131,6 +143,7 @@ func (c *Client)handleMessage(msg *Message)(err error){
             err_unmarshal := json.Unmarshal( data, &msg_du )
             //
             //
+            //
             if err_unmarshal == nil && msg_du.SourcePath != "/tmp/test/motion.test" {
                 //
                 // c.server.SendAll(&msg_chat)
@@ -166,8 +179,12 @@ func (c *Client)handleMessage(msg *Message)(err error){
                     c.Write(&response)
                 }
             }
+            //
+            //
+            //
         case "message_ws_state":
             //
+        case "new_dynima":
             //
     }
     return nil
