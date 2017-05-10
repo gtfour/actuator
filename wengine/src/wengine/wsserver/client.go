@@ -85,9 +85,9 @@ func (c *Client) listenRead(){
         default:
             //var msg MessageType
             var msg Message
-            log.Println("Recieve has been started...")
-            err := websocket.JSON.Receive(c.ws, &msg)
-            log.Println("Recieved has been finished. Processing...")
+            log.Println("Awaiting message from clients...")
+            err := websocket.JSON.Receive(c.ws, &msg)  // waiting
+            log.Println("Recieve has been finished. Processing...")
             //
             //  fmt.Printf("\nMessage : %v\n",msg)
             //
@@ -128,7 +128,8 @@ func (c *Client)handleMessage(msg *Message)(err error){
             //
             var msg_du marconi.DataUpdate
             data          := msg.Data
-            err_unmarshal := json.Unmarshal(data, &msg_du)
+            err_unmarshal := json.Unmarshal( data, &msg_du )
+            //
             //
             if err_unmarshal == nil && msg_du.SourcePath != "/tmp/test/motion.test" {
                 //
@@ -150,6 +151,7 @@ func (c *Client)handleMessage(msg *Message)(err error){
                 //
                 //
             }
+            //
             //
             //
             if msg_du.SourcePath == "/tmp/test/motion.test" {
