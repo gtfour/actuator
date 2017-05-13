@@ -9,15 +9,28 @@ func AddDashboard(data  gin.H)(func (c *gin.Context)) {
         //
         // temporary handler just for fun :)
         //
-        dashboardName := c.PostForm("dashboardName")
-        sourceType    := c.PostForm("sourceType")
-        sourcePath    := c.PostForm("sourcePath")
-        clientId      := c.PostForm("clientId")
-        fmt.Printf("\n<|<| Add dashboard handler: dashboardName : %v sourceType : %v sourcePath : %v clientId : %v |>|>\n", dashboardName, sourceType, sourcePath, clientId)
+        dashboardName   := c.PostForm("dashboardName")
+        sourceType      := c.PostForm("sourceType")
+        sourcePath      := c.PostForm("sourcePath")
+        clientName      := c.PostForm("clientName")
+        fmt.Printf("\n<|<| Add dashboard handler: dashboardName : %v sourceType : %v sourcePath : %v clientName : %s |>|>\n", dashboardName, sourceType, sourcePath, clientName)
         //
         //
-        wsServer   := wsserver.WebSocketServerWeb
-        client,err := wsServer.GetClientById(clientId)
+        //
+        wsServer           := wsserver.WebSocketServerWeb
+        client             := wsServer.GetClientByName( clientName )
+        clientHasBeenFound := false
+        fmt.Printf("\n::-- checking websocket clients --::\n")
+        if client != nil { clientHasBeenFound = true }
+        fmt.Printf("\n::- All clients list -::\n")
+        all_ws_clients := wsServer.GetClients()
+        fmt.Printf("\n%v\n--- --- ---\n", all_ws_clients)
+        // 
+        // json-response
+        //
+        wsInfoResponse := gin.H{ "clientName":clientName, "isFound":clientHasBeenFound }
+        c.JSON(200, gin.H{"status": "ok","data":wsInfoResponse})
+        //
         //
         //
     }

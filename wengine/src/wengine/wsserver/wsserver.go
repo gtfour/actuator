@@ -108,18 +108,32 @@ func (s *Server) SendToAllClients (msg *Message) {
         c.Write(msg)
     }
 }
+
 //
 //
 //
-func (s *Server) GetClients ()( map[int]*Client ) {
+func (s *Server)GetClients()( map[int]*Client ) {
+     //
+     //
+     fmt.Printf("\n:: calling GetClients ::\n")
+     for _,c := range s.Clients {
+         //
+         log.Printf("\nclient name %s\n", c.name)
+         //
+     }
+     //
+     //
      return s.Clients
 }
+
 //
 //
 //
 func (s *Server) GetClientByName ( client_name string )( *Client ) {
     //
+    log.Printf("\n<< clients count: %d >>\n", len(s.Clients))
     for _,c := range s.Clients {
+        log.Printf("-- iterating over clients: %s --\n", c.name)
         name := c.name
         if name == client_name {
             return c
@@ -128,7 +142,7 @@ func (s *Server) GetClientByName ( client_name string )( *Client ) {
     return nil
     //
 }
-
+//
 //
 //
 

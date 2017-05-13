@@ -3,6 +3,7 @@ package wsserver
 import "io"
 import "log"
 import "fmt"
+import "strconv"
 import "encoding/json"
 import "golang.org/x/net/websocket"
 
@@ -34,7 +35,6 @@ type Client struct {
 func NewClient ( ws *websocket.Conn, server *Server )( *Client ) {
     //
     //
-    //
     if ws == nil {
         panic("ws cannot be nil")
     }
@@ -48,7 +48,12 @@ func NewClient ( ws *websocket.Conn, server *Server )( *Client ) {
     ch          := make(chan *Message, channelBufSize)
     doneChannel := make(chan bool)
     //
-    return &Client{ maxId, ws, server, ch, doneChannel, "", "" } // session_id is empty yet . Will be filled when recieve first "ws_state":"open" message
+    // temporary solution
+    //
+    maxIdStr := strconv.Itoa(maxId)
+    //
+    //
+    return &Client{ maxId, ws, server, ch, doneChannel, "", maxIdStr } // session_id is empty yet . Will be filled when recieve first "ws_state":"open" message
     //
     //
 }
