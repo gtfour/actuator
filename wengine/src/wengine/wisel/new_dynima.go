@@ -38,12 +38,16 @@ func AddNewDynima(params map[string]string)(error) {
         request_byte,err   := request.GetRaw()
         //
         if err == nil {
+            //
             wsMessage.DataType = "dynima"
             wsMessage.Data     = request_byte
             wsClient.Write( &wsMessage )
             return nil
+            //
         } else {
+            //
             return err
+            //
         }
         //
     } else {

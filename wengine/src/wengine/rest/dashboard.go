@@ -1,8 +1,9 @@
 package rest
 import "fmt"
-//import "wengine/dusk"
+// import "wengine/dusk"
 import "wengine/wsserver"
-import "wengine/core/marconi"
+import "wengine/wisel"
+// import "wengine/core/marconi"
 import "github.com/gin-gonic/gin"
 
 func AddDashboard(data  gin.H)(func (c *gin.Context)) {
@@ -28,11 +29,11 @@ func AddDashboard(data  gin.H)(func (c *gin.Context)) {
         // fmt.Printf("\n::-- checking websocket clients --::\n")
         if client != nil { clientHasBeenFound = true }
         // fmt.Printf("\n::- All clients list -::\n")
-        all_ws_clients := wsServer.GetClients()
+        // all_ws_clients := wsServer.GetClients()
         // fmt.Printf("\n%v\n--- --- ---\n", all_ws_clients)
         // json-response
         //
-        var new_dynima_message marconi.DataUpdate
+        // var new_dynima_message marconi.DataUpdate
         //
         //
         wsInfoResponse := gin.H{ "clientName":clientName,
@@ -42,7 +43,20 @@ func AddDashboard(data  gin.H)(func (c *gin.Context)) {
                                  "sourcePath":sourcePath,
                                  "websocketClientsCount":clientsCount,
                                }
-        c.JSON( 200, gin.H{"status": "ok","data":wsInfoResponse} )
+        params := make(map[string]string,0)
+        //
+        params["dashboardName"] = dashboardName
+        params["sourceType"]    = sourceType
+        params["sourcePath"]    = sourcePath
+        params["clientName"]    = clientName
+        // params["clientId"]
+        //
+        err    := wisel.AddNewDynima(params)
+        if err == nil {
+            c.JSON( 200, gin.H{"status": "ok", "data":wsInfoResponse} )
+        } else {
+            c.JSON( 500, gin.H{"status": "error"} )
+        }
         //
         //
     }

@@ -131,6 +131,8 @@ func Handle(messages chan majesta.CompNotes )() {
                                   //
                                   motions<-&motion
                               }
+                          case "dynima":
+                              fmt.Printf("\n--\nHandling dynima\n--\n")
                               //
                               //
                       }
