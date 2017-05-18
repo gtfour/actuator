@@ -48,7 +48,7 @@ func (r *Router)GetAllWebClients()(error) {
     clients:=r.web.server.Clients
     for i:= range clients {
         client:=clients[i]
-        fmt.Printf("\nclient id %d\n",client.Id)
+        fmt.Printf("\nclient id %d\n",client.IndexNumber)
     }
     return nil
 }
@@ -57,7 +57,7 @@ func (r *Router)GetAllHostsClients()(error) {
     clients:=r.srv.server.Clients
     for i:= range clients {
         client:=clients[i]
-        fmt.Printf("\nclient id %d\n",client.Id)
+        fmt.Printf("\nclient id %d\n",client.IndexNumber)
     }
     return nil
 }

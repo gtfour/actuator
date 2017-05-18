@@ -2,6 +2,7 @@ package rest
 import "fmt"
 //import "wengine/dusk"
 import "wengine/wsserver"
+import "wengine/core/marconi"
 import "github.com/gin-gonic/gin"
 
 func AddDashboard(data  gin.H)(func (c *gin.Context)) {
@@ -19,18 +20,29 @@ func AddDashboard(data  gin.H)(func (c *gin.Context)) {
         //
         wsServer           := wsserver.WebSocketServerWeb
         client             := wsServer.GetClientByName( clientName )
+        clientsCount       := len(wsServer.GetClients())
         clientHasBeenFound := false
-        fmt.Printf("\n::-- checking websocket clients --::\n")
+        //
+        //
+        //
+        // fmt.Printf("\n::-- checking websocket clients --::\n")
         if client != nil { clientHasBeenFound = true }
-        fmt.Printf("\n::- All clients list -::\n")
+        // fmt.Printf("\n::- All clients list -::\n")
         all_ws_clients := wsServer.GetClients()
-        fmt.Printf("\n%v\n--- --- ---\n", all_ws_clients)
-        // 
+        // fmt.Printf("\n%v\n--- --- ---\n", all_ws_clients)
         // json-response
         //
-        wsInfoResponse := gin.H{ "clientName":clientName, "isFound":clientHasBeenFound }
-        c.JSON(200, gin.H{"status": "ok","data":wsInfoResponse})
+        var new_dynima_message marconi.DataUpdate
         //
+        //
+        wsInfoResponse := gin.H{ "clientName":clientName,
+                                 "isFound":clientHasBeenFound,
+                                 "dashboardName":dashboardName,
+                                 "sourceType":sourceType,
+                                 "sourcePath":sourcePath,
+                                 "websocketClientsCount":clientsCount,
+                               }
+        c.JSON( 200, gin.H{"status": "ok","data":wsInfoResponse} )
         //
         //
     }

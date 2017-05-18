@@ -8,6 +8,9 @@ import "wengine/settings"
 // import "wengine/rest"
 import "wengine/core/net"
 // import "golang.org/x/net/websocket"
+//
+// replacing Id to IndexNumber
+//
 
 var WebSocketServerWeb = CreateServer( settings.WS_WEBDATA_URL )
 var WebSocketServerSrv = CreateServer( settings.WS_SRVDATA_URL )
@@ -42,6 +45,7 @@ func(s *Server)GetHandler(c *gin.Context)(function func(ws *websocket.Conn)){
         client.Listen()
     }
     return function
+
 }
 
 
@@ -63,10 +67,9 @@ func CreateServer (pattern string) *Server {
         sendAllChannel:sendAllChannel,
         doneChannel:doneChannel,
         errChannel:errChannel,
-        //s.WShandler:handler,
+        // s.WShandler:handler,
     }
-
-    //onConnected := func(ws *websocket.Conn){
+    // onConnected := func(ws *websocket.Conn){
     //    defer func(){
     //        err := ws.Close()
     //        if err != nil {
@@ -76,8 +79,8 @@ func CreateServer (pattern string) *Server {
     //    client := NewClient(ws, s)
     //    s.Add(client)
     //    client.Listen()
-   // }
-    //s.WShandler = websocket.Handler(onConnected)
+    // }
+    // s.WShandler = websocket.Handler(onConnected)
     // test
     go s.Listen()
     log.Printf("Server has been created :)\nServer is listening connection :)\n")
@@ -110,38 +113,40 @@ func (s *Server) SendToAllClients (msg *Message) {
 }
 
 //
-//
-//
+
 func (s *Server)GetClients()( map[int]*Client ) {
-     //
-     //
-     fmt.Printf("\n:: calling GetClients ::\n")
-     for _,c := range s.Clients {
-         //
-         log.Printf("\nclient name %s\n", c.name)
-         //
-     }
-     //
-     //
      return s.Clients
 }
+
 
 //
 //
 //
-func (s *Server) GetClientByName ( client_name string )( *Client ) {
-    //
-    log.Printf("\n<< clients count: %d >>\n", len(s.Clients))
+
+func (s *Server)GetClientByName( client_name string )( *Client ){
     for _,c := range s.Clients {
-        log.Printf("-- iterating over clients: %s --\n", c.name)
         name := c.name
         if name == client_name {
             return c
         }
     }
     return nil
-    //
 }
+
+//
+//
+//
+
+func (s *Server)GetClientById( client_id string )( *Client ){
+    for _,c := range s.Clients {
+        id := c.id
+        if id == client_id {
+            return c
+        }
+    }
+    return nil
+}
+
 //
 //
 //
@@ -158,11 +163,11 @@ func (s *Server)Listen(){
         select {
             case c:= <-s.addChannel:
                 log.Println("Added new client")
-                s.Clients[c.Id] = c
+                s.Clients[c.IndexNumber] = c
                 log.Println("Now", len(s.Clients), "clients connected")
             case c:= <-s.delChannel:
-                log.Printf("Delete client %s",c.Id)
-                delete(s.Clients, c.Id)
+                log.Printf("Delete client %s",c.IndexNumber)
+                delete(s.Clients, c.IndexNumber)
             case msg:= <-s.sendAllChannel:
                 log.Println("Send all:", msg)
                 s.messages = append(s.messages, msg)

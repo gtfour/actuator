@@ -22,6 +22,8 @@ type Key struct {
 */
 
 type Motion struct {
+    //
+    //
     Id               string // `bson:"id"`
     InitTime         string // `bson:"init_time"`
     StartTime        string // `bson:"start_time"`
@@ -37,6 +39,8 @@ type Motion struct {
     SubType          int
     MotionData       json.RawMessage `json:"data"`
     MotionLastUpdate string
+    //
+    //
 }
 
 func (m *Motion)GetRaw()([]byte, error) {

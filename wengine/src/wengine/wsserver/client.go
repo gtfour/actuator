@@ -11,22 +11,25 @@ import "wengine/activa"
 import "wengine/dusk"
 import "wengine/core/marconi"
 
+import "jumper/common/gen"
 
-const channelBufSize =  100
-var   maxId      int =  0
-var   database       =  dusk.DATABASE_INSTANCE
+
+const channelBufSize      =  100
+var   maxIndexNumber int  =  0
+var   database            =  dusk.DATABASE_INSTANCE
 
 type Client struct {
     //
     //
     //
-    Id           int
+    IndexNumber  int
     ws           *websocket.Conn
     server       *Server
     ch           chan             *Message
     doneChannel  chan             bool
     session_id   string
     name         string
+    id           string
     //
     //
     //
@@ -43,17 +46,17 @@ func NewClient ( ws *websocket.Conn, server *Server )( *Client ) {
     }
     //
     //
-    //
-    maxId++
-    ch          := make(chan *Message, channelBufSize)
-    doneChannel := make(chan bool)
+    maxIndexNumber++
+    ch            := make(chan *Message, channelBufSize)
+    doneChannel   := make(chan bool)
     //
     // temporary solution
     //
-    maxIdStr := strconv.Itoa(maxId)
+    maxIdStr      := strconv.Itoa(maxIndexNumber)
+    newClientId,_ := gen.GenId()
     //
     //
-    return &Client{ maxId, ws, server, ch, doneChannel, "", maxIdStr } // session_id is empty yet . Will be filled when recieve first "ws_state":"open" message
+    return &Client{ maxIndexNumber, ws, server, ch, doneChannel, "", maxIdStr, newClientId } // session_id is empty yet . Will be filled when recieve first "ws_state":"open" message
     //
     //
 }
@@ -63,7 +66,7 @@ func (c *Client)Write(msg *Message) {
         case c.ch <- msg:
         default:
             c.server.Del(c)
-            err := fmt.Errorf("client %d is disconnected.", c.Id)
+            err := fmt.Errorf("client %d is disconnected.", c.IndexNumber)
             c.server.Error(err)
         }
 }
