@@ -132,6 +132,11 @@ func Handle(messages chan majesta.CompNotes )() {
                                   motions<-&motion
                               }
                           case "dynima":
+                              //
+                              // way to get here:
+                              //    send post request to wengine server:
+                              //    curl --data 'dashboardName="Users";sourceType="TARGET_FILE";sourcePath="/etc/passwd";clientName=1' "http://127.0.0.1:9000/rest/dashboard/add-dashboard/"
+                              //    
                               fmt.Printf("\n--\nHandling dynima\n--\n")
                               //
                               //

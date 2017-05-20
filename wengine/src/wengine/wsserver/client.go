@@ -9,7 +9,7 @@ import "golang.org/x/net/websocket"
 
 import "wengine/activa"
 import "wengine/dusk"
-import "wengine/core/marconi"
+import "jumper/common/marconi"
 
 import "jumper/common/gen"
 

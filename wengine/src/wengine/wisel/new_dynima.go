@@ -1,7 +1,7 @@
 package wisel
 
 import "wengine/wsserver"
-import "wengine/core/marconi"
+import "jumper/common/marconi"
 
 func AddNewDynima(params map[string]string)(error) {
     //
