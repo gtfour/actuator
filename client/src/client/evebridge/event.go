@@ -9,6 +9,12 @@ import "jumper/activa"
 // // import "client/cross"
 import "client/majesta"
 import "jumper/common/marconi"
+//
+//
+import "jumper/cuda"
+import "jumper/cuda/targets"
+//
+//
 
 type Event struct {
 
@@ -147,8 +153,33 @@ func Handle(messages chan majesta.CompNotes )() {
                               //
                               //
                               if err_unmarshal == nil {
-                                  fmt.Printf("\nHandling dynima:\n")
-                                  fmt.Printf("params:\nChangeType: %d\nObjName: %s\nObjType: %s\nObjPath: %s\n", request.ChangeType,request.ObjName, request.ObjType, request.ObjPath)
+                                  // fmt.Printf("\nHandling dynima:\n")
+                                  // fmt.Printf("params:\nChangeType: %d\nObjName: %s\nObjType: %s\nObjPath: %s\n", request.ChangeType,request.ObjName, request.ObjType, request.ObjPath)
+                                  // var ws_message_data  =  wsclient.DataUpdate{ SourcePath:message.Path, SourceType:message.SourceType }
+                                  // message_data_raw,err := ws_message_data.GetRaw()
+                                  //
+                                  // trying to get file content via dynima 
+                                  //
+                                  var newTargetType string = targets.TARGET_UNDEFINED_STR
+                                  if request.ObjType == targets.TARGET_FILE_STR {
+
+                                  } else request.ObjType == targets.TARGET_FILE_STR {
+
+                                  } else {
+                                      return targets.targetTypeHasNotBeenSpecified
+
+                                  }
+                                  targetDirectoryConfig         := make(map[string]string, 0)
+                                  targetDirectoryConfig["type"] =  "TARGET_DIR"
+                                  targetDirectoryConfig["path"] =  "/home/venom/test_passwd/"
+                                  tgtDirectory,err              := targets.NewTarget(targetDirectoryConfig)
+                                  //
+                                  //
+                                  //
+                                  response_type      := "dynima_response"
+                                  var ws_message = &wsclient.Message{DataType:"data_update",Data:message_data_raw}
+                                  websocket_connection.Write(ws_message)
+                                  // 
                               }
                               //
                               //
