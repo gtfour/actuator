@@ -12,6 +12,7 @@ import "client/evebridge"
 
 func main() {
     fmt.Printf("\n::main has been started\n")
+    //
     //go func() {
     //     fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
     //}()
