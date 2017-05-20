@@ -8,6 +8,7 @@ import "client/wsclient"
 import "jumper/activa"
 // // import "client/cross"
 import "client/majesta"
+import "jumper/common/marconi"
 
 type Event struct {
 
@@ -132,12 +133,23 @@ func Handle(messages chan majesta.CompNotes )() {
                                   motions<-&motion
                               }
                           case "dynima":
+                              var request marconi.Request
+                              data           := message.Data
+                              err_unmarshal  := json.Unmarshal( data, &request )
                               //
                               // way to get here:
                               //    send post request to wengine server:
                               //    curl --data 'dashboardName="Users";sourceType="TARGET_FILE";sourcePath="/etc/passwd";clientName=1' "http://127.0.0.1:9000/rest/dashboard/add-dashboard/"
                               //    
-                              fmt.Printf("\n--\nHandling dynima\n--\n")
+                              // seems now we can recieve params on client side by sending json-requests to wengine master server :))))
+                              // example of curl-request is above
+                              // clientName is index number assigned to websocket client on first connection and equals to maxIndexNumber global variable
+                              //
+                              //
+                              if err_unmarshal == nil {
+                                  fmt.Printf("\nHandling dynima:\n")
+                                  fmt.Printf("params:\nChangeType: %d\nObjName: %s\nObjType: %s\nObjPath: %s\n", request.ChangeType,request.ObjName, request.ObjType, request.ObjPath)
+                              }
                               //
                               //
                       }
