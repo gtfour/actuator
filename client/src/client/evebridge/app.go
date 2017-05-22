@@ -1,19 +1,23 @@
 package evebridge
 
+import "fmt"
+import "time"
+
 import "client/wsclient"
-import "client/activa"
+//import "client/activa"
+import "jumper/activa"
 import "client/majesta"
+import "client/logging"
 
 type App struct {
     //
     //
     //
-
-    WebsocketConn   wsclient.WebSocketConnection
-    FileUpdates     chan majesta.CompNotes
-    CommandUpdates  chan majesta.CompNotes
-    Motions         chan *activa.Motion
-
+    websocketConn   *wsclient.WebSocketConnection
+    fileUpdates     chan majesta.CompNotes
+    commandUpdates  chan majesta.CompNotes
+    motions         chan *activa.Motion
+    logs            chan logging.LogMessage
     //
     //
     //
@@ -21,30 +25,74 @@ type App struct {
 
 func (a *App)Handle()(error){
     //
+    var websocket_connection = wsclient.GetWsConnection()
+    //
+    for {
+        //
+        select {
+                case message    :=<-a.fileUpdates:
+                    //
+                    //
+                case message    :=<-a.commandUpdates:
+                    //
+                    //
+                case motion     :=<-a.motions:
+                    //
+                    //
+                case wsmessage  :=<-websocket_connection.OutChannel:
+                    //
+                    a.handleWebSocketConnection(wsmessage)
+                    // 
+                case logmessage :=<-a.logs:
+                    //
+                    fmt.Printf("\nLOG: %v", logmessage)
+                    //
+                default:
+                    //
+                    time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
+                    //
+        }
+        //
+    }
+    //
     return nil
-    //
 }
-
-func (a *App)handleWebSocketConnection()(error){
-    //
-    return nil
-    //
-}
-
-func (a *App)handleFileUpdates()(error){
-    //
-    return nil
-    //
-}
-
-func (a *App)handleCommandUpdates()(error){
-    //
-    return nil
-    //
-}
+/*
 
 func (a *App)handleMotions()(error){
     //
     return nil
     //
+}
+
+func (a *App)handleLogs()(error){
+    //
+    return nil
+    //
+}
+*/
+
+func (a *App)writeLogEntry( packageName,functionName,procedureName string, err error )( error ){
+    //
+    message := logging.LogMessage{PackageName:packageName, FunctionName:functionName, ProcedureName:procedureName, Err:err}
+    a.logs  <-  message
+    //
+    return nil
+    //
+}
+
+
+func MakeApp()( *App, error ){
+    //
+    var app App
+    //
+    app.fileUpdates     = make( chan majesta.CompNotes,  100 )
+    app.commandUpdates  = make( chan majesta.CompNotes,  100 )
+    //
+    app.motions         = make( chan *activa.Motion,     100 )
+    app.logs            = make( chan logging.LogMessage, 100 )
+    //
+    app.websocketConn   = wsclient.GetWsConnection()
+    //
+    return &app, nil
 }

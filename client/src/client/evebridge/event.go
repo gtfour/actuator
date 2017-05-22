@@ -11,7 +11,7 @@ import "client/majesta"
 import "jumper/common/marconi"
 //
 //
-import "jumper/cuda"
+// import "jumper/cuda"
 import "jumper/cuda/targets"
 //
 //
@@ -86,12 +86,14 @@ func Handle(messages chan majesta.CompNotes )() {
                           case "server_response":
                               //
                               //
+                              //
                               var response wsclient.Response
                               data          := message.Data
                               err_unmarshal := json.Unmarshal( data, &response )
                               if err_unmarshal == nil {
                                   fmt.Printf("\nMessage from server: %v\n", response)
                               }
+                              //
                               //
                               //
                           case "motion":
@@ -162,23 +164,29 @@ func Handle(messages chan majesta.CompNotes )() {
                                   //
                                   var newTargetType string = targets.TARGET_UNDEFINED_STR
                                   if request.ObjType == targets.TARGET_FILE_STR {
-
-                                  } else request.ObjType == targets.TARGET_FILE_STR {
-
+                                      //
+                                      newTargetType = targets.TARGET_FILE_STR
+                                      //
+                                  } else if request.ObjType == targets.TARGET_DIR_STR {
+                                      //
+                                      newTargetType = targets.TARGET_DIR_STR
+                                      //
                                   } else {
-                                      return targets.targetTypeHasNotBeenSpecified
-
+                                      //
+                                      // return targetTypeUndefined
+                                      //
                                   }
-                                  targetDirectoryConfig         := make(map[string]string, 0)
-                                  targetDirectoryConfig["type"] =  "TARGET_DIR"
-                                  targetDirectoryConfig["path"] =  "/home/venom/test_passwd/"
-                                  tgtDirectory,err              := targets.NewTarget(targetDirectoryConfig)
+                                  targetConfig         := make(map[string]string, 0)
+                                  targetConfig["type"] =  targets.TARGET_FILE_STR
+                                  targetConfig["path"] =  request.ObjPath
+                                  tgt,err              := targets.NewTarget(targetConfig)
+                                  if err != nil { /* return err */  }
                                   //
                                   //
                                   //
-                                  response_type      := "dynima_response"
-                                  var ws_message = &wsclient.Message{DataType:"data_update",Data:message_data_raw}
-                                  websocket_connection.Write(ws_message)
+                                  response_type        := "dynima_response"
+                                  // //  var ws_message = &wsclient.Message{DataType:"data_update",Data:message_data_raw}
+                                  // // websocket_connection.Write(ws_message)
                                   // 
                               }
                               //
