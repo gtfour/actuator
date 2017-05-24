@@ -5,30 +5,32 @@ import "encoding/json"
 import "client/wsclient"
 import "jumper/activa"
 import "jumper/common/marconi"
-import "jumper/cuda/targets"
+// import "jumper/cuda/targets"
 // import "client/activa"
 // // import "client/majesta"
 // // import "client/logging"
 
 
 func (a *App)handleWebSocketConnection(message *wsclient.Message)(){
+    //
+    FUNCTION_NAME := "handleWebSocketConnection"
+    //
     switch message_type := message.DataType; message_type {
         //
         //
+        //
         case "server_response":
-            //
-            //
             //
             var response wsclient.Response
             data          := message.Data
             err_unmarshal := json.Unmarshal( data, &response )
             if err_unmarshal == nil {
+                //
                 fmt.Printf("\nMessage from server: %v\n", response)
+                //
             } else {
                 //
             }
-            //
-            //
             //
         case "motion":
             //
@@ -41,40 +43,14 @@ func (a *App)handleWebSocketConnection(message *wsclient.Message)(){
             //
             //
             if err_unmarshal == nil {
-                //
-                // fmt.Printf("\nNew motion %v\n", motion)
-                //
-                motion.TaskState =  activa.TASK_STATE_inprogress
-                motionSubType    := motion.SubType
-                motionSourceType := motion.SourceType
-                motionSourcePath := motion.SourcePath
-                _,_              =  motionSourceType, motionSourcePath
-                // // cross.WriteMotion( &motion )
-                //
-                //
-                switch motion_type := motion.Type; motion_type {
-                    //
-                    //
-                    case activa.MOTION_TYPE_BLACKOUT:
-                        //
-                        // // commands
-                        //
-                        //
-                    case activa.MOTION_TYPE_BLACKTOP:
-                        //
-                        // // files and directories
-                        if motionSubType == activa.MOTION_SUBTYPE_ADD_DYNIMA {
-                            fmt.Printf("\nMotion %v  Data: motionSubType: %v  motionSubType: %v motionSourceType: %v motionSourcePath: %v \n", motion_type, motionSubType, motionSourceType, motionSourcePath )
-                        }
-                        //
-                        //
-                }
-                //
-                //
-                //
-                a.motions<-&motion
+                a.handleMotion(&motion)
+            } else {
+                a.writeLogEntry(PACKAGE_NAME,FUNCTION_NAME,"motion",err_unmarshal)
             }
         case "dynima":
+            //
+            //
+            //
             var request marconi.Request
             data           := message.Data
             err_unmarshal  := json.Unmarshal( data, &request )
@@ -96,32 +72,11 @@ func (a *App)handleWebSocketConnection(message *wsclient.Message)(){
                 //
                 // trying to get file content via dynima 
                 //
-                var newTargetType string = targets.TARGET_UNDEFINED_STR
-                //
-                if request.ObjType == targets.TARGET_FILE_STR {
-                    //
-                    newTargetType = targets.TARGET_FILE_STR
-                    //
-                } else if request.ObjType == targets.TARGET_DIR_STR {
-                    //
-                    newTargetType = targets.TARGET_DIR_STR
-                    //
-                } else {
-                    //
-                    // // return targetTypeUndefined
-                    //
-                }
-                targetConfig          :=  make(map[string]string, 0)
-                targetConfig["type"]  =   newTargetType
-                targetConfig["path"]  =   request.ObjPath
-                tgt,err               :=  targets.NewTarget(targetConfig)
-                if err != nil { /* return err */  }
-                //
-                response_type        := "dynima_response"
-                var ws_message = &wsclient.Message{DataType:"data_update",Data:message_data_raw}
-                a.websocketConn.Write(ws_message)
-                // 
+                a.handleDynima(&request)
+            } else {
+                a.writeLogEntry( PACKAGE_NAME,FUNCTION_NAME,"dynima",err_unmarshal )
             }
+            //
             //
             //
     }

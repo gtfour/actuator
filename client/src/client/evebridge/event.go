@@ -176,15 +176,18 @@ func Handle(messages chan majesta.CompNotes )() {
                                       // return targetTypeUndefined
                                       //
                                   }
+                                  _ = newTargetType
                                   targetConfig         := make(map[string]string, 0)
                                   targetConfig["type"] =  targets.TARGET_FILE_STR
                                   targetConfig["path"] =  request.ObjPath
                                   tgt,err              := targets.NewTarget(targetConfig)
+                                  _ = tgt
                                   if err != nil { /* return err */  }
                                   //
                                   //
                                   //
                                   response_type        := "dynima_response"
+                                  _ = response_type
                                   // //  var ws_message = &wsclient.Message{DataType:"data_update",Data:message_data_raw}
                                   // // websocket_connection.Write(ws_message)
                                   // 

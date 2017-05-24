@@ -2,7 +2,8 @@ package cross
 
 import "encoding/json"
 import "github.com/boltdb/bolt"
-import "client/activa"
+//import "client/activa"
+import "jumper/activa"
 
 func WriteMotion(m *activa.Motion)(err error) {
 

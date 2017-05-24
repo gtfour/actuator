@@ -25,21 +25,24 @@ type App struct {
 
 func (a *App)Handle()(error){
     //
-    var websocket_connection = wsclient.GetWsConnection()
+    // var websocket_connection = wsclient.GetWsConnection()
     //
     for {
         //
         select {
-                case message    :=<-a.fileUpdates:
+                case messageF    :=<-a.fileUpdates:
                     //
+                    a.handleTextOutput(&messageF)
                     //
-                case message    :=<-a.commandUpdates:
+                case messageC    :=<-a.commandUpdates:
                     //
+                    a.handleTextOutput(&messageC)
                     //
                 case motion     :=<-a.motions:
                     //
+                    a.handleMotion(motion)
                     //
-                case wsmessage  :=<-websocket_connection.OutChannel:
+                case wsmessage  :=<-a.websocketConn.OutChannel:
                     //
                     a.handleWebSocketConnection(wsmessage)
                     // 

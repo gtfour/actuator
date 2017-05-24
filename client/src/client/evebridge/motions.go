@@ -1,7 +1,10 @@
 package evebridge
 
+import "fmt"
 import "client/cross"
-import "client/activa"
+// import "client/activa"
+import "jumper/activa"
+
 
 func HandleMotion(motion *activa.Motion)(err error) {
     if motion.TaskState == activa.TASK_STATE_new || motion.TaskState == activa.TASK_STATE_empty {
@@ -27,3 +30,41 @@ func HandleCompletedMotion(motion *activa.Motion)(err error) {
     return err
 }
 
+
+
+
+func (a *App)handleMotion(motion *activa.Motion)(){
+
+    //
+    // fmt.Printf("\nNew motion %v\n", motion)
+    //
+    motion.TaskState =  activa.TASK_STATE_inprogress
+    motionSubType    := motion.SubType
+    motionSourceType := motion.SourceType
+    motionSourcePath := motion.SourcePath
+    _,_              =  motionSourceType, motionSourcePath
+    // // cross.WriteMotion( &motion )
+    //
+    //
+    switch motion_type := motion.Type; motion_type {
+        //
+        //
+        case activa.MOTION_TYPE_BLACKOUT:
+            //
+            // // commands
+            //
+            //
+        case activa.MOTION_TYPE_BLACKTOP:
+            //
+            // // files and directories
+            if motionSubType == activa.MOTION_SUBTYPE_ADD_DYNIMA {
+                fmt.Printf("\nMotion %v  Data: motionSubType: %v  motionSubType: %v motionSourceType: %v motionSourcePath: %v \n", motion_type, motionSubType, motionSourceType, motionSourcePath )
+                }
+                //
+                //
+            }
+            //
+            //
+            //
+            a.motions<-motion
+}

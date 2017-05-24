@@ -7,6 +7,9 @@ var MOTION_TYPE_BLACKTOP_LOCAL     int = 8062
 var TRIGGER_ADD                    int = 10000
 var TRIGGER_REMOVE                 int = 10002
 
+
+
+var TASK_STATE_empty               int
 var TASK_STATE_new                 int = 4000
 var TASK_STATE_completed           int = 4002
 var TASK_STATE_failed              int = 4003
