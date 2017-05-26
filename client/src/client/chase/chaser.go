@@ -9,6 +9,11 @@ type chaser struct {
     //
 }
 
+func(c *chaser)Orient(messages <-chan majesta.CompNotes)(){
+    c.messages = messages
+}
+
+
 func(c *chaser)Follow(path string)(err error){
     //
     err = Listen(path, c.messages, c.wp)
@@ -19,6 +24,8 @@ func(c *chaser)Follow(path string)(err error){
 func NewChaser(mchan_size int)(*chaser){
     var c chaser
     c.wp       = WPCreate()
-    c.messages = make(chan majesta.CompNotes, mchan_size)
+    if mchan_size > 0 {
+        c.messages = make(chan majesta.CompNotes, mchan_size)
+    }
     return &c
 }
