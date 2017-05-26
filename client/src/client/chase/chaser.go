@@ -9,7 +9,7 @@ type chaser struct {
     //
 }
 
-func(c *chaser)Orient(messages <-chan majesta.CompNotes)(){
+func(c *chaser)Orient(messages chan<- majesta.CompNotes)(){
     c.messages = messages
 }
 
