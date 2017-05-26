@@ -23,7 +23,7 @@ type Target struct {
     Prop                          *actuator.Prop // try to use Prop comparing instead of using markers
     InfoIn                        chan bool
     InfoOut                       chan string
-    MessageChannel                chan majesta.CompNotes
+    MessageChannel                chan<- majesta.CompNotes
     WorkerPool                    *WorkerPool
     InformAboutExit               bool
     KeepChaseWhenDoesNotExist     bool // Do not remove target  from Worker targets array when some error has been caused
@@ -36,7 +36,7 @@ type Target struct {
 
 func ( tgt *Target ) GetDir()  string { return tgt.Dir }
 func ( tgt *Target ) GetPath() string { return tgt.Path }
-func ( tgt *Target ) GetMessageChannel() chan majesta.CompNotes {return tgt.MessageChannel}
+func ( tgt *Target ) GetMessageChannel() chan<- majesta.CompNotes {return tgt.MessageChannel}
 func ( tgt *Target ) IsReady() bool {return tgt.Prop.Ready }
 func ( tgt *Target ) SetReady(state bool)() {tgt.Prop.Ready = state }
 func ( tgt *Target ) GetSelfProp()(*actuator.Prop){ return tgt.Prop }
@@ -58,7 +58,7 @@ type TargetDir struct {
 
 func ( tgt *TargetDir )  GetDir()  string { return tgt.Dir }
 func ( tgt *TargetDir )  GetPath() string { return tgt.Path }
-func ( tgt *TargetDir )  GetMessageChannel() chan majesta.CompNotes {return tgt.MessageChannel}
+func ( tgt *TargetDir )  GetMessageChannel() chan<- majesta.CompNotes {return tgt.MessageChannel}
 func ( tgt *TargetDir )  IsReady() bool {return tgt.Prop.Ready }
 func ( tgt *TargetDir )  SetReady(state bool)() {tgt.Prop.Ready = state }
 func ( tgt *TargetDir )  GetSelfProp()(*actuator.Prop){ return tgt.Prop }
@@ -70,7 +70,7 @@ func ( tgt *TargetDir ) GetRemove()(bool) { return tgt.Remove }
 func ( tgt *TargetDir ) ToRemove()() { tgt.Remove = true }
 
 
-func Start (targets []string, message_channel chan majesta.CompNotes, wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
+func Start (targets []string, message_channel chan<- majesta.CompNotes, wp *WorkerPool, subdirs *map[string]*TargetDir )(err error){
 
     // Bug was found : when i passing an file name not a dir name to func to func Start 
     // nil point dereference error is causing . It happens because subdirs is nil ( i suppose )
@@ -359,12 +359,10 @@ func (tgt *TargetDir) Chasing (mode int) (err error){
 
 
 //func (tgt *Target) Reporting () {
-
 //    tgt.MessageChannel <- tgt.Path+"file was modified"
-
 //}
 
-func Listen( path string,  messages chan majesta.CompNotes , wp WorkerPool )(err error) {
+func Listen( path string,  messages chan<- majesta.CompNotes , wp WorkerPool )(err error) {
 
     target_dir_path             :=  path
 
@@ -381,8 +379,6 @@ func Listen( path string,  messages chan majesta.CompNotes , wp WorkerPool )(err
     target.WorkerPool           =   &wp // Deirz@golang.cjr advice
     subdirs                     :=  make(map[string]*TargetDir)
     subdirs[target.Path]        =   target
-
-
 
     Start( test_dir, messages, &wp, &subdirs )
 

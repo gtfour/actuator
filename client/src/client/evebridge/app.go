@@ -11,15 +11,12 @@ import "client/logging"
 
 type App struct {
     //
-    //
-    //
     websocketConn   *wsclient.WebSocketConnection
     fileUpdates     chan majesta.CompNotes
     commandUpdates  chan majesta.CompNotes
+    // majestaCommon   chan majesta.CompNotes
     motions         chan *activa.Motion
     logs            chan logging.LogMessage
-    //
-    //
     //
 }
 
@@ -28,46 +25,39 @@ func (a *App)Handle()(error){
     // var websocket_connection = wsclient.GetWsConnection()
     //
     for {
-        //
         select {
                 case messageF    :=<-a.fileUpdates:
-                    //
-                    a.handleTextOutput(&messageF)
-                    //
-                case messageC    :=<-a.commandUpdates:
-                    //
-                    a.handleTextOutput(&messageC)
-                    //
-                case motion     :=<-a.motions:
-                    //
-                    a.handleMotion(motion)
-                    //
-                case wsmessage  :=<-a.websocketConn.OutChannel:
-                    //
-                    a.handleWebSocketConnection(wsmessage)
-                    // 
-                case logmessage :=<-a.logs:
-                    //
-                    fmt.Printf("\nLOG: %v", logmessage)
-                    //
-                default:
-                    //
-                    time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
-                    //
-        }
-        //
-    }
-    //
-    return nil
-}
-/*
+                    a.handleTextOutput( &messageF )
 
+                case messageC    :=<-a.commandUpdates:
+                    a.handleTextOutput( &messageC )
+
+                case motion     :=<-a.motions:
+                    a.handleMotion( motion )
+
+                case wsmessage  :=<-a.websocketConn.OutChannel:
+                    a.handleWebSocketConnection( wsmessage )
+
+                case logmessage :=<-a.logs:
+                    fmt.Printf("\nLOG: %v", logmessage)
+
+                default:
+                    time.Sleep( LOG_CHANNEL_TIMEOUT_MS  * time.Millisecond )
+
+        }
+    }
+    return nil
+    //
+    //
+    //
+}
+
+/*
 func (a *App)handleMotions()(error){
     //
     return nil
     //
 }
-
 func (a *App)handleLogs()(error){
     //
     return nil

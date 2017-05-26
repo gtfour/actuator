@@ -8,7 +8,7 @@ import "jumper/actuator"
 import "client/majesta"
 // Have to implement carousel method
 
-
+/*
 var TGT_PER_GR int64                       = 50 // if FILES_PER_GR is very big - TargetsCount type should be modified 
 var TIMEOUT_MS              time.Duration  = 800
 var INHIBITION_TIMEOUT      time.Duration  = 1000
@@ -18,13 +18,14 @@ var LOG_CHANNEL_TIMEOUT_MS  time.Duration  = 1000
 var EMPTY_OPENING_MODE int = 0
 var LAZY_OPENING_MODE  int = 01
 var SAFE_OPENING_MODE  int = 02
+*/
 
 
 type AbstractTarget interface {
     GetDir()            string
     Chasing(int)        error
     GetPath()           string
-    GetMessageChannel() chan majesta.CompNotes
+    GetMessageChannel() chan<- majesta.CompNotes
     SetReady            (bool)()
     IsReady()           bool
     GetSelfProp         ()(*actuator.Prop)
