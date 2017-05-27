@@ -11,14 +11,14 @@ import "client/logging"
 
 type MessageSource interface{
     //
-    Orient(messages <-chan majesta.CompNotes)()
+    Orient(messages chan majesta.CompNotes)()
     //
 }
 
 type App struct {
     //
     websocketConn   *wsclient.WebSocketConnection
-    fileUpdates     <-chan majesta.CompNotes
+    fileUpdates     chan majesta.CompNotes
     //  // commandUpdates  chan majesta.CompNotes
     // majestaCommon   chan majesta.CompNotes
     motions         chan *activa.Motion

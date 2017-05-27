@@ -5,12 +5,14 @@ import "client/majesta"
 type chaser struct {
     //
     wp       WorkerPool
-    messages chan<- majesta.CompNotes
+    messages chan majesta.CompNotes
     //
 }
 
-func(c *chaser)Orient(messages chan<- majesta.CompNotes)(){
+func(c *chaser)Orient(messages chan majesta.CompNotes)(){
+    //
     c.messages = messages
+    // 
 }
 
 

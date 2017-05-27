@@ -25,7 +25,7 @@ type AbstractTarget interface {
     GetDir()            string
     Chasing(int)        error
     GetPath()           string
-    GetMessageChannel() chan<- majesta.CompNotes
+    GetMessageChannel() chan majesta.CompNotes
     SetReady            (bool)()
     IsReady()           bool
     GetSelfProp         ()(*actuator.Prop)
