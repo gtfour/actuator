@@ -1,5 +1,6 @@
 package chase
 
+import "fmt"
 import "client/majesta"
 
 type chaser struct {
@@ -18,6 +19,7 @@ func(c *chaser)Orient(messages chan majesta.CompNotes)(){
 
 func(c *chaser)Follow(path string)(err error){
     //
+    fmt.Printf("\nStart following with chaser: %v\n", c)
     err = Listen(path, c.messages, c.wp)
     return err
     //

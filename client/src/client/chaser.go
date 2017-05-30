@@ -19,7 +19,7 @@ func main() {
     //go func() {
     //     fmt.Println(http.ListenAndServe("0.0.0.0:6060", nil))
     //}()
-    path1      := "/tmp/test/test.txt"
+    path1      := "/tmp/test"
     //path2    := "/etc/group"
     //path3    := "/proc/net"
     messages   := make(chan majesta.CompNotes, 100)

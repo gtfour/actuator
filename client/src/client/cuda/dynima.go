@@ -47,6 +47,7 @@ func (d *Dynima) SetSource (sourceType string, sourcePath string)(error) {
 }
 */
 
+/*
 type Dynima struct {
     //parsers
     Id              string
@@ -189,4 +190,4 @@ func GetDynimasByPath(path string) ( dynimas  []Dynima , err  error ) {
     }
     return nil, err
 }
-
+*/
