@@ -41,6 +41,7 @@ func main() {
     //
     //
     //
+    http://choly.ca/post/go-json-marshalling/   interesting techniq
 
 
 }

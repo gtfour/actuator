@@ -3,18 +3,30 @@ package result
 import "encoding/json"
 import "jumper/common/gen"
 
+type ResultsRaw []ResultRaw
+
 type Result interface {
     //
     // // GetData        ()            ([]Line,error)
     //
     GetType        ()            (typ int)
     GetJson        ()            ([]byte,error)
+    // // MarshalJSON()([]byte,error)
+    //
     // // ProceedTemplate([][]string)  string
     //
 }
 
 type ResultSet struct {
-    results []Result
+    //
+    Results    []Result
+    // ResultsRaw []ResultRaw `json:"results"`
+    //
+}
+
+type ResultRaw struct {
+    Type       int             `json:"type"`
+    Result     json.RawMessage `json:"result"`
 }
 
 
@@ -268,8 +280,8 @@ func (d *Directory)Append(file File)(){
 //
 
 func(rs *ResultSet)GetData()([]Result,error ){
-    if ( rs.results != nil ){
-        return rs.results, nil
+    if ( rs.Results != nil ){
+        return rs.Results, nil
     } else {
         return nil, nilResultError
     }
@@ -279,21 +291,38 @@ func(rs *ResultSet)GetType()(int){
     return RESULT_TYPE_SET
 }
 
-func(rs *ResultSet)GetJson()( []byte,error ){
-    //
-    if rs == nil { return nil, nilResultError }
-    result_set_byte,err := json.Marshal(rs)
+func(rs *ResultSet)GetJson()([]byte,error){
+    //// if rs == nil { return nil, nilResultError }
+    //// result_set_byte,err := json.Marshal(rs)
+    //// if err != nil {
+    ////     return nil, err
+    //// } else {
+    ////    return result_set_byte, nil
+    //// }
+    var resultsRaw ResultsRaw
+    for i := range rs.Results {
+        r       := rs.Results[i]
+        rtype   := r.GetType()
+        rjs,err := r.GetJson()
+        if err == nil {
+            resultRaw     := ResultRaw{Type:rtype, Result:rjs}
+            resultsRaw =  append(resultsRaw, resultRaw)
+        }
+
+    }
+    resultsetByte,err := json.Marshal(resultsRaw)
     if err != nil {
         return nil, err
     } else {
-        return result_set_byte, nil
+        return resultsetByte, nil
     }
-    //
 }
 
 
 func (rs *ResultSet)Append(result Result)(){
-    rs.results = append(rs.results, result)
+    //
+    rs.Results = append(rs.Results, result)
+    //
 }
 
 

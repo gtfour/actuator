@@ -1,5 +1,6 @@
 package evebridge
 
+import "fmt"
 import "client/wsclient"
 import "jumper/common/marconi"
 import "jumper/cuda"
@@ -47,16 +48,33 @@ func (a *App)handleDynima(request *marconi.Request)(){
     }
     d.AppendTarget(tgt)
     resultSet       := d.RunFilters()
+    //
+    // checking result before sending to wengine
+    //
+    // //results,err:=resultSet.GetData()
+    // //fmt.Printf("\n==checking result set==\n")
+    // //for i:= range results {
+    // //    r:=results[i]
+    // //    fmt.Printf("\n%v",r)
+    // //}
+    // //fmt.Printf("\n== ==\n")
+    //
+    //
+    //
     result_byte,err := resultSet.GetJson()
     if err != nil {
         a.writeLogEntry(PACKAGE_NAME,FUNCTION_NAME,"converting dynima result to byte",err)
         return
     }
     //
+    fmt.Printf("\n<< -- result_byte: %v -- >>\n", result_byte)
     //
     //
     response_type        := "dynima_response"
-    var ws_message = &wsclient.Message{DataType:response_type, Data:result_byte}
+    var ws_message       =  &wsclient.Message{DataType:response_type, Data:result_byte}
+    //fmt.Printf("\n-- Sending response back to server --\n")
+    a.writeLogEntry(PACKAGE_NAME,FUNCTION_NAME,"sending response back to server",nil)
     a.websocketConn.Write(ws_message)
-
+    //
+    //
 }
