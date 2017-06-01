@@ -63,9 +63,12 @@ func (c *Client)handleMessage(msg *Message)(err error){
             //
         case "message_ws_state":
             //
+            //
         case "new_dynima":
             //
+            //
         case "dynima_response":
+            //
             fmt.Printf("\n<<Recieving dynima response>>")
             var resultsRaw result.ResultsRaw
             data          := msg.Data
@@ -73,11 +76,26 @@ func (c *Client)handleMessage(msg *Message)(err error){
             err_unmarshal := json.Unmarshal( data, &resultsRaw )
             fmt.Printf("\nunmarshal convert : %v", err_unmarshal)
             if err_unmarshal == nil {
+                var r           result.ResultRaw
+                var result_byte json.RawMessage
                 for i:= range resultsRaw {
-                    r := resultsRaw[i]
-                    fmt.Printf("\n-- Result with Type: %v --\n", r.Type)
-                    fmt.Printf("%v\n",r.Result)
-                    fmt.Printf("\n-- -- --\n")
+                    r           = resultsRaw[i]
+                    result_byte = r.Result
+                    //
+                    // fmt.Printf("\n-- Result with Type: %v --\n", r.Type)
+                    // fmt.Printf("%v\n",r.Result)
+                    // fmt.Printf("\n-- -- --\n")
+
+                    switch result_type := r.Type; result_type  {
+                        case result.RESULT_TYPE_FILE:
+                            var resultFile result.File
+                            err_unmarshal := json.Unmarshal( result_byte, &resultFile )
+                            if err_unmarshal == nil {
+                                fmt.Printf("\n checking result with 'File'-type\n%v\n",resultFile)
+                            }
+
+                    }
+                    //
                 }
 
             }
