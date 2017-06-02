@@ -38,7 +38,7 @@ var REMOVE_FROM_LIST        = 4106
 var ADD_PAIR                           = 4108 // this key-value pair  can't be present in hash marked by this key.???    
 var REMOVE_PAIR                        = 4110 // 
 var GET_PAIR                           = 4112 //
-var APPEND_TO_INCLUDED_ARRAY           = 4202 // if pair value is array
+var APPEND_TO_ARRAY                    = 4202 // пиздешь!  if pair value is array
 var REMOVE_ELEMENT_FROM_INCLUDED_ARRAY = 4203 // if pair value is array
 var CREATE_EMPTY_ARRAY                 = 4205
 
@@ -47,6 +47,8 @@ var CREATE_NEW_TABLE_IF_DOESNT_EXIST   = 5001
 var CHECK_TABLE_EXIST                  = 5002
 var REMOVE_TABLE                       = 5003
 var DELETE_TABLE                       = 5003
+
+var TABLE_SIZE                         = 5004
 
 // dumm shit
 

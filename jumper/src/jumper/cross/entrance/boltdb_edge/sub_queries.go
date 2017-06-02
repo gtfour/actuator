@@ -1,6 +1,7 @@
 package boltdb_edge
 
 import "errors"
+// import "strconv"
 import "encoding/json"
 import "github.com/boltdb/bolt"
 import "jumper/cross"
@@ -340,33 +341,56 @@ func (d *Database)GetPair(q *cross.Query)(result_slice_addr *[]map[string]interf
     return
 }
 
-func (d *Database)AppendToIncludedArray(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
-    key_exist,value_exist,err:=q.Validate()
+func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
-    if !key_exist   { return nil, cross.KeyIsEmpty   }
+    _,value_exist,err := q.Validate()
+
+    // if !key_exist   { return nil, cross.KeyIsEmpty   }
     if !value_exist { return nil, cross.ValueIsEmpty }
     if err!=nil     { return nil, err                }
 
-    key_byte,err_key     := json.Marshal(q.KeyBody)
-    if err_key!=nil {
+    //key_byte,err_key     := json.Marshal( q.KeyBody   )
+    query_byte,err_query := json.Marshal( q.QueryBody )
+    if err_query!=nil {
         return nil, cross.EncodeError
     }
+
 
     err=d.db.Update(func(tx *bolt.Tx) error {
         table:=tx.Bucket([]byte(q.Table))
         if table==nil{ return cross.TableDoesntExist  }
-        bucket:=table.Bucket(key_byte)
-        if bucket==nil {
-            entry:=table.Get(key_byte)
-            if entry == nil {
-                return cross.EntryDoesntExist
-            } else {
+        //bucket:=table.Bucket(key_byte)
+        //if bucket==nil {
+        //     entry:=table.Get(key_byte)
+        //     if entry == nil {
+        //        return cross.EntryDoesntExist
+        //    } else {
 
+        //    }
+        // } else {
+            //
+            // when bucket identified by key exists
+            //
+            // decimal          := 10
+            table_stats      := table.Stats()
+            table_size       := table_stats.KeyN
+            new_index        := table_size
+            // bucket_size_str  := strconv.FormatInt(int64(bucket_size), decimal)
+            key_map          := make(map[string]interface{}, 0)
+            key_map["index"] =  new_index
+            //new_key_byte     := []byte(key_map)
+            new_key_byte,err_tx := json.Marshal(key_map)
+            if err_tx != nil {
+                return err_tx
             }
-        } else {
-
-        }
+            err_tx          = table.Put(new_key_byte, query_byte)
+            return err_tx
+            //
+            //
+            //
+        //}
+        //return nil // !!!
 
 
     });
@@ -398,11 +422,27 @@ func (d *Database)RemoveFromIncludedArray(q *cross.Query)(result_slice_addr *[]m
         } else {
 
         }
+        return nil // !!!
 
 
     });
     return
 
+}
+
+func (d *Database)BucketSize(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+    result_slice := make([]map[string]interface{},0)
+    err=d.db.View(func(tx *bolt.Tx) error {
+        table:=tx.Bucket([]byte(q.Table))
+        if table==nil { return cross.TableDoesntExist }
+        stats  := table.Stats()
+        size   := stats.KeyN
+        result := make(map[string]interface{}, 0)
+        result["size"] = size
+        result_slice = append(result_slice, result)
+        return nil
+    });
+    return &result_slice, err
 }
 
 

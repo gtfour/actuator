@@ -58,17 +58,26 @@ func main() {
     fmt.Printf("\n---Remove query: %v ---\n",remove_query)
     fmt.Printf("\n---Create query: %v ---\n",create_query)
 
+    //
+    get_size_query                         := cross.Query{Table:"dynimas", Type:cross.TABLE_SIZE}
+
+
+    //
+
 
 
     //
     // Runing queries
     //
     r4,e4 := database.RunQuery(&maketable_query)
+    r0,e0 := database.RunQuery(&get_size_query)
     r1,e1 := database.RunQuery(&create_query)
     r2,e2 := database.RunQuery(&remove_query)
     r3,e3 := database.RunQuery(&get_query)
     r5,e5 := database.RunQuery(&table_check_query)
+    r6,e6 := database.RunQuery(&get_size_query)
     fmt.Printf("Make Tables Query Result:\n%v\nError:%v\n"              ,r4,e4)
+    fmt.Printf("Check table %v size: %v Error: %v\n"                       ,get_size_query.Table,r0,e0)
     fmt.Printf("Create new entry:\n%v\nError:%v\n"                      ,r1,e1)
     fmt.Printf("Remove entries by value field:\n%v\nError:%v\n"         ,r2,e2)
     fmt.Printf("Get Query Result:\nError:%v\n",e3)
@@ -77,4 +86,5 @@ func main() {
         fmt.Printf("%v\n",myres)
     }
     fmt.Printf("Check table exist:\n%vError:%v\n"                       ,r5,e5)
+    fmt.Printf("Check table %v size: %v Error:%v\n"                       ,get_size_query.Table,r6,e6)
 }
