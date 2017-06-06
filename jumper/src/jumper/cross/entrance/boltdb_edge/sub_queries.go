@@ -344,38 +344,35 @@ func (d *Database)GetPair(q *cross.Query)(result_slice_addr *[]map[string]interf
 
 func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
-    _,value_exist,err := q.Validate()
+    key_exist,value_exist,err := q.Validate()
 
-    // if !key_exist   { return nil, cross.KeyIsEmpty   }
+    if !key_exist   { return nil, cross.KeyIsEmpty   }
     if !value_exist { return nil, cross.ValueIsEmpty }
     if err!=nil     { return nil, err                }
-
-    //key_byte,err_key     := json.Marshal( q.KeyBody   )
+    key_byte,err_key     := json.Marshal( q.KeyBody   )
     query_byte,err_query := json.Marshal( q.QueryBody )
-    if err_query!=nil {
+    if err_query != nil || err_key != nil {
         return nil, cross.EncodeError
     }
-
-
     err=d.db.Update(func(tx *bolt.Tx) error {
         table:=tx.Bucket([]byte(q.Table))
         if table==nil{ return cross.TableDoesntExist  }
-        //bucket:=table.Bucket(key_byte)
-        //if bucket==nil {
-        //     entry:=table.Get(key_byte)
-        //     if entry == nil {
-        //        return cross.EntryDoesntExist
-        //    } else {
+        bucket:=table.Bucket(key_byte)
+        if bucket==nil {
+             entry := table.Get(key_byte)
+             if entry == nil {
+                return cross.EntryDoesntExist
+            } else {
 
-        //    }
-        // } else {
+            }
+         } else {
             //
             // when bucket identified by key exists
             //
             // decimal          := 10
-            table_stats      := table.Stats()
-            table_size       := table_stats.KeyN
-            new_index        := table_size
+            table_stats := table.Stats()
+            table_size  := table_stats.KeyN
+            new_index   := table_size
             // bucket_size_str  := strconv.FormatInt(int64(bucket_size), decimal)
             key_map          := make(map[string]interface{}, 0)
             key_map["index"] =  new_index
@@ -389,10 +386,8 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
             //
             //
             //
-        //}
-        //return nil // !!!
-
-
+        }
+        return nil // !!!
     });
     return
 
