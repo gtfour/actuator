@@ -41,6 +41,7 @@ var GET_PAIR                           = 4112 //
 var APPEND_TO_ARRAY                    = 4202 // пиздешь!  if pair value is array
 var REMOVE_ELEMENT_FROM_INCLUDED_ARRAY = 4203 // if pair value is array
 var CREATE_EMPTY_ARRAY                 = 4205
+var GET_ARRAY                          = 4206
 
 var CREATE_NEW_TABLE                   = 5000
 var CREATE_NEW_TABLE_IF_DOESNT_EXIST   = 5001

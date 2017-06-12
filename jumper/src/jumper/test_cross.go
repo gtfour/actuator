@@ -60,9 +60,21 @@ func main() {
 
     //
     get_size_query                         := cross.Query{Table:"dynimas", Type:cross.TABLE_SIZE}
-
-
     //
+    // append to slice query
+    //
+    appendToSliceQuery                    := cross.Query{Table:"dynimas", Type:cross.APPEND_TO_ARRAY}
+    newSlicePropMap                       := make(map[string]interface{},0)
+    newSlicePropMap["entry_id"]           =  new_entry_id
+    newSlicePropMap["slice_name"]         =  "filters"
+    appendToSliceQuery.KeyBody            =  newSlicePropMap
+    appendToSliceQuery.QueryBody          =  make(map[string]interface{},0)
+    appendToSliceQuery.QueryBody["value"] =  "hello"
+    //
+    // get slice query
+    //
+    getSliceQuery                 := cross.Query{Table:"dynimas", Type:cross.GET_ARRAY}
+    getSliceQuery.KeyBody         =  newSlicePropMap
 
 
 
@@ -76,6 +88,8 @@ func main() {
     r3,e3 := database.RunQuery(&get_query)
     r5,e5 := database.RunQuery(&table_check_query)
     r6,e6 := database.RunQuery(&get_size_query)
+    _,_ = database.RunQuery(&appendToSliceQuery)
+    _,_ = database.RunQuery(&getSliceQuery)
     fmt.Printf("Make Tables Query Result:\n%v\nError:%v\n"              ,r4,e4)
     fmt.Printf("Check table %v size: %v Error: %v\n"                       ,get_size_query.Table,r0,e0)
     fmt.Printf("Create new entry:\n%v\nError:%v\n"                      ,r1,e1)

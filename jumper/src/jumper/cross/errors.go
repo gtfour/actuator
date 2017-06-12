@@ -23,7 +23,6 @@ var EncodeError        = errors.New("cross:encode error")
 var DecodeError        = errors.New("cross:decode error")
 
 // database query errors
-
 var EmptyKey            = errors.New("cross:key is empty")
 var EmptyQuery          = errors.New("cross:query is empty")
 var EmptyTableName      = errors.New("cross:table name is empty")
@@ -31,5 +30,8 @@ var KeyAndValueEmpty    = errors.New("cross:key and Value are empty")
 var KeyIsEmpty          = errors.New("cross:key is empty")
 var ValueIsEmpty        = errors.New("cross:value is empty")
 var IncorrectQueryType  = errors.New("cross:incorrect query type")
-
-
+//
+var SliceNameIsEmpty = errors.New("cross:slice name is empty")
+var SliceDoesntExist = errors.New("cross:slice doesn't exist")
+var EntryIdIsEmpty   = errors.New("cross:entry id is empty")
+//
