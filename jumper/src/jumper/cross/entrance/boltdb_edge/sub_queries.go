@@ -378,22 +378,28 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
     //
     err=d.db.Update(func(tx *bolt.Tx) error {
         table:=tx.Bucket([]byte(q.Table))
-        if table==nil{ return cross.TableDoesntExist  }
+        if table == nil { return cross.TableDoesntExist  }
         //
-        entryIdStr  := fmt.Sprintf( "%v", entryId )
-        entryIdByte := []byte(entryIdStr)
+        // entryIdStr  := fmt.Sprintf( "%v", entryId )
+        // entryIdByte := []byte(entryIdStr)
+        // EncodeError 
+        entryIdByte,errMarshal := json.Marshal(entryId)
+        if errMarshal != nil { return errMarshal }
+        fmt.Printf("\n AppendToArray\tEntryIdByte: %v\n", entryIdByte)
         // 
         bucket:=table.Bucket(entryIdByte)
+        //
         if bucket == nil {
             //
             //
-            entry := table.Get(entryIdByte)
-            if entry == nil {
+            // entry := table.Get(entryIdByte)
+            // if entry == nil {
                 //
-                return cross.EntryDoesntExist
-            } else {
-
-            }
+            //     return cross.EntryDoesntExist
+            // } else {
+                //
+            //}
+            return cross.EntryDoesntExist
             //
             //
         } else {
@@ -425,7 +431,7 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
                 //
                 key_word          := "key"
                 newKeyStr         := fmt.Sprintf("%v", newKey)
-                // newKeyByte        := []byte(newKeyStr)
+                // newKeyByte     := []byte(newKeyStr)
                 key_map[key_word] =  newKeyStr
                 //
             } else {
@@ -501,9 +507,15 @@ func(d *Database)GetSlice(q *cross.Query)(result_slice_addr *[]map[string]interf
         table    := tx.Bucket( []byte(q.Table) )
         if table == nil { return cross.TableDoesntExist }
         //
-        entryIdStr  := fmt.Sprintf( "%v", entryId )
-        entryIdByte := []byte(entryIdStr)
-        bucket      := table.Bucket(entryIdByte)
+        // entryIdStr  := fmt.Sprintf( "%v", entryId )
+        //
+        // entryIdByte := []byte(entryIdStr)
+        //
+        entryIdByte,errMarshal := json.Marshal(entryId)
+        if errMarshal != nil { return errMarshal }
+        fmt.Printf("\n GetSlice\tEntryIdByte: %v\n", entryIdByte)
+        //
+        bucket := table.Bucket(entryIdByte)
         if bucket == nil {
             //
             return cross.EntryDoesntExist
@@ -515,13 +527,11 @@ func(d *Database)GetSlice(q *cross.Query)(result_slice_addr *[]map[string]interf
             sliceBucket    := bucket.Bucket(sliceNameByte)
             if sliceBucket == nil { return cross.SliceDoesntExist }
             //
-
             sliceBucket.ForEach(func(k, v []byte) error {
 		fmt.Printf("key=%s, value=%s\n", k, v)
 		return nil
 	    })
             return nil
-
             //
         }
         //
