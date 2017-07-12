@@ -383,8 +383,10 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
         // entryIdStr  := fmt.Sprintf( "%v", entryId )
         // entryIdByte := []byte(entryIdStr)
         // EncodeError 
+        // ??? 
         entryIdByte,errMarshal := json.Marshal(entryId)
         if errMarshal != nil { return errMarshal }
+        // ???
         fmt.Printf("\n AppendToArray\tEntryIdByte: %v\n", entryIdByte)
         // 
         bucket:=table.Bucket(entryIdByte)
@@ -493,6 +495,8 @@ func (d *Database)RemoveFromArray(q *cross.Query)(result_slice_addr *[]map[strin
 
 func(d *Database)GetSlice(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     //
+    result_slice := make([]map[string]interface{},0)
+    //
     key_exist,_,err := q.Validate()
     if !key_exist { return nil, cross.KeyIsEmpty }
     // get entry key and slice name
@@ -511,14 +515,49 @@ func(d *Database)GetSlice(q *cross.Query)(result_slice_addr *[]map[string]interf
         //
         // entryIdByte := []byte(entryIdStr)
         //
-        entryIdByte,errMarshal := json.Marshal(entryId)
+        entryIdByte,errMarshal := json.Marshal( entryId )
         if errMarshal != nil { return errMarshal }
-        fmt.Printf("\n GetSlice\tEntryIdByte: %v\n", entryIdByte)
+        //   fmt.Printf("\n GetSlice\tEntryIdByte: %v\n", entryIdByte)
         //
         bucket := table.Bucket(entryIdByte)
         if bucket == nil {
             //
-            return cross.EntryDoesntExist
+            // try to get just entry instead of bucket
+            //
+            entry_byte := table.Get(entryIdByte)
+            if entry_byte != nil {
+                //
+                entry_map  := make(map[string]interface{}, 0)
+                err_entry  := json.Unmarshal(entry_byte, &entry_map)
+                if err_entry == nil {
+                    fmt.Printf("\n::>> decoded map\n%v\n<<::\n", entry_map )
+                    //
+                    sliceNameStr   := fmt.Sprintf( "%v", sliceName)
+                    //
+                    targetSlice, sliceExists     := entry_map[sliceNameStr]
+                    if sliceExists {
+                        search_result_slice          := make(map[string]interface{}, 0)
+                        search_result_slice["value"] =  targetSlice
+                        result_slice                 =  append(result_slice, search_result_slice)
+                        return nil
+                    } else {
+                        return cross.SliceDoesntExist
+                    }
+                    //
+                    return nil
+                } else  {
+                    return cross.DecodeError
+                }
+                //
+            } else {
+                return cross.EntryDoesntExist
+            }
+            //
+            //
+            //
+            // return cross.EntryDoesntExist
+            //
+            //
             //
         } else {
             //
@@ -537,7 +576,7 @@ func(d *Database)GetSlice(q *cross.Query)(result_slice_addr *[]map[string]interf
         //
     });
     //
-    return
+    return &result_slice, err
 }
 
 func (d *Database)BucketSize(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){

@@ -21,12 +21,16 @@ func main() {
     //
     // "create_new"-query 
     //
-    new_entry_id,err                 :=  gen.GenId()
-    create_key_body                  :=  make(map[string]interface{},0)
-    create_key_body["Id"]            =   new_entry_id
-    create_query_body                :=  make(map[string]interface{},0)
-    create_query_body["SourceType"]  =   "file"
-    create_query_body["SourcePath"]  =   "/etc/passwd555.so"
+    new_entry_id,err                 := gen.GenId()
+    create_key_body                  := make(map[string]interface{},0)
+    create_key_body["Id"]            =  new_entry_id
+    create_query_body                := make(map[string]interface{},0)
+    create_query_body["SourceType"]  =  "file"
+    create_query_body["SourcePath"]  =  "/etc/passwd555.so"
+    //
+    myTempSlice                      := []string {"a","b","c"}
+    create_query_body["myTempSlice"] = myTempSlice
+    //
     create_query                     :=  cross.Query{Table:"dynimas", Type:cross.CREATE_NEW_IFNOT}
     create_query.QueryBody           =   create_query_body
     create_query.KeyBody             =   create_key_body
@@ -67,7 +71,7 @@ func main() {
     // newEntryIdStr                         := fmt.Sprintf( "%v", create_key_body)
     //
     newSlicePropMap["entry_id"]           =  create_key_body
-    newSlicePropMap["slice_name"]         =  "filters"
+    newSlicePropMap["slice_name"]         =  "myTempSlice"
     appendToSliceQuery.KeyBody            =  newSlicePropMap
     appendToSliceQuery.QueryBody          =  make(map[string]interface{},0)
     appendToSliceQuery.QueryBody["value"] =  "hello"
@@ -87,7 +91,7 @@ func main() {
     r5,e5 := database.RunQuery( &table_check_query )
     r6,e6 := database.RunQuery( &get_size_query )
     _, e7 := database.RunQuery( &appendToSliceQuery )
-    _, e8 := database.RunQuery( &getSliceQuery )
+    targetSlice, e8 := database.RunQuery( &getSliceQuery )
     fmt.Printf("Make Tables Query Result:\n%v\nError:%v\n"              ,r4,e4)
     fmt.Printf("Check table %v size: %v Error: %v\n"                       ,get_size_query.Table,r0,e0)
     fmt.Printf("Create new entry:\n%v\nError:%v\n"                      ,r1,e1)
@@ -100,7 +104,7 @@ func main() {
     fmt.Printf("Check table exist:\n%vError:%v\n"                       ,r5,e5)
     fmt.Printf("Check table %v size: %v Error:%v\n"                       ,get_size_query.Table,r6,e6)
     fmt.Printf("--\nappending to slice err : %v\n--", e7)
-    fmt.Printf("--\ngetting to slice err : %v\n--", e8)
+    fmt.Printf("--\ngetting slice err : %v\n--Get Result:    %v   \n", e8,targetSlice)
     //
     //
     //
