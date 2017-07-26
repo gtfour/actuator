@@ -7,6 +7,8 @@ import "encoding/json"
 import "github.com/boltdb/bolt"
 import "jumper/cross"
 import "jumper/common/maps"
+//
+import "jumper/common/flexi"
 
 func(d *Database)CreateNew(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     _,_,err=q.Validate()
@@ -345,6 +347,7 @@ func (d *Database)GetPair(q *cross.Query)(result_slice_addr *[]map[string]interf
 
 func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     //
+    //
     key_exist,value_exist,err := q.Validate()
     //
     // query.KeyBody should contains following key fields: 
@@ -365,14 +368,16 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
     //
     // get entry key and slice name
     //
-    entryId,entryIdOk     := q.KeyBody["entry_id"]
-    newKey, newKeyOk      := q.KeyBody["new_key"]
-    sliceName,sliceNameOk := q.KeyBody["slice_name"]
+    entryId,entryIdOk                 := q.KeyBody["entry_id"]
+    newKey, newKeyOk                  := q.KeyBody["new_key"]    // wtf ??? 
+    sliceName,sliceNameOk             := q.KeyBody["slice_name"]
+    valueToAppend,valueToAppendExists := q.QueryBody["value"]
     //
     // 
     //
-    if !entryIdOk   { return nil, cross.EntryIdIsEmpty   }
-    if !sliceNameOk { return nil, cross.SliceNameIsEmpty }
+    if !entryIdOk           { return nil, cross.EntryIdIsEmpty         }
+    if !sliceNameOk         { return nil, cross.SliceNameIsEmpty       }
+    if !valueToAppendExists { return nil, cross.NothingIsAppendToSlice }
     //
     //
     //
@@ -380,14 +385,16 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
         table:=tx.Bucket([]byte(q.Table))
         if table == nil { return cross.TableDoesntExist  }
         //
+        // ???
         // entryIdStr  := fmt.Sprintf( "%v", entryId )
         // entryIdByte := []byte(entryIdStr)
         // EncodeError 
         // ??? 
+        //
         entryIdByte,errMarshal := json.Marshal(entryId)
         if errMarshal != nil { return errMarshal }
         // ???
-        fmt.Printf("\n AppendToArray\tEntryIdByte: %v\n", entryIdByte)
+        fmt.Printf("\nAppendToArray\tEntryIdByte: %v\n", entryIdByte)
         // 
         bucket:=table.Bucket(entryIdByte)
         //
@@ -401,6 +408,63 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
             // } else {
                 //
             //}
+            // --
+            //
+            entry_byte := table.Get(entryIdByte)
+            if entry_byte == nil { return cross.EntryDoesntExist }
+            entry_map  := make(map[string]interface{}, 0)
+            err_entry  := json.Unmarshal(entry_byte, &entry_map)
+            if err_entry == nil {
+                fmt.Printf("\n::>> decoded map\n%v\n<<::\n", entry_map )
+                //
+                sliceNameStr     := fmt.Sprintf( "%v", sliceName)
+                valueToAppendStr := fmt.Sprintf( "%v", valueToAppend)
+                //
+                targetSlice, sliceExists     := entry_map[sliceNameStr]
+                if sliceExists {
+                    //
+                    // if slice exists then appending
+                    //
+                    // search_result_slice          := make(map[string]interface{}, 0)
+                    // search_result_slice["value"] =  targetSlice
+                    // result_slice                 =  append(result_slice, search_result_slice)
+                    //
+                    // targetSlice = append(targetSlice, valueToAppendStr)
+                    newTargetSlice, errOnAppend := flexi.AppendString(targetSlice, valueToAppendStr)
+                    //var errOnAppend := nil
+                    // newTargetSlice := append(targetSlice, valueToAppendStr)
+                    // var errOnAppend error = nil
+                    // fmt.Printf("=== >>> Append : result : %v err : %v",newTargetSlice, errOnAppend)
+                    //
+                    if errOnAppend == nil {
+                        //
+                        //
+                        entry_map[sliceNameStr]          = newTargetSlice
+                        newEntryByte , errNewEntryEncode := json.Marshal(entry_map)
+                        if errNewEntryEncode == nil {
+                            return table.Put(entryIdByte, newEntryByte)
+                        } else {
+                            return errNewEntryEncode
+                        }
+                        //
+                        // now we have to overwrite existing entry_map . now it should contains updated map
+                        //
+                        return nil
+                    } else {
+                        return errOnAppend
+                    }
+                    //
+                    //
+                } else {
+                    return cross.SliceDoesntExist
+                }
+                //
+                return nil
+            } else  {
+                return cross.DecodeError
+            }
+            //
+            // --
             return cross.EntryDoesntExist
             //
             //
@@ -415,7 +479,7 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
             sliceBucket    := bucket.Bucket(sliceNameByte)
             if sliceBucket == nil {
                 var errCreate error
-                sliceBucket,errCreate = bucket.CreateBucketIfNotExists(sliceNameByte)
+                sliceBucket, errCreate = bucket.CreateBucketIfNotExists(sliceNameByte)
                 if errCreate != nil { return errCreate }
             }
             //

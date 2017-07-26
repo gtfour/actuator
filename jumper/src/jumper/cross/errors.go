@@ -31,7 +31,8 @@ var KeyIsEmpty          = errors.New("cross:key is empty")
 var ValueIsEmpty        = errors.New("cross:value is empty")
 var IncorrectQueryType  = errors.New("cross:incorrect query type")
 //
-var SliceNameIsEmpty = errors.New("cross:slice name is empty")
-var SliceDoesntExist = errors.New("cross:slice doesn't exist")
-var EntryIdIsEmpty   = errors.New("cross:entry id is empty")
+var SliceNameIsEmpty        = errors.New("cross:slice name is empty")
+var SliceDoesntExist        = errors.New("cross:slice doesn't exist")
+var NothingIsAppendToSlice  = errors.New("cross:nothing Is Append To Slice")
+var EntryIdIsEmpty          = errors.New("cross:entry id is empty")
 //
