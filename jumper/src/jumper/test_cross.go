@@ -74,7 +74,14 @@ func main() {
     newSlicePropMap["slice_name"]         =  "myTempSlice"
     appendToSliceQuery.KeyBody            =  newSlicePropMap
     appendToSliceQuery.QueryBody          =  make(map[string]interface{},0)
-    appendToSliceQuery.QueryBody["value"] =  "privet" // value to append to slice with name myTempSlice included to mape or bucket identified by create_key_body 
+    //
+    //
+    interfaceSlice                        := make([]interface{},0)
+    interfaceSlice                        = append(interfaceSlice, 1)
+    interfaceSlice                        = append(interfaceSlice, "a")
+    //
+    //
+    appendToSliceQuery.QueryBody["value"] = interfaceSlice // value to append to slice with name myTempSlice included to mape or bucket identified by create_key_body 
     //
     // "get_slice"-query
     //

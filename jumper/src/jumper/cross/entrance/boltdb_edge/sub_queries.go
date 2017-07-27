@@ -418,7 +418,7 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
                 fmt.Printf("\n::>> decoded map\n%v\n<<::\n", entry_map )
                 //
                 sliceNameStr     := fmt.Sprintf( "%v", sliceName)
-                valueToAppendStr := fmt.Sprintf( "%v", valueToAppend)
+                // valueToAppendStr := fmt.Sprintf( "%v", valueToAppend)
                 //
                 targetSlice, sliceExists     := entry_map[sliceNameStr]
                 if sliceExists {
@@ -430,13 +430,20 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
                     // result_slice                 =  append(result_slice, search_result_slice)
                     //
                     // targetSlice = append(targetSlice, valueToAppendStr)
-                    newTargetSlice, errOnAppend := flexi.AppendString(targetSlice, valueToAppendStr)
+                    newTargetSlice                  := make([]interface{}, 0)
+                    newTargetSlice, errOnAppend := flexi.AppendInterfaceFrom( targetSlice, valueToAppend )
+                    if errOnAppend != nil {
+                        newTargetSlice, errOnAppend = flexi.AppendInterface( targetSlice, valueToAppend )
+                        if errOnAppend != nil {
+                            return errOnAppend
+                        }
+                    }
+                    // newTargetSlice, errOnAppend := flexi.AppendInterface( targetSlice, valueToAppendStr )
                     //var errOnAppend := nil
                     // newTargetSlice := append(targetSlice, valueToAppendStr)
                     // var errOnAppend error = nil
-                    // fmt.Printf("=== >>> Append : result : %v err : %v",newTargetSlice, errOnAppend)
                     //
-                    if errOnAppend == nil {
+                    //if errOnAppend == nil {
                         //
                         //
                         entry_map[sliceNameStr]          = newTargetSlice
@@ -450,9 +457,9 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
                         // now we have to overwrite existing entry_map . now it should contains updated map
                         //
                         return nil
-                    } else {
-                        return errOnAppend
-                    }
+                    //} else {
+                    //    return errOnAppend
+                    //}
                     //
                     //
                 } else {
