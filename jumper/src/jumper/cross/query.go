@@ -9,6 +9,7 @@ type Query struct {
     QueryXY
     Queries     []QueryXY
     Multi       bool
+    CreateIfNot bool
 }
 
 type QueryXY struct {

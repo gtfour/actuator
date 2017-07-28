@@ -64,29 +64,32 @@ func main() {
     //
     // "append_to_slice"-query
     //
-    appendToSliceQuery                    := cross.Query{Table:"dynimas", Type:cross.APPEND_TO_ARRAY}
+    appendToSliceQuery                    := cross.Query{ Table:"dynimas", Type:cross.APPEND_TO_ARRAY, CreateIfNot:true }
     newSlicePropMap                       := make(map[string]interface{}, 0)
     //
     // newEntryIdStr := fmt.Sprintf( "%v", create_query_body)
     // newEntryIdStr                         := fmt.Sprintf( "%v", create_key_body)
     //
     newSlicePropMap["entry_id"]           =  create_key_body
-    newSlicePropMap["slice_name"]         =  "myTempSlice"
+    newSlicePropMap["slice_name"]         =  "myNewTempSlice"
     appendToSliceQuery.KeyBody            =  newSlicePropMap
     appendToSliceQuery.QueryBody          =  make(map[string]interface{},0)
     //
     //
-    interfaceSlice                        := make([]interface{},0)
-    interfaceSlice                        = append(interfaceSlice, 1)
-    interfaceSlice                        = append(interfaceSlice, "a")
+    interfaceSlice                        := make([]interface{},     0)
+    interfaceSlice                        =  append(interfaceSlice,  998)
+    interfaceSlice                        =  append(interfaceSlice, "zzx")
     //
     //
     appendToSliceQuery.QueryBody["value"] = interfaceSlice // value to append to slice with name myTempSlice included to mape or bucket identified by create_key_body 
     //
     // "get_slice"-query
     //
-    getSliceQuery                 := cross.Query{Table:"dynimas", Type:cross.GET_ARRAY}
-    getSliceQuery.KeyBody         =  newSlicePropMap
+    getSliceQuery                  := cross.Query{Table:"dynimas", Type:cross.GET_ARRAY}
+    getPropMap                     := make(map[string]interface{}, 0)
+    getPropMap["entry_id"]         =  create_key_body
+    getPropMap["slice_name"]       = "myTempSlice"
+    getSliceQuery.KeyBody          =  getPropMap
     //
     // Running queries
     //
@@ -99,6 +102,9 @@ func main() {
     r6,e6 := database.RunQuery( &get_size_query )
     _, e7 := database.RunQuery( &appendToSliceQuery )
     targetSlice, e8 := database.RunQuery( &getSliceQuery )
+    //
+    //
+    //
     fmt.Printf("Make Tables Query Result:\n%v\nError:%v\n"              ,r4,e4)
     fmt.Printf("Check table %v size: %v Error: %v\n"                       ,get_size_query.Table,r0,e0)
     fmt.Printf("Create new entry:\n%v\nError:%v\n"                      ,r1,e1)

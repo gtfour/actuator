@@ -422,14 +422,7 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
                 //
                 targetSlice, sliceExists     := entry_map[sliceNameStr]
                 if sliceExists {
-                    //
                     // if slice exists then appending
-                    //
-                    // search_result_slice          := make(map[string]interface{}, 0)
-                    // search_result_slice["value"] =  targetSlice
-                    // result_slice                 =  append(result_slice, search_result_slice)
-                    //
-                    // targetSlice = append(targetSlice, valueToAppendStr)
                     newTargetSlice                  := make([]interface{}, 0)
                     newTargetSlice, errOnAppend := flexi.AppendInterfaceFrom( targetSlice, valueToAppend )
                     if errOnAppend != nil {
@@ -438,32 +431,36 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
                             return errOnAppend
                         }
                     }
-                    // newTargetSlice, errOnAppend := flexi.AppendInterface( targetSlice, valueToAppendStr )
-                    //var errOnAppend := nil
-                    // newTargetSlice := append(targetSlice, valueToAppendStr)
-                    // var errOnAppend error = nil
-                    //
-                    //if errOnAppend == nil {
-                        //
                         //
                         entry_map[sliceNameStr]          = newTargetSlice
                         newEntryByte , errNewEntryEncode := json.Marshal(entry_map)
                         if errNewEntryEncode == nil {
+                            // now we have to overwrite existing entry_map . now it should contains updated map
                             return table.Put(entryIdByte, newEntryByte)
                         } else {
                             return errNewEntryEncode
                         }
                         //
-                        // now we have to overwrite existing entry_map . now it should contains updated map
-                        //
                         return nil
-                    //} else {
-                    //    return errOnAppend
-                    //}
-                    //
-                    //
                 } else {
-                    return cross.SliceDoesntExist
+                    if q.CreateIfNot == true {
+                        //
+                        // let's create this slice if it still doesn't exist 
+                        //
+                        entry_map[sliceNameStr]          =  valueToAppend
+                        newEntryByte , errNewEntryEncode := json.Marshal(entry_map)
+                        //
+                        if errNewEntryEncode == nil {
+                            // now we have to overwrite existing entry_map . now it should contains updated map
+                            return table.Put(entryIdByte, newEntryByte)
+                        } else {
+                            return errNewEntryEncode
+                        }
+                        //
+                    } else {
+                        return cross.SliceDoesntExist
+                    }
+                    //
                 }
                 //
                 return nil
