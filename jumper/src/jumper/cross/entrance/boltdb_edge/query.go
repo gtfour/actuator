@@ -84,11 +84,11 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
             res,err:=d.GetPair(q)
             return res,err
 
-        case cross.APPEND_TO_ARRAY:
-            res,err:=d.AppendToArray(q)
+        case cross.APPEND_TO_SLICE:
+            res,err:=d.AppendToSlice(q)
             return res, err
-        case cross.REMOVE_ELEMENT_FROM_INCLUDED_ARRAY:
-            res,err:=d.RemoveFromArray(q)
+        case cross.REMOVE_FROM_SLICE:
+            res,err:=d.RemoveFromSlice(q)
             return res, err
         case cross.GET_ARRAY:
             res,err:=d.GetSlice(q)

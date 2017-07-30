@@ -35,13 +35,13 @@ var REMOVE_FROM_LIST        = 4106
 
 // working over nested hashes
 
-var ADD_PAIR                           = 4108 // this key-value pair  can't be present in hash marked by this key.???    
-var REMOVE_PAIR                        = 4110 // 
-var GET_PAIR                           = 4112 //
-var APPEND_TO_ARRAY                    = 4202 // пиздешь!  if pair value is array
-var REMOVE_ELEMENT_FROM_INCLUDED_ARRAY = 4203 // if pair value is array
-var CREATE_EMPTY_ARRAY                 = 4205
-var GET_ARRAY                          = 4206
+var ADD_PAIR           = 4108 // this key-value pair  can't be present in hash marked by this key.???    
+var REMOVE_PAIR        = 4110 // 
+var GET_PAIR           = 4112 //
+var APPEND_TO_SLICE    = 4202 // пиздешь!  if pair value is array
+var REMOVE_FROM_SLICE  = 4203 // if pair value is array
+var CREATE_EMPTY_ARRAY = 4205
+var GET_ARRAY          = 4206
 
 var CREATE_NEW_TABLE                   = 5000
 var CREATE_NEW_TABLE_IF_DOESNT_EXIST   = 5001

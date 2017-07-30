@@ -345,7 +345,7 @@ func (d *Database)GetPair(q *cross.Query)(result_slice_addr *[]map[string]interf
 }
 
 
-func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func (d *Database)AppendToSlice(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
     //
     //
     key_exist,value_exist,err := q.Validate()
@@ -361,15 +361,15 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
     //
     // key_byte,err_key  := json.Marshal( q.KeyBody )
     //
-    query_byte,err_query := json.Marshal( q.QueryBody )
-    if err_query != nil {
-        return nil, cross.EncodeError
-    }
+    // query_byte,err_query := json.Marshal( q.QueryBody )
+    // if err_query != nil {
+    //    return nil, cross.EncodeError
+    // }
     //
     // get entry key and slice name
     //
     entryId,entryIdOk                 := q.KeyBody["entry_id"]
-    newKey, newKeyOk                  := q.KeyBody["new_key"]    // wtf ??? 
+    // newKey, newKeyOk                  := q.KeyBody["new_key"]    // wtf ??? 
     sliceName,sliceNameOk             := q.KeyBody["slice_name"]
     valueToAppend,valueToAppendExists := q.QueryBody["value"]
     //
@@ -424,24 +424,19 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
                 if sliceExists {
                     // if slice exists then appending
                     newTargetSlice                  := make([]interface{}, 0)
-                    newTargetSlice, errOnAppend := flexi.AppendInterfaceFrom( targetSlice, valueToAppend )
-                    if errOnAppend != nil {
-                        newTargetSlice, errOnAppend = flexi.AppendInterface( targetSlice, valueToAppend )
-                        if errOnAppend != nil {
-                            return errOnAppend
-                        }
+                    newTargetSlice, errOnAppend := flexi.Append( targetSlice, valueToAppend )
+                    if errOnAppend != nil { return errOnAppend }
+                    //
+                    entry_map[sliceNameStr]          = newTargetSlice
+                    newEntryByte , errNewEntryEncode := json.Marshal(entry_map)
+                    if errNewEntryEncode == nil {
+                        // now we have to overwrite existing entry_map . now it should contains updated map
+                        return table.Put(entryIdByte, newEntryByte)
+                    } else {
+                        return errNewEntryEncode
                     }
-                        //
-                        entry_map[sliceNameStr]          = newTargetSlice
-                        newEntryByte , errNewEntryEncode := json.Marshal(entry_map)
-                        if errNewEntryEncode == nil {
-                            // now we have to overwrite existing entry_map . now it should contains updated map
-                            return table.Put(entryIdByte, newEntryByte)
-                        } else {
-                            return errNewEntryEncode
-                        }
-                        //
-                        return nil
+                    //
+                    return nil
                 } else {
                     if q.CreateIfNot == true {
                         //
@@ -480,35 +475,49 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
             //
             sliceNameStr   := fmt.Sprintf( "%v", sliceName)
             sliceNameByte  := []byte(sliceNameStr)
-            sliceBucket    := bucket.Bucket(sliceNameByte)
-            if sliceBucket == nil {
-                var errCreate error
-                sliceBucket, errCreate = bucket.CreateBucketIfNotExists(sliceNameByte)
-                if errCreate != nil { return errCreate }
+            // //sliceBucket    := bucket.Bucket(sliceNameByte)
+            sliceByte      := bucket.Get(sliceNameByte)
+            if sliceByte == nil  {
+                if q.CreateIfNot == true {
+                    var errCreate error
+                    newTargetSlice              := make([]interface{}, 0)
+                    // sliceBucket, errCreate = bucket.CreateBucketIfNotExists(sliceNameByte)
+                    newTargetSlice, errOnAppend := flexi.Append( newTargetSlice, valueToAppend )
+                    if errOnAppend != nil { return errOnAppend }
+                    sliceValueByte , errSliceEncode := json.Marshal(newTargetSlice)
+                    if errSliceEncode == nil {
+                        // now we have to overwrite existing entry_map . now it should contains updated map
+                        return bucket.Put(sliceNameByte, sliceValueByte)
+                    } else {
+                        return errSliceEncode
+                    }
+                } else {
+                    return cross.SliceDoesntExist
+                }
             }
             //
             //
-            stats     := sliceBucket.Stats()
-            size      := stats.KeyN
-            new_index := size
+            // //stats     := sliceBucket.Stats()
+            // //size      := stats.KeyN
+            // //new_index := size
             //
             //
-            key_map   := make(map[string]interface{}, 0)
-            key_word  := "index"
+            // //key_map   := make(map[string]interface{}, 0)
+            // //key_word  := "index"
             //
             //
-            if newKeyOk {
+            // //if newKeyOk {
                 //
-                key_word          := "key"
-                newKeyStr         := fmt.Sprintf("%v", newKey)
+                // //key_word          := "key"
+                // //newKeyStr         := fmt.Sprintf("%v", newKey)
                 // newKeyByte     := []byte(newKeyStr)
-                key_map[key_word] =  newKeyStr
+                // //key_map[key_word] =  newKeyStr
                 //
-            } else {
+            // //} else {
                 //
-                key_map[key_word] =  new_index
+                // //key_map[key_word] =  new_index
                 //
-            }
+            // //}
             //
             // bucket_size_str  := strconv.FormatInt(int64(bucket_size), decimal)
             //
@@ -516,13 +525,13 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
             //
             // new_key_byte     := []byte(key_map)
             //
-            new_key_byte,err_tx := json.Marshal(key_map)
-            if err_tx != nil {
-                return err_tx
-            }
+            // //new_key_byte,err_tx := json.Marshal(key_map)
+            // //if err_tx != nil {
+                // //return err_tx
+            // //}
             //
-            err_tx = table.Put(new_key_byte, query_byte)
-            return err_tx
+            // //err_tx = table.Put(new_key_byte, query_byte) // what ??? ... seems code is wrong
+            // //return err_tx
             //
         }
         return nil // !!!
@@ -531,26 +540,50 @@ func (d *Database)AppendToArray(q *cross.Query)(result_slice_addr *[]map[string]
 
 }
 
-func (d *Database)RemoveFromArray(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+func (d *Database)RemoveFromSlice(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
 
     key_exist, value_exist, err := q.Validate()
     if !key_exist   { return nil, cross.KeyIsEmpty   }
     if !value_exist { return nil, cross.ValueIsEmpty }
     if err!=nil     { return nil, err                }
-    key_byte,err_key     := json.Marshal(q.KeyBody)
-    if err_key!=nil {
-        return nil, cross.EncodeError
-    }
+    // key_byte,err_key     := json.Marshal(q.KeyBody)
+    // if err_key!=nil {
+    //    return nil, cross.EncodeError
+    //}
+    //
+    entryId,entryIdOk                 := q.KeyBody["entry_id"]
+    sliceName,sliceNameOk             := q.KeyBody["slice_name"]
+    valueToAppend,valueToAppendExists := q.QueryBody["index"] // index or list of indexes to remove
+    //
+    //
     err=d.db.Update(func(tx *bolt.Tx) error {
         table:=tx.Bucket([]byte(q.Table))
         if table==nil{ return cross.TableDoesntExist }
-        bucket:=table.Bucket(key_byte)
+        //
+        entryIdByte,errMarshal := json.Marshal(entryId)
+        if errMarshal != nil { return errMarshal }
+        //
+        bucket:=table.Bucket(entryIdByte)
         if bucket==nil {
-            entry:=table.Get(key_byte)
-            if entry == nil {
-                return cross.EntryDoesntExist
-            } else {
+            entry_byte:=table.Get(entryIdByte)
+            if entry_byte == nil { return cross.EntryDoesntExist } else {
+                entry_map  := make(map[string]interface{}, 0)
+                err_entry  := json.Unmarshal(entry_byte, &entry_map)
+                if err_entry == nil {
 
+                    sliceNameStr             := fmt.Sprintf( "%v", sliceName)
+                    targetSlice, sliceExists := entry_map[sliceNameStr]
+                    if sliceExists == true {
+                        // a = append(a[:i], a[i+1:]...)
+
+                    } else {
+                        return cross.SliceDoesntExist
+                    }
+
+                } else {
+                    return cross.DecodeError
+
+                }
             }
         } else {
 

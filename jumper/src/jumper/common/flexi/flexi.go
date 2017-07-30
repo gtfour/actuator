@@ -1,5 +1,6 @@
 package flexi
 
+import "fmt"
 import "reflect"
 
 func GetTheFuckingArray(i interface{})(interface{}){
@@ -15,7 +16,7 @@ func GetTheFuckingArray(i interface{})(interface{}){
     return inSlice.Interface()
 }
 
-func AppendInterface(suspectInterfaceSlice interface{}, suspectInterfaceToAppend interface{})(interfaceSlice []interface{},err error){
+func appendInterface(suspectInterfaceSlice interface{}, suspectInterfaceToAppend interface{})(interfaceSlice []interface{},err error){
     defer func() {
         if r := recover(); r != nil {
             err = notInterfaceSlice
@@ -28,7 +29,7 @@ func AppendInterface(suspectInterfaceSlice interface{}, suspectInterfaceToAppend
 }
 
 
-func AppendInterfaceFrom(suspectInterfaceSlice interface{}, suspectSourceInterfaceSlice interface{})(extendedInterfaceSlice []interface{},err error) {
+func appendInterfaceFrom(suspectInterfaceSlice interface{}, suspectSourceInterfaceSlice interface{})(extendedInterfaceSlice []interface{},err error) {
 
     defer func() {
         if r := recover(); r != nil {
@@ -44,4 +45,77 @@ func AppendInterfaceFrom(suspectInterfaceSlice interface{}, suspectSourceInterfa
     return interfaceSlice, err
 }
 
+func Append( slice interface{}, new_value interface{} )(new_slice []interface{}, err error) {
+    //
+    new_slice, err = appendInterfaceFrom( slice, new_value )
+    if err != nil {
+        new_slice, err = appendInterface( slice, new_value )
+        return new_slice, err
+    } else {
+        return new_slice, err
+    }
+    //
+}
 
+func removeBySingleIndex( suspectSlice interface{}, suspectIndex interface{} )(new_slice []interface{}, err error) {
+    //
+    //
+    var nilErr error = nil
+    defer func() {
+        if r := recover(); r != nil {
+            // err = notInterfaceSlice
+        }
+    }()
+    err       =  notInterfaceSlice
+    new_slice =  suspectSlice.([]interface{})
+    err       =  notInt
+    index     := suspectIndex.(int)
+    err       =  nilErr
+    //
+    new_slice = append(new_slice[:index], new_slice[index+1:]...)
+    //
+    return
+    //
+    //
+}
+
+
+func removeByListOfIndexes( suspectSlice interface{}, suspectListOfIndexes interface{} )(new_slice []interface{}, err error) {
+    //
+    //
+    var nilErr error = nil
+    defer func() {
+        if r := recover(); r != nil {
+            // err = notInterfaceSlice
+        }
+    }()
+    err       =  notInterfaceSlice
+    new_slice =  suspectSlice.([]interface{})
+    err       =  notIntSlice
+    indexes   := suspectListOfIndexes.([]int)
+    err       =  nilErr
+    fmt.Printf("flexi:checking len of input slice : %d",len(new_slice))
+    for i := range indexes {
+        indexToRemove := indexes[i]
+        if indexToRemove >= 0 && indexToRemove < len(new_slice) {
+            new_slice = append(new_slice[:indexToRemove], new_slice[indexToRemove+1:]...)
+        }
+    }
+    //
+    return
+    //
+    //
+}
+
+
+func Remove( slice interface{}, index interface{} )(new_slice []interface{}, err error) {
+    //
+    new_slice,err = removeBySingleIndex(slice, index)
+    if err != nil {
+        new_slice, err = removeByListOfIndexes( slice, index )
+        return new_slice, err
+    } else {
+        return new_slice, err
+    }
+    //
+}

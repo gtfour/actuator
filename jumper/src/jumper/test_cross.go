@@ -64,7 +64,7 @@ func main() {
     //
     // "append_to_slice"-query
     //
-    appendToSliceQuery                    := cross.Query{ Table:"dynimas", Type:cross.APPEND_TO_ARRAY, CreateIfNot:true }
+    appendToSliceQuery                    := cross.Query{ Table:"dynimas", Type:cross.APPEND_TO_SLICE, CreateIfNot:true }
     newSlicePropMap                       := make(map[string]interface{}, 0)
     //
     // newEntryIdStr := fmt.Sprintf( "%v", create_query_body)
@@ -73,12 +73,12 @@ func main() {
     newSlicePropMap["entry_id"]           =  create_key_body
     newSlicePropMap["slice_name"]         =  "myNewTempSlice"
     appendToSliceQuery.KeyBody            =  newSlicePropMap
-    appendToSliceQuery.QueryBody          =  make(map[string]interface{},0)
+    appendToSliceQuery.QueryBody          =  make( map[string]interface{}, 0 )
     //
     //
-    interfaceSlice                        := make([]interface{},     0)
-    interfaceSlice                        =  append(interfaceSlice,  998)
-    interfaceSlice                        =  append(interfaceSlice, "zzx")
+    interfaceSlice                        := make([]interface{},     0    )
+    interfaceSlice                        =  append(interfaceSlice,  998  )
+    interfaceSlice                        =  append(interfaceSlice, "zzx" )
     //
     //
     appendToSliceQuery.QueryBody["value"] = interfaceSlice // value to append to slice with name myTempSlice included to mape or bucket identified by create_key_body 
