@@ -57,8 +57,8 @@ func main() {
     remove_query_body["SourceType"]      =  "dir"
     remove_query.QueryBody               =  remove_query_body
     //
-    fmt.Printf("\n---Remove query: %v ---\n",remove_query)
-    fmt.Printf("\n---Create query: %v ---\n",create_query)
+    // fmt.Printf("\n---Remove query: %v ---\n",remove_query)
+    // fmt.Printf("\n---Create query: %v ---\n",create_query)
     //
     get_size_query                         := cross.Query{Table:"dynimas", Type:cross.TABLE_SIZE}
     //
@@ -79,6 +79,12 @@ func main() {
     interfaceSlice                        := make([]interface{},     0    )
     interfaceSlice                        =  append(interfaceSlice,  998  )
     interfaceSlice                        =  append(interfaceSlice, "zzx" )
+    interfaceSlice                        =  append(interfaceSlice, false )
+    interfaceSlice                        =  append(interfaceSlice, true )
+    interfaceSlice                        =  append(interfaceSlice, 'a' )
+    interfaceSlice                        =  append(interfaceSlice, []int{0,1,2,3,4} )
+    interfaceSlice                        =  append(interfaceSlice, []string{"a0","b1","c2","d3","e4"} )
+    interfaceSlice                        =  append(interfaceSlice, false )
     //
     //
     appendToSliceQuery.QueryBody["value"] = interfaceSlice // value to append to slice with name myTempSlice included to mape or bucket identified by create_key_body 
@@ -88,8 +94,20 @@ func main() {
     getSliceQuery                  := cross.Query{Table:"dynimas", Type:cross.GET_ARRAY}
     getPropMap                     := make(map[string]interface{}, 0)
     getPropMap["entry_id"]         =  create_key_body
-    getPropMap["slice_name"]       = "myTempSlice"
+    getPropMap["slice_name"]       = "myNewTempSlice"
     getSliceQuery.KeyBody          =  getPropMap
+    //
+    //
+    // cross.REMOVE_FROM_SLICE:
+    removeElemQuery                          := cross.Query{Table:"dynimas", Type:cross.REMOVE_FROM_SLICE}
+    removeQueryKeybodySpec               := make(map[string]interface{}, 0)
+    removeQueryKeybodySpec["entry_id"]   =  create_key_body
+    removeQueryKeybodySpec["slice_name"] =  "myNewTempSlice"
+    removeQueryQuerybodySpec             := make(map[string]interface{}, 0)
+    removeQueryQuerybodySpec["index"]    =  []int{2,3}
+    removeElemQuery.KeyBody                  =  removeQueryKeybodySpec
+    removeElemQuery.QueryBody                =  removeQueryQuerybodySpec
+    //
     //
     // Running queries
     //
@@ -102,22 +120,27 @@ func main() {
     r6,e6 := database.RunQuery( &get_size_query )
     _, e7 := database.RunQuery( &appendToSliceQuery )
     targetSlice, e8 := database.RunQuery( &getSliceQuery )
+    _,e9           := database.RunQuery( &removeElemQuery )
+    targetSliceUp, e10 := database.RunQuery( &getSliceQuery )
     //
     //
     //
-    fmt.Printf("Make Tables Query Result:\n%v\nError:%v\n"              ,r4,e4)
-    fmt.Printf("Check table %v size: %v Error: %v\n"                       ,get_size_query.Table,r0,e0)
-    fmt.Printf("Create new entry:\n%v\nError:%v\n"                      ,r1,e1)
-    fmt.Printf("Remove entries by value field:\n%v\nError:%v\n"         ,r2,e2)
-    fmt.Printf("Get Query Result:\nError:%v\n",e3)
+    fmt.Printf(":::Make Tables Query Result:\n%v\nerr:%v\n"              ,r4,e4)
+    fmt.Printf(":::Check table %v size: %v err: %v\n"                       ,get_size_query.Table,r0,e0)
+    fmt.Printf(":::Create new entry:\t%v\t\terr:%v\n"                      ,r1,e1)
+    fmt.Printf(":::Remove entries by value field:\t%v\t\terr:%v\n"         ,r2,e2)
+    fmt.Printf(":::Get by this query:\t%v\t\terr:%v \n{\n",get_query,e3)
     for i:= range (*r3) {
         myres:=(*r3)[i]
         fmt.Printf("%v\n",myres)
     }
-    fmt.Printf("Check table exist:\n%vError:%v\n"                       ,r5,e5)
-    fmt.Printf("Check table %v size: %v Error:%v\n"                       ,get_size_query.Table,r6,e6)
-    fmt.Printf("--\nappending to slice err : %v\n--", e7)
-    fmt.Printf("--\ngetting slice err : %v\n--Get Result:    %v   \n", e8,targetSlice)
+    fmt.Printf("}\n")
+    fmt.Printf(":::Check table exist: %v\t\terr:%v\n"                       ,r5,e5)
+    fmt.Printf(":::Check table %v size: %v\t\terr:%v\n"                       ,get_size_query.Table,r6,e6)
+    fmt.Printf(":::Append to slice err : %v\n--", e7)
+    fmt.Printf(":::Get a slice err : %v \t\terr:%v\n", targetSlice,e8)
+    fmt.Printf(":::Remove elem from slice\t\terr:%v\n", e9)
+    fmt.Printf(":::Get a slice after removing elem: %v \t\terr:%v\n", targetSliceUp,e10)
     //
     //
     //

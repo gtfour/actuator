@@ -1,6 +1,5 @@
 package flexi
 
-import "fmt"
 import "reflect"
 
 func GetTheFuckingArray(i interface{})(interface{}){
@@ -89,22 +88,32 @@ func removeByListOfIndexes( suspectSlice interface{}, suspectListOfIndexes inter
             // err = notInterfaceSlice
         }
     }()
-    err       =  notInterfaceSlice
-    new_slice =  suspectSlice.([]interface{})
-    err       =  notIntSlice
-    indexes   := suspectListOfIndexes.([]int)
-    err       =  nilErr
-    fmt.Printf("flexi:checking len of input slice : %d",len(new_slice))
-    for i := range indexes {
-        indexToRemove := indexes[i]
-        if indexToRemove >= 0 && indexToRemove < len(new_slice) {
-            new_slice = append(new_slice[:indexToRemove], new_slice[indexToRemove+1:]...)
+    err       =   notInterfaceSlice
+    slice     :=  suspectSlice.([]interface{})
+    err       =   notIntSlice
+    indexes   :=  suspectListOfIndexes.([]int)
+    err       =   nilErr
+    //
+    //
+    for i := 0; i < len(slice); i++ {
+        skip := false
+        elem := slice[i]
+        for z := range indexes {
+            indexToRemove := indexes[z]
+            if indexToRemove == i {
+                // indexToRemove >= 0 && indexToRemove < len(slice)
+                // new_slice = append(new_slice[:indexToRemove], new_slice[indexToRemove+1:]...)
+                skip = true
+                break
+            }
+        }
+        if skip == false {
+            new_slice = append(new_slice, elem)
         }
     }
     //
+    //
     return
-    //
-    //
 }
 
 

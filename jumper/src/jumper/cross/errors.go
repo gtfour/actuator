@@ -34,5 +34,6 @@ var IncorrectQueryType  = errors.New("cross:incorrect query type")
 var SliceNameIsEmpty        = errors.New("cross:slice name is empty")
 var SliceDoesntExist        = errors.New("cross:slice doesn't exist")
 var NothingIsAppendToSlice  = errors.New("cross:nothing Is Append To Slice")
+var RemoveIndexIsEmpty      = errors.New("cross:nothing to remove from slice. Remove index is empty")
 var EntryIdIsEmpty          = errors.New("cross:entry id is empty")
 //

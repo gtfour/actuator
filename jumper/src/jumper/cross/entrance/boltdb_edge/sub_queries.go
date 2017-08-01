@@ -479,7 +479,7 @@ func (d *Database)AppendToSlice(q *cross.Query)(result_slice_addr *[]map[string]
             sliceByte      := bucket.Get(sliceNameByte)
             if sliceByte == nil  {
                 if q.CreateIfNot == true {
-                    var errCreate error
+                    // var errCreate error
                     newTargetSlice              := make([]interface{}, 0)
                     // sliceBucket, errCreate = bucket.CreateBucketIfNotExists(sliceNameByte)
                     newTargetSlice, errOnAppend := flexi.Append( newTargetSlice, valueToAppend )
@@ -551,9 +551,14 @@ func (d *Database)RemoveFromSlice(q *cross.Query)(result_slice_addr *[]map[strin
     //    return nil, cross.EncodeError
     //}
     //
-    entryId,entryIdOk                 := q.KeyBody["entry_id"]
-    sliceName,sliceNameOk             := q.KeyBody["slice_name"]
-    valueToAppend,valueToAppendExists := q.QueryBody["index"] // index or list of indexes to remove
+    entryId,entryIdOk              := q.KeyBody["entry_id"]
+    sliceName,sliceNameOk          := q.KeyBody["slice_name"]
+    removeIndex, removeIndexExists := q.QueryBody["index"] // index or list of indexes to remove //
+    //
+    //
+    if !entryIdOk           { return nil, cross.EntryIdIsEmpty     }
+    if !sliceNameOk         { return nil, cross.SliceNameIsEmpty   }
+    if !removeIndexExists   { return nil, cross.RemoveIndexIsEmpty }
     //
     //
     err=d.db.Update(func(tx *bolt.Tx) error {
@@ -570,11 +575,23 @@ func (d *Database)RemoveFromSlice(q *cross.Query)(result_slice_addr *[]map[strin
                 entry_map  := make(map[string]interface{}, 0)
                 err_entry  := json.Unmarshal(entry_byte, &entry_map)
                 if err_entry == nil {
-
                     sliceNameStr             := fmt.Sprintf( "%v", sliceName)
                     targetSlice, sliceExists := entry_map[sliceNameStr]
                     if sliceExists == true {
                         // a = append(a[:i], a[i+1:]...)
+                        newTargetSlice,errOnRemove := flexi.Remove(targetSlice, removeIndex)
+                        //
+                        if errOnRemove != nil { return errOnRemove }
+                        //
+                        entry_map[sliceNameStr]          =  newTargetSlice
+                        newEntryByte , errNewEntryEncode := json.Marshal(entry_map)
+                        if errNewEntryEncode == nil {
+                            // now we have to overwrite existing entry_map . now it should contains updated map
+                            return table.Put(entryIdByte, newEntryByte)
+                        } else {
+                            return errNewEntryEncode
+                        }
+                        //
 
                     } else {
                         return cross.SliceDoesntExist
@@ -582,7 +599,6 @@ func (d *Database)RemoveFromSlice(q *cross.Query)(result_slice_addr *[]map[strin
 
                 } else {
                     return cross.DecodeError
-
                 }
             }
         } else {
@@ -637,12 +653,22 @@ func(d *Database)GetSlice(q *cross.Query)(result_slice_addr *[]map[string]interf
                     //
                     targetSlice, sliceExists     := entry_map[sliceNameStr]
                     if sliceExists {
+                        // //
+                        // //
+                        // //
                         search_result_slice          := make(map[string]interface{}, 0)
                         search_result_slice["value"] =  targetSlice
                         result_slice                 =  append(result_slice, search_result_slice)
                         return nil
+                        // //
+                        // //
+                        // //
                     } else {
+                        // //
+                        // //
                         return cross.SliceDoesntExist
+                        // //
+                        // //
                     }
                     //
                     return nil
