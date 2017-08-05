@@ -28,6 +28,8 @@ func main() {
     fmt.Printf("\nAnd now we just remove single one(last one): %v\n", singleRemoveIndex)
     inSlice1,err=flexi.Remove( inSlice1, singleRemoveIndex )
     fmt.Printf("\nAnd result is: %v\nerr:%v\n",inSlice1,err)
+    elems,err:=flexi.Get( inSlice1, []int{0,1})
+    fmt.Printf("Get slice elems: %v \t\t %v\n",elems,err)
     //
     // fmt.Printf("\ninSlice1: %v\nerr:%v", inSlice1,err)
 }

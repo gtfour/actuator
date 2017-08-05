@@ -40,6 +40,7 @@ var REMOVE_PAIR        = 4110 //
 var GET_PAIR           = 4112 //
 var APPEND_TO_SLICE    = 4202 // пиздешь!  if pair value is array
 var REMOVE_FROM_SLICE  = 4203 // if pair value is array
+var GET_SLICE_ELEM     = 4204
 var CREATE_EMPTY_ARRAY = 4205
 var GET_ARRAY          = 4206
 

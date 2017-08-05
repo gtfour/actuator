@@ -602,6 +602,91 @@ func (d *Database)RemoveFromSlice(q *cross.Query)(result_slice_addr *[]map[strin
                 }
             }
         } else {
+            sliceNameStr  := fmt.Sprintf( "%v", sliceName)
+            sliceNameByte := []byte(sliceNameStr)
+            sliceByte     := bucket.Get(sliceNameByte)
+            if sliceByte != nil {
+
+            } else {
+                return cross.SliceDoesntExist
+            }
+
+        }
+        return nil // !!!
+    });
+    return
+
+}
+
+func (d *Database)GetSliceElem(q *cross.Query)(result_slice_addr *[]map[string]interface{}, err error){
+
+    key_exist, value_exist, err := q.Validate()
+    if !key_exist   { return nil, cross.KeyIsEmpty   }
+    if !value_exist { return nil, cross.ValueIsEmpty }
+    if err!=nil     { return nil, err                }
+    // key_byte,err_key     := json.Marshal(q.KeyBody)
+    // if err_key!=nil {
+    //    return nil, cross.EncodeError
+    //}
+    //
+    entryId,entryIdOk              := q.KeyBody["entry_id"]
+    sliceName,sliceNameOk          := q.KeyBody["slice_name"]
+    removeIndex, removeIndexExists := q.QueryBody["index"] // index or list of indexes to remove //
+    sliceNameStr                   := fmt.Sprintf( "%v", sliceName)
+    //
+    //
+    if !entryIdOk           { return nil, cross.EntryIdIsEmpty     }
+    if !sliceNameOk         { return nil, cross.SliceNameIsEmpty   }
+    if !removeIndexExists   { return nil, cross.RemoveIndexIsEmpty }
+    //
+    //
+    err=d.db.View(func(tx *bolt.Tx) error {
+        table:=tx.Bucket([]byte(q.Table))
+        if table==nil{ return cross.TableDoesntExist }
+        //
+        entryIdByte,errMarshal := json.Marshal(entryId)
+        if errMarshal != nil { return errMarshal }
+        //
+        bucket:=table.Bucket(entryIdByte)
+        if bucket==nil {
+            entry_byte:=table.Get(entryIdByte)
+            if entry_byte == nil { return cross.EntryDoesntExist } else {
+                entry_map  := make(map[string]interface{}, 0)
+                err_entry  := json.Unmarshal(entry_byte, &entry_map)
+                if err_entry == nil {
+                    targetSlice, sliceExists := entry_map[sliceNameStr]
+                    if sliceExists == true {
+                        // a = append(a[:i], a[i+1:]...)
+                        newTargetSlice,errOnRemove := flexi.Remove(targetSlice, removeIndex)
+                        //
+                        if errOnRemove != nil { return errOnRemove }
+                        //
+                        entry_map[sliceNameStr]          =  newTargetSlice
+                        newEntryByte , errNewEntryEncode := json.Marshal(entry_map)
+                        if errNewEntryEncode == nil {
+                            // now we have to overwrite existing entry_map . now it should contains updated map
+                            return table.Put(entryIdByte, newEntryByte)
+                        } else {
+                            return errNewEntryEncode
+                        }
+                        //
+
+                    } else {
+                        return cross.SliceDoesntExist
+                    }
+
+                } else {
+                    return cross.DecodeError
+                }
+            }
+        } else {
+            sliceNameByte := []byte(sliceNameStr)
+            sliceByte     := bucket.Get(sliceNameByte)
+            if sliceByte != nil {
+
+            } else {
+                return cross.SliceDoesntExist
+            }
 
         }
         return nil // !!!

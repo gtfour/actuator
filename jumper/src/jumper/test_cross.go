@@ -99,48 +99,50 @@ func main() {
     //
     //
     // cross.REMOVE_FROM_SLICE:
-    removeElemQuery                          := cross.Query{Table:"dynimas", Type:cross.REMOVE_FROM_SLICE}
+    removeElemQuery                      := cross.Query{Table:"dynimas", Type:cross.REMOVE_FROM_SLICE}
     removeQueryKeybodySpec               := make(map[string]interface{}, 0)
     removeQueryKeybodySpec["entry_id"]   =  create_key_body
     removeQueryKeybodySpec["slice_name"] =  "myNewTempSlice"
     removeQueryQuerybodySpec             := make(map[string]interface{}, 0)
-    removeQueryQuerybodySpec["index"]    =  []int{2,3}
-    removeElemQuery.KeyBody                  =  removeQueryKeybodySpec
-    removeElemQuery.QueryBody                =  removeQueryQuerybodySpec
+    removeQueryQuerybodySpec["index"]    =  2
+    removeElemQuery.KeyBody              =  removeQueryKeybodySpec
+    removeElemQuery.QueryBody            =  removeQueryQuerybodySpec
     //
     //
     // Running queries
     //
-    r4,e4 := database.RunQuery( &maketable_query )
-    r0,e0 := database.RunQuery( &get_size_query )
-    r1,e1 := database.RunQuery( &create_query )
-    r2,e2 := database.RunQuery( &remove_query )
-    r3,e3 := database.RunQuery( &get_query )
-    r5,e5 := database.RunQuery( &table_check_query )
-    r6,e6 := database.RunQuery( &get_size_query )
-    _, e7 := database.RunQuery( &appendToSliceQuery )
-    targetSlice, e8 := database.RunQuery( &getSliceQuery )
-    _,e9           := database.RunQuery( &removeElemQuery )
+    r4,e4              := database.RunQuery( &maketable_query )
+    r0,e0              := database.RunQuery( &get_size_query )
+    r1,e1              := database.RunQuery( &create_query )
+    r2,e2              := database.RunQuery( &remove_query )
+    r3,e3              := database.RunQuery( &get_query )
+    r5,e5              := database.RunQuery( &table_check_query )
+    r6,e6              := database.RunQuery( &get_size_query )
+    _, e7              := database.RunQuery( &appendToSliceQuery )
+    targetSlice, e8    := database.RunQuery( &getSliceQuery )
+    _,e9               := database.RunQuery( &removeElemQuery )
     targetSliceUp, e10 := database.RunQuery( &getSliceQuery )
     //
     //
     //
-    fmt.Printf(":::Make Tables Query Result:\n%v\nerr:%v\n"              ,r4,e4)
-    fmt.Printf(":::Check table %v size: %v err: %v\n"                       ,get_size_query.Table,r0,e0)
-    fmt.Printf(":::Create new entry:\t%v\t\terr:%v\n"                      ,r1,e1)
-    fmt.Printf(":::Remove entries by value field:\t%v\t\terr:%v\n"         ,r2,e2)
-    fmt.Printf(":::Get by this query:\t%v\t\terr:%v \n{\n",get_query,e3)
+    fmt.Printf("::: Make Tables Query Result:\n%v\nerr:%v\n"        ,r4,e4)
+    fmt.Printf("::: Check table %v size: %v err: %v\n"              ,get_size_query.Table,r0,e0)
+    fmt.Printf("::: Create new entry:\t%v\t\terr:%v\n"              ,r1,e1)
+    fmt.Printf("::: Remove entries by value field:\t%v\t\terr:%v\n" ,r2,e2)
+    fmt.Printf("::: Get by this query:\t%v\t\terr:%v \n{\n",        get_query,e3)
+    //
     for i:= range (*r3) {
         myres:=(*r3)[i]
         fmt.Printf("%v\n",myres)
     }
+    //
     fmt.Printf("}\n")
-    fmt.Printf(":::Check table exist: %v\t\terr:%v\n"                       ,r5,e5)
-    fmt.Printf(":::Check table %v size: %v\t\terr:%v\n"                       ,get_size_query.Table,r6,e6)
-    fmt.Printf(":::Append to slice err : %v\n--", e7)
-    fmt.Printf(":::Get a slice err : %v \t\terr:%v\n", targetSlice,e8)
-    fmt.Printf(":::Remove elem from slice\t\terr:%v\n", e9)
-    fmt.Printf(":::Get a slice after removing elem: %v \t\terr:%v\n", targetSliceUp,e10)
+    fmt.Printf("::: Check table exist: %v\t\terr:%v\n"                       ,r5,e5)
+    fmt.Printf("::: Check table %v size: %v\t\terr:%v\n"                       ,get_size_query.Table,r6,e6)
+    fmt.Printf("::: Append to slice err : %v\n--", e7)
+    fmt.Printf("::: Get a slice err : %v \t\terr:%v\n", targetSlice,e8)
+    fmt.Printf("::: Remove elem from slice\t\terr:%v\n", e9)
+    fmt.Printf("::: Get a slice after removing elem: %v \t\terr:%v\n", targetSliceUp,e10)
     //
     //
     //

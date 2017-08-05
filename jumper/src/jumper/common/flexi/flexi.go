@@ -128,3 +128,75 @@ func Remove( slice interface{}, index interface{} )(new_slice []interface{}, err
     }
     //
 }
+
+//
+//
+//
+
+func getBySingleIndex( suspectSlice interface{}, suspectIndex interface{} )(new_slice []interface{}, err error) {
+    //
+    //
+    var nilErr error = nil
+    defer func() {
+        if r := recover(); r != nil {
+            // err = notInterfaceSlice
+        }
+    }()
+    err   =  notInterfaceSlice
+    slice :=  suspectSlice.([]interface{})
+    err   =  notInt
+    index := suspectIndex.(int)
+    err   =  nilErr
+    //
+    if index>=0 && index<len(slice) {
+        new_slice = append( new_slice, slice[index] )
+    }
+    //
+    return
+    //
+    //
+}
+
+
+func getByListOfIndexes( suspectSlice interface{}, suspectListOfIndexes interface{} )(new_slice []interface{}, err error) {
+    //
+    //
+    var nilErr error = nil
+    defer func() {
+        if r := recover(); r != nil {
+            // err = notInterfaceSlice
+        }
+    }()
+    err       =   notInterfaceSlice
+    slice     :=  suspectSlice.([]interface{})
+    err       =   notIntSlice
+    indexes   :=  suspectListOfIndexes.([]int)
+    err       =   nilErr
+    //
+    //
+    for i := range indexes {
+        index := indexes[i]
+        if index>=0 && index<len(slice) {
+            new_slice = append( new_slice, slice[index] )
+        }
+    }
+    //
+    //
+    return
+}
+
+
+func Get( slice interface{}, index interface{} )(new_slice []interface{}, err error) {
+    //
+    new_slice,err = getBySingleIndex(slice, index)
+    if err != nil {
+        new_slice, err = getByListOfIndexes( slice, index )
+        return new_slice, err
+    } else {
+        return new_slice, err
+    }
+    //
+}
+
+
+

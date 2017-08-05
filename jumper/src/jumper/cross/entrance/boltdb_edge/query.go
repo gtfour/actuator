@@ -90,6 +90,8 @@ func (d *Database)RunQuery(q *cross.Query)(result_slice_addr *[]map[string]inter
         case cross.REMOVE_FROM_SLICE:
             res,err:=d.RemoveFromSlice(q)
             return res, err
+        case cross.GET_SLICE_ELEM:
+           // 
         case cross.GET_ARRAY:
             res,err:=d.GetSlice(q)
             return res, err
