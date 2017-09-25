@@ -13,6 +13,7 @@ import "github.com/gin-gonic/gin"
 
 func main() {
     //users:=make([]*webclient.WengineWrapper,0)
+    var serverAddr string = settings.SERVER_ADDR + ":" + settings.SERVER_PORT
     run.ParseCmd()
     app:= gin.Default()
     app.LoadHTMLGlob("/actuator/wapour/src/wapour/templates/*")                   // load app  templates
@@ -53,5 +54,5 @@ func main() {
     // server := ws.NewServer("/entry")
     // go server.Listen()
     app.GET("/entry", ws.WebSocketHandle(gin.H{}))
-    app.Run(":8090")
+    app.Run(serverAddr)
 }

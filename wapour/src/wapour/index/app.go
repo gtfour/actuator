@@ -18,7 +18,7 @@ func Index()(func (c *gin.Context)) {
     navigaton_menu := GetNavigationMenu()
     data:=gin.H{"navigation_items":navigaton_menu,"static_url":settings.STATIC_URL, "app_data_url":settings.ADMIN_DATA_URL,"websocket":"false" }
     return  func(c *gin.Context ){
-        if auth.IsAuthorized(c) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,"/auth/login"+"?redirect_to="+"/index") }
+        if auth.IsAuthorized(c) == true { c.HTML(200, template_name,  data ) } else { c.Redirect(302,settings.SERVER_URL+"/auth/login"+"?redirect_to="+"/index") }
     }
 }
 
@@ -39,27 +39,35 @@ func IndexData()(func (c *gin.Context)) {
 }
 
 func Redirect(url string)(func (c *gin.Context)) {
-    return  func(c *gin.Context ){ c.Redirect(302,url) }
+    return  func(c *gin.Context ){ c.Redirect(302,settings.SERVER_URL+url) }
 }
 
 
 
 func Login( ) (func (c *gin.Context)) {
     template_name := "login.html"
-    server_addr   := settings.SERVER_ADDR
-    server_proto  := settings.SERVER_PROTO
-    server_port   := settings.SERVER_PORT
-    post_url      := server_proto+"://"+server_addr+":"+server_port+"/auth/login"
+    // 
+    // modify for running through nginx
+    // old:
+    // // server_addr   := settings.SERVER_ADDR
+    // // server_proto  := settings.SERVER_PROTO
+    // // server_port   := settings.SERVER_PORT
+    // // post_url      := server_proto+"://"+server_addr+":"+server_port+"/auth/login"
+    //
+    post_url:="/auth/login"
     data          :=gin.H{"post_url":post_url, "static_url":settings.STATIC_URL }
     return  func(c *gin.Context ){
+        fmt.Printf("Login:GetRequest:\n---\n%v\n---\n",c.Request)
         redirect_to := c.DefaultQuery("redirect_to", "/index")
         if common.IsIn(redirect_to, settings.ALLOWED_REDIRECTS)==false {
             redirect_to = "/index"
         }
         if auth.IsAuthorized(c) == true {
-            c.Redirect(302,redirect_to)
+            redirectTo := settings.SERVER_URL+redirect_to
+            fmt.Printf("\n=== client is already authorized\t\tredirecting to: %s\n", redirectTo)
+            c.Redirect(302,redirectTo)
         } else {
-            data["post_url"] =post_url+"?redirect_to="+redirect_to
+            data["post_url"] = post_url+"?redirect_to="+redirect_to // redirects if login post will be success 
             c.HTML(200, template_name,  data )
         }
     }
@@ -102,6 +110,10 @@ func LoginPost () (func (c *gin.Context)) {
             cookie_token  := &http.Cookie{Name:settings.TOKEN_COOKIE_FIELD_NAME,  Value:w.TokenId, Path:"/", Domain:settings.SERVER_ADDR }
             http.SetCookie(c.Writer, cookie_userid)
             http.SetCookie(c.Writer, cookie_token)
+
+
+            redirectTo := settings.SERVER_URL+redirect_to
+            fmt.Printf("\n=== login has been success \t\t redirecting to %s\n", redirectTo )
 
             c.Redirect(302,settings.SERVER_URL+redirect_to)
         }

@@ -30,7 +30,7 @@ const USERID_COOKIE_FIELD_NAME string = "USER_ID"
 //##################################
 //##################################
 const STATIC_DIR                = "/actuator/wapour/static"
-const STATIC_URL                = "/static/main/"
+const STATIC_URL                = "/static/wapour"
 //##################################
 //##################################
 //##################################

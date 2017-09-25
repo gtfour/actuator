@@ -30,7 +30,7 @@ func main() {
     }
     app.GET(settings.WS_DATA_URL, wsserver.WebSocketHandle(gin.H{}))
     // s.GetHandler()
-    app.Run(":9000")
+    app.Run("127.0.0.1:9000")
     //
     //
 }

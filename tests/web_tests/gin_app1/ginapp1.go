@@ -3,7 +3,7 @@ package main
 import "github.com/gin-gonic/gin"
 
 var STATIC_DIR           = "/actuator/wapour/static"
-var STATIC_URL           = "/static/main/"
+var STATIC_URL           = "/static/wapour/"
 var LOCAL_STATIC_URL     = "/local-static/"
 
 
