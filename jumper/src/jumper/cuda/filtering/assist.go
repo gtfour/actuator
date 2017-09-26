@@ -56,11 +56,20 @@ func AlumaPaster(delims [][]int, data [][]int, strada [][]int)(ndelims [][]int, 
     var last_delim_index int
     var last_data_index  int
     //
-    delims_last_elem := delims[(len(delims)-1)]
-    data_last_elem   := data[(len(data)-1)]
-    if len(delims_last_elem)==2 && len(data_last_elem)==2 {
-        last_delim_index = delims_last_elem[1]
-        last_data_index  = data_last_elem[1]
+    // will try to fix bug caused by following input string
+    // `"1" "2" "3333" [13/Sep/2017:12:25:57 +0300] "GET /static/wapour/fonts/fontawesome-webfont.woff2?v=4.4.0 HTTP/1.1"`
+    // don't know why but this construction [13/Sep/2017:12:25:57 +0300] cause panic inside quotes filter
+    //
+    //
+    //delims_last_elem := delims[(len(delims)-1)]
+    //data_last_elem   := data[(len(data)-1)]
+    if len(delims) > 0 && len(data) > 0 {
+        delims_last_elem := delims[(len(delims)-1)]
+        data_last_elem   := data[(len(data)-1)]
+        if len(delims_last_elem)==2 && len(data_last_elem)==2 {
+            last_delim_index = delims_last_elem[1]
+            last_data_index  = data_last_elem[1]
+        }
     }
     // --
     // -- range over strada

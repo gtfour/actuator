@@ -32,10 +32,10 @@ type ResultRaw struct {
 
 type Line struct {
     //
-    Data_string_slice         []string    `json:"data_string_slice"` // is it for lineAsArray ??? 
+    Data_string_slice         []string    `json:"data"` // is it for lineAsArray ??? 
     delim_indexes             [][]int     `json:"delim_indexes"`
     data_indexes              [][]int     `json:"data_indexes"`
-    Data                      [][]string  `json:"data"`
+    // Data                      [][]string  `json:"data"`
     // template                  string      `json:"template"`
     // template_data_size        int         `json:"template_data_size"`
     //
