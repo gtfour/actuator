@@ -22,12 +22,44 @@ func BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelim
 
 }
 
+func SquareBracketsFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+    square_brackets_open             := []string{"["}
+    square_brackets_close            := []string{"]"}
+    square_brackets_indexes          := analyze.ArrayInArrayIndexes(lineAsArray, square_brackets_open, square_brackets_close)
+    square_brackets_complete_indexes := CombineDoubleSymbols(square_brackets_indexes)
+    //fmt.Printf("\nSquare Brackets Complete Indexes: %v\n", square_brackets_complete_indexes)
+    //ndelims = delims
+    //ndata   = data
+    //
+    var data_inside_squauare_indexes [][]int
+    if len(square_brackets_complete_indexes)>=1 {
+        for sq:= range square_brackets_complete_indexes  {
+            sq_range := square_brackets_complete_indexes[sq]
+            if len(sq_range) == 2 {
+                first_data                   := sq_range[0]+1
+                last_data                    := sq_range[1]-1
+                //
+                // data between pair of square quotes
+                //
+                data_range                   := []int{first_data,last_data}
+                data_inside_squauare_indexes =  append(data_inside_squauare_indexes, data_range)
+                //
+            }
+        }
+        ndelims,ndata = AlumaPaster(delims , data , Shifter(data_inside_squauare_indexes))
+    } else {
+        ndelims = delims
+        ndata   = data
+    }
+    return
+}
+
 
 func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
 
-    single_quote :=[]string{"'"}
-    double_quote :=[]string{`"`}
-    grave_quote  :=[]string{"`"}
+    single_quote := []string{"'"}
+    double_quote := []string{`"`}
+    grave_quote  := []string{"`"}
 
 
     single_quote_indexes := analyze.ArrayInArrayIndexes(lineAsArray, single_quote)
@@ -36,9 +68,11 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
 
     var quotes_complete_indexes   [][]int
     var data_inside_quote_indexes [][]int
+
     single_quote_complete_indexes := CombineDoubleSymbols(single_quote_indexes)
     double_quote_complete_indexes := CombineDoubleSymbols(double_quote_indexes)
     grave_quote_complete_indexes  := CombineDoubleSymbols(grave_quote_indexes)
+    //
     for s:= range single_quote_complete_indexes {
         single:=single_quote_complete_indexes[s]
         quotes_complete_indexes=append(quotes_complete_indexes, single)
@@ -62,8 +96,10 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
                 last_data  := quote_range[1]-1
                 new_quote_range:=[]int{first_data,last_data}
                 if first_data < last_data {
+                    // wtf ?!
                     data_inside_quote_indexes=append(data_inside_quote_indexes, new_quote_range)
                 } else if last_data < first_data  { // example: line3:=`cache_file_prefix = ""`
+                    // wtf ?!
                     data_inside_quote_indexes=append(data_inside_quote_indexes, new_quote_range)
                 }
             }
