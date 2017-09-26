@@ -22,16 +22,12 @@ type Handler struct {
 
 func(h *Handler)AddFilters(filterList filtering.FilterList)(error){
     //
-    //
-    //
     if ( filterList != nil ) {
         h.filters = filterList
         return nil
     } else {
         return filterListIsNil
     }
-    //
-    //
     //
 }
 
@@ -40,16 +36,12 @@ func(h *Handler)AddFilters(filterList filtering.FilterList)(error){
 
 func(h *Handler)AddTargetPtr(target *targets.Target)(error){
     //
-    //
-    //
     if ( target != nil ) {
         h.target = target
         return nil
     } else {
         return targetIsNil
     }
-    //
-    //
     //
 }
 
@@ -64,12 +56,10 @@ func NewHandler(config map[string]string)(h Handler){
 
 func(h *Handler)Handle()(result.Result, error){
     //
-    //
-    //
-    switch target_type:=h.target.GetType();target_type {
+    target := h.target
+    switch target_type:=target.GetType();target_type {
         //
-        //
-        case targets.TARGET_LINE:
+        case targets.TARGET_LINE, targets.TARGET_LINE_TYPE_SINGLE:
             r,e := h.handleLine()
             return &r,e
         case targets.TARGET_FILE:
@@ -82,18 +72,37 @@ func(h *Handler)Handle()(result.Result, error){
         default:
             return nil, targetTypeUndefined
         //
-        //
     }
-    //
-    //
     //
 }
 
 
 
 
-func(h *Handler)handleLine()(line result.Line, err error ){
+func(h *Handler)handleLine()(resultLine result.Line,err error){
     //
+    target := h.target
+    lines  := target.GetLines()
+    if len(lines) == 1 && target.GetType() == targets.TARGET_LINE_TYPE_SINGLE {
+        //
+        line        := lines[0]
+        lineAsArray := strings.Split(line, "")
+        delims,data := analyze.GetIndexes(lineAsArray)
+        //
+        for i := range h.filters {
+            filter := h.filters[i]
+            if filter.Enabled {
+                new_delims, new_data := filter.Call( lineAsArray, delims, data )
+                delims,     data     =  new_delims, new_data
+            }
+        }
+        selectedData := analyze.SelectDataByIndexes(lineAsArray, data)
+        resultLine   =  result.NewLine(selectedData, delims, data)
+        return resultLine, nil
+        //
+    } else {
+        return resultLine, unableToHandleLine
+    }
     return
     //
 }

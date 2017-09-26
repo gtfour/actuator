@@ -158,6 +158,8 @@ func getBySingleIndex( suspectSlice interface{}, suspectIndex interface{} )(new_
 }
 
 
+
+
 func getByListOfIndexes( suspectSlice interface{}, suspectListOfIndexes interface{} )(new_slice []interface{}, err error) {
     //
     //
@@ -184,6 +186,22 @@ func getByListOfIndexes( suspectSlice interface{}, suspectListOfIndexes interfac
     //
     return
 }
+
+
+func GetString(suspectString interface{})(read_string string, err error){
+    //
+    var nilErr error = nil
+    defer func() {
+        if r := recover(); r != nil {
+        }
+    }()
+    err         =  notString
+    read_string = suspectString.(string)
+    err         =  nilErr
+    return
+    //
+}
+
 
 
 func Get( slice interface{}, index interface{} )(new_slice []interface{}, err error) {

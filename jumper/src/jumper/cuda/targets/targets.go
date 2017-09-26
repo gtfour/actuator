@@ -4,6 +4,7 @@ package targets
 import "path"
 import "strconv"
 import "jumper/common/file"
+import "jumper/common/flexi"
 
 type TargetListPtrs  []*Target
 type TargetList      []Target
@@ -153,7 +154,16 @@ func NewTarget(config map[string]string)(t *Target,err error){
         if path_exist == true { return nil,  pathHaveToBeEmpty }
         //line, line_exist := config["line"]
         if target_type == TARGET_LINE_STR || target_type == LINE_SINGLE_STR {
-            new_target.typ = TARGET_LINE_TYPE_SINGLE
+            new_target.typ   =  TARGET_LINE_TYPE_SINGLE
+            line, line_exist := config["line"]
+            if line_exist {
+                new_line,err     := flexi.GetString(line)
+                if err == nil {
+                    new_target.lines =  append(new_target.lines, new_line)
+                } else {
+                    return nil, err
+                }
+            }
         } else {
             new_target.typ = TARGET_LINE_TYPE_SPLITTED
         }
@@ -195,16 +205,25 @@ func(t *Target)Gather()(err error){
     return
 }
 
-func (t *Target)AddLine(line []string)(err error){
+func (t *Target)SetLines(lines []string)(err error){
     if !t.configured { return targetWasNotConfigured }
     if t.typ == TARGET_LINE_TYPE_SINGLE || t.typ == TARGET_LINE_TYPE_SPLITTED { } else { return cantAddLineForThisTypeOfTarget }
-    if line != nil {
-         t.lines = line
+    if lines != nil {
+         t.lines = lines
          return nil
     } else {
         return lineIsNil
     }
 }
+
+func (t *Target)SetLine(line string)(err error){
+    if !t.configured { return targetWasNotConfigured }
+    if t.typ != TARGET_LINE_TYPE_SINGLE { return cantAddLineForThisTypeOfTarget }
+    t.lines = make([]string,0)
+    t.lines = append(t.lines, line)
+    return nil
+}
+
 
 
 func(t *Target)gatherFile()(err error){

@@ -32,16 +32,12 @@ type ResultRaw struct {
 
 type Line struct {
     //
-    //
-    //
     Data_string_slice         []string    `json:"data_string_slice"` // is it for lineAsArray ??? 
     delim_indexes             [][]int     `json:"delim_indexes"`
     data_indexes              [][]int     `json:"data_indexes"`
-    data                      [][]string  `json:"data"`
+    Data                      [][]string  `json:"data"`
     // template                  string      `json:"template"`
     // template_data_size        int         `json:"template_data_size"`
-    //
-    //
     //
 }
 
@@ -56,15 +52,14 @@ type Section struct {
     ParentId                  string      `json:"parentId"`
     Typ                       int         `json:"typ"`
     Lines                     []Line      `json:"lines"`
-    // LineTemplate              string      `json:"line_template"`
-    // LineTemplate_data_size    int         `json:"line_template_data_size"`
+    // LineTemplate           string      `json:"line_template"`
+    // LineTemplate_data_size int         `json:"line_template_data_size"`
     //
     sectionTyp                int          // is it dup field ????
     parentSectionPointer      *Section
     //
     //
     //
-
 }
 
 type File struct {
@@ -88,8 +83,8 @@ type Command struct {
 
 type Directory struct {
     //
-    Path      string    `json:"path"`
-    Files     []File    `json:"files"` // have to change from lowercase to Uppercase because fields with lowecase don't visible after json.Marshal
+    Path  string `json:"path"`
+    Files []File `json:"files"` // have to change from lowercase to Uppercase because fields with lowecase don't visible after json.Marshal
     //
 }
 
@@ -116,7 +111,6 @@ func (l *Line)GetType()(int){
 }
 
 func (l *Line)GetJson()([]byte,error){
-    //
     if l == nil { return nil,nilResultError }
     line_byte,err := json.Marshal(l)
     if err != nil {
@@ -124,10 +118,15 @@ func (l *Line)GetJson()([]byte,error){
     } else {
         return line_byte,nil
     }
-    //
 }
 
-
+/*
+func (l *Line)Append(line []string)(){
+    if line != nil {
+        l.Data = append(l.Data, line)
+    }
+}
+*/
 //
 // Section methods
 //
@@ -332,7 +331,7 @@ func (rs *ResultSet)Append(result Result)(){
 // Common methods
 //
 
-func NewLine( lineAsArray []string, delims [][]int, data [][]int)(line Line){
+func NewLine(lineAsArray []string, delims [][]int, data [][]int)(line Line){
     //
     line.Data_string_slice = lineAsArray
     line.delim_indexes     = delims
@@ -353,9 +352,7 @@ func NewSection(name string, typ int)(s Section){
 //
 //
 //
-
 func BlankResult(rtype int)(Result){
-    //
     //
     switch rtype {
         case RESULT_TYPE_LINE:
@@ -373,7 +370,6 @@ func BlankResult(rtype int)(Result){
         default:
             return nil
     }
-    //
     //
 }
 //

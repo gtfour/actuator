@@ -7,11 +7,11 @@ func main(){
     //
     // -- 
     // line target
-    target_config          := make(map[string]string,0)
+    target_config          := make(map[string]string, 0)
     target_config["type"]  =  "SINGLE_LINE"
     tgt,err                := targets.NewTarget(target_config)
-    line                   := []string{"root:x:0:0:root:/root:/bin/bash"}
-    tgt.AddLine(line)
+    lines                   := []string{"root:x:0:0:root:/root:/bin/bash"}
+    tgt.SetLines(lines)
     //
     fmt.Printf("\n\n>>    Line Target:    <<\n%v\nError:\n%v\n>>        <<",tgt,err)
     // -- -- -- --
@@ -27,6 +27,7 @@ func main(){
     // -- -- -- --
     // directory target
     // -- -- -- --
+
     targetDirectoryConfig              := make(map[string]string,0)
     targetDirectoryConfig["type"]      = "TARGET_DIRECTORY"
     targetDirectoryConfig["path"]      =  "/etc/wengine/"
@@ -40,7 +41,7 @@ func main(){
     //
     for i:= range directory_nested_targets {
         myNestedTarget:=directory_nested_targets[i]
-        fmt.Printf("\n\t%v\n",*myNestedTarget)
+        fmt.Printf("\n\t%v\n",myNestedTarget)
     }
     fmt.Printf("\n>>        <<\n")
     //
