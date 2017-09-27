@@ -19,7 +19,9 @@ func BracketsFilter(lineAsArray []string , delims [][]int , data [][]int)(ndelim
     ndelims = delims
     ndata   = data
     return
-
+    //
+    //
+    //
 }
 
 func SquareBracketsFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
@@ -51,6 +53,21 @@ func SquareBracketsFilter( lineAsArray []string , delims [][]int , data [][]int)
         ndelims = delims
         ndata   = data
     }
+    return
+}
+
+
+func DotFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims [][]int , ndata [][]int) {
+    //
+    //
+    dot              := []string{"."}
+    dot_indexes      := analyze.ArrayInArrayIndexes(lineAsArray, dot)
+    new_data_indexes := analyze.GlueDataByConnector(data, dot_indexes)
+    ndelims,ndata    =  AlumaPaster(delims , data , Shifter(new_data_indexes))
+    //
+    // debug
+    //fmt.Printf("\n----\nGlueDataByConnector:\ndata: %v\ndot_indexes: %v\nnew_data: %v\n----\n",data,dot_indexes,analyze.GlueDataByConnector(data, dot_indexes))
+    //
     return
 }
 

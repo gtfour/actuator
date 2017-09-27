@@ -87,3 +87,57 @@ func DigitInInterval(digit int, interval []int)(int){
     }
     return 0
 }
+
+func GlueDataByConnector(data_indexes [][]int, connector_indexes [][]int)(new_data_indexes [][]int){
+    //
+    // seems will not with following string ".hello"
+    //
+    data_indexes_length := len(data_indexes)
+    last_elem           := false
+    skip_next           := false
+    currentDataIndex    := make([]int,0)
+    connector_x         := 0
+    //
+    //
+    for i := range data_indexes {
+        dataIndex           := data_indexes[i]
+        // newDataIndex     := make([]int,0)
+        // currentDataIndex := make([]int,0)
+        // newDataIndex     =  dataIndex
+        if !skip_next {
+            currentDataIndex = dataIndex
+        }
+        if i == data_indexes_length-1 { last_elem=true }
+        if !last_elem {
+            dataIndexNext := data_indexes[i+1]
+            //for x := range connector_indexes {
+            pair_found := false
+            for x := connector_x; x<len(connector_indexes); x++ {
+                connectorIndex := connector_indexes[x]
+                if len(connectorIndex) == 2 && len(dataIndex) == 2 && len(dataIndexNext) == 2 {
+                    connectorIndexFirst   := connectorIndex[0]
+                    connectorIndexLast    := connectorIndex[1]
+                    //currentDataIndexFirst := currentDataIndex[0]
+                    currentDataIndexLast  := currentDataIndex[1]
+                    dataIndexNextFirst    := dataIndexNext[0]
+                    dataIndexNextLast     := dataIndexNext[1]
+                    if currentDataIndexLast == connectorIndexFirst-1 && dataIndexNextFirst == connectorIndexLast+1 {
+                        currentDataIndex[1] = dataIndexNextLast
+                        skip_next           = true
+                        pair_found          = true
+                        connector_x = x // start since this position next time
+                        break
+                    }
+                }
+            }
+            if !pair_found {
+                skip_next        = false
+                new_data_indexes = append(new_data_indexes, currentDataIndex)
+            }
+        } else {
+            new_data_indexes = append(new_data_indexes, currentDataIndex)
+        }
+    }
+    //
+    return
+}

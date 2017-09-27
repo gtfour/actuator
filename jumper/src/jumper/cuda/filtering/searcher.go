@@ -2,7 +2,6 @@ package filtering
 
 type Searcher struct {
     // //
-    // //
     value               string
     since               int
     direction           int
@@ -16,7 +15,6 @@ type Searcher struct {
     breakerInputSize    int
     // //
     resultPosition      int // calculating field
-    // //
     // //
 }
 
