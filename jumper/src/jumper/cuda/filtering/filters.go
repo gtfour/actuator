@@ -101,7 +101,7 @@ func QuotesFilter( lineAsArray []string , delims [][]int , data [][]int)(ndelims
     }
     //
     for g:= range grave_quote_complete_indexes {
-        grave:=single_quote_complete_indexes[g]
+        grave:=grave_quote_complete_indexes[g]
         quotes_complete_indexes=append(quotes_complete_indexes, grave)
     }
     //
