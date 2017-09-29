@@ -9,6 +9,8 @@ var section_brackets_curly    =  [2]string {"{","}"}
 
 func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
 
+    // match tabbed section by keyword
+
     entryAsArray         :=  strings.Split(entry,"")
     section_type         =   NOT_SECTION
     if len(entryAsArray) == 0 { return }
@@ -160,14 +162,48 @@ func EscapeSection( entry string ) ( name, tag [2]int , section_type int ) {
              //}
         }
     }
+    //
+    // check if section has tabbed (check if keyword exists inside entry)
+    //
+    //if len(keyword) > 0 {
+    //    first_keyword := keyword[0]
+    //    keyword_index := strings.Index(entry, first_keyword)
+    //}
+    //
+    //
+    //
     return
 
 }
 
-func SectionCouldBeNested(section_type int)(yes bool) {
+func EscapeIndentSection(entry string, keywords []string)(name, tag [2]int , section_type int){
+    //
+    //
+    section_type    =  NOT_SECTION
+    keywords_len    := len(keywords)
+    if keywords_len <= 0 { return }
+    if len(entry)   <= 0 { return }
+    // last            := keywords_len-1
+    for i := range keywords {
+        keyword       := keywords[i]
+        keyword_index := strings.Index(entry, keyword)
+        if keyword_index < 0 {
+            break
+        }
+    }
+    last_char    := len(entry)-1
+    name         = [2]int{0, last_char}
+    section_type = INDENT_SECTION
+    return
+    //
+    //
+}
+
+func SectionCouldBeNested(section_type int)(yes bool){
     // incomplete ! have to add checking curly sections 
     if section_type == TRIANGLE_SECTION_STARTING || section_type == CURLY_SECTION { yes = true }
     return
+    //
 }
 
 func SectionCouldBeInline(section_type int)(yes bool) {

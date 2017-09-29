@@ -22,4 +22,7 @@ var TRIANGLE_SECTION_ENDING    int = 6012
 var TRIANGLE_SECTION_UNDEFINED int = 6013
 
 var CURLY_SECTION              int = 6014
+
+var INDENT_SECTION             int = 6015
+
 var NOT_SECTION                int = 6019

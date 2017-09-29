@@ -8,11 +8,13 @@ func GetSectionBreaker( line string, name [2]int, tag [2]int, sectionType int )(
     //
     switch {
         case sectionType == analyze.SQUARE_SECTION:
-            breaker := func(line string)(bool){
+            //
+            //
+            breaker := func(phrase string)(bool){
                 //
                 // this kind of section is closing by empty line
                 //
-                if line == "" {
+                if phrase == "" {
                     return true
                 } else {
                     return false
@@ -34,6 +36,15 @@ func GetSectionBreaker( line string, name [2]int, tag [2]int, sectionType int )(
                 }
             }
             return breaker
+        case sectionType == analyze.INDENT_SECTION:
+             breaker := func(phrase string)(bool) {
+                  if len(phrase)>0 && phrase[0] != ' ' {
+                      return true
+                  } else {
+                      return false
+                  }
+             }
+             return breaker
         default:
             breaker := func(line string)(bool){
                     return false
