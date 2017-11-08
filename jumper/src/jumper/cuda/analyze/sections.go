@@ -184,13 +184,18 @@ func EscapeIndentSection(entry string, keywords []string)(name, tag [2]int , sec
     if keywords_len <= 0 { return }
     if len(entry)   <= 0 { return }
     // last            := keywords_len-1
+    found           := false
     for i := range keywords {
         keyword       := keywords[i]
         keyword_index := strings.Index(entry, keyword)
         if keyword_index < 0 {
+            continue
+        } else {
+            found = true
             break
         }
     }
+    if !found { return }
     last_char    := len(entry)-1
     name         = [2]int{0, last_char}
     section_type = INDENT_SECTION

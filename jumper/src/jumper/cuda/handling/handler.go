@@ -13,7 +13,7 @@ type Handler struct {
     //  will be heavy structure with a lot of different fields
     //
     filters  filtering.FilterList
-    target   *targets.Target
+    target   *targets.Target // ????
     single   bool
     //
     //
